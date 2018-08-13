@@ -6,6 +6,8 @@ autom4te.cache/
 compile
 config.guess
 config.sub
+config.h.in
+config.h.in~
 configure
 install-sh
 missing
@@ -15,5 +17,4 @@ Makefile.in
 ar-lib
 depcomp
 ltmain.sh
-m4/
 builddir/
