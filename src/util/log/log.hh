@@ -1,22 +1,21 @@
 #ifndef LOG_HH_122CBA13F35A4A728F0E7A261062A564
 #define LOG_HH_122CBA13F35A4A728F0E7A261062A564
 
-#include <string>
-#include <iostream>
 #include <boost/format.hpp>
 #include <boost/any.hpp>
-#include <deque>
 
-#include <stdio.h>
-#include <stdarg.h>
+#include <string>
+#include <deque>
 
 namespace Logging {
 
 class BaseLogType;
 
-class Log {
+class Log
+{
 public:
-	enum Level {
+	enum Level
+	{
 	  LL_EMERG,
 	  LL_ALERT,
 	  LL_CRIT,
@@ -28,51 +27,51 @@ public:
 	  LL_TRACE
 	};
 
-	enum Type {
+	enum Type
+	{
 	  LT_CONSOLE,
 	  LT_FILE,
 	  LT_SYSLOG
 	};
 
-	Log(const std::string& _name);
+	Log(const std::string& name);
 	~Log();
 
-  void setName(const std::string &_name);
-	void addHandler(Log::Type _type, const boost::any& _param = boost::any());
+    void setName(const std::string &name);
+    void addHandler(Log::Type type, const boost::any& param = boost::any());
 
-	void setLevel(Log::Level _ll);
-	Log::Level getLevel() const;
-		
-	void trace(const std::string& _msg);
-	void trace(const boost::format& _frmt);
-	void debug(const std::string& _msg);
-	void debug(const boost::format& _frmt);
-	void info(const std::string& _msg);
-	void info(const boost::format& _frmt);
-	void notice(const std::string& _msg);
-	void notice(const boost::format& _frmt);
-	void warning(const std::string& _msg);
-	void warning(const boost::format& _frmt);
-	void error(const std::string& _msg);
-	void error(const boost::format& _frmt);
-	void critical(const std::string& _msg);
-	void critical(const boost::format& _frmt);
-	void alert(const std::string& _msg);
-	void alert(const boost::format& _frmt);
-	void emerg(const std::string& _msg);
-	void emerg(const boost::format& _frmt);
+    void setLevel(Log::Level ll);
+    Log::Level getLevel() const;
+
+    void trace(const std::string& msg);
+    void trace(const boost::format& frmt);
+    void debug(const std::string& msg);
+    void debug(const boost::format& frmt);
+    void info(const std::string& msg);
+    void info(const boost::format& frmt);
+    void notice(const std::string& msg);
+    void notice(const boost::format& frmt);
+    void warning(const std::string& msg);
+    void warning(const boost::format& frmt);
+    void error(const std::string& msg);
+    void error(const boost::format& frmt);
+    void critical(const std::string& msg);
+    void critical(const boost::format& frmt);
+    void alert(const std::string& msg);
+    void alert(const boost::format& frmt);
+    void emerg(const std::string& msg);
+    void emerg(const boost::format& frmt);
 
   /**
    * support for old style formatting log
    */
-  void message(int _prio, const char *_format, ...);
-	
-protected:	
-	std::deque<BaseLogType* > handlers;
-	Log::Level level;
-  std::string name;
+  void message(int prio, const char *format, ...);
+protected:
+    std::deque<BaseLogType*> handlers;
+    Log::Level level;
+    std::string name;
 };
 
-}
+}//namespace Logging
 
-#endif /*LOG_H_*/
+#endif//LOG_HH_122CBA13F35A4A728F0E7A261062A564

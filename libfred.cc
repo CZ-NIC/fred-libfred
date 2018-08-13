@@ -1,7 +1,9 @@
 #include "src/libfred/registrable_object/contact/info_contact.hh"
+#include "src/util/log/logger.hh"
 
 #include <exception>
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 
 int main(int argc, char* argv[])
@@ -10,10 +12,21 @@ int main(int argc, char* argv[])
                                              : argv[1];
     try
     {
-        Database::Manager::init(new Database::ConnectionFactory(db_conn_str));
+        {
+            Logging::Manager::instance_ref().get(PACKAGE).setLevel(Logging::Log::Level::LL_DEBUG);
+            boost::any param = std::string("libfred.log");
+            Logging::Manager::instance_ref().get(PACKAGE).addHandler(Logging::Log::LT_FILE, param);
+        }
+        {
+            Database::Manager::init(new Database::ConnectionFactory(db_conn_str));
+        }
         LibFred::OperationContextCreator ctx;
         LibFred::InfoContactByHandle info_contact_op("KONTAKT");
-        info_contact_op.exec(ctx);
+        const auto info = info_contact_op.exec(ctx);
+        std::ostringstream out;
+        out << info;
+        std::cout << out.str() << std::endl;
+        ctx.get_log().info(out.str());
         return EXIT_SUCCESS;
     }
     catch (const std::exception& e)

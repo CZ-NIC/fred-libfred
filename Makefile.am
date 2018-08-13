@@ -67,12 +67,6 @@ libfred_la_SOURCES = \
 	src/util/db/value.hh \
 	src/util/db/psql/psql_connection.hh \
 	src/util/db/psql/psql_result.hh \
-	src/util/db/query/query.hh \
-	src/util/db/query/query_common.hh \
-	src/util/db/query/query_old.cc \
-	src/util/db/query/query_old.hh \
-	src/util/db/query/sql_helper_objects.hh \
-	src/util/db/query/sql_operators.hh \
 	src/util/log/context.cc \
 	src/util/log/context.hh \
 	src/util/log/log.cc \

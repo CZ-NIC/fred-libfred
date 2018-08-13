@@ -11,6 +11,7 @@ LT_INIT
 AC_PROG_LIBTOOL(libtool)
 AC_PROG_CC
 AC_CONFIG_FILES([Makefile])
+AC_DEFINE_UNQUOTED([HAVE_LOGGER], [1], [compile libraries with logging messages])
 
 AC_LANG(C++)
 
