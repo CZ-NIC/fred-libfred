@@ -47,7 +47,7 @@ target_compile_options(fred
     PUBLIC "-grecord-gcc-switches"
     PUBLIC "-Wall"
     PUBLIC "-Wextra"
-    PUBLIC "-fdiagnostics-color=always")
+    PUBLIC "-fdiagnostics-color=auto")
 
 set(PACKAGE libfred)
 set(HAVE_BOOST_SERIALIZATION 1)
