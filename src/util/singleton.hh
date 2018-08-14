@@ -47,18 +47,14 @@ public:
     {
         return *instance_ptr();
     }
-protected:
-  /**
-   * Constructors, destructors, assigment operator
-   * keeping as private
-   */
+
 	Singleton() = delete;
 
-	Singleton(const Singleton<T>&) = delete;
+	Singleton(const Singleton&) = delete;
 
 	~Singleton() = delete;
 
-	Singleton<T>& operator=(const Singleton<T>&) = delete;
+	Singleton& operator=(const Singleton&) = delete;
 };
 
 #endif//SINGLETON_HH_C5F4DE21F764431C9B613A3D019D91A5
