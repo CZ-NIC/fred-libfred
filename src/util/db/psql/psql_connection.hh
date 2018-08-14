@@ -25,15 +25,17 @@
 #define PSQL_CONNECTION_HH_7365F969C663447FA2B3C2A0FAEE30CC
 
 #include "src/util/db/psql/psql_result.hh"
-#include "src/util/db/statement.hh"
 #include "src/util/db/db_exceptions.hh"
 
 #include <libpq-fe.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
+#include <boost/regex.hpp>
 
 #include <algorithm>
+#include <memory>
+#include <string>
 
 namespace Database {
 
@@ -56,29 +58,39 @@ class PSQLTransaction;
 class PSQLConnection
 {
 public:
-    typedef PSQLResult       result_type;
-    typedef PSQLTransaction  transaction_type;
+    typedef PSQLResult result_type;
+    typedef PSQLTransaction transaction_type;
 
     /**
      * Constructors and destructor
      */
-    PSQLConnection() : psql_conn_(nullptr),
-                       psql_conn_finish_(true) { }
+    PSQLConnection()
+        : psql_conn_(nullptr),
+          psql_conn_finish_(true)
+    { }
 
     PSQLConnection(const std::string& _conn_info) /* throw (ConnectionFailed) */
-        : conn_info_(_conn_info), psql_conn_(nullptr), psql_conn_finish_(true)
+        : conn_info_(_conn_info),
+          psql_conn_(nullptr),
+          psql_conn_finish_(true)
     {
-        open(_conn_info);
+        this->open(_conn_info);
     }
 
-    PSQLConnection(PGconn* _psql_conn) : psql_conn_(_psql_conn), psql_conn_finish_(false)
-    {
-    }
+    PSQLConnection(PGconn* _psql_conn)
+        : psql_conn_(_psql_conn),
+          psql_conn_finish_(false)
+    { }
 
-    virtual ~PSQLConnection()
+    ~PSQLConnection()
     {
         close();
-        // std::cout << "(CALL) PSQLConnection destructor" << std::endl;
+    }
+
+    static std::string get_nopass_conn_info(const std::string& conn_info)
+    {
+        static const boost::regex re_find_password("password=[^\\ ]+");
+        return boost::regex_replace(conn_info, re_find_password, "password=******** ");
     }
 
     /**
@@ -86,15 +98,15 @@ public:
      * timeout (set by setQueryTimeout) occurs
      * it's too hard to implement it as const member in this class and in ConnectionBase_
      */
-    static const std::string getTimeoutString()
+    static std::string getTimeoutString()
     {
         return std::string("statement timeout");
     }
 
     /**
-     * Implementation of coresponding methods called by Connection_ template
+     * Implementation of corresponding methods called by Connection_ template
      */
-    virtual void open(const std::string& _conn_info) /* throw (ConnectionFailed) */
+    void open(const std::string& _conn_info) /* throw (ConnectionFailed) */
     {
         conn_info_ = _conn_info;
         close();
@@ -105,13 +117,13 @@ public:
             PQfinish(psql_conn_);
             throw ConnectionFailed(_conn_info + " errmsg: " + err_msg);
         }
-        #ifdef HAVE_LOGGER
+#ifdef HAVE_LOGGER
         // set notice processor
         PQsetNoticeProcessor(psql_conn_, logger_notice_processor, NULL);
-        #endif
+#endif
     }
 
-    virtual void close()
+    void close()
     {
         if (psql_conn_ && psql_conn_finish_)
         {
@@ -120,12 +132,7 @@ public:
         }
     }
 
-    virtual result_type exec(Statement& _query) /*throw (ResultFailed) */
-    {
-        return exec(_query.toSql(boost::bind(&PSQLConnection::escape, this, _1)));
-    }
-
-    virtual result_type exec(const std::string& _query) /*throw (ResultFailed)*/
+    result_type exec(const std::string& _query) /*throw (ResultFailed)*/
     {
         PGresult* const tmp = PQexec(psql_conn_, _query.c_str());
 
@@ -138,7 +145,7 @@ public:
         throw ResultFailed(_query + " (" + PQerrorMessage(psql_conn_) + ")");
     }
 
-    virtual result_type exec_params(
+    result_type exec_params(
             const std::string& _query,//one command query
             const std::vector<std::string>& params)//parameters data
     {
@@ -180,7 +187,7 @@ public:
                            "(" + PQerrorMessage(psql_conn_) + ")");
     }
 
-    virtual result_type exec_params(
+    result_type exec_params(
             const std::string& _query,//one command query
             const QueryParams& params)//parameters data
     {
@@ -203,7 +210,7 @@ public:
                 psql_conn_,
                 _query.c_str(),//query buffer
                 paramValues.size(),//number of parameters
-                paramTypes.size() ? &paramTypes[0] : 0,
+                paramTypes.size() != 0 ? &paramTypes[0] : nullptr,
                 &paramValues[0],//values to substitute $1 ... $n
                 &paramLengths[0],//the lengths, in bytes, of each of the parameter values
                 &paramFormats[0],//param values formats
@@ -231,51 +238,49 @@ public:
                            "Params:" + params_dump + " (" + PQerrorMessage(psql_conn_) + ")");
     }
 
-    virtual void setConstraintExclusion(bool on = true)
+    void setConstraintExclusion(bool on = true)
     {
         if (on)
         {
-            exec("SET constraint_exclusion=ON");
+            this->exec("SET constraint_exclusion=ON");
         }
         else
         {
-            exec("SET constraint_exclusion=OFF");
+            this->exec("SET constraint_exclusion=OFF");
         }
     }
 
-    virtual void setQueryTimeout(unsigned t)
+    void setQueryTimeout(unsigned t)
     {
         boost::format fmt_timeout = boost::format("SET statement_timeout=%1%") % t;
         exec(fmt_timeout.str());
     }
 
-    virtual void reset()
+    void reset()
     {
         PQreset(psql_conn_);
     }
 
-    virtual std::string escape(const std::string& _in)const
+    std::string escape(const std::string& _in)const
     {
         std::string ret;
         int err;
         {
-            char *const esc = new char [2*_in.size() + 1];
-            PQescapeStringConn(psql_conn_, esc, _in.c_str(), _in.size(), &err);
-            ret = esc;
-            delete [] esc;
+            const std::unique_ptr<char[]> esc(new char[(2 * _in.size()) + 1]);
+            PQescapeStringConn(psql_conn_, esc.get(), _in.c_str(), _in.size(), &err);
+            ret = esc.get();
         }
         if (err != 0)
         {
             /* error */
             const std::string msg = str(boost::format("error in escape function: %1%") % PQerrorMessage(psql_conn_));
-            #ifdef HAVE_LOGGER
+#ifdef HAVE_LOGGER
             LOGGER(PACKAGE).error(msg);
-            #endif
+#endif
             throw std::runtime_error(msg);
         }
         return ret;
     }
-
 
     bool inTransaction()const
     {
@@ -315,11 +320,9 @@ public:
     }
 private:
     std::string conn_info_;
-    PGconn* psql_conn_;     /**< wrapped connection structure from libpq library */
-    bool psql_conn_finish_; /**< whether or not to finish PGconn at the destruct (close() method) */
+    PGconn* psql_conn_; ///< wrapped connection structure from libpq library
+    bool psql_conn_finish_; ///< whether or not to finish PGconn at the destruction (close() method)
 };
-
-
 
 /**
  * \class PSQLTransaction

@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
             Logging::Manager::instance_ref().get(PACKAGE).addHandler(Logging::Log::LT_FILE, param);
         }
         {
-            Database::Manager::init(new Database::ConnectionFactory(db_conn_str));
+            Database::StandaloneManager::init(db_conn_str);
         }
         LibFred::OperationContextCreator ctx;
         LibFred::InfoContactByHandle info_contact_op("KONTAKT");

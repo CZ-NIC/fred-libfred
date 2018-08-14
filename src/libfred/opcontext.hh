@@ -28,10 +28,8 @@
 #include "src/libfred/db_settings.hh"
 
 #include <string>
-#include <boost/utility.hpp>
 
-namespace LibFred
-{
+namespace LibFred {
 
 class OperationContextCreator;
 class OperationContextTwoPhaseCommit;
@@ -45,10 +43,11 @@ class OperationContextTwoPhaseCommitCreator;
  * Is instantiable only by selected friend classes.
  */
 class OperationContext
-:   private boost::noncopyable
 {
 public:
-    typedef Database::StandaloneConnection DbConn;///< typename alias
+    OperationContext(const OperationContext&) = delete;
+    OperationContext& operator=(const OperationContext&) = delete;
+    using DbConn = Database::StandaloneConnection;
     /**
      * Obtain database connection with running transaction.
      * @return database connection object reference
@@ -63,9 +62,8 @@ public:
 private:
     OperationContext();
     ~OperationContext();
-    typedef std::unique_ptr< DbConn > DbConnPtr;
-    DbConnPtr conn_;
-    Logging::Log &log_;
+    std::unique_ptr<DbConn> conn_;
+    Logging::Log& log_;
     friend class OperationContextCreator;
     friend class OperationContextTwoPhaseCommit;
     friend class OperationContextTwoPhaseCommitCreator;
@@ -78,8 +76,7 @@ private:
  * Is not directly instantiable (implemented by private ctor and destructor).
  * Is instantiable only by friend class.
  */
-class OperationContextTwoPhaseCommit
-:   public OperationContext
+class OperationContextTwoPhaseCommit : public OperationContext
 {
 public:
     /**
@@ -98,8 +95,7 @@ private:
  *
  * Is non-copyable (implemented by non-copyable base class).
  */
-class OperationContextCreator
-:   public OperationContext
+class OperationContextCreator : public OperationContext
 {
 public:
     /**
@@ -122,8 +118,7 @@ public:
  *
  * Is non-copyable (implemented by non-copyable base class).
  */
-class OperationContextTwoPhaseCommitCreator
-:   public OperationContextTwoPhaseCommit
+class OperationContextTwoPhaseCommitCreator : public OperationContextTwoPhaseCommit
 {
 public:
     /**
@@ -132,8 +127,8 @@ public:
      * @throw std::runtime_error in case of empty _transaction_id
      * @note Calling commit_transaction() will process first phase of two-phase commit.
      */
-    OperationContextTwoPhaseCommitCreator(const std::string &_transaction_id)
-    :   OperationContextTwoPhaseCommit(_transaction_id) { }
+    OperationContextTwoPhaseCommitCreator(const std::string& _transaction_id)
+        : OperationContextTwoPhaseCommit(_transaction_id) { }
     /**
      * Processes database transaction rollback if transaction wasn't commited.
      */
@@ -150,13 +145,14 @@ public:
  * @param _transaction_id database transaction string identification used in first phase of two-phase commit
  * @throw std::runtime_error if _transaction_id empty
  */
-void commit_transaction(const std::string &_transaction_id);
+void commit_transaction(const std::string& _transaction_id);
+
 /**
  * Drops two-phase database transaction on standalone database connection.
  * @param _transaction_id database transaction string identification used in first phase of two-phase commit
  * @throw std::runtime_error if _transaction_id empty
  */
-void rollback_transaction(const std::string &_transaction_id);
+void rollback_transaction(const std::string& _transaction_id);
 
 } // namespace LibFred
 

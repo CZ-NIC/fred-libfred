@@ -29,7 +29,6 @@
 #include "src/util/db/connection_factory.hh"
 #include "src/util/db/psql/psql_connection.hh"
 #include "src/util/db/manager.hh"
-#include "src/util/db/manager_tss.hh"
 
 #endif /*DATABASE_H_*/
 
