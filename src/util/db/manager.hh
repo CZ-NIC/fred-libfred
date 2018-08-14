@@ -54,7 +54,6 @@ class Manager_
 public:
     using connection_driver = typename T::connection_driver;
     using connection_type = Connection_<connection_driver, Manager_>;
-    using transaction_type = Transaction_<typename connection_driver::transaction_type, Manager_>;
     using result_type = Result_<typename connection_driver::result_type>;
     using sequence_type = Sequence_<connection_type, Manager_>;
     using row_type = typename result_type::Row;

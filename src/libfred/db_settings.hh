@@ -38,7 +38,6 @@ using StandaloneConnectionFactory = Factory::Simple<PSQLConnection>;
 using StandaloneManager = Manager_<StandaloneConnectionFactory>;
 
 using StandaloneConnection = StandaloneManager::connection_type;
-using Transaction = StandaloneManager::transaction_type;
 using Result = StandaloneManager::result_type;
 using Sequence = StandaloneManager::sequence_type;
 using Row = StandaloneManager::row_type;

@@ -17,10 +17,9 @@
  */
 
 /**
- *  @file psql_result.h
+ *  @file psql_result.hh
  *  Implementation of result object for PSQL database.
  */
-
 
 #ifndef PSQL_RESULT_HH_B4F0DE7B238A4A23B6F7C82EC3692B2F
 #define PSQL_RESULT_HH_B4F0DE7B238A4A23B6F7C82EC3692B2F

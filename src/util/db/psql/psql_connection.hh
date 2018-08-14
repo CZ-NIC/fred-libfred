@@ -49,8 +49,6 @@ static void logger_notice_processor(void*, const char* message)
 }
 #endif
 
-class PSQLTransaction;
-
 /**
  * \class PSQLConnection
  * \brief PSQL connection driver for Connection_ template
@@ -58,8 +56,7 @@ class PSQLTransaction;
 class PSQLConnection
 {
 public:
-    typedef PSQLResult result_type;
-    typedef PSQLTransaction transaction_type;
+    using result_type = PSQLResult;
 
     /**
      * Constructors and destructor
@@ -322,40 +319,6 @@ private:
     std::string conn_info_;
     PGconn* psql_conn_; ///< wrapped connection structure from libpq library
     bool psql_conn_finish_; ///< whether or not to finish PGconn at the destruction (close() method)
-};
-
-/**
- * \class PSQLTransaction
- * \brief Implementation of local transaction for PSQL driver
- */
-class PSQLTransaction
-{
-public:
-    typedef PSQLConnection connection_type;
-
-    PSQLTransaction() { }
-
-    ~PSQLTransaction() { }
-
-    static std::string start()
-    {
-        return "START TRANSACTION ISOLATION LEVEL READ COMMITTED";
-    }
-
-    static std::string rollback()
-    {
-        return "ROLLBACK TRANSACTION";
-    }
-
-    static std::string commit()
-    {
-        return "COMMIT TRANSACTION";
-    }
-
-    static std::string prepare(const std::string& _id)
-    {
-        return "PREPARE TRANSACTION '" + _id + "'";
-    }
 };
 
 }//namespace Database

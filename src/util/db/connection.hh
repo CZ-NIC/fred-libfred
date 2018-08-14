@@ -48,16 +48,14 @@ class Connection_
 {
 public:
     using driver_type = connection_driver;
-    using transaction_type = typename manager_type::transaction_type;
     using result_type = typename manager_type::result_type;
 
-    Connection_() : conn_(nullptr), trans_(nullptr) { }
+    Connection_() : conn_(nullptr) { }
 
     explicit Connection_(
             const std::string& _conn_info,
             bool _lazy_connect = true) //throw (ConnectionFailed)
         : conn_(nullptr),
-          trans_(nullptr),
           conn_info_(_conn_info)
     {
         /* lazy connection open */
@@ -67,7 +65,7 @@ public:
         }
     }
 
-    explicit Connection_(connection_driver* _conn) : conn_(_conn), trans_(nullptr) { }
+    explicit Connection_(connection_driver* _conn) : conn_(_conn) { }
 
     /**
      * Destructor
@@ -254,12 +252,8 @@ public:
     {
         return conn_->__getConn__();
     }
-
-    template <class _transaction_type, class _manager_type>
-    friend class Transaction_;
 private:
     connection_driver* conn_; ///< connection_driver instance
-    transaction_type* trans_; ///< pointer to active transaction
     std::string conn_info_; ///< connection string used to open connection
     void open()
     {
@@ -270,29 +264,6 @@ private:
         LOGGER(PACKAGE).info(boost::format("connection established; (%1%)") %
                              connection_driver::get_nopass_conn_info(conn_info_));
 #endif
-    }
-    /**
-     * Trasaction support methods
-     */
-    void setTransaction(transaction_type* _trans)
-    {
-        trans_ = _trans;
-#ifdef HAVE_LOGGER
-        LOGGER(PACKAGE).debug(boost::format("(%1%) transaction assigned to (%2%) connection") % trans_ % this->conn_);
-#endif
-    }
-
-    void unsetTransaction()
-    {
-#ifdef HAVE_LOGGER
-        LOGGER(PACKAGE).debug(boost::format("(%1%) transaction released from connection") % trans_);
-#endif
-        trans_ = nullptr;
-    }
-
-    transaction_type* getTransaction()const
-    {
-        return trans_;
     }
 };
 
