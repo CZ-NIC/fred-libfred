@@ -40,6 +40,8 @@
 
 namespace Database {
 
+class PSQLConnection;
+
 /**
  * \class PSQLResult
  * \brief PSQL result object
@@ -55,11 +57,6 @@ public:
      * Constructors and destructor
      */
     PSQLResult() { }
-
-    PSQLResult(PGresult* _psql_result)
-    {
-        psql_result_.reset(_psql_result, PQclear);
-    }
 
     PSQLResult(const PSQLResult& _other)
     {
@@ -164,6 +161,11 @@ public:
         return Iterator(this, size());
     }
 private:
+    PSQLResult(PGresult* _psql_result)
+    {
+        psql_result_.reset(_psql_result, PQclear);
+    }
+
     /**
      * @return number of columns
      */
@@ -250,6 +252,7 @@ private:
     friend class Row_<PSQLResult, value_type>;
     friend class Row_<PSQLResult, value_type>::Iterator;
     friend class Result_<PSQLResult>;
+    friend class PSQLConnection;
     std::shared_ptr<PGresult> psql_result_; /**< wrapped result structure from lipq library */
 };
 

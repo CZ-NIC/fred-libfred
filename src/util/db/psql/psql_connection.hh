@@ -62,26 +62,19 @@ public:
      * Constructors and destructor
      */
     PSQLConnection()
-        : psql_conn_(nullptr),
-          psql_conn_finish_(true)
+        : psql_conn_(nullptr)
     { }
 
     PSQLConnection(const std::string& _conn_info) /* throw (ConnectionFailed) */
         : conn_info_(_conn_info),
-          psql_conn_(nullptr),
-          psql_conn_finish_(true)
+          psql_conn_(nullptr)
     {
         this->open(_conn_info);
     }
 
-    PSQLConnection(PGconn* _psql_conn)
-        : psql_conn_(_psql_conn),
-          psql_conn_finish_(false)
-    { }
-
     ~PSQLConnection()
     {
-        close();
+        this->close();
     }
 
     static std::string get_nopass_conn_info(const std::string& conn_info)
@@ -106,32 +99,30 @@ public:
     void open(const std::string& _conn_info) /* throw (ConnectionFailed) */
     {
         conn_info_ = _conn_info;
-        close();
-        psql_conn_ = PQconnectdb(_conn_info.c_str());
-        if (PQstatus(psql_conn_) != CONNECTION_OK)
+        this->close();
+        psql_conn_.reset(PQconnectdb(_conn_info.c_str()), PQreset);
+        if (PQstatus(psql_conn_.get()) != CONNECTION_OK)
         {
-            const std::string err_msg =  PQerrorMessage(psql_conn_);
-            PQfinish(psql_conn_);
+            const std::string err_msg =  PQerrorMessage(psql_conn_.get());
             throw ConnectionFailed(_conn_info + " errmsg: " + err_msg);
         }
 #ifdef HAVE_LOGGER
         // set notice processor
-        PQsetNoticeProcessor(psql_conn_, logger_notice_processor, NULL);
+        PQsetNoticeProcessor(psql_conn_.get(), logger_notice_processor, NULL);
 #endif
     }
 
-    void close()
+    void close()noexcept
     {
-        if (psql_conn_ && psql_conn_finish_)
+        if (psql_conn_ != nullptr)
         {
-            PQfinish(psql_conn_);
             psql_conn_ = nullptr;
         }
     }
 
     result_type exec(const std::string& _query) /*throw (ResultFailed)*/
     {
-        PGresult* const tmp = PQexec(psql_conn_, _query.c_str());
+        PGresult* const tmp = PQexec(psql_conn_.get(), _query.c_str());
 
         const ExecStatusType status = PQresultStatus(tmp);
         if ((status == PGRES_COMMAND_OK) || (status == PGRES_TUPLES_OK))
@@ -139,7 +130,7 @@ public:
             return PSQLResult(tmp);
         }
         PQclear(tmp);
-        throw ResultFailed(_query + " (" + PQerrorMessage(psql_conn_) + ")");
+        throw ResultFailed(_query + " (" + PQerrorMessage(psql_conn_.get()) + ")");
     }
 
     result_type exec_params(
@@ -156,7 +147,7 @@ public:
         }
 
         PGresult* const tmp = PQexecParams(
-                psql_conn_,
+                psql_conn_.get(),
                 _query.c_str(),//query buffer
                 paramValues.size(),//number of parameters
                 0,//not using Oids, use type in query like: WHERE id = $1::int4 and name = $2::varchar
@@ -181,7 +172,7 @@ public:
 
         throw ResultFailed("query: " + _query + " "
                            "Params:" + params_dump + " "
-                           "(" + PQerrorMessage(psql_conn_) + ")");
+                           "(" + PQerrorMessage(psql_conn_.get()) + ")");
     }
 
     result_type exec_params(
@@ -204,7 +195,7 @@ public:
         }
 
         PGresult* const tmp = PQexecParams(
-                psql_conn_,
+                psql_conn_.get(),
                 _query.c_str(),//query buffer
                 paramValues.size(),//number of parameters
                 paramTypes.size() != 0 ? &paramTypes[0] : nullptr,
@@ -232,7 +223,7 @@ public:
         }
 
         throw ResultFailed("query: " + _query + " "
-                           "Params:" + params_dump + " (" + PQerrorMessage(psql_conn_) + ")");
+                           "Params:" + params_dump + " (" + PQerrorMessage(psql_conn_.get()) + ")");
     }
 
     void setConstraintExclusion(bool on = true)
@@ -255,7 +246,7 @@ public:
 
     void reset()
     {
-        PQreset(psql_conn_);
+        psql_conn_ = nullptr;
     }
 
     std::string escape(const std::string& _in)const
@@ -264,13 +255,13 @@ public:
         int err;
         {
             const std::unique_ptr<char[]> esc(new char[(2 * _in.size()) + 1]);
-            PQescapeStringConn(psql_conn_, esc.get(), _in.c_str(), _in.size(), &err);
+            PQescapeStringConn(psql_conn_.get(), esc.get(), _in.c_str(), _in.size(), &err);
             ret = esc.get();
         }
         if (err != 0)
         {
             /* error */
-            const std::string msg = str(boost::format("error in escape function: %1%") % PQerrorMessage(psql_conn_));
+            const std::string msg = str(boost::format("error in escape function: %1%") % PQerrorMessage(psql_conn_.get()));
 #ifdef HAVE_LOGGER
             LOGGER(PACKAGE).error(msg);
 #endif
@@ -281,7 +272,7 @@ public:
 
     bool inTransaction()const
     {
-        switch (PQtransactionStatus(psql_conn_))
+        switch (PQtransactionStatus(psql_conn_.get()))
         {
             case PQTRANS_INTRANS://idle, within transaction block
             case PQTRANS_INERROR://idle, within failed transaction
@@ -296,7 +287,7 @@ public:
 
     bool in_valid_transaction()const
     {
-        switch (PQtransactionStatus(psql_conn_))
+        switch (PQtransactionStatus(psql_conn_.get()))
         {
             case PQTRANS_INTRANS://idle, within transaction block
                 return true;
@@ -313,12 +304,11 @@ public:
     typedef PGconn* __conn_type__;
     __conn_type__ __getConn__()const
     {
-        return psql_conn_;
+        return psql_conn_.get();
     }
 private:
     std::string conn_info_;
-    PGconn* psql_conn_; ///< wrapped connection structure from libpq library
-    bool psql_conn_finish_; ///< whether or not to finish PGconn at the destruction (close() method)
+    std::shared_ptr<PGconn> psql_conn_; ///< wrapped connection structure from libpq library
 };
 
 }//namespace Database
