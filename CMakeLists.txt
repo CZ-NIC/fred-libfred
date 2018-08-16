@@ -22,6 +22,8 @@ add_library(fred SHARED
     src/util/util.cc
     src/util/db/param_query_composition.cc
     src/util/db/value.cc
+    src/util/db/psql/psql_connection.cc
+    src/util/db/psql/psql_result.cc
     src/util/log/context.cc
     src/util/log/log.cc
     src/util/log/logger.cc

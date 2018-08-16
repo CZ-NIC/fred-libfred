@@ -35,8 +35,6 @@
 
 #include <boost/format.hpp>
 
-#include <string>
-
 namespace Database {
 namespace Factory {
 
@@ -49,16 +47,15 @@ template <class T>
 class Simple
 {
 public:
-    using connection_driver = T;
+    using connection_driver = T;//PSQLConnection
 
-    /**
-     * Constuctors and destructor
-     */
-    explicit Simple(const std::string& _conn_info)
-        : conn_info_(_conn_info)
+    template <typename ...A>
+    Simple(A ...args)
+        : need_to_open_(args...)
     {
 #ifdef HAVE_LOGGER
-        TRACE(boost::format("<CALL> Database::Factory::Simple::Simple('%1%')") % this->get_nopass_conn_info());
+        TRACE(boost::format("<CALL> Database::Factory::Simple::Simple('%1%')") %
+              T::to_publicable_string(need_to_open_));
 #endif
     }
 
@@ -74,9 +71,9 @@ public:
      *
      * @return  connection
      */
-    connection_driver* acquire()
+    connection_driver* acquire()const
     {
-        return new connection_driver(conn_info_);
+        return new connection_driver(need_to_open_);
     }
 
     /**
@@ -84,7 +81,7 @@ public:
      *
      * @param _conn  connection pointer
      */
-    void release(connection_driver*& _conn)
+    static void release(connection_driver*& _conn)
     {
         if (_conn != nullptr)
         {
@@ -92,25 +89,8 @@ public:
             _conn = nullptr;
         }
     }
-
-    /**
-     * Connection string getter
-     *
-     * @return  connection string factory was configured with
-     */
-    const std::string& getConnectionString()const
-    {
-        return conn_info_;
-    }
 private:
-    /**
-     * filter out password from database connection string
-     */
-    std::string get_nopass_conn_info()const
-    {
-        return T::get_nopass_conn_info(conn_info_);
-    }
-    std::string conn_info_; /**< connection string (host, database name, user, password ...) */
+    typename connection_driver::OpenType need_to_open_;
 };
 
 }//namespace Database::Factory

@@ -1,21 +1,28 @@
 #ifndef UTIL_HH_F54151D7C0B848C8926F03720CB06166
 #define UTIL_HH_F54151D7C0B848C8926F03720CB06166
 
+#include "src/util/types/data_types.hh"
+
+#include <boost/format.hpp>
+
+#include <iterator>
 #include <string>
 #include <vector>
 #include <set>
-#include <iterator>
-#include <boost/format.hpp>
-#include "src/util/types/data_types.hh"
+#include <stdexcept>
 
 namespace Util {
 
-//get n-th element of given container or throw
-template<class CONTAINER> typename CONTAINER::value_type get_nth(const CONTAINER& in, typename CONTAINER::size_type n)
+//TODO: move into tests
+template <class CONTAINER>
+typename CONTAINER::value_type get_nth(const CONTAINER& in, typename CONTAINER::size_type n)
 {
-    if(in.size() <= n) throw std::out_of_range((boost::format("Util::get_nth n: %1%  size: %2%") % n % in.size()).str());
+    if (in.size() <= n)
+    {
+        throw std::out_of_range((boost::format("Util::get_nth n: %1%  size: %2%") % n % in.size()).str());
+    }
     typename CONTAINER::const_iterator i = in.begin();
-    std::advance(i,n);
+    std::advance(i, n);
     return *i;
 }
 
@@ -23,40 +30,20 @@ template<class CONTAINER> typename CONTAINER::value_type get_nth(const CONTAINER
 //
 class HeadSeparator
 {
+public:
+    HeadSeparator(const std::string& head, const std::string& separator);
+    std::string get();
+    void reset();
+private:
     bool got_head_;
     std::string head_;
     std::string separator_;
-public:
-
-    HeadSeparator(const std::string& head, const std::string& separator)
-    : got_head_(false)
-    , head_(head)
-    , separator_(separator)
-    {}
-
-    std::string get()
-    {
-        if(got_head_)
-        {
-            return separator_;
-        }
-        else
-        {
-            got_head_ = true;
-            return head_;
-        }
-    }
-
-    void reset()
-    {
-        got_head_ = false;
-    }
 };
 
 
 //template for initialization of vector
-template <typename ELEMENT_TYPE > struct vector_of
-    : public std::vector<ELEMENT_TYPE>
+template <typename ELEMENT_TYPE >
+struct vector_of : public std::vector<ELEMENT_TYPE>
 {
     //appends one element
     vector_of(const ELEMENT_TYPE& t)
@@ -81,8 +68,8 @@ template <typename ELEMENT_TYPE > struct vector_of
 };
 
 //template for initialization of std::set
-template <typename ELEMENT_TYPE > struct set_of
-    : public std::set<ELEMENT_TYPE>
+template <typename ELEMENT_TYPE >
+struct set_of : public std::set<ELEMENT_TYPE>
 {
     //insert one element
     set_of(const ELEMENT_TYPE& t)
@@ -107,48 +94,32 @@ template <typename ELEMENT_TYPE > struct set_of
     }
 };
 
-template<class T>
+template <class T>
 std::string container2comma_list(const T &_cont)
 {
-    if (_cont.empty()) {
+    if (_cont.empty())
+    {
         return "";
     }
 
     std::stringstream tmp;
     typename T::const_iterator it = _cont.begin();
     tmp << *it;
-    for (++it; it != _cont.end(); ++it) {
+    for (++it; it != _cont.end(); ++it)
+    {
         tmp << ", " << *it;
     }
     return tmp.str();
 }
 
-inline std::string escape(std::string _input,
-                   const std::string _what = "'\\",
-                   const std::string _esc_char = "\\") {
+std::string escape(
+        std::string input,
+        const std::string& what = "'\\",
+        const std::string& esc_by = "\\");
 
-  size_t i = 0;
-  while ((i = _input.find_first_of(_what, i)) != _input.npos) {
-    _input.replace(i, 1, _esc_char + _input[i]);
-    i += _esc_char.length() + 1;
-  }
-  return _input;
-}
-
-
-inline std::string escape2(std::string _input) {
-  const std::string _what = "'\\";
-  const std::string _esc_char = "\\";
-  size_t i = 0;
-  while ((i = _input.find_first_of(_what, i)) != _input.npos) {
-    _input.replace(i, 1, _esc_char + _input[i]);
-    i += _esc_char.length() + 1;
-  }
-  return _input;
-}
+std::string escape2(std::string);
 
 std::string make_svtrid(unsigned long long request_id);
-
 
 /**
  * Makes type from enum value
@@ -160,6 +131,6 @@ struct EnumType
    enum { value = VALUE };
 };
 
-} // namespace Util
+}//namespace Util
 
-#endif /*UTIL_H_*/
+#endif//UTIL_HH_F54151D7C0B848C8926F03720CB06166

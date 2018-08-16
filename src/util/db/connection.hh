@@ -47,44 +47,19 @@ template <class connection_driver, class manager_type>
 class Connection_
 {
 public:
-    using driver_type = connection_driver;
+    using driver_type = connection_driver;//e.g. PSQLConnection
     using result_type = typename manager_type::result_type;
-
-    Connection_() : conn_(nullptr) { }
-
-    explicit Connection_(
-            const std::string& _conn_info,
-            bool _lazy_connect = true) //throw (ConnectionFailed)
-        : conn_(nullptr),
-          conn_info_(_conn_info)
-    {
-        /* lazy connection open */
-        if (!_lazy_connect)
-        {
-            this->open();
-        }
-    }
 
     explicit Connection_(connection_driver* _conn) : conn_(_conn) { }
 
-    /**
-     * Destructor
-     *
-     * close connection on destruct
-     */
     ~Connection_()
     {
         this->close();
     }
 
-    /**
-     * Open connection with specific connection string
-     */
-    void open(const std::string& _conn_info) /* throw (ConnectionFailed) */
-    {
-        conn_info_ = _conn_info;
-        this->open();
-    }
+    Connection_() = delete;
+    Connection_(const Connection_&) = delete;
+    Connection_& operator=(const Connection_&) = delete;
 
     /**
      * Close connection
@@ -93,13 +68,12 @@ public:
     {
         if (conn_ != nullptr)
         {
-            delete conn_;
+            manager_type::connection_factory::release(conn_);
             conn_ = nullptr;
 #ifdef HAVE_LOGGER
             try
             {
-                LOGGER(PACKAGE).info(boost::format("connection closed; (%1%)") %
-                                     connection_driver::get_nopass_conn_info(conn_info_));
+                LOGGER(PACKAGE).info("connection closed");
             }
             catch (...) {}
 #endif
@@ -108,16 +82,13 @@ public:
 
     result_type exec(const std::string& _stmt)//throw (ResultFailed)
     {
-        if (conn_ == nullptr)
-        {
-            this->open();
-        }
+        this->check_open();
         try
         {
 #ifdef HAVE_LOGGER
             LOGGER(PACKAGE).debug(boost::format("exec query [%1%]") % _stmt);
 #endif
-            return result_type(conn_->exec(_stmt));
+            return result_type(this->get_opened_connection().exec(_stmt));
         }
         catch (const ResultFailed&)
         {
@@ -133,17 +104,14 @@ public:
             const std::string& _stmt,//one command query
             const std::vector<std::string>& params)//parameters data
     {
-        if (conn_ == nullptr)
-        {
-            this->open();
-        }
+        this->check_open();
         try
         {
 #ifdef HAVE_LOGGER
             LOGGER(PACKAGE).debug(boost::format("exec query [%1%]") % _stmt);
 #endif
-            return result_type(conn_->exec_params(_stmt,//one command query
-                                                  params));//parameters data
+            return result_type(this->get_opened_connection().exec_params(_stmt,//one command query
+                                                                         params));//parameters data
         }
         catch (const ResultFailed&)
         {
@@ -158,10 +126,7 @@ public:
     result_type exec_params(const std::string& _stmt,//one command query
                             const QueryParams& params)//parameters data
     {
-        if (conn_ == nullptr)
-        {
-            this->open();
-        }
+        this->check_open();
         try
         {
 #ifdef HAVE_LOGGER
@@ -170,17 +135,17 @@ public:
                 std::string value;
                 std::string params_dump;
                 std::size_t params_counter = 0;
-                for (QueryParams::const_iterator i = params.begin(); i != params.end(); ++i)
+                for (const auto& param : params)
                 {
                     ++params_counter;
-                    value = i->is_null() ? "[null]" : "'" + i->print_buffer() + "'";
+                    value = param.is_null() ? "[null]" : "'" + param.print_buffer() + "'";
                     params_dump += " $" + boost::lexical_cast<std::string>(params_counter) + ": " + value;
                 }
                 LOGGER(PACKAGE).debug(boost::format("exec query [%1%] params %2%") % _stmt % params_dump);
             }
 #endif
-            return result_type(conn_->exec_params(_stmt,//one command query
-                                                  params));//parameters data
+            return result_type(this->get_opened_connection().exec_params(_stmt,//one command query
+                                                                         params));//parameters data
         }
         catch (const ResultFailed&)
         {
@@ -205,25 +170,21 @@ public:
 
     std::string escape(const std::string& _in)
     {
-        if (conn_ == nullptr)
-        {
-            this->open(conn_info_);
-        }
-        return conn_->escape(_in);
+        return this->get_opened_connection().escape(_in);
     }
 
-    bool in_valid_transaction()const
+    bool is_in_valid_transaction()const
     {
-        return (conn_ != nullptr) && conn_->in_valid_transaction();
+        return (conn_ != nullptr) && conn_->is_in_valid_transaction();
     }
 
     /**
      * @return  true if there is active transaction on connection
      *          false otherwise
      */
-    bool inTransaction()const
+    bool is_in_transaction()const
     {
-        return conn_->inTransaction();
+        return (conn_ != nullptr) && conn_->is_in_transaction();
     }
 
     /**
@@ -231,40 +192,30 @@ public:
      */
     void reset()
     {
-        conn_->reset();
-    }
-
-    void setConstraintExclusion(bool on = true)
-    {
-        conn_->setConstraintExclusion(on);
+        this->get_opened_connection().reset();
     }
 
     void setQueryTimeout(unsigned t)
     {
-        conn_->setQueryTimeout(t);
+        this->get_opened_connection().setQueryTimeout(t);
 #ifdef HAVE_LOGGER
         LOGGER(PACKAGE).debug(boost::format("sql statement timout set to %1%ms") % t);
 #endif
     }
-
-/* HACK! HACK! HACK! (use with construct with old DB connection) */
-    typename driver_type::__conn_type__ __getConn__()const
-    {
-        return conn_->__getConn__();
-    }
 private:
-    connection_driver* conn_; ///< connection_driver instance
-    std::string conn_info_; ///< connection string used to open connection
-    void open()
+    void check_open()const
     {
-        this->close();
-        // TODO: this should be done by manager_type!
-        this->conn_ = new connection_driver(conn_info_);
-#ifdef HAVE_LOGGER
-        LOGGER(PACKAGE).info(boost::format("connection established; (%1%)") %
-                             connection_driver::get_nopass_conn_info(conn_info_));
-#endif
+        if (conn_ == nullptr)
+        {
+            throw std::runtime_error("Expectation violation - connection is closed");
+        }
     }
+    connection_driver& get_opened_connection()const
+    {
+        this->check_open();
+        return *conn_;
+    }
+    connection_driver* conn_; ///< connection_driver instance
 };
 
 }//namespace Database

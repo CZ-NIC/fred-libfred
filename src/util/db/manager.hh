@@ -29,17 +29,44 @@
 #include "src/util/db/result.hh"
 #include "src/util/db/connection.hh"
 #include "src/util/db/transaction.hh"
-#include "src/util/db/sequence.hh"
 
 #ifdef HAVE_LOGGER
 #include "src/util/log/logger.hh"
 #endif
 
+#include <atomic>
 #include <memory>
 #include <stdexcept>
-#include <string>
 
 namespace Database {
+
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+//
+// Note:
+//
+//     class Connection_<PSQLConnection, ...>
+//     {
+//         PSQLConnection* conn_;
+//     };
+//
+//     class Factory::Simple<PSQLConnection>
+//     {
+//         PSQLConnection* acquire()const
+//         {
+//             return new PSQLConnection(...);
+//         }
+//     };
+//
+//     class Manager<Factory::Simple<PSQLConnection>>
+//     {
+//         Connection_<PSQLConnection, ...>* acquire()const
+//         {
+//             return new Connection_<PSQLConnection, ...>(conn_factory_.acquire())
+//         }
+//         Factory::Simple<PSQLConnection> conn_factory_;
+//     };
+//
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 /**
  * \class Manager_
@@ -48,55 +75,84 @@ namespace Database {
  * This object populated with specific connection factory can be used as
  * connection manager
  */
-template <class T>
+template <class T>// e.g. Factory::Simple<PSQLConnection>
 class Manager_
 {
 public:
-    using connection_driver = typename T::connection_driver;
-    using connection_type = Connection_<connection_driver, Manager_>;
-    using result_type = Result_<typename connection_driver::result_type>;
-    using sequence_type = Sequence_<connection_type, Manager_>;
+    using connection_factory = T;// e.g. Factory::Simple<PSQLConnection>
+    using connection_driver = typename T::connection_driver;// e.g. PSQLConnection
+    using connection_type = Connection_<connection_driver, Manager_>;// e.g. Connection<PSQLConnection, Manager<Factory<PSQLConnection>>
+    using result_type = Result_<typename connection_driver::ResultType>;
     using row_type = typename result_type::Row;
 
-    static std::unique_ptr<Manager_> make_instance()
-    {
-        std::string& connection_string = get_connection_string();
-        if (connection_string.empty())
-        {
-            throw std::runtime_error("Connection string not yet initialized");
-        }
-        std::unique_ptr<T> conn_factory(std::make_unique<T>(connection_string));
-        std::unique_ptr<Manager_> manager(new Manager_(std::move(conn_factory)));
-        return std::move(manager);
-    }
+    template <typename ...A>
+    Manager_(A ...args)
+        : conn_factory_(args...)
+    { }
+
     ~Manager_() = default;
 
-    const std::string& getConnectionString()
+    std::unique_ptr<connection_type> acquire()const
     {
-        return conn_factory_->getConnectionString();
-    }
-
-    std::unique_ptr<connection_type> acquire()
-    {
-        std::unique_ptr<connection_type> conn(new connection_type(conn_factory_->getConnectionString()));
+        std::unique_ptr<connection_type> conn(new connection_type(conn_factory_.acquire()));
         return std::move(conn);
     }
-
-    static void init(const std::string& connection_string)
-    {
-        get_connection_string() = connection_string;
-    }
 private:
-    Manager_(std::unique_ptr<T> _conn_factory)
-        : conn_factory_(std::move(_conn_factory))
-    { }
-    static std::string& get_connection_string()
-    {
-        static std::string singleton;
-        return singleton;
-    }
-    std::unique_ptr<T> conn_factory_;
+    connection_factory conn_factory_;
 };
+
+template <typename T>
+void set_default_manager(std::unique_ptr<Manager_<T>> default_manager);
+
+template <typename T>
+const Manager_<T>& get_default_manager();
+
+template <typename T>
+class DefaultManagerProvider
+{
+private:
+    template <typename F>
+    friend void set_default_manager(std::unique_ptr<Manager_<F>> default_manager);
+    template <typename F>
+    friend const Manager_<F>& get_default_manager();
+    static std::unique_ptr<Manager_<T>>* storage_ptr_;
+};
+
+template <typename T>
+std::unique_ptr<Manager_<T>>* DefaultManagerProvider<T>::storage_ptr_ = nullptr;
+
+template <typename T>
+const Manager_<T>& get_default_manager()
+{
+    if (DefaultManagerProvider<T>::storage_ptr_ != nullptr)
+    {
+        return **DefaultManagerProvider<T>::storage_ptr_;
+    }
+    throw std::runtime_error("Uninitialized default database manager");
+}
+
+template <typename T>
+void set_default_manager(std::unique_ptr<Manager_<T>> default_manager)
+{
+    if (DefaultManagerProvider<T>::storage_ptr_ != nullptr)
+    {
+        throw std::runtime_error("Default database manager was initialized");
+    }
+    static std::atomic<bool> lock(false);
+    bool expected_lock = false;
+    if (!lock.compare_exchange_weak(expected_lock, true, std::memory_order_release, std::memory_order_relaxed))
+    {
+        throw std::runtime_error("Default database manager was initialized");
+    }
+    static std::unique_ptr<Manager_<T>> singleton(std::move(default_manager));
+    DefaultManagerProvider<T>::storage_ptr_ = &singleton;
+}
+
+template <typename M, typename ...A>
+void emplace_default_manager(A ...args)
+{
+    set_default_manager(std::make_unique<M>(args...));
+}
 
 }//namespace Database
 

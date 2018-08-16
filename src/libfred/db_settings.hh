@@ -23,8 +23,7 @@
  *  There should be defined user database settings:
  *    Manager and used Connection factory, and following types
  *    defined as internal and depends on used connection manager type
- *    (Manager + Connection factory) - Connection, Transaction,
- *    Result, Sequence and Row types.
+ *    (Manager + Connection factory) - Connection, Result and Row types.
  */
 
 #ifndef DB_SETTINGS_HH_496DFB2A05584145B21F5808014C6545
@@ -39,7 +38,6 @@ using StandaloneManager = Manager_<StandaloneConnectionFactory>;
 
 using StandaloneConnection = StandaloneManager::connection_type;
 using Result = StandaloneManager::result_type;
-using Sequence = StandaloneManager::sequence_type;
 using Row = StandaloneManager::row_type;
 
 }//namespace Database

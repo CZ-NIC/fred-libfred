@@ -53,7 +53,7 @@ using namespace Database;
 
 std::unique_ptr<StandaloneConnection> get_database_conn()
 {
-    return StandaloneManager::make_instance()->acquire();
+    return get_default_manager<StandaloneConnectionFactory>().acquire();
 }
 
 }//namespace LibFred::{anonymous}
@@ -70,7 +70,7 @@ Database::StandaloneConnection& OperationContext::get_conn()const
     Database::StandaloneConnection* const conn_ptr = conn_.get();
     if (conn_ptr != nullptr)
     {
-        if (conn_ptr->inTransaction())
+        if (conn_ptr->is_in_transaction())
         {
             return *conn_ptr;
         }

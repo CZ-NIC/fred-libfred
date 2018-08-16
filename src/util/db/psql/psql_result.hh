@@ -26,14 +26,10 @@
 
 #include "src/util/db/row.hh"
 #include "src/util/db/value.hh"
-#include "src/util/db/db_exceptions.hh"
 #include "src/util/db/result.hh"
 
 #include <libpq-fe.h>
 
-#include <boost/lexical_cast.hpp>
-
-#include <cstdlib>
 #include <string>
 #include <iterator>
 #include <memory>
@@ -53,40 +49,23 @@ public:
     using value_type = Value;
     using Row = Row_<PSQLResult, value_type>;
 
-    /**
-     * Constructors and destructor
-     */
-    PSQLResult() { }
+    PSQLResult();
 
-    PSQLResult(const PSQLResult& _other)
-    {
-        psql_result_ = _other.psql_result_;
-    }
+    PSQLResult(const PSQLResult&);
 
-    ~PSQLResult()
-    {
-        this->clear();
-    }
+    ~PSQLResult();
 
-    void clear() { }
+    void clear();
 
     /**
      * Implementation of corresponding methods called by Result_ template
      */
-    size_type size()const
-    {
-        return PQntuples(psql_result_.get());
-    }
+    size_type size()const;
 
     /**
      * Number of rows affected by non-select query
      */
-    size_type rows_affected()const
-    {
-        const std::string number_in_string(PQcmdTuples(psql_result_.get()));
-        const size_type ret = boost::lexical_cast<size_type>(number_in_string);
-        return ret;
-    }
+    size_type rows_affected()const;
 
     /**
      * Iterator interface definition
@@ -94,166 +73,90 @@ public:
     class Iterator : public std::iterator<std::bidirectional_iterator_tag, Row>
     {
     public:
-        Iterator(const PSQLResult* _data_ptr, unsigned _row = 0) : data_ptr_(_data_ptr), row_(_row) { }
+        Iterator(const PSQLResult* _data_ptr, unsigned _row = 0);
 
-        Iterator(const Iterator& _other)
-        {
-            data_ptr_ = _other.data_ptr_;
-            row_ = _other.row_;
-        }
+        Iterator(const Iterator&);
 
-        value_type operator*()const
-        {
-            return value_type(data_ptr_, row_);
-        }
+        value_type operator*()const;
 
-        Iterator& operator+(int _n)
-        {
-            row_ += _n;
-            return *this;
-        }
+        Iterator& operator+(int n);
 
-        Iterator& operator++()
-        {
-            ++row_;
-            return *this;
-        }
+        Iterator& operator++();
 
-        Iterator& operator+=(int _n)
-        {
-            row_ += _n;
-            return *this;
-        }
+        Iterator& operator+=(int n);
 
-        Iterator& operator-(int _n)
-        {
-            row_ -= _n;
-            return *this;
-        }
+        Iterator& operator-(int n);
 
-        Iterator& operator--()
-        {
-            --row_;
-            return *this;
-        }
+        Iterator& operator--();
 
-        bool operator==(const Iterator& _other)const
-        {
-            return (data_ptr_ == _other.data_ptr_) && (row_ == _other.row_);
-        }
+        bool operator==(const Iterator&)const;
 
-        bool operator!=(const Iterator& _other)const
-        {
-            return !(*this == _other);
-        }
+        bool operator!=(const Iterator&)const;
     private:
         const PSQLResult* data_ptr_;
         unsigned row_;
     };
 
-    Iterator begin()const
-    {
-        return Iterator(this);
-    }
+    Iterator begin()const;
 
-    Iterator end()const
-    {
-        return Iterator(this, size());
-    }
+    Iterator end()const;
 private:
-    PSQLResult(PGresult* _psql_result)
-    {
-        psql_result_.reset(_psql_result, PQclear);
-    }
+    PSQLResult(const std::shared_ptr<PGresult>& _psql_result);
 
     /**
      * @return number of columns
      */
-    size_type cols_()const
-    {
-        return PQnfields(psql_result_.get());
-    }
+    size_type cols_()const;
 
     /**
      * @return number of rows
      */
-    size_type rows_()const
-    {
-        return PQntuples(psql_result_.get());
-    }
+    size_type rows_()const;
+
+    /**
+     * @param  row_idx row number
+     * @param  col_idx column number
+     */
+    void check_range(size_type row_idx, size_type col_idx)const;// throw(OutOfRange)
 
     /**
      * @param  _r row number
      * @param  _c column number
      * @return    value from result at position [_r, _c]
      */
-    std::string value_(size_type _r, size_type _c)const /* throw(OutOfRange) */
-    {
-        if (_r >= rows_())
-        {
-            throw OutOfRange(0, rows_(), _r);
-        }
-        if (_c >= cols_())
-        {
-            throw OutOfRange(0, cols_(), _c);
-        }
-        return PQgetvalue(psql_result_.get(), _r, _c);
-    }
+    std::string value_(size_type _r, size_type _c)const;// throw(OutOfRange)
 
     /**
      * @param  _r row number
      * @param  _c column number
      * @return    true if value from result at position [_r, _c] is null, false otherwise
      */
-    bool value_is_null_(size_type _r, size_type _c)const /* throw(OutOfRange) */
-    {
-        if (_r >= rows_())
-        {
-            throw OutOfRange(0, rows_(), _r);
-        }
-        if (_c >= cols_())
-        {
-            throw OutOfRange(0, cols_(), _c);
-        }
-        return PQgetisnull(psql_result_.get(), _r, _c);
-    }
+    bool value_is_null_(size_type _r, size_type _c)const;// throw(OutOfRange)
 
     /**
-     * @param  _r row number
      * @param  _c column name
-     * @return    value from result at position [_r, _c]
+     * @return column index
      */
-    std::string value_(size_type _r, const std::string& _c)const /* throw(NoSuchField) */
-    {
-        const int field = PQfnumber(psql_result_.get(), _c.c_str());
-        constexpr int no_such_field = -1;
-        if (field == no_such_field)
-        {
-            throw NoSuchField(_c);
-        }
-        return this->value_(_r, field);
-    }
+    int get_column_number(const std::string& column_name)const;// throw(NoSuchField)
 
     /**
-     * @param  _r row number
-     * @param  _c column name
-     * @return    true if value from result at position [_r, _c] is null, false otherwise
+     * @param row_idx row number
+     * @param column_name column name
+     * @return value from result at position [row_idx, column_name]
      */
-    bool value_is_null_(size_type _r, const std::string& _c)const /* throw(NoSuchField) */
-    {
-        const int field = PQfnumber(psql_result_.get(), _c.c_str());
-        constexpr int no_such_field = -1;
-        if (field == no_such_field)
-        {
-            throw NoSuchField(_c);
-        }
-        return this->value_is_null_(_r, field);
-    }
+    std::string value_(size_type row_idx, const std::string& column_name)const;// throw(NoSuchField)
+
+    /**
+     * @param row_idx row number
+     * @param column_name column name
+     * @return true if value from result at position [row_idx, column_name] is null, false otherwise
+     */
+    bool value_is_null_(size_type row_idx, const std::string& column_name)const;// throw(NoSuchField)
     friend class Row_<PSQLResult, value_type>;
     friend class Row_<PSQLResult, value_type>::Iterator;
     friend class Result_<PSQLResult>;
     friend class PSQLConnection;
-    std::shared_ptr<PGresult> psql_result_; /**< wrapped result structure from lipq library */
+    std::shared_ptr<PGresult> psql_result_;///< wrapped result structure from lipq library
 };
 
 }//namespace Database
