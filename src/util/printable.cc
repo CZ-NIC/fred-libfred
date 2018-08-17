@@ -18,73 +18,70 @@
 
 /**
  *  @file
- *  print description of object data to the string and ostream for debugging and error handling
+ *  print description of object data to the string for debugging and error handling
  */
 
+#include "src/util/printable.hh"
+#include "src/util/util.hh"
 
 #include <string>
 #include <vector>
 #include <utility>
-#include <sstream>
-#include <iostream>
-#include <stdexcept>
-#include <cassert>
-#include <iterator>
 
-#include "src/util/util.hh"
-#include "src/util/printable.hh"
+namespace Util {
 
-namespace Util
+namespace {
+
+class SeparatorWithDataIntoStringFunctor
 {
-
-    class SeparatorWithDataIntoStringFunctor
+public:
+    SeparatorWithDataIntoStringFunctor(std::string& s, const std::string& separator)
+        : s_(s),
+          separator_(separator)
+    {}
+    void operator()(const std::pair<std::string,std::string>& string_pair_to_be_added_into_string)
     {
-        std::string& s_;
-        const std::string separator_;
-    public:
-        SeparatorWithDataIntoStringFunctor(std::string& s, const std::string& separator)
-        : s_(s), separator_(separator)
-        {}
-        void operator()(const std::pair<std::string,std::string>& string_pair_to_be_added_into_string)
+        if (!string_pair_to_be_added_into_string.first.empty())
         {
-            if (!string_pair_to_be_added_into_string.first.empty())
-            {
-                s_+=separator_;
-                s_+=string_pair_to_be_added_into_string.first;
-                s_+=":";
-            }
-            if (!string_pair_to_be_added_into_string.second.empty())
-            {
-                s_+=separator_;
-                s_+=string_pair_to_be_added_into_string.second;
-            }
+            s_ += separator_;
+            s_ += string_pair_to_be_added_into_string.first;
+            s_ += ":";
         }
-    };
-
-    std::string format_operation_state(const std::string& operation_name,
-        const std::vector<std::pair<std::string, std::string> >& key_value_list)
-    {
-        std::string s;
-        SeparatorWithDataIntoStringFunctor add_to_ss(s," ");
-
-        s += "#";
-        s += operation_name;
-        std::for_each(key_value_list.begin(), key_value_list.end(), add_to_ss);
-        return s;
+        if (!string_pair_to_be_added_into_string.second.empty())
+        {
+            s_ += separator_;
+            s_ += string_pair_to_be_added_into_string.second;
+        }
     }
+private:
+    std::string& s_;
+    const std::string separator_;
+};
 
-    std::string format_data_structure(const std::string& data_structure_name,
-        const std::vector<std::pair<std::string, std::string> >& key_value_list)
-    {
-        std::string s;
-        SeparatorWithDataIntoStringFunctor add_to_ss(s," ");
+}//namespace Util::{anonymous}
 
-        s += " ";
-        s += data_structure_name;
-        std::for_each(key_value_list.begin(), key_value_list.end(), add_to_ss);
-        return s;
-    }
+std::string format_operation_state(const std::string& operation_name,
+    const std::vector<std::pair<std::string, std::string>>& key_value_list)
+{
+    std::string s;
+    SeparatorWithDataIntoStringFunctor add_to_ss(s," ");
 
-} // namespace Util
+    s += "#";
+    s += operation_name;
+    std::for_each(key_value_list.begin(), key_value_list.end(), add_to_ss);
+    return s;
+}
 
+std::string format_data_structure(const std::string& data_structure_name,
+    const std::vector<std::pair<std::string, std::string>>& key_value_list)
+{
+    std::string s;
+    SeparatorWithDataIntoStringFunctor add_to_ss(s," ");
 
+    s += " ";
+    s += data_structure_name;
+    std::for_each(key_value_list.begin(), key_value_list.end(), add_to_ss);
+    return s;
+}
+
+}//namespace Util

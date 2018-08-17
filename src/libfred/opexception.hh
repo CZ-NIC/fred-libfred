@@ -17,12 +17,15 @@
  */
 
 /**
- *  @file opexception.h
+ *  @file opexception.hh
  *  operation exceptions
  */
 
 #ifndef OPEXCEPTION_HH_CD4D595579FB4E3CBA845B23423113F3
 #define OPEXCEPTION_HH_CD4D595579FB4E3CBA845B23423113F3
+
+#include <boost/function.hpp>
+#include <boost/exception/all.hpp>
 
 #include <unistd.h>
 #include <string.h>
@@ -31,19 +34,15 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <assert.h>
+
+#include <algorithm>
+#include <functional>
 #include <string>
 #include <vector>
 #include <map>
 
-#include <algorithm>
-#include <functional>
-#include <boost/function.hpp>
-#include <boost/exception/all.hpp>
+namespace LibFred {
 
-#include "src/libfred/db_settings.hh"
-
-namespace LibFred
-{
 /**
  * Exception stack context info.
  */
@@ -311,6 +310,6 @@ protected:\
  */
 template <class T> struct ExceptionTraits;
 
+}//namespace LibFred
 
-} // namespace LibFred
-#endif
+#endif//OPEXCEPTION_HH_CD4D595579FB4E3CBA845B23423113F3
