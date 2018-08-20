@@ -5,14 +5,14 @@
 
 namespace LibFred {
 
-GetOpenedPublicRequest::GetOpenedPublicRequest(const PublicRequestTypeIface &_type)
+GetOpenedPublicRequest::GetOpenedPublicRequest(const PublicRequestTypeIface& _type)
 :   type_(_type.get_public_request_type())
 { }
 
 PublicRequestId GetOpenedPublicRequest::exec(
-    OperationContext &_ctx,
-    const LockedPublicRequestsOfObject &_locked_object,
-    const Optional< LogRequestId > &_log_request_id)const
+    OperationContext& _ctx,
+    const LockedPublicRequestsOfObject& _locked_object,
+    const Optional<LogRequestId>&)const
 {
     Database::query_param_list params(type_);// $1::TEXT
     params(_locked_object.get_id());         // $2::BIGINT
@@ -24,10 +24,12 @@ PublicRequestId GetOpenedPublicRequest::exec(
                 "LIMIT 1) "
         "FROM enum_public_request_type "
         "WHERE name=$1::TEXT", params);
-    if (res.size() <= 0) {
+    if (res.size() <= 0)
+    {
         BOOST_THROW_EXCEPTION(Exception().set_unknown_type(type_));
     }
-    if (res[0][0].isnull()) {
+    if (res[0][0].isnull())
+    {
         BOOST_THROW_EXCEPTION(Exception().set_no_request_found(type_));
     }
     const PublicRequestId found_public_request_id = static_cast< PublicRequestId >(res[0][0]);

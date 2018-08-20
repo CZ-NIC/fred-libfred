@@ -23,11 +23,11 @@
 #ifndef ADD_OLD_NEW_SUFFIX_PAIR_HH_1ABFCFFB480A44BC831452CDDBEDF53C
 #define ADD_OLD_NEW_SUFFIX_PAIR_HH_1ABFCFFB480A44BC831452CDDBEDF53C
 
+#include "src/libfred/notifier/exception.hh"
+
 #include <map>
 #include <vector>
 #include <stdexcept>
-
-#include "src/libfred/notifier/exception.hh"
 
 namespace Notification {
 
@@ -36,33 +36,31 @@ namespace Notification {
      *      insert pair("changes." _key ".old", _old) to _target
      *      insert pair("changes." _key ".new", _new) to _target
      */
-    inline void add_old_new_changes_pair_if_different(std::map<std::string, std::string>& _target, const std::string& _key, const std::string& _old, const std::string& _new) {
-        if(_old != _new) {
-            if(
-                _target.insert(
-                    std::make_pair("changes." + _key + ".old", _old)
-                ).second == false /* existing value */
-            ) {
-                throw ExceptionInvalidNotificationContent();
-            };
+inline void add_old_new_changes_pair_if_different(
+        std::map<std::string, std::string>& _target,
+        const std::string& _key,
+        const std::string& _old,
+        const std::string& _new)
+{
+    if (_old != _new)
+    {
+        if (!_target.insert(std::make_pair("changes." + _key + ".old", _old)).second) /* existing value */
+        {
+            throw ExceptionInvalidNotificationContent();
+        }
 
-            if(
-                _target.insert(
-                    std::make_pair("changes." + _key + ".new", _new)
-                ).second == false /* existing value */
-            ) {
-                throw ExceptionInvalidNotificationContent();
-            };
+        if (!_target.insert(std::make_pair("changes." + _key + ".new", _new)).second) /* existing value */
+        {
+            throw ExceptionInvalidNotificationContent();
+        }
 
-            if(
-                _target.insert(
-                    std::make_pair("changes." + _key, "1")
-                ).second == false /* existing value */
-            ) {
-                throw ExceptionInvalidNotificationContent();
-            };
+        if (!_target.insert(std::make_pair("changes." + _key, "1")).second) /* existing value */
+        {
+            throw ExceptionInvalidNotificationContent();
         }
     }
 }
 
-#endif
+}//namespace Notification
+
+#endif//ADD_OLD_NEW_SUFFIX_PAIR_HH_1ABFCFFB480A44BC831452CDDBEDF53C

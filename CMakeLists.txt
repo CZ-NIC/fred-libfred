@@ -150,14 +150,14 @@ add_library(fred SHARED
     src/libfred/zone/update_zone.cc
     src/libfred/zone/util.cc
     src/libfred/zone/zone.cc
-    src/libfred/zone_ns/create_zone_ns.cc
-    src/libfred/zone_ns/exceptions.cc
-    src/libfred/zone_ns/info_zone_ns.cc
-    src/libfred/zone_ns/update_zone_ns.cc
-    src/libfred/zone_ns/util.cc
-    src/libfred/zone_soa/create_zone_soa.cc
-    src/libfred/zone_soa/info_zone_soa.cc
-    src/libfred/zone_soa/update_zone_soa.cc
+    src/libfred/zone/zone_ns/create_zone_ns.cc
+    src/libfred/zone/zone_ns/exceptions.cc
+    src/libfred/zone/zone_ns/info_zone_ns.cc
+    src/libfred/zone/zone_ns/update_zone_ns.cc
+    src/libfred/zone/zone_ns/util.cc
+    src/libfred/zone/zone_soa/create_zone_soa.cc
+    src/libfred/zone/zone_soa/info_zone_soa.cc
+    src/libfred/zone/zone_soa/update_zone_soa.cc
     src/util/idn_utils.cc
     src/util/printable.cc
     src/util/random.cc
@@ -247,7 +247,126 @@ install(TARGETS fred
 
 install(FILES ${CMAKE_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
-add_executable(test-libfred libfred.cc)
+add_executable(test-libfred
+    test/fake-src/util/tz/europe/prague.cc
+    test/libfred/main.cc
+    test/libfred/test_check_handle.cc
+    test/libfred/test_opexception.cc
+    test/libfred/contact/test_copy_contact.cc
+    test/libfred/contact/test_create_contact.cc
+    test/libfred/contact/test_delete_contact.cc
+    test/libfred/contact/test_info_contact.cc
+    test/libfred/contact/test_merge_contact.cc
+    test/libfred/contact/test_transfer_contact.cc
+    test/libfred/contact/test_update_contact.cc
+    test/libfred/contact/verification/setup_utils.cc
+    test/libfred/contact/verification/test_create_check.cc
+    test/libfred/contact/verification/test_create_test.cc
+    test/libfred/contact/verification/test_django_email_format_check.cc
+    test/libfred/contact/verification/test_info_check.cc
+    test/libfred/contact/verification/test_list_enum_objects.cc
+    test/libfred/contact/verification/test_list_checks.cc
+    test/libfred/contact/verification/test_update_check.cc
+    test/libfred/contact/verification/test_update_test.cc
+    test/libfred/domain/test_create_domain.cc
+    test/libfred/domain/test_create_domain_name_blacklist_id.cc
+    test/libfred/domain/test_delete_domain.cc
+    test/libfred/domain/test_domain_name.cc
+    test/libfred/domain/test_check_domain.cc
+    test/libfred/domain/test_info_domain.cc
+    test/libfred/domain/test_renew_domain.cc
+    test/libfred/domain/test_transfer_domain.cc
+    test/libfred/domain/test_update_domain.cc
+    test/libfred/keyset/test_delete_keyset.cc
+    test/libfred/keyset/test_info_keyset.cc
+    test/libfred/keyset/test_transfer_keyset.cc
+    test/libfred/keyset/test_update_keyset.cc
+    test/libfred/notifier/test_enqueue_notification.cc
+    test/libfred/notifier/test_event_on_object_enum.cc
+    test/libfred/notifier/test_gather_email_addresses_contact_create.cc
+    test/libfred/notifier/test_gather_email_addresses_contact_delete.cc
+    test/libfred/notifier/test_gather_email_addresses_contact_transfer.cc
+    test/libfred/notifier/test_gather_email_addresses_contact_update.cc
+    test/libfred/notifier/test_gather_email_addresses_domain_create.cc
+    test/libfred/notifier/test_gather_email_addresses_domain_delete.cc
+    test/libfred/notifier/test_gather_email_addresses_domain_renew.cc
+    test/libfred/notifier/test_gather_email_addresses_domain_transfer.cc
+    test/libfred/notifier/test_gather_email_addresses_domain_update.cc
+    test/libfred/notifier/test_gather_email_addresses_keyset_create.cc
+    test/libfred/notifier/test_gather_email_addresses_keyset_delete.cc
+    test/libfred/notifier/test_gather_email_addresses_keyset_transfer.cc
+    test/libfred/notifier/test_gather_email_addresses_keyset_update.cc
+    test/libfred/notifier/test_gather_email_addresses_nsset_create.cc
+    test/libfred/notifier/test_gather_email_addresses_nsset_delete.cc
+    test/libfred/notifier/test_gather_email_addresses_nsset_transfer.cc
+    test/libfred/notifier/test_gather_email_addresses_nsset_update.cc
+    test/libfred/notifier/test_gather_email_content_contact_create.cc
+    test/libfred/notifier/test_gather_email_content_contact_delete.cc
+    test/libfred/notifier/test_gather_email_content_contact_transfer.cc
+    test/libfred/notifier/test_gather_email_content_contact_update.cc
+    test/libfred/notifier/test_gather_email_content_domain_create.cc
+    test/libfred/notifier/test_gather_email_content_domain_delete.cc
+    test/libfred/notifier/test_gather_email_content_domain_renew.cc
+    test/libfred/notifier/test_gather_email_content_domain_transfer.cc
+    test/libfred/notifier/test_gather_email_content_domain_update.cc
+    test/libfred/notifier/test_gather_email_content_keyset_create.cc
+    test/libfred/notifier/test_gather_email_content_keyset_delete.cc
+    test/libfred/notifier/test_gather_email_content_keyset_transfer.cc
+    test/libfred/notifier/test_gather_email_content_keyset_update.cc
+    test/libfred/notifier/test_gather_email_content_nsset_create.cc
+    test/libfred/notifier/test_gather_email_content_nsset_delete.cc
+    test/libfred/notifier/test_gather_email_content_nsset_transfer.cc
+    test/libfred/notifier/test_gather_email_content_nsset_update.cc
+    test/libfred/object/test_generate_authinfo_password.cc
+    test/libfred/object/test_generated_authinfo_password.cc
+    test/libfred/object/test_registry_object_type.cc
+    test/libfred/object/test_transfer_object.cc
+    test/libfred/object_state/test_cancel_object_state_request_id.cc
+    test/libfred/object_state/test_create_admin_object_block_request_id.cc
+    test/libfred/object_state/test_create_admin_object_state_restore_request_id.cc
+    test/libfred/object_state/test_create_object_state_request_id.cc
+    test/libfred/object_state/test_object_state.cc
+    test/libfred/poll/test_create_delete_contact_poll_message.cc
+    test/libfred/poll/test_create_delete_domain_poll_message.cc
+    test/libfred/poll/test_create_state_messages.cc
+    test/libfred/poll/test_create_update_object_poll_message.cc
+    test/libfred/poll/test_get_request_fee_info_message.cc
+    test/libfred/public_request/test_create_public_request.cc
+    test/libfred/public_request/test_create_public_request_auth.cc
+    test/libfred/public_request/test_update_public_request.cc
+    test/libfred/nsset/test_delete_nsset.cc
+    test/libfred/nsset/test_info_nsset.cc
+    test/libfred/nsset/test_transfer_nsset.cc
+    test/libfred/nsset/test_update_nsset.cc
+    test/libfred/registrar/test_create_registrar.cc
+    test/libfred/registrar/test_get_registrar_zone_credit.cc
+    test/libfred/registrar/test_info_registrar.cc
+    test/libfred/registrar/test_registrar_zone_access.cc
+    test/libfred/registrar/certification/test_create_registrar_certification.cc
+    test/libfred/registrar/certification/test_get_registrar_certifications.cc
+    test/libfred/registrar/certification/test_update_registrar_certification.cc
+    test/libfred/registrar/group/test_cancel.cc
+    test/libfred/registrar/group/test_create.cc
+    test/libfred/registrar/group/test_get.cc
+    test/libfred/registrar/group/test_update.cc
+    test/libfred/registrar/group/membership/test_create.cc
+    test/libfred/registrar/group/membership/test_end.cc
+    test/libfred/registrar/group/membership/test_info_by_group.cc
+    test/libfred/registrar/group/membership/test_info_by_registrar.cc
+    test/libfred/zone/test_create_zone.cc
+    test/libfred/zone/test_info_zone.cc
+    test/libfred/zone/test_update_zone.cc
+    test/libfred/zone/util.cc
+    test/libfred/zone/zone_ns/test_create_zone_ns.cc
+    test/libfred/zone/zone_ns/test_info_zone_ns.cc
+    test/libfred/zone/zone_ns/test_update_zone_ns.cc
+    test/libfred/zone/zone_ns/util.cc
+    test/libfred/zone/zone_soa/test_create_zone_soa.cc
+    test/libfred/zone/zone_soa/test_info_zone_soa.cc
+    test/libfred/zone/zone_soa/test_update_zone_soa.cc
+    test/libfred/zone/zone_soa/util.cc
+    test/setup/fixtures.cc
+    test/setup/fixtures_utils.cc)
 
 set_target_properties(test-libfred PROPERTIES
     CXX_STANDARD 14
@@ -255,6 +374,18 @@ set_target_properties(test-libfred PROPERTIES
     CXX_EXTENSIONS NO
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
+target_include_directories(test-libfred
+    PRIVATE .
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_BINARY_DIR}
+        ${PostgreSQL_INCLUDE_DIRS})
+
 target_link_libraries(test-libfred PRIVATE
     fred::library
+    ${Mpdec_LIBRARY}
+    ${Boost_DATE_TIME_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${Boost_REGEX_LIBRARY}
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
     ${Boost_SYSTEM_LIBRARY})

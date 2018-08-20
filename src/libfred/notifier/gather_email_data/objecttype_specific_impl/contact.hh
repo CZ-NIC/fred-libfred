@@ -33,19 +33,18 @@
 
 namespace Notification {
 
-    std::map<std::string, std::string> gather_contact_data_change(
-        LibFred::OperationContext& _ctx,
-        const notified_event& _event,
-        unsigned long long _history_id_post_change
-    );
-
-    std::set<std::string> get_emails_to_notify_contact_event(
+std::map<std::string, std::string> gather_contact_data_change(
         LibFred::OperationContext& _ctx,
         notified_event _event,
-        unsigned long long _history_id_after_change
-    );
+        unsigned long long _history_id_post_change);
 
-    std::string to_template_handle(LibFred::ContactAddressType::Value _type);
-}
+std::set<std::string> get_emails_to_notify_contact_event(
+        LibFred::OperationContext& _ctx,
+        notified_event _event,
+        unsigned long long _history_id_after_change);
 
-#endif
+std::string to_template_handle(LibFred::ContactAddressType::Value _type);
+
+}//namespace Notification
+
+#endif//CONTACT_HH_3BBBCE559F3D4FB59261C5C3AC35CDDC
