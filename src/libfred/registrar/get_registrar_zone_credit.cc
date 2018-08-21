@@ -15,10 +15,10 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrar/get_registrar_zone_credit.hh"
-#include "src/libfred/registrar/info_registrar.hh"
+#include "libfred/registrar/get_registrar_zone_credit.hh"
+#include "libfred/registrar/info_registrar.hh"
 
-#include "src/libfred/opexception.hh"
+#include "libfred/opexception.hh"
 
 namespace LibFred {
 

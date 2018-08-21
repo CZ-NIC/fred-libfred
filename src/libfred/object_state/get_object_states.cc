@@ -24,7 +24,7 @@
 #include <vector>
 #include <string>
 
-#include "src/libfred/object_state/get_object_states.hh"
+#include "libfred/object_state/get_object_states.hh"
 
 namespace LibFred
 {

@@ -26,9 +26,9 @@
 #include <map>
 #include <set>
 
-#include "src/libfred/opexception.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/registrable_object/contact/merge_contact_email_notification_data.hh"
+#include "libfred/opexception.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/registrable_object/contact/merge_contact_email_notification_data.hh"
 
 
 namespace LibFred

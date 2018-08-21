@@ -16,8 +16,8 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/poll/create_state_messages.hh"
-#include "src/libfred/opexception.hh"
+#include "libfred/poll/create_state_messages.hh"
+#include "libfred/opexception.hh"
 
 #include <sstream>
 

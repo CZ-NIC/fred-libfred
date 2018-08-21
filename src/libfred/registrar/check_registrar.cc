@@ -21,8 +21,8 @@
  *  registrar check
  */
 
-#include "src/libfred/registrar/check_registrar.hh"
-#include "src/util/util.hh"
+#include "libfred/registrar/check_registrar.hh"
+#include "util/util.hh"
 
 #include <boost/regex.hpp>
 

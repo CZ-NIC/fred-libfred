@@ -16,7 +16,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/zone/info_zone_data.hh"
+#include "libfred/zone/info_zone_data.hh"
 
 #include <stdexcept>
 

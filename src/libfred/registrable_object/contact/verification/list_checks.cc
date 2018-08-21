@@ -21,9 +21,9 @@
  *  (get) list (of) contact check
  */
 
-#include "src/libfred/registrable_object/contact/verification/list_checks.hh"
-#include "src/libfred/registrable_object/contact/verification/enum_check_status.hh"
-#include "src/libfred/opexception.hh"
+#include "libfred/registrable_object/contact/verification/list_checks.hh"
+#include "libfred/registrable_object/contact/verification/enum_check_status.hh"
+#include "libfred/opexception.hh"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/join.hpp>

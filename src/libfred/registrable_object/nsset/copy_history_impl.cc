@@ -1,4 +1,4 @@
-#include "src/libfred/registrable_object/nsset/copy_history_impl.hh"
+#include "libfred/registrable_object/nsset/copy_history_impl.hh"
 
 namespace LibFred
 {

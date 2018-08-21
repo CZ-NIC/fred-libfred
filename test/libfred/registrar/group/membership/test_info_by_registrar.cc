@@ -16,13 +16,13 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrar/group/create_registrar_group.hh"
-#include "src/libfred/registrar/group/membership/create_registrar_group_membership.hh"
-#include "src/libfred/registrar/group/membership/info_group_membership_by_registrar.cc"
-#include "src/libfred/registrar/group/membership/exceptions.hh"
+#include "libfred/registrar/group/create_registrar_group.hh"
+#include "libfred/registrar/group/membership/create_registrar_group_membership.hh"
+#include "libfred/registrar/group/membership/info_group_membership_by_registrar.hh"
+#include "libfred/registrar/group/membership/exceptions.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 
@@ -33,12 +33,8 @@ using namespace boost::gregorian;
 
 struct test_membership_by_registrar_fixture : virtual public Test::instantiate_db_template
 {
-    LibFred::InfoRegistrarData reg;
-    std::map<unsigned long long, unsigned long long> mem_map;
-    date today;
-
     test_membership_by_registrar_fixture()
-    : today(day_clock::universal_day())
+        : today(day_clock::universal_day())
     {
         LibFred::OperationContextCreator ctx;
         reg = Test::registrar::make(ctx);
@@ -56,6 +52,9 @@ struct test_membership_by_registrar_fixture : virtual public Test::instantiate_d
             .exec(ctx);
         ctx.commit_transaction();
     }
+    LibFred::InfoRegistrarData reg;
+    std::map<unsigned long long, unsigned long long> mem_map;
+    date today;
 };
 
 BOOST_FIXTURE_TEST_SUITE(TestGroupMembershipByRegistrar, test_membership_by_registrar_fixture)
@@ -76,4 +75,4 @@ BOOST_AUTO_TEST_CASE(info_by_registrar_membership)
     }
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestGroupMembershipByRegistrar

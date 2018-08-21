@@ -24,10 +24,10 @@
 #include <algorithm>
 #include <string>
 
-#include "src/libfred/registrar/info_registrar.hh"
-#include "src/libfred/registrar/info_registrar_impl.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/util/util.hh"
+#include "libfred/registrar/info_registrar.hh"
+#include "libfred/registrar/info_registrar_impl.hh"
+#include "libfred/opcontext.hh"
+#include "util/util.hh"
 
 namespace LibFred
 {

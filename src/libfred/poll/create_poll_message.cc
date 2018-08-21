@@ -1,5 +1,5 @@
-#include "src/libfred/poll/create_poll_message.hh"
-#include "src/libfred/object/object_type.hh"
+#include "libfred/poll/create_poll_message.hh"
+#include "libfred/object/object_type.hh"
 
 
 namespace LibFred {

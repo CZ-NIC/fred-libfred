@@ -1,5 +1,5 @@
-#include "src/libfred/registrar/group/membership/info_group_membership_by_registrar.hh"
-#include "src/libfred/db_settings.hh"
+#include "libfred/registrar/group/membership/info_group_membership_by_registrar.hh"
+#include "libfred/db_settings.hh"
 
 namespace LibFred {
 namespace Registrar {

@@ -16,9 +16,9 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrable_object/nsset/check_nsset.hh"
+#include "libfred/registrable_object/nsset/check_nsset.hh"
 
-#include "src/libfred/object/check_handle.hh"
+#include "libfred/object/check_handle.hh"
 
 namespace LibFred
 {

@@ -1,4 +1,4 @@
-#include "src/util/random.hh"
+#include "util/random.hh"
 
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int.hpp>

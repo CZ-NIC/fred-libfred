@@ -26,10 +26,10 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "src/util/util.hh"
-#include "src/util/is_equal_optional_nullable.hh"
+#include "util/util.hh"
+#include "util/is_equal_optional_nullable.hh"
 
-#include "src/libfred/registrar/info_registrar_diff.hh"
+#include "libfred/registrar/info_registrar_diff.hh"
 
 namespace LibFred
 {

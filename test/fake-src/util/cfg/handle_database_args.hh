@@ -26,7 +26,7 @@
 
 #include "test/fake-src/util/cfg/faked_args.hh"
 #include "test/fake-src/util/cfg/handle_args.hh"
-#include "src/libfred/db_settings.hh"
+#include "libfred/db_settings.hh"
 
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>

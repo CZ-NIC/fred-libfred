@@ -21,8 +21,8 @@
  *  clear all administrative object state requests
  */
 
-#include "src/libfred/object_state/clear_admin_object_state_request_id.hh"
-#include "src/libfred/object_state/clear_object_state_request_id.hh"
+#include "libfred/object_state/clear_admin_object_state_request_id.hh"
+#include "libfred/object_state/clear_object_state_request_id.hh"
 
 #include <sstream>
 

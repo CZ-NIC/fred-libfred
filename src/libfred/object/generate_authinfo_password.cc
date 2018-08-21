@@ -1,4 +1,4 @@
-#include "src/libfred/object/generate_authinfo_password.hh"
+#include "libfred/object/generate_authinfo_password.hh"
 
 #include <stdexcept>
 #include <string>

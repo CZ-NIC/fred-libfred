@@ -1,4 +1,4 @@
-#include "src/libfred/public_request/public_request_lock_guard.hh"
+#include "libfred/public_request/public_request_lock_guard.hh"
 
 namespace LibFred
 {

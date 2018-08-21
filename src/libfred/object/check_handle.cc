@@ -21,7 +21,7 @@
  *  keyset check
  */
 
-#include "src/libfred/object/check_handle.hh"
+#include "libfred/object/check_handle.hh"
 
 #include <boost/regex.hpp>
 

@@ -7,7 +7,7 @@
 #define FIXTURES_HH_327B2D873D064624803561323E8E3BF3
 
 #include "test/fake-src/util/cfg/handle_args.hh"
-#include "src/libfred/db_settings.hh"
+#include "libfred/db_settings.hh"
 
 #include <string>
 

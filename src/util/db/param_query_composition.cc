@@ -29,11 +29,11 @@
 
 #include <memory>
 
-#include "src/util/db/param_query_composition.hh"
-#include "src/util/db/query_param.hh"
-#include "src/util/util.hh"
-#include "src/util/map_at.hh"
-#include "src/util/optional_value.hh"
+#include "util/db/param_query_composition.hh"
+#include "util/db/query_param.hh"
+#include "util/util.hh"
+#include "util/map_at.hh"
+#include "util/optional_value.hh"
 
 namespace Database
 {

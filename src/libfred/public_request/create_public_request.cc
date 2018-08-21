@@ -1,10 +1,10 @@
-#include "src/libfred/public_request/create_public_request.hh"
-#include "src/libfred/public_request/update_public_request.hh"
-#include "src/libfred/public_request/public_request_lock_guard.hh"
-#include "src/libfred/public_request/public_request_status.hh"
-#include "src/libfred/contact_verification/django_email_format.hh"
-#include "src/libfred/public_request/public_request_on_status_action.hh"
-#include "src/util/idn_utils.hh"
+#include "libfred/public_request/create_public_request.hh"
+#include "libfred/public_request/update_public_request.hh"
+#include "libfred/public_request/public_request_lock_guard.hh"
+#include "libfred/public_request/public_request_status.hh"
+#include "libfred/contact_verification/django_email_format.hh"
+#include "libfred/public_request/public_request_on_status_action.hh"
+#include "util/idn_utils.hh"
 
 #include <string>
 

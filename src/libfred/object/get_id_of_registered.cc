@@ -1,5 +1,5 @@
-#include "src/libfred/object/get_id_of_registered.hh"
-#include "src/libfred/db_settings.hh"
+#include "libfred/object/get_id_of_registered.hh"
+#include "libfred/db_settings.hh"
 
 #include <stdexcept>
 

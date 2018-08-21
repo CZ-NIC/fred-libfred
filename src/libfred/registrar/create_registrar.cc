@@ -26,12 +26,12 @@
 #include <vector>
 #include <sstream>
 
-#include "src/libfred/registrar/create_registrar.hh"
-#include "src/libfred/registrable_object/contact/contact_enum.hh"
+#include "libfred/registrar/create_registrar.hh"
+#include "libfred/registrable_object/contact/contact_enum.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/util/optional_value.hh"
-#include "src/util/util.hh"
+#include "libfred/opcontext.hh"
+#include "util/optional_value.hh"
+#include "util/util.hh"
 
 namespace LibFred
 {

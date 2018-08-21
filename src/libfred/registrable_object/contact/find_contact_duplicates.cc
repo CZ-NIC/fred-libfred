@@ -1,5 +1,5 @@
-#include "src/util/optional_value.hh"
-#include "src/libfred/registrable_object/contact/find_contact_duplicates.hh"
+#include "util/optional_value.hh"
+#include "libfred/registrable_object/contact/find_contact_duplicates.hh"
 
 #include <boost/algorithm/string/join.hpp>
 

@@ -21,12 +21,12 @@
  *  contact info
  */
 
-#include "src/libfred/registrable_object/contact/info_contact.hh"
-#include "src/libfred/registrable_object/contact/info_contact_impl.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
+#include "libfred/registrable_object/contact/info_contact_impl.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/util/db/nullable.hh"
-#include "src/util/util.hh"
+#include "libfred/opcontext.hh"
+#include "util/db/nullable.hh"
+#include "util/util.hh"
 
 #include <boost/throw_exception.hpp>
 

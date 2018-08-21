@@ -1,6 +1,6 @@
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/registrar/certification/exceptions.hh"
-#include "src/libfred/registrar/certification/update_registrar_certification.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/registrar/certification/exceptions.hh"
+#include "libfred/registrar/certification/update_registrar_certification.hh"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

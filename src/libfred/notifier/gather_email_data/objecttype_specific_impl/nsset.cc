@@ -1,11 +1,11 @@
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.hh"
 
-#include "src/libfred/notifier/util/add_old_new_suffix_pair.hh"
-#include "src/libfred/notifier/util/get_previous_object_historyid.hh"
-#include "src/libfred/notifier/util/string_list_utils.hh"
-#include "src/libfred/notifier/exception.hh"
-#include "src/libfred/registrable_object/nsset/info_nsset.hh"
-#include "src/libfred/registrable_object/nsset/info_nsset_diff.hh"
+#include "libfred/notifier/util/add_old_new_suffix_pair.hh"
+#include "libfred/notifier/util/get_previous_object_historyid.hh"
+#include "libfred/notifier/util/string_list_utils.hh"
+#include "libfred/notifier/exception.hh"
+#include "libfred/registrable_object/nsset/info_nsset.hh"
+#include "libfred/registrable_object/nsset/info_nsset_diff.hh"
 
 #include <algorithm>
 #include <boost/foreach.hpp>

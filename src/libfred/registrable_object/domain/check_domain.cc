@@ -23,14 +23,14 @@
 
 #include <string>
 
-#include "src/libfred/registrable_object/domain/check_domain.hh"
-#include "src/libfred/registrable_object/domain/domain_name.hh"
-#include "src/libfred/zone/zone.hh"
-#include "src/libfred/object/object.hh"
+#include "libfred/registrable_object/domain/check_domain.hh"
+#include "libfred/registrable_object/domain/domain_name.hh"
+#include "libfred/zone/zone.hh"
+#include "libfred/object/object.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/libfred/object_states.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "libfred/object_states.hh"
 
 namespace LibFred
 {

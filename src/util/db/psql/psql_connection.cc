@@ -21,8 +21,8 @@
  *  Implementation of connection object for PSQL database.
  */
 
-#include "src/util/db/psql/psql_connection.hh"
-#include "src/util/db/db_exceptions.hh"
+#include "util/db/psql/psql_connection.hh"
+#include "util/db/db_exceptions.hh"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>

@@ -21,27 +21,27 @@
  *  contact merge
  */
 
-#include "src/libfred/registrable_object/contact/merge_contact.hh"
+#include "libfred/registrable_object/contact/merge_contact.hh"
 
-#include "src/libfred/registrable_object/contact/delete_contact.hh"
-#include "src/libfred/registrable_object/contact/update_contact.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/libfred/registrable_object/domain/update_domain.hh"
-#include "src/libfred/registrable_object/keyset/update_keyset.hh"
-#include "src/libfred/registrable_object/nsset/update_nsset.hh"
-#include "src/libfred/object/object_state.hh"
-#include "src/libfred/object/generate_authinfo_password.hh"
-#include "src/libfred/object/object_states_info.hh"
-#include "src/libfred/object_state/create_object_state_request_id.hh"
-#include "src/libfred/object_state/lock_object_state_request_lock.hh"
-#include "src/libfred/object_state/object_has_state.hh"
-#include "src/libfred/object_state/object_state_name.hh"
-#include "src/libfred/poll/create_update_object_poll_message.hh"
-#include "src/libfred/poll/create_poll_message.hh"
-#include "src/libfred/object_state/perform_object_state_request.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/poll/create_update_object_poll_message.hh"
-#include "src/util/random.hh"
+#include "libfred/registrable_object/contact/delete_contact.hh"
+#include "libfred/registrable_object/contact/update_contact.hh"
+#include "libfred/db_settings.hh"
+#include "libfred/registrable_object/domain/update_domain.hh"
+#include "libfred/registrable_object/keyset/update_keyset.hh"
+#include "libfred/registrable_object/nsset/update_nsset.hh"
+#include "libfred/object/object_state.hh"
+#include "libfred/object/generate_authinfo_password.hh"
+#include "libfred/object/object_states_info.hh"
+#include "libfred/object_state/create_object_state_request_id.hh"
+#include "libfred/object_state/lock_object_state_request_lock.hh"
+#include "libfred/object_state/object_has_state.hh"
+#include "libfred/object_state/object_state_name.hh"
+#include "libfred/poll/create_update_object_poll_message.hh"
+#include "libfred/poll/create_poll_message.hh"
+#include "libfred/object_state/perform_object_state_request.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/poll/create_update_object_poll_message.hh"
+#include "util/random.hh"
 
 #include <boost/algorithm/string.hpp>
 
@@ -603,13 +603,13 @@ bool MergeContact::DefaultDiffContacts::operator()(
     dup_sql <<
         "o1.clid!=o2.clid AS differ,"// current registrar
         "c1.id AS src_contact_id,"
-        "c2.id AS dst_contact_id"
+        "c2.id AS dst_contact_id "
     "FROM (object_registry oreg1 "
     "JOIN object o1 ON oreg1.id=o1.id "
     "JOIN contact c1 ON c1.id=oreg1.id AND oreg1.name=UPPER($1::text) AND oreg1.erdate IS NULL) "
     "JOIN (object_registry oreg2 "
     "JOIN object o2 ON oreg2.id=o2.id "
-    "JOIN contact c2 ON c2.id = oreg2.id AND oreg2.name = UPPER($2::text) AND oreg2.erdate IS NULL) ON TRUE";
+    "JOIN contact c2 ON c2.id=oreg2.id AND oreg2.name=UPPER($2::text) AND oreg2.erdate IS NULL) ON TRUE";
     const Database::Result diff_result = ctx.get_conn().exec_params(
             dup_sql.str(),
             Database::query_param_list(src_contact_handle)(dst_contact_handle));

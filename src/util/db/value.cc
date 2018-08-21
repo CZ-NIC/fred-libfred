@@ -1,8 +1,8 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <vector>
 
-#include "src/util/db/value.hh"
-#include "src/util/string_split.hh"
+#include "util/db/value.hh"
+#include "util/string_split.hh"
 
 
 namespace Database {

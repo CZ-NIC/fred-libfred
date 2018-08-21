@@ -21,9 +21,9 @@
  *  functions for listing of various auxiliary enumerated objects realted to admin contact verification
  */
 
-#include "src/libfred/registrable_object/contact/verification/list_enum_objects.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/opexception.hh"
+#include "libfred/registrable_object/contact/verification/list_enum_objects.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/opexception.hh"
 
 namespace LibFred
 {

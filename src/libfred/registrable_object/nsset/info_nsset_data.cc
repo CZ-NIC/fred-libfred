@@ -26,9 +26,9 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "src/util/util.hh"
-#include "src/libfred/registrable_object/nsset/info_nsset_data.hh"
-#include "src/libfred/registrable_object/nsset/info_nsset_diff.hh"
+#include "util/util.hh"
+#include "libfred/registrable_object/nsset/info_nsset_data.hh"
+#include "libfred/registrable_object/nsset/info_nsset_diff.hh"
 
 namespace LibFred
 {

@@ -28,9 +28,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
 
-#include "src/libfred/registrable_object/contact/info_contact_impl.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/util/util.hh"
+#include "libfred/registrable_object/contact/info_contact_impl.hh"
+#include "libfred/opcontext.hh"
+#include "util/util.hh"
 
 namespace LibFred
 {

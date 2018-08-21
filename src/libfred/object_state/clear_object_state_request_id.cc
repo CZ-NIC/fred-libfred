@@ -21,8 +21,8 @@
  *  clear object state request
  */
 
-#include "src/libfred/object_state/clear_object_state_request_id.hh"
-#include "src/libfred/object_state/lock_object_state_request_lock.hh"
+#include "libfred/object_state/clear_object_state_request_id.hh"
+#include "libfred/object_state/lock_object_state_request_lock.hh"
 
 namespace LibFred {
 

@@ -1,4 +1,4 @@
-#include "src/libfred/public_request/info_public_request.hh"
+#include "libfred/public_request/info_public_request.hh"
 
 namespace LibFred {
 

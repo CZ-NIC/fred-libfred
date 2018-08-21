@@ -23,9 +23,9 @@
 
 #include <string>
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/object_state/lock_object_state_request_lock.hh"
-#include "src/libfred/object_state/perform_object_state_request.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/object_state/lock_object_state_request_lock.hh"
+#include "libfred/object_state/perform_object_state_request.hh"
 
 namespace LibFred
 {

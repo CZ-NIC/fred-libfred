@@ -1,15 +1,15 @@
 #include "test/libfred/contact/verification/setup_utils.hh"
 #include "test/setup/fixtures_utils.hh"
 
-#include "src/libfred/registrable_object/contact/verification/create_check.hh"
-#include "src/libfred/registrable_object/contact/verification/create_test.hh"
+#include "libfred/registrable_object/contact/verification/create_check.hh"
+#include "libfred/registrable_object/contact/verification/create_test.hh"
 #include "test/fake-src/libfred/registrable_object/contact/verification/enum_testsuite_handle.hh"
-#include "src/libfred/registrable_object/contact/verification/enum_check_status.hh"
-#include "src/libfred/registrable_object/contact/verification/enum_test_status.hh"
-#include "src/libfred/registrable_object/contact/create_contact.hh"
-#include "src/libfred/registrable_object/contact/delete_contact.hh"
-#include "src/util/random.hh"
-#include "src/util/random_data_generator.hh"
+#include "libfred/registrable_object/contact/verification/enum_check_status.hh"
+#include "libfred/registrable_object/contact/verification/enum_test_status.hh"
+#include "libfred/registrable_object/contact/create_contact.hh"
+#include "libfred/registrable_object/contact/delete_contact.hh"
+#include "util/random.hh"
+#include "util/random_data_generator.hh"
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/uuid/uuid.hpp>            // uuid class

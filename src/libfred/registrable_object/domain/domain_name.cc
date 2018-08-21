@@ -21,9 +21,9 @@
  *  domain name check
  */
 
-#include "src/libfred/registrable_object/domain/domain_name.hh"
+#include "libfred/registrable_object/domain/domain_name.hh"
 
-#include "src/libfred/zone/zone.hh"
+#include "libfred/zone/zone.hh"
 
 #include <boost/regex.hpp>
 #include <boost/assign.hpp>

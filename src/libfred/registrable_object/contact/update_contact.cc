@@ -21,18 +21,18 @@
  *  contact update
  */
 
-#include "src/libfred/registrable_object/contact/update_contact.hh"
-#include "src/libfred/registrable_object/contact/copy_history_impl.hh"
-#include "src/libfred/object/object.hh"
-#include "src/libfred/registrable_object/contact/contact_enum.hh"
+#include "libfred/registrable_object/contact/update_contact.hh"
+#include "libfred/registrable_object/contact/copy_history_impl.hh"
+#include "libfred/object/object.hh"
+#include "libfred/registrable_object/contact/contact_enum.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/util/optional_value.hh"
-#include "src/util/db/nullable.hh"
-#include "src/util/util.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "util/optional_value.hh"
+#include "util/db/nullable.hh"
+#include "util/util.hh"
 
-#include "src/backend/admin/contact/verification/contact_states/delete_all.hh"
+#include "backend/admin/contact/verification/contact_states/delete_all.hh"
 
 #include <boost/algorithm/string.hpp>
 

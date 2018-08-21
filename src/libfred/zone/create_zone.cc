@@ -16,9 +16,9 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/zone/create_zone.hh"
-#include "src/libfred/zone/exceptions.hh"
-#include "src/libfred/zone/util.hh"
+#include "libfred/zone/create_zone.hh"
+#include "libfred/zone/exceptions.hh"
+#include "libfred/zone/util.hh"
 
 namespace LibFred {
 namespace Zone {

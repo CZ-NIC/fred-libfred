@@ -1,4 +1,4 @@
-#include "src/libfred/object_states.hh"
+#include "libfred/object_states.hh"
 #include <memory>
 
 

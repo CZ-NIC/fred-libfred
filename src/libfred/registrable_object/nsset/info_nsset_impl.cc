@@ -30,13 +30,13 @@
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/time_period.hpp>
 
-#include "src/libfred/registrable_object/nsset/info_nsset_impl.hh"
+#include "libfred/registrable_object/nsset/info_nsset_impl.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/util/db/nullable.hh"
-#include "src/util/db/param_query_composition.hh"
-#include "src/util/util.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "util/db/nullable.hh"
+#include "util/db/param_query_composition.hh"
+#include "util/util.hh"
 
 namespace LibFred
 {

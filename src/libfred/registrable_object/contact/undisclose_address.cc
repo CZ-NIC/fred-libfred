@@ -16,12 +16,12 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrable_object/contact/undisclose_address.hh"
+#include "libfred/registrable_object/contact/undisclose_address.hh"
 
-#include "src/libfred/object/object_states_info.hh"
-#include "src/libfred/poll/create_poll_message.hh"
-#include "src/libfred/registrable_object/contact/info_contact.hh"
-#include "src/libfred/registrable_object/contact/update_contact.hh"
+#include "libfred/object/object_states_info.hh"
+#include "libfred/poll/create_poll_message.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
+#include "libfred/registrable_object/contact/update_contact.hh"
 
 #include <string>
 

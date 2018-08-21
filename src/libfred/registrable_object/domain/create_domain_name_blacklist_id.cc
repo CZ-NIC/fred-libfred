@@ -21,11 +21,11 @@
  *  create domain name blacklist
  */
 
-#include "src/libfred/registrable_object/domain/create_domain_name_blacklist_id.hh"
-#include "src/libfred/object_state/get_blocking_status_desc_list.hh"
-#include "src/libfred/object_state/get_object_state_id_map.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/util/optional_value.hh"
+#include "libfred/registrable_object/domain/create_domain_name_blacklist_id.hh"
+#include "libfred/object_state/get_blocking_status_desc_list.hh"
+#include "libfred/object_state/get_object_state_id_map.hh"
+#include "libfred/opcontext.hh"
+#include "util/optional_value.hh"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

@@ -1,5 +1,5 @@
-#include "src/libfred/public_request/update_public_request.hh"
-#include "src/libfred/public_request/get_opened_public_request.hh"
+#include "libfred/public_request/update_public_request.hh"
+#include "libfred/public_request/get_opened_public_request.hh"
 
 #include <sstream>
 

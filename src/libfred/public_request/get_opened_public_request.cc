@@ -1,7 +1,7 @@
-#include "src/libfred/public_request/get_opened_public_request.hh"
-#include "src/libfred/public_request/update_public_request.hh"
-#include "src/libfred/public_request/public_request_lock_guard.hh"
-#include "src/libfred/public_request/public_request_status.hh"
+#include "libfred/public_request/get_opened_public_request.hh"
+#include "libfred/public_request/update_public_request.hh"
+#include "libfred/public_request/public_request_lock_guard.hh"
+#include "libfred/public_request/public_request_status.hh"
 
 namespace LibFred {
 

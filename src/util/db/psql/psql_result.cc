@@ -21,8 +21,8 @@
  *  Implementation of result object for PSQL database.
  */
 
-#include "src/util/db/psql/psql_result.hh"
-#include "src/util/db/db_exceptions.hh"
+#include "util/db/psql/psql_result.hh"
+#include "util/db/db_exceptions.hh"
 
 #include <boost/lexical_cast.hpp>
 

@@ -15,7 +15,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrar/zone_credit.hh"
+#include "libfred/registrar/zone_credit.hh"
 
 #include <stdexcept>
 

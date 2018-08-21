@@ -25,11 +25,11 @@
 #include <string>
 #include <sstream>
 
-#include "src/libfred/opexception.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/util/util.hh"
+#include "libfred/opexception.hh"
+#include "libfred/opcontext.hh"
+#include "util/util.hh"
 
-#include "src/libfred/registrar/get_registrar_handles.hh"
+#include "libfred/registrar/get_registrar_handles.hh"
 
 namespace LibFred
 {

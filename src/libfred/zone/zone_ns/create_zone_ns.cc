@@ -16,10 +16,10 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/zone/zone_ns/create_zone_ns.hh"
-#include "src/libfred/zone/zone_ns/exceptions.hh"
-#include "src/libfred/zone/zone_ns/util.hh"
-#include "src/libfred/zone/info_zone.hh"
+#include "libfred/zone/zone_ns/create_zone_ns.hh"
+#include "libfred/zone/zone_ns/exceptions.hh"
+#include "libfred/zone/zone_ns/util.hh"
+#include "libfred/zone/info_zone.hh"
 
 #include <algorithm>
 #include <sstream>

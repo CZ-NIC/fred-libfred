@@ -1,8 +1,8 @@
-#include "src/libfred/notifier/process_one_notification_request.hh"
+#include "libfred/notifier/process_one_notification_request.hh"
 
-#include "src/libfred/notifier/gather_email_data/gather_email_addresses.hh"
-#include "src/libfred/notifier/gather_email_data/gather_email_content.hh"
-#include "src/libfred/notifier/exception.hh"
+#include "libfred/notifier/gather_email_data/gather_email_addresses.hh"
+#include "libfred/notifier/gather_email_data/gather_email_content.hh"
+#include "libfred/notifier/exception.hh"
 
 #include <exception>
 #include <boost/foreach.hpp>

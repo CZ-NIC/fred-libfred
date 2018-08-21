@@ -21,16 +21,16 @@
  *  domain history info
  */
 
-#include "src/libfred/registrable_object/domain/info_domain.hh"
-#include "src/libfred/registrable_object/domain/info_domain_impl.hh"
+#include "libfred/registrable_object/domain/info_domain.hh"
+#include "libfred/registrable_object/domain/info_domain_impl.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/opexception.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/opexception.hh"
 
-#include "src/libfred/zone/zone.hh"
+#include "libfred/zone/zone.hh"
 
-#include "src/util/util.hh"
-#include "src/util/printable.hh"
+#include "util/util.hh"
+#include "util/printable.hh"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>

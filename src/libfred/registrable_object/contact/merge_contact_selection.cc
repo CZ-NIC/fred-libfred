@@ -32,12 +32,12 @@
 #include <memory>
 #include <boost/regex.hpp>
 
-#include "src/libfred/registrable_object/contact/merge_contact_selection.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/libfred/object_states.hh"
+#include "libfred/registrable_object/contact/merge_contact_selection.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "libfred/object_states.hh"
 
-#include "src/util/util.hh"
+#include "util/util.hh"
 
 namespace LibFred
 {

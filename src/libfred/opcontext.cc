@@ -21,7 +21,7 @@
  *  operation context
  */
 
-#include "src/libfred/opcontext.hh"
+#include "libfred/opcontext.hh"
 
 #include <stdexcept>
 

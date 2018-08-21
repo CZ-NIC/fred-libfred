@@ -21,12 +21,12 @@
  *  domain info implementation
  */
 
-#include "src/libfred/registrable_object/domain/info_domain_impl.hh"
+#include "libfred/registrable_object/domain/info_domain_impl.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/util/util.hh"
-#include "src/util/printable.hh"
-#include "src/util/db/param_query_composition.hh"
+#include "libfred/opcontext.hh"
+#include "util/util.hh"
+#include "util/printable.hh"
+#include "util/db/param_query_composition.hh"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>

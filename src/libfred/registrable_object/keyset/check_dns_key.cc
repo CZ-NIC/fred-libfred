@@ -16,7 +16,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrable_object/keyset/check_dns_key.hh"
+#include "libfred/registrable_object/keyset/check_dns_key.hh"
 #include <stdexcept>
 
 namespace LibFred {

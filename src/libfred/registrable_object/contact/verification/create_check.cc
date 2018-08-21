@@ -21,11 +21,11 @@
  *  create contact check
  */
 
-#include "src/util/random_data_generator.hh"
+#include "util/random_data_generator.hh"
 
-#include "src/libfred/registrable_object/contact/verification/create_check.hh"
-#include "src/libfred/registrable_object/contact/verification/create_test.hh"
-#include "src/libfred/registrable_object/contact/verification/enum_check_status.hh"
+#include "libfred/registrable_object/contact/verification/create_check.hh"
+#include "libfred/registrable_object/contact/verification/create_test.hh"
+#include "libfred/registrable_object/contact/verification/enum_check_status.hh"
 
 #include <utility>
 #include <boost/assign/list_of.hpp>

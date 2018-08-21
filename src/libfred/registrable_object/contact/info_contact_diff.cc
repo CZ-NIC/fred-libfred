@@ -26,9 +26,9 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "src/util/util.hh"
-#include "src/util/is_equal_optional_nullable.hh"
-#include "src/libfred/registrable_object/contact/info_contact_diff.hh"
+#include "util/util.hh"
+#include "util/is_equal_optional_nullable.hh"
+#include "libfred/registrable_object/contact/info_contact_diff.hh"
 
 namespace LibFred
 {

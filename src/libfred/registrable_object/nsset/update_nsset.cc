@@ -24,16 +24,16 @@
 #include <string>
 #include <vector>
 
-#include "src/libfred/registrable_object/nsset/update_nsset.hh"
-#include "src/libfred/registrable_object/nsset/copy_history_impl.hh"
-#include "src/libfred/object/object.hh"
-#include "src/libfred/object/object_impl.hh"
-#include "src/libfred/registrar/registrar_impl.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/util/optional_value.hh"
-#include "src/util/db/nullable.hh"
-#include "src/util/log/log.hh"
+#include "libfred/registrable_object/nsset/update_nsset.hh"
+#include "libfred/registrable_object/nsset/copy_history_impl.hh"
+#include "libfred/object/object.hh"
+#include "libfred/object/object_impl.hh"
+#include "libfred/registrar/registrar_impl.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "util/optional_value.hh"
+#include "util/db/nullable.hh"
+#include "util/log/log.hh"
 
 namespace LibFred
 {

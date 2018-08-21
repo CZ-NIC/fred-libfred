@@ -16,11 +16,11 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/poll/get_request_fee_message.hh"
-#include "src/libfred/opexception.hh"
-#include "src/libfred/poll/message_type.hh"
-#include "src/libfred/registrar/info_registrar.hh"
-#include "src/util/db/param_query_composition.hh"
+#include "libfred/poll/get_request_fee_message.hh"
+#include "libfred/opexception.hh"
+#include "libfred/poll/message_type.hh"
+#include "libfred/registrar/info_registrar.hh"
+#include "util/db/param_query_composition.hh"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>

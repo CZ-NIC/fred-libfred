@@ -22,7 +22,7 @@
  */
 
 
-#include "src/libfred/zone/zone.hh"
+#include "libfred/zone/zone.hh"
 
 
 namespace LibFred {

@@ -16,8 +16,8 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrable_object/domain/domain.hh"
-#include "src/libfred/registrable_object/domain/check_domain.hh"
+#include "libfred/registrable_object/domain/domain.hh"
+#include "libfred/registrable_object/domain/check_domain.hh"
 
 namespace LibFred {
 namespace Domain {

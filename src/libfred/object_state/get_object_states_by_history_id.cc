@@ -16,7 +16,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/object_state/get_object_states_by_history_id.hh"
+#include "libfred/object_state/get_object_states_by_history_id.hh"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

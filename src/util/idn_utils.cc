@@ -21,7 +21,7 @@
  *  IDN related utils
  */
 
-#include "src/util/idn_utils.hh"
+#include "util/idn_utils.hh"
 
 #include <idna.h>
 

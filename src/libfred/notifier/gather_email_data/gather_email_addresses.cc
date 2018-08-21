@@ -1,19 +1,19 @@
-#include "src/libfred/notifier/gather_email_data/gather_email_addresses.hh"
-#include "src/libfred/notifier/util/get_previous_object_historyid.hh"
+#include "libfred/notifier/gather_email_data/gather_email_addresses.hh"
+#include "libfred/notifier/util/get_previous_object_historyid.hh"
 
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/contact.hh"
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/domain.hh"
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/keyset.hh"
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.hh"
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/util.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/contact.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/domain.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/keyset.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/util.hh"
 
-#include "src/libfred/notifier/exception.hh"
+#include "libfred/notifier/exception.hh"
 
-#include "src/libfred/registrable_object/contact/info_contact.hh"
-#include "src/libfred/registrable_object/domain/info_domain.hh"
-#include "src/libfred/registrable_object/keyset/info_keyset.hh"
-#include "src/libfred/registrable_object/nsset/info_nsset.hh"
-#include "src/libfred/registrable_object/domain/info_domain_diff.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
+#include "libfred/registrable_object/domain/info_domain.hh"
+#include "libfred/registrable_object/keyset/info_keyset.hh"
+#include "libfred/registrable_object/nsset/info_nsset.hh"
+#include "libfred/registrable_object/domain/info_domain_diff.hh"
 
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string/trim.hpp>

@@ -20,7 +20,7 @@
  *  @file
  *  update contact check
  */
-#include "src/libfred/registrable_object/contact/verification/update_check.hh"
+#include "libfred/registrable_object/contact/verification/update_check.hh"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/join.hpp>

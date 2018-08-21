@@ -1,4 +1,4 @@
-#include "src/util/types/date_interval.hh"
+#include "util/types/date_interval.hh"
 
 namespace Database {
 

@@ -21,7 +21,7 @@
  *  get object state descriptions
  */
 
-#include "src/libfred/object_state/get_object_state_descriptions.hh"
+#include "libfred/object_state/get_object_state_descriptions.hh"
 
 namespace LibFred {
 

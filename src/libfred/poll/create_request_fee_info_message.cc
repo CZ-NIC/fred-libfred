@@ -16,10 +16,10 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/poll/create_request_fee_info_message.hh"
-#include "src/util/db/query_param.hh"
-#include "src/libfred/opexception.hh"
-#include "src/libfred/poll/message_type.hh"
+#include "libfred/poll/create_request_fee_info_message.hh"
+#include "util/db/query_param.hh"
+#include "libfred/opexception.hh"
+#include "libfred/poll/message_type.hh"
 
 namespace LibFred {
 namespace Poll {

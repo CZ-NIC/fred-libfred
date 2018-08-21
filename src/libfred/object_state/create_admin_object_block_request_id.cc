@@ -21,10 +21,10 @@
  *  create administrative object block request
  */
 
-#include "src/libfred/object_state/create_admin_object_block_request_id.hh"
-#include "src/libfred/object_state/clear_object_state_request_id.hh"
-#include "src/libfred/object_state/get_blocking_status_desc_list.hh"
-#include "src/libfred/object_state/lock_object_state_request_lock.hh"
+#include "libfred/object_state/create_admin_object_block_request_id.hh"
+#include "libfred/object_state/clear_object_state_request_id.hh"
+#include "libfred/object_state/get_blocking_status_desc_list.hh"
+#include "libfred/object_state/lock_object_state_request_lock.hh"
 
 #include <boost/algorithm/string.hpp>
 #include <set>

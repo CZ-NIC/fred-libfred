@@ -1,6 +1,6 @@
-#include "src/libfred/public_request/create_public_request_auth.hh"
-#include "src/libfred/public_request/create_public_request.hh"
-#include "src/util/random.hh"
+#include "libfred/public_request/create_public_request_auth.hh"
+#include "libfred/public_request/create_public_request.hh"
+#include "util/random.hh"
 
 namespace LibFred {
 

@@ -25,14 +25,14 @@
 #include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "src/libfred/registrable_object/nsset/delete_nsset.hh"
-#include "src/libfred/object/object.hh"
-#include "src/libfred/object/object_impl.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/libfred/object_states.hh"
-#include "src/libfred/object_state/object_has_state.hh"
-#include "src/libfred/object_state/object_state_name.hh"
+#include "libfred/registrable_object/nsset/delete_nsset.hh"
+#include "libfred/object/object.hh"
+#include "libfred/object/object_impl.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "libfred/object_states.hh"
+#include "libfred/object_state/object_has_state.hh"
+#include "libfred/object_state/object_state_name.hh"
 
 namespace LibFred
 {

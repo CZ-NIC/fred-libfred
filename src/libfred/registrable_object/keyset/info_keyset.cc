@@ -29,13 +29,13 @@
 #include <boost/date_time/posix_time/time_period.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "src/libfred/registrable_object/keyset/info_keyset.hh"
-#include "src/libfred/registrable_object/keyset/info_keyset_impl.hh"
+#include "libfred/registrable_object/keyset/info_keyset.hh"
+#include "libfred/registrable_object/keyset/info_keyset_impl.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/opexception.hh"
-#include "src/libfred/registrable_object/contact/check_contact.hh"
-#include "src/util/util.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/opexception.hh"
+#include "libfred/registrable_object/contact/check_contact.hh"
+#include "util/util.hh"
 
 namespace LibFred
 {

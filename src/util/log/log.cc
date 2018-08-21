@@ -1,6 +1,6 @@
-#include "src/util/log/log.hh"
-#include "src/util/log/log_types.hh"
-#include "src/util/log/context.hh"
+#include "util/log/log.hh"
+#include "util/log/log_types.hh"
+#include "util/log/context.hh"
 
 #include <boost/utility.hpp>
 

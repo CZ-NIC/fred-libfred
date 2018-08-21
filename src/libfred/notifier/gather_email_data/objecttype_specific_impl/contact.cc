@@ -1,12 +1,12 @@
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/contact.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/contact.hh"
 
-#include "src/libfred/notifier/util/add_old_new_suffix_pair.hh"
-#include "src/libfred/notifier/util/get_previous_object_historyid.hh"
-#include "src/libfred/notifier/util/bool_to_string.hh"
-#include "src/libfred/notifier/exception.hh"
-#include "src/libfred/registrable_object/contact/info_contact.hh"
-#include "src/libfred/registrable_object/contact/info_contact_diff.hh"
-#include "src/libfred/registrable_object/contact/info_contact_data.hh"
+#include "libfred/notifier/util/add_old_new_suffix_pair.hh"
+#include "libfred/notifier/util/get_previous_object_historyid.hh"
+#include "libfred/notifier/util/bool_to_string.hh"
+#include "libfred/notifier/exception.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
+#include "libfred/registrable_object/contact/info_contact_diff.hh"
+#include "libfred/registrable_object/contact/info_contact_data.hh"
 
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>

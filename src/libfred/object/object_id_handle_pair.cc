@@ -22,9 +22,9 @@
  */
 
 #include <string>
-#include "src/util/printable.hh"
+#include "util/printable.hh"
 
-#include "src/libfred/object/object_id_handle_pair.hh"
+#include "libfred/object/object_id_handle_pair.hh"
 #include <boost/algorithm/string.hpp>
 
 namespace LibFred

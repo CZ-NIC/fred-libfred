@@ -1,16 +1,16 @@
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/domain.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/domain.hh"
 
-#include "src/libfred/notifier/gather_email_data/objecttype_specific_impl/util.hh"
-#include "src/libfred/notifier/util/add_old_new_suffix_pair.hh"
-#include "src/libfred/notifier/util/get_previous_object_historyid.hh"
-#include "src/libfred/notifier/util/string_list_utils.hh"
-#include "src/libfred/notifier/util/bool_to_string.hh"
-#include "src/libfred/notifier/util/boost_date_to_cz_string.hh"
-#include "src/libfred/notifier/exception.hh"
-#include "src/libfred/registrable_object/domain/info_domain.hh"
-#include "src/libfred/registrable_object/nsset/info_nsset.hh"
-#include "src/libfred/registrable_object/keyset/info_keyset.hh"
-#include "src/libfred/registrable_object/domain/info_domain_diff.hh"
+#include "libfred/notifier/gather_email_data/objecttype_specific_impl/util.hh"
+#include "libfred/notifier/util/add_old_new_suffix_pair.hh"
+#include "libfred/notifier/util/get_previous_object_historyid.hh"
+#include "libfred/notifier/util/string_list_utils.hh"
+#include "libfred/notifier/util/bool_to_string.hh"
+#include "libfred/notifier/util/boost_date_to_cz_string.hh"
+#include "libfred/notifier/exception.hh"
+#include "libfred/registrable_object/domain/info_domain.hh"
+#include "libfred/registrable_object/nsset/info_nsset.hh"
+#include "libfred/registrable_object/keyset/info_keyset.hh"
+#include "libfred/registrable_object/domain/info_domain_diff.hh"
 
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>

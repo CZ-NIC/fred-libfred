@@ -26,10 +26,10 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "src/util/util.hh"
-#include "src/util/printable.hh"
-#include "src/libfred/registrable_object/keyset/info_keyset_data.hh"
-#include "src/libfred/registrable_object/keyset/info_keyset_diff.hh"
+#include "util/util.hh"
+#include "util/printable.hh"
+#include "libfred/registrable_object/keyset/info_keyset_data.hh"
+#include "libfred/registrable_object/keyset/info_keyset_diff.hh"
 
 namespace LibFred
 {

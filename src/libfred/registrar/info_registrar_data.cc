@@ -26,9 +26,9 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "src/util/util.hh"
-#include "src/libfred/registrar/info_registrar_data.hh"
-#include "src/libfred/registrar/info_registrar_diff.hh"
+#include "util/util.hh"
+#include "libfred/registrar/info_registrar_data.hh"
+#include "libfred/registrar/info_registrar_diff.hh"
 
 namespace LibFred
 {

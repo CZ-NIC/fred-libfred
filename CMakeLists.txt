@@ -225,7 +225,7 @@ find_package(Boost 1.53.0
 find_package(PkgConfig REQUIRED)
 
 target_include_directories(fred
-    PRIVATE .
+    PRIVATE . include
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_BINARY_DIR}
@@ -375,7 +375,7 @@ set_target_properties(test-libfred PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 target_include_directories(test-libfred
-    PRIVATE .
+    PRIVATE . include
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_BINARY_DIR}

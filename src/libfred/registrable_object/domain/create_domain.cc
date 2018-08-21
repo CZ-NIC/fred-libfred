@@ -22,22 +22,22 @@
  */
 
 
-#include "src/libfred/registrable_object/domain/create_domain.hh"
-#include "src/libfred/registrable_object/domain/domain_name.hh"
-#include "src/libfred/registrable_object/domain/check_domain.hh"
-#include "src/libfred/registrable_object/domain/copy_history_impl.hh"
-#include "src/libfred/registrar/info_registrar.hh"
-#include "src/libfred/registrar/info_registrar_data.hh"
-#include "src/libfred/zone/zone.hh"
-#include "src/libfred/object/object.hh"
-#include "src/libfred/object/object_impl.hh"
-#include "src/libfred/registrar/registrar_impl.hh"
+#include "libfred/registrable_object/domain/create_domain.hh"
+#include "libfred/registrable_object/domain/domain_name.hh"
+#include "libfred/registrable_object/domain/check_domain.hh"
+#include "libfred/registrable_object/domain/copy_history_impl.hh"
+#include "libfred/registrar/info_registrar.hh"
+#include "libfred/registrar/info_registrar_data.hh"
+#include "libfred/zone/zone.hh"
+#include "libfred/object/object.hh"
+#include "libfred/object/object_impl.hh"
+#include "libfred/registrar/registrar_impl.hh"
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/util/optional_value.hh"
-#include "src/util/db/nullable.hh"
-#include "src/util/util.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "util/optional_value.hh"
+#include "util/db/nullable.hh"
+#include "util/util.hh"
 
 #include <boost/algorithm/string.hpp>
 

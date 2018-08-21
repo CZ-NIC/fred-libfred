@@ -21,7 +21,7 @@
  *  get blocking status desc list
  */
 
-#include "src/libfred/object_state/get_blocking_status_desc_list.hh"
+#include "libfred/object_state/get_blocking_status_desc_list.hh"
 
 namespace LibFred {
 

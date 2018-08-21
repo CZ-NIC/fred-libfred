@@ -1,7 +1,7 @@
-#include "src/libfred/registrar/group/membership/create_registrar_group_membership.hh"
-#include "src/libfred/registrar/group/membership/exceptions.hh"
+#include "libfred/registrar/group/membership/create_registrar_group_membership.hh"
+#include "libfred/registrar/group/membership/exceptions.hh"
 
-#include "src/libfred/db_settings.hh"
+#include "libfred/db_settings.hh"
 
 namespace LibFred {
 namespace Registrar {

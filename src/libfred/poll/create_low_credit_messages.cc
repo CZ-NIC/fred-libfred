@@ -16,9 +16,9 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/poll/create_low_credit_messages.hh"
-#include "src/libfred/opexception.hh"
-#include "src/util/db/query_param.hh"
+#include "libfred/poll/create_low_credit_messages.hh"
+#include "libfred/opexception.hh"
+#include "util/db/query_param.hh"
 
 namespace LibFred {
 namespace Poll {

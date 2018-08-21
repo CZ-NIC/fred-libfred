@@ -16,11 +16,11 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/registrar/info_registrar.hh"
-#include "src/libfred/registrar/info_registrar_data.hh"
-#include "src/libfred/registrar/registrar_zone_access.hh"
-#include "src/util/db/param_query_composition.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/registrar/info_registrar.hh"
+#include "libfred/registrar/info_registrar_data.hh"
+#include "libfred/registrar/registrar_zone_access.hh"
+#include "util/db/param_query_composition.hh"
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 

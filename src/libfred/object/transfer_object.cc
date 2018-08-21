@@ -1,8 +1,8 @@
-#include "src/libfred/object/transfer_object.hh"
+#include "libfred/object/transfer_object.hh"
 
-#include "src/libfred/object/transfer_object_exception.hh"
-#include "src/libfred/registrar/info_registrar.hh"
-#include "src/libfred/object/object.hh"
+#include "libfred/object/transfer_object_exception.hh"
+#include "libfred/registrar/info_registrar.hh"
+#include "libfred/object/object.hh"
 
 namespace LibFred
 {

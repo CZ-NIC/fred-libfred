@@ -20,8 +20,8 @@
  *  @file
  *  create contact test
  */
-#include "src/libfred/registrable_object/contact/verification/create_test.hh"
-#include "src/libfred/registrable_object/contact/verification/enum_test_status.hh"
+#include "libfred/registrable_object/contact/verification/create_test.hh"
+#include "libfred/registrable_object/contact/verification/enum_test_status.hh"
 
 #include <boost/algorithm/string/join.hpp>
 #include <boost/assign/list_of.hpp>

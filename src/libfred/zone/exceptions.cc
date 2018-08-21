@@ -16,7 +16,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/zone/exceptions.hh"
+#include "libfred/zone/exceptions.hh"
 
 namespace LibFred {
 namespace Zone {

@@ -16,9 +16,9 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/registrable_object/keyset/check_keyset.hh"
-#include "src/libfred/object/object_type.hh"
-#include "src/libfred/object/check_handle.hh"
+#include "libfred/registrable_object/keyset/check_keyset.hh"
+#include "libfred/object/object_type.hh"
+#include "libfred/object/check_handle.hh"
 
 namespace LibFred {
 namespace Keyset {

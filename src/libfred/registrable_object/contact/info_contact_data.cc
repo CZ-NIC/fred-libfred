@@ -25,11 +25,11 @@
 #include <string>
 #include <ostream>
 
-#include "src/util/optional_value.hh"
-#include "src/util/db/nullable.hh"
-#include "src/util/util.hh"
-#include "src/libfred/registrable_object/contact/info_contact_data.hh"
-#include "src/libfred/registrable_object/contact/info_contact_diff.hh"
+#include "util/optional_value.hh"
+#include "util/db/nullable.hh"
+#include "util/util.hh"
+#include "libfred/registrable_object/contact/info_contact_data.hh"
+#include "libfred/registrable_object/contact/info_contact_diff.hh"
 
 namespace LibFred
 {

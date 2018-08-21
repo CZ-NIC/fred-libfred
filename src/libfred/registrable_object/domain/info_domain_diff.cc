@@ -29,9 +29,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "src/util/util.hh"
-#include "src/util/is_equal_optional_nullable.hh"
-#include "src/libfred/registrable_object/domain/info_domain_diff.hh"
+#include "util/util.hh"
+#include "util/is_equal_optional_nullable.hh"
+#include "libfred/registrable_object/domain/info_domain_diff.hh"
 
 namespace LibFred
 {

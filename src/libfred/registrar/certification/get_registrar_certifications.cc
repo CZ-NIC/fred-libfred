@@ -1,7 +1,7 @@
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/registrar/certification/exceptions.hh"
-#include "src/libfred/registrar/certification/get_registrar_certifications.hh"
-#include "src/libfred/registrar/certification/registrar_certification_type.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/registrar/certification/exceptions.hh"
+#include "libfred/registrar/certification/get_registrar_certifications.hh"
+#include "libfred/registrar/certification/registrar_certification_type.hh"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

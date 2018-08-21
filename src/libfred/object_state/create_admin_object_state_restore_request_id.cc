@@ -21,14 +21,14 @@
  *  create administrative object state restore request
  */
 
-#include "src/libfred/object_state/create_admin_object_state_restore_request_id.hh"
-#include "src/libfred/object_state/clear_admin_object_state_request_id.hh"
-#include "src/libfred/object_state/clear_object_state_request_id.hh"
-#include "src/libfred/object_state/create_object_state_request_id.hh"
-#include "src/libfred/object_state/get_blocking_status_desc_list.hh"
-#include "src/libfred/object_state/lock_object_state_request_lock.hh"
+#include "libfred/object_state/create_admin_object_state_restore_request_id.hh"
+#include "libfred/object_state/clear_admin_object_state_request_id.hh"
+#include "libfred/object_state/clear_object_state_request_id.hh"
+#include "libfred/object_state/create_object_state_request_id.hh"
+#include "libfred/object_state/get_blocking_status_desc_list.hh"
+#include "libfred/object_state/lock_object_state_request_lock.hh"
 
-#include "src/libfred/types.hh"
+#include "libfred/types.hh"
 
 #include <boost/algorithm/string.hpp>
 

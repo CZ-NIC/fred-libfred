@@ -1,6 +1,6 @@
-#include "src/libfred/db_settings.hh"
-#include "src/libfred/registrar/group/cancel_registrar_group.hh"
-#include "src/libfred/registrar/group/exceptions.hh"
+#include "libfred/db_settings.hh"
+#include "libfred/registrar/group/cancel_registrar_group.hh"
+#include "libfred/registrar/group/exceptions.hh"
 
 namespace LibFred {
 namespace Registrar {

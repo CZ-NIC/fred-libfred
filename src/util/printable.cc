@@ -21,8 +21,8 @@
  *  print description of object data to the string for debugging and error handling
  */
 
-#include "src/util/printable.hh"
-#include "src/util/util.hh"
+#include "util/printable.hh"
+#include "util/util.hh"
 
 #include <string>
 #include <vector>

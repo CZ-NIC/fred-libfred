@@ -28,9 +28,9 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "src/util/util.hh"
-#include "src/util/is_equal_optional_nullable.hh"
-#include "src/libfred/registrable_object/keyset/info_keyset_diff.hh"
+#include "util/util.hh"
+#include "util/is_equal_optional_nullable.hh"
+#include "libfred/registrable_object/keyset/info_keyset_diff.hh"
 
 namespace LibFred
 {

@@ -16,7 +16,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/libfred/zone/util.hh"
+#include "libfred/zone/util.hh"
 
 #include <regex>
 

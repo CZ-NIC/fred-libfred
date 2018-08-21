@@ -21,8 +21,8 @@
  *  place address type
  */
 
-#include "src/libfred/registrable_object/contact/place_address.hh"
-#include "src/util/util.hh"
+#include "libfred/registrable_object/contact/place_address.hh"
+#include "util/util.hh"
 
 namespace LibFred {
 namespace Contact {

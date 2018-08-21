@@ -1,11 +1,11 @@
-#include "src/libfred/registrable_object/contact/transfer_contact.hh"
+#include "libfred/registrable_object/contact/transfer_contact.hh"
 
-#include "src/libfred/registrable_object/contact/info_contact.hh"
-#include "src/libfred/registrable_object/contact/copy_history_impl.hh"
-#include "src/libfred/object/generate_authinfo_password.hh"
-#include "src/libfred/object/transfer_object.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
+#include "libfred/registrable_object/contact/copy_history_impl.hh"
+#include "libfred/object/generate_authinfo_password.hh"
+#include "libfred/object/transfer_object.hh"
 
-#include "src/libfred/exception.hh"
+#include "libfred/exception.hh"
 
 namespace LibFred
 {

@@ -21,9 +21,9 @@
  *  object state request locking
  */
 
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/libfred/object_state/lock_object_state_request_lock.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "libfred/object_state/lock_object_state_request_lock.hh"
 
 
 namespace LibFred

@@ -1,7 +1,7 @@
-#include "src/libfred/poll/create_update_object_poll_message.hh"
-#include "src/libfred/poll/create_poll_message.hh"
-#include "src/libfred/object/object_type.hh"
-#include "src/libfred/opexception.hh"
+#include "libfred/poll/create_update_object_poll_message.hh"
+#include "libfred/poll/create_poll_message.hh"
+#include "libfred/object/object_type.hh"
+#include "libfred/opexception.hh"
 
 namespace LibFred {
 namespace Poll {

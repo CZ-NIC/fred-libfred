@@ -21,7 +21,7 @@
  *  update contact test
  */
 
-#include "src/libfred/registrable_object/contact/verification/update_test.hh"
+#include "libfred/registrable_object/contact/verification/update_test.hh"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/assign/list_of.hpp>

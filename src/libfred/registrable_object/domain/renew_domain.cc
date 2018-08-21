@@ -25,17 +25,17 @@
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "src/libfred/registrable_object/domain/renew_domain.hh"
-#include "src/libfred/registrable_object/domain/copy_history_impl.hh"
-#include "src/libfred/zone/zone.hh"
-#include "src/libfred/object/object.hh"
-#include "src/libfred/registrar/registrar_impl.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/libfred/db_settings.hh"
-#include "src/util/optional_value.hh"
-#include "src/util/db/nullable.hh"
-#include "src/util/util.hh"
-#include "src/util/printable.hh"
+#include "libfred/registrable_object/domain/renew_domain.hh"
+#include "libfred/registrable_object/domain/copy_history_impl.hh"
+#include "libfred/zone/zone.hh"
+#include "libfred/object/object.hh"
+#include "libfred/registrar/registrar_impl.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/db_settings.hh"
+#include "util/optional_value.hh"
+#include "util/db/nullable.hh"
+#include "util/util.hh"
+#include "util/printable.hh"
 
 namespace LibFred
 {

@@ -1,5 +1,5 @@
 #include "test/setup/fixtures.hh"
-#include "src/libfred/db_settings.hh"
+#include "libfred/db_settings.hh"
 #include "test/fake-src/util/cfg/config_handler_decl.hh"
 
 #include <boost/lexical_cast.hpp>

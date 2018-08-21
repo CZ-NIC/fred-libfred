@@ -27,9 +27,9 @@
 
 #include <boost/date_time/posix_time/ptime.hpp>
 
-#include "src/libfred/registrar/info_registrar_output.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/util/util.hh"
+#include "libfred/registrar/info_registrar_output.hh"
+#include "libfred/opcontext.hh"
+#include "util/util.hh"
 
 namespace LibFred
 {

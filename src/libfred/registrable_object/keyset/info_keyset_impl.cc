@@ -29,10 +29,10 @@
 #include <boost/date_time/posix_time/time_period.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "src/libfred/registrable_object/keyset/info_keyset_impl.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/util/db/param_query_composition.hh"
-#include "src/util/util.hh"
+#include "libfred/registrable_object/keyset/info_keyset_impl.hh"
+#include "libfred/opcontext.hh"
+#include "util/db/param_query_composition.hh"
+#include "util/util.hh"
 
 
 

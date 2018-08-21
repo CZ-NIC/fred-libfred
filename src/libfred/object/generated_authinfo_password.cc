@@ -1,11 +1,11 @@
-#include "src/libfred/object/generated_authinfo_password.hh"
+#include "libfred/object/generated_authinfo_password.hh"
 
 #include <string>
 #include <set>
 
 #include <boost/foreach.hpp>
 
-#include "src/libfred/object/generated_authinfo_password_exception.hh"
+#include "libfred/object/generated_authinfo_password_exception.hh"
 
 namespace LibFred
 {

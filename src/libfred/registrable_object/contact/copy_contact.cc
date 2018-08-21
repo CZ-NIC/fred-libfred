@@ -21,15 +21,15 @@
  *  copy contact
  */
 
-#include "src/libfred/registrable_object/contact/copy_contact.hh"
-#include "src/libfred/object_state/get_blocking_status_desc_list.hh"
-#include "src/libfred/object_state/get_object_state_id_map.hh"
-#include "src/libfred/registrable_object/contact/info_contact.hh"
-#include "src/libfred/registrable_object/contact/create_contact.hh"
-#include "src/libfred/object/object.hh"
-#include "src/libfred/opcontext.hh"
-#include "src/util/optional_value.hh"
-#include "src/util/db/nullable.hh"
+#include "libfred/registrable_object/contact/copy_contact.hh"
+#include "libfred/object_state/get_blocking_status_desc_list.hh"
+#include "libfred/object_state/get_object_state_id_map.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
+#include "libfred/registrable_object/contact/create_contact.hh"
+#include "libfred/object/object.hh"
+#include "libfred/opcontext.hh"
+#include "util/optional_value.hh"
+#include "util/db/nullable.hh"
 
 namespace LibFred {
 

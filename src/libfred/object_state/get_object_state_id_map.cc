@@ -21,8 +21,8 @@
  *  get object state id map
  */
 
-#include "src/libfred/object_state/get_object_state_id_map.hh"
-#include "src/libfred/opcontext.hh"
+#include "libfred/object_state/get_object_state_id_map.hh"
+#include "libfred/opcontext.hh"
 
 #include <sstream>
 

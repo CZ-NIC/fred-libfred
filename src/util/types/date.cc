@@ -16,7 +16,7 @@
  *  along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/util/types/date.hh"
+#include "util/types/date.hh"
 
 namespace Database {
 

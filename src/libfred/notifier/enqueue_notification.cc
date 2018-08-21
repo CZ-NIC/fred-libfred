@@ -20,9 +20,9 @@
  *  @file
  */
 
-#include "src/libfred/notifier/enqueue_notification.hh"
+#include "libfred/notifier/enqueue_notification.hh"
 
-#include "src/util/db/query_param.hh"
+#include "util/db/query_param.hh"
 
 namespace Notification {
 
