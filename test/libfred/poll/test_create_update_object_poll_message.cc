@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
     );
 
     std::vector<int> ids_before;
-    for(Database::Result::Iterator it = ids_res.begin();
+    for (Database::Result::Iterator it = ids_res.begin();
         it != ids_res.end();
         ++it
     ) {
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
 
     int new_message_id = -1;
     std::vector<int> ids_after;
-    for(Database::Result::Iterator it = ids2_res.begin();
+    for (Database::Result::Iterator it = ids2_res.begin();
         it != ids2_res.end();
         ++it
     ) {
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
             static_cast<int>((*it)["count_"])
         );
 
-        if( std::find(ids_before.begin(), ids_before.end(), *ids_after.rbegin())
+        if (std::find(ids_before.begin(), ids_before.end(), *ids_after.rbegin())
             == ids_before.end()
         ) {
             new_message_id = *ids_after.rbegin();
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
 BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
 {
 
-    for(int i=0; i<3; ++i) {
+    for (int i=0; i<3; ++i) {
         ::LibFred::OperationContextCreator ctx;
 
         Database::Result ids_res = ctx.get_conn().exec(
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
         );
 
         std::vector<int> ids_before;
-        for(Database::Result::Iterator it = ids_res.begin();
+        for (Database::Result::Iterator it = ids_res.begin();
             it != ids_res.end();
             ++it
         ) {
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
 
         int new_message_id = -1;
         std::vector<int> ids_after;
-        for(Database::Result::Iterator it = ids2_res.begin();
+        for (Database::Result::Iterator it = ids2_res.begin();
             it != ids2_res.end();
             ++it
         ) {
@@ -169,7 +169,7 @@ BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
                 static_cast<int>((*it)["count_"])
             );
 
-            if( std::find(ids_before.begin(), ids_before.end(), *ids_after.rbegin())
+            if (std::find(ids_before.begin(), ids_before.end(), *ids_after.rbegin())
                 == ids_before.end()
             ) {
                 new_message_id = *ids_after.rbegin();

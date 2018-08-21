@@ -212,7 +212,7 @@ namespace MergeContactAutoProc {
             + "OF" + boost::lexical_cast<std::string>(quantity_case)
             +"-T-"+tech_contact_handle;
 
-            if(!additional_tech_contacts.empty())
+            if (!additional_tech_contacts.empty())
             {
                 handle += "-T-";
                 handle += Util::format_container(additional_tech_contacts,"-T-");
@@ -243,7 +243,7 @@ namespace MergeContactAutoProc {
             + "OF" + boost::lexical_cast<std::string>(quantity_case)
             +"-T-"+tech_contact_handle;
 
-            if(!additional_tech_contacts.empty())
+            if (!additional_tech_contacts.empty())
             {
                 handle += "-T-";
                 handle += Util::format_container(additional_tech_contacts,"-T-");
@@ -270,7 +270,7 @@ namespace MergeContactAutoProc {
             )
         {
             std::string admin_contacts_in_fqdn;
-            if(!admin_contacts.empty())
+            if (!admin_contacts.empty())
             {
                 admin_contacts_in_fqdn += ".";
                 admin_contacts_in_fqdn += Util::format_container(admin_contacts,".");
@@ -306,7 +306,7 @@ namespace MergeContactAutoProc {
             )
         {
             std::string additional_admin_contacts_in_fqdn;
-            if(!additional_admin_contacts.empty())
+            if (!additional_admin_contacts.empty())
             {
                 additional_admin_contacts_in_fqdn += ".";
                 additional_admin_contacts_in_fqdn += Util::format_container(additional_admin_contacts,".");
@@ -393,14 +393,14 @@ namespace MergeContactAutoProc {
                  */
 
                 /*
-                for( int j = 1; j < 32; ++j)//2^5 = 32 state combinations
+                for (int j = 1; j < 32; ++j)//2^5 = 32 state combinations
                 {
                     std::set<std::string> state_case;
-                    if(j & (1 << 0)) state_case.insert(SERVER_UPDATE_PROHIBITED);
-                    if(j & (1 << 1)) state_case.insert(SERVER_TRANSFER_PROHIBITED);
-                    if(j & (1 << 2)) state_case.insert(SERVER_DELETE_PROHIBITED);
-                    if(j & (1 << 3)) state_case.insert(SERVER_BLOCKED);
-                    if(j & (1 << 4)) state_case.insert(MOJEID_CONTACT);
+                    if (j & (1 << 0)) state_case.insert(SERVER_UPDATE_PROHIBITED);
+                    if (j & (1 << 1)) state_case.insert(SERVER_TRANSFER_PROHIBITED);
+                    if (j & (1 << 2)) state_case.insert(SERVER_DELETE_PROHIBITED);
+                    if (j & (1 << 3)) state_case.insert(SERVER_BLOCKED);
+                    if (j & (1 << 4)) state_case.insert(MOJEID_CONTACT);
                     states_.push_back(state_case);
                     BOOST_TEST_MESSAGE(Util::format_container(state_case));
                 }
@@ -790,7 +790,7 @@ namespace MergeContactAutoProc {
             )
         {
             ::LibFred::LockObjectStateRequestLock(id).exec(ctx);
-            for(std::set<std::string>::const_iterator ci = state_set.begin(); ci != state_set.end(); ++ci)
+            for (std::set<std::string>::const_iterator ci = state_set.begin(); ci != state_set.end(); ++ci)
             {
                 ctx.get_conn().exec_params(
                 "INSERT INTO object_state_request (object_id, state_id)"
@@ -1149,11 +1149,11 @@ namespace MergeContactAutoProc {
          {
              ::LibFred::OperationContextCreator ctx;
              std::map<std::string, ::LibFred::InfoContactDiff> diff_map;
-             for(std::map<std::string, ::LibFred::InfoContactData>::const_iterator ci = contact_info.begin(); ci != contact_info.end(); ++ci)
+             for (std::map<std::string, ::LibFred::InfoContactData>::const_iterator ci = contact_info.begin(); ci != contact_info.end(); ++ci)
              {
                  ::LibFred::InfoContactDiff diff = ::LibFred::diff_contact_data(ci->second
                      , ::LibFred::InfoContactHistoryById(ci->second.id).exec(ctx).at(0).info_contact_data);//including deleted contacts in history
-                 if(!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
+                 if (!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
              }
              return diff_map;
          }
@@ -1167,10 +1167,10 @@ namespace MergeContactAutoProc {
          {
              ::LibFred::OperationContextCreator ctx;
              std::map<std::string, ::LibFred::InfoNssetDiff> diff_map;
-             for(std::map<std::string, ::LibFred::InfoNssetData>::const_iterator ci = nsset_info.begin(); ci != nsset_info.end(); ++ci)
+             for (std::map<std::string, ::LibFred::InfoNssetData>::const_iterator ci = nsset_info.begin(); ci != nsset_info.end(); ++ci)
              {
                  ::LibFred::InfoNssetDiff diff = ::LibFred::diff_nsset_data(ci->second, ::LibFred::InfoNssetByHandle(ci->first).exec(ctx).info_nsset_data);
-                 if(!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
+                 if (!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
              }
              return diff_map;
          }
@@ -1184,10 +1184,10 @@ namespace MergeContactAutoProc {
          {
              ::LibFred::OperationContextCreator ctx;
              std::map<std::string, ::LibFred::InfoKeysetDiff> diff_map;
-             for(std::map<std::string, ::LibFred::InfoKeysetData>::const_iterator ci = keyset_info.begin(); ci != keyset_info.end(); ++ci)
+             for (std::map<std::string, ::LibFred::InfoKeysetData>::const_iterator ci = keyset_info.begin(); ci != keyset_info.end(); ++ci)
              {
                  ::LibFred::InfoKeysetDiff diff = ::LibFred::diff_keyset_data(ci->second, ::LibFred::InfoKeysetByHandle(ci->first).exec(ctx).info_keyset_data);
-                 if(!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
+                 if (!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
              }
              return diff_map;
          }
@@ -1201,10 +1201,10 @@ namespace MergeContactAutoProc {
          {
              ::LibFred::OperationContextCreator ctx;
              std::map<std::string, ::LibFred::InfoDomainDiff> diff_map;
-             for(std::map<std::string, ::LibFred::InfoDomainData>::const_iterator ci = domain_info.begin(); ci != domain_info.end(); ++ci)
+             for (std::map<std::string, ::LibFred::InfoDomainData>::const_iterator ci = domain_info.begin(); ci != domain_info.end(); ++ci)
              {
                  ::LibFred::InfoDomainDiff diff = ::LibFred::diff_domain_data(ci->second, ::LibFred::InfoDomainByFqdn(ci->first).exec(ctx).info_domain_data);
-                 if(!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
+                 if (!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
              }
              return diff_map;
          }
@@ -1218,10 +1218,10 @@ namespace MergeContactAutoProc {
          {
              ::LibFred::OperationContextCreator ctx;
              std::map<std::string, ::LibFred::InfoRegistrarDiff> diff_map;
-             for(std::map<std::string, ::LibFred::InfoRegistrarData>::const_iterator ci = registrar_info.begin(); ci != registrar_info.end(); ++ci)
+             for (std::map<std::string, ::LibFred::InfoRegistrarData>::const_iterator ci = registrar_info.begin(); ci != registrar_info.end(); ++ci)
              {
                  ::LibFred::InfoRegistrarDiff diff = ::LibFred::diff_registrar_data(ci->second, ::LibFred::InfoRegistrarByHandle(ci->first).exec(ctx).info_registrar_data);
-                 if(!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
+                 if (!diff.is_empty()) diff_map.insert(std::make_pair(ci->first, diff));
              }
              return diff_map;
          }
@@ -1252,7 +1252,7 @@ namespace MergeContactAutoProc {
                  " JOIN messagetype mt ON mt.id = m.msgtype "
                  " WHERE mt.name = 'delete_contact' ");
              std::map<std::string, unsigned long long> ret;
-             for(unsigned long long i = 0; i < poll_res.size(); ++i)
+             for (unsigned long long i = 0; i < poll_res.size(); ++i)
              {
                  ret[poll_res[i]["handle"]]=poll_res[i]["msgid"];
              }
@@ -1293,7 +1293,7 @@ namespace MergeContactAutoProc {
             //registrar
             registrar_vect = Util::vector_of<std::string>
                 (registrar_mc_1_handle)(registrar_mc_2_handle);
-            for(std::vector<std::string>::const_iterator reg_ci = registrar_vect.begin()
+            for (std::vector<std::string>::const_iterator reg_ci = registrar_vect.begin()
                 ; reg_ci != registrar_vect.end(); ++reg_ci)
             {
                 BOOST_TEST_MESSAGE(*reg_ci);
@@ -1310,7 +1310,7 @@ namespace MergeContactAutoProc {
                             ,ctx)));
 
             //contact
-            for(std::vector<std::string>::const_iterator reg_ci = registrar_vect.begin()
+            for (std::vector<std::string>::const_iterator reg_ci = registrar_vect.begin()
                 ; reg_ci != registrar_vect.end(); ++reg_ci)
             {
                 std::string nmch1 = create_non_mergeable_contact(ctx, *reg_ci, 1);
@@ -1328,17 +1328,17 @@ namespace MergeContactAutoProc {
                 std::string dma_nmch2 = create_domain_with_admin_contact(ctx, *reg_ci, 0, 1, 0, nmch1, nmch2);
 
                 //mergeable contacts
-                for(unsigned grpidtag = 0; grpidtag < mergeable_contact_group_count; ++grpidtag)
+                for (unsigned grpidtag = 0; grpidtag < mergeable_contact_group_count; ++grpidtag)
                 {
-                    for(unsigned state_num = 0; state_num < contact_states.size(); ++state_num)
+                    for (unsigned state_num = 0; state_num < contact_states.size(); ++state_num)
                     {
                         BOOST_TEST_MESSAGE("States S" + boost::lexical_cast<std::string>(state_num) + " " + Util::format_container(contact_states.at(state_num)));
-                        for(std::set<unsigned>::const_iterator linked_object_cases_ci = linked_object_cases.begin()
+                        for (std::set<unsigned>::const_iterator linked_object_cases_ci = linked_object_cases.begin()
                             ; linked_object_cases_ci != linked_object_cases.end(); ++linked_object_cases_ci)
                         {
-                            for(unsigned linked_object_state_case = 0; linked_object_state_case < linked_object_states.size(); ++linked_object_state_case)
+                            for (unsigned linked_object_state_case = 0; linked_object_state_case < linked_object_states.size(); ++linked_object_state_case)
                             {
-                                for(std::vector<unsigned>::const_iterator q_ci = linked_object_quantities.begin(); q_ci != linked_object_quantities.end(); ++q_ci)
+                                for (std::vector<unsigned>::const_iterator q_ci = linked_object_quantities.begin(); q_ci != linked_object_quantities.end(); ++q_ci)
                                 {
                                     std::string mch1 = create_mergeable_contact(ctx,*reg_ci, grpidtag, state_num, *linked_object_cases_ci, linked_object_state_case
                                         , *q_ci);
@@ -1352,25 +1352,25 @@ namespace MergeContactAutoProc {
 
             //linked objects need pre-created contacts
             BOOST_TEST_MESSAGE("create_linked_object");
-            for(std::vector<std::string>::const_iterator reg_ci = registrar_vect.begin()
+            for (std::vector<std::string>::const_iterator reg_ci = registrar_vect.begin()
                 ; reg_ci != registrar_vect.end(); ++reg_ci)
             {
                 BOOST_TEST_MESSAGE(std::string("registrar: ") + *reg_ci);
-                for(unsigned grpidtag = 0; grpidtag < mergeable_contact_group_count; ++grpidtag)
+                for (unsigned grpidtag = 0; grpidtag < mergeable_contact_group_count; ++grpidtag)
                 {
                     BOOST_TEST_MESSAGE(std::string("grp: ") + boost::lexical_cast<std::string>(grpidtag));
-                    for(unsigned contact_state_case = 0; contact_state_case < contact_states.size(); ++contact_state_case)
+                    for (unsigned contact_state_case = 0; contact_state_case < contact_states.size(); ++contact_state_case)
                     {
                         BOOST_TEST_MESSAGE(std::string("contact_state_case: ") + boost::lexical_cast<std::string>(contact_state_case));
 
-                        for(std::set<unsigned>::const_iterator linked_object_cases_ci = linked_object_cases.begin()
+                        for (std::set<unsigned>::const_iterator linked_object_cases_ci = linked_object_cases.begin()
                             ; linked_object_cases_ci != linked_object_cases.end(); ++linked_object_cases_ci)
                         {
                             BOOST_TEST_MESSAGE(std::string("linked_object_case: ") + boost::lexical_cast<std::string>(*linked_object_cases_ci));
-                            for(unsigned linked_object_state_case = 0; linked_object_state_case < linked_object_states.size(); ++linked_object_state_case)
+                            for (unsigned linked_object_state_case = 0; linked_object_state_case < linked_object_states.size(); ++linked_object_state_case)
                             {
                                 BOOST_TEST_MESSAGE(std::string("linked_object_state_case: ") + boost::lexical_cast<std::string>(linked_object_state_case));
-                                for(std::vector<unsigned>::const_iterator q_ci = linked_object_quantities.begin(); q_ci != linked_object_quantities.end(); ++q_ci)
+                                for (std::vector<unsigned>::const_iterator q_ci = linked_object_quantities.begin(); q_ci != linked_object_quantities.end(); ++q_ci)
                                 {
                                     BOOST_TEST_MESSAGE(std::string("linked_object_quantity: ") + boost::lexical_cast<std::string>(*q_ci));
                                     std::string contact_handle = create_contact_handle(
@@ -1382,12 +1382,12 @@ namespace MergeContactAutoProc {
                                         , linked_object_state_case
                                         , *q_ci
                                         );//return contact handle composed of given params
-                                    for(unsigned number = 0; number < *q_ci; ++number)
+                                    for (unsigned number = 0; number < *q_ci; ++number)
                                     {
                                         BOOST_TEST_MESSAGE(std::string("linked_object_quantity_case: ") + boost::lexical_cast<std::string>(number) +" of "+ boost::lexical_cast<std::string>(*q_ci));
                                         unsigned long long object_id = create_linked_object(ctx, contact_handle, *reg_ci, grpidtag, contact_state_case
                                             , *linked_object_cases_ci, linked_object_state_case, *q_ci, number);
-                                        if(object_id != 0)//else no linked object states
+                                        if (object_id != 0)//else no linked object states
                                         {
                                             insert_state_requests(ctx, object_id, linked_object_states.at(linked_object_state_case));//set states
                                         }

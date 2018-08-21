@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(test_Exec)
     int check_history_steps = 5;
     int test_count = 5;
     vector<int> tests_history_steps;
-    for(int i=0; i<test_count; ++i) {
+    for (int i=0; i<test_count; ++i) {
         tests_history_steps.push_back(RandomDataGenerator().xnum1_6());
     }
 
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE(test_Exec)
     check_logd_request_history.push_back(Optional<unsigned long long>() );
 
     // building check history
-    for(int i=1; i<check_history_steps; ++i) {
+    for (int i=1; i<check_history_steps; ++i) {
         check_status_history.push_back(setup_check_status().status_handle);
         check_logd_request_history.push_back(setup_logd_request_id().logd_request_id);
 
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(test_Exec)
     tests_error_msg_history.front().push_back(Optional<string>());
 
     // starting from 1 because first history step is already CREATEd
-    for(int j=1; j<tests_history_steps.at(0); ++j) {
+    for (int j=1; j<tests_history_steps.at(0); ++j) {
         tests_status_history.at(0).push_back(setup_test_status().status_handle_);
         tests_logd_request_history.at(0).push_back(Optional<unsigned long long>(setup_logd_request_id().logd_request_id));
         tests_error_msg_history.at(0).push_back(Optional<string>(setup_error_msg().error_msg));
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(test_Exec)
            BOOST_FAIL(string("exception (3):") + exp.what());
         }
     }
-    for(int i=1; i<test_count; ++i) {
+    for (int i=1; i<test_count; ++i) {
         test_handles.push_back(setup_testdef().testdef_handle_);
         tests_status_history.at(i).push_back(::LibFred::ContactTestStatus::ENQUEUED);
         tests_logd_request_history.at(i).push_back(Optional<unsigned long long>(setup_logd_request_id().logd_request_id));
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(test_Exec)
         }
 
         // starting from 1 because first history step is already CREATEd
-        for(int j=1; j<tests_history_steps.at(i); ++j) {
+        for (int j=1; j<tests_history_steps.at(i); ++j) {
             tests_status_history.at(i).push_back(setup_test_status().status_handle_);
             tests_logd_request_history.at(i).push_back(Optional<unsigned long long>(setup_logd_request_id().logd_request_id));
             tests_error_msg_history.at(i).push_back(Optional<string>(setup_error_msg().error_msg));
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(test_Exec)
         BOOST_FAIL(string("exception (3):") + exp.what());
     }
 
-    for(int i=0; i<check_history_steps; ++i) {
+    for (int i=0; i<check_history_steps; ++i) {
         BOOST_CHECK_EQUAL(check_status_history.at(i), info.check_state_history.at(i).status_handle);
         BOOST_CHECK_MESSAGE(
             Util::is_equal(
@@ -226,8 +226,8 @@ BOOST_AUTO_TEST_CASE(test_Exec)
         );
     }
 
-    for(int i=0; i<test_count; ++i) {
-        for(int j=0; j<tests_history_steps.at(i); ++j) {
+    for (int i=0; i<test_count; ++i) {
+        for (int j=0; j<tests_history_steps.at(i); ++j) {
             BOOST_CHECK_EQUAL(
                 tests_status_history.at(i).at(j),
                 info.tests.at(i).state_history.at(j).status_handle);
@@ -274,7 +274,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_nonexistent_check_handle)
         BOOST_FAIL("incorrect exception caught");
     }
 
-    if(! caught_the_right_exception) {
+    if (! caught_the_right_exception) {
         BOOST_FAIL("should have caught the exception");
     }
 }

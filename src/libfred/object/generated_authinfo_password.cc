@@ -25,12 +25,12 @@ namespace LibFred
     GeneratedAuthInfoPassword::GeneratedAuthInfoPassword(const std::string& _password)
     :   password_(_password)
     {
-        if(password_.length() < min_length() || password_.length() > max_length()) { throw InvalidGeneratedAuthInfoPassword(); }
+        if (password_.length() < min_length() || password_.length() > max_length()) { throw InvalidGeneratedAuthInfoPassword(); }
 
         const std::set<char> allowed_chars = get_allowed_chars();
 
         BOOST_FOREACH(const char& c, password_) {
-            if( allowed_chars.find(c) == allowed_chars.end() ) {
+            if (allowed_chars.find(c) == allowed_chars.end() ) {
                 throw InvalidGeneratedAuthInfoPassword();
             }
         }

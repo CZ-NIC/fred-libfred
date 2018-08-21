@@ -129,23 +129,23 @@ namespace LibFred
             {
                 bool caught_exception_has_been_handled = false;
 
-                if( ex.is_set_unknown_object_handle() ) {
+                if (ex.is_set_unknown_object_handle() ) {
                     update_keyset_exception.set_unknown_keyset_handle( ex.get_unknown_object_handle() );
                     caught_exception_has_been_handled = true;
                 }
 
-                if( ex.is_set_unknown_registrar_handle() ) {
+                if (ex.is_set_unknown_registrar_handle() ) {
                     update_keyset_exception.set_unknown_registrar_handle( ex.get_unknown_registrar_handle() );
                     caught_exception_has_been_handled = true;
                 }
 
-                if( ! caught_exception_has_been_handled ) {
+                if (! caught_exception_has_been_handled ) {
                     throw;
                 }
             }
 
             //add tech contacts
-            if(!add_tech_contact_.empty())
+            if (!add_tech_contact_.empty())
             {
                 Database::QueryParams params;//query params
                 std::stringstream sql;
@@ -154,13 +154,13 @@ namespace LibFred
                 sql << "INSERT INTO keyset_contact_map(keysetid, contactid) "
                         " VALUES ($" << params.size() << "::integer, ";
 
-                for(std::vector<std::string>::iterator i = add_tech_contact_.begin(); i != add_tech_contact_.end(); ++i)
+                for (std::vector<std::string>::iterator i = add_tech_contact_.begin(); i != add_tech_contact_.end(); ++i)
                 {
                     //lock object_registry row for share
                     unsigned long long tech_contact_id = get_object_id_by_handle_and_type_with_lock(
                             ctx, false, *i,"contact",&update_keyset_exception,
                             &Exception::add_unknown_technical_contact_handle);
-                    if(tech_contact_id == 0) continue;
+                    if (tech_contact_id == 0) continue;
 
                     Database::QueryParams params_i = params;//query params
                     std::stringstream sql_i;
@@ -179,7 +179,7 @@ namespace LibFred
                     catch(const std::exception& ex)
                     {
                         std::string what_string(ex.what());
-                        if(what_string.find("keyset_contact_map_pkey") != std::string::npos)
+                        if (what_string.find("keyset_contact_map_pkey") != std::string::npos)
                         {
                             update_keyset_exception.add_already_set_technical_contact_handle(*i);
                             ctx.get_conn().exec("ROLLBACK TO SAVEPOINT add_tech_contact");
@@ -192,7 +192,7 @@ namespace LibFred
             }//if add tech contacts
 
             //delete tech contacts
-            if(!rem_tech_contact_.empty())
+            if (!rem_tech_contact_.empty())
             {
                 Database::QueryParams params;//query params
                 std::stringstream sql;
@@ -201,12 +201,12 @@ namespace LibFred
                 sql << "DELETE FROM keyset_contact_map WHERE keysetid = "
                         " $" << params.size() << "::integer AND ";
 
-                for(std::vector<std::string>::iterator i = rem_tech_contact_.begin(); i != rem_tech_contact_.end(); ++i)
+                for (std::vector<std::string>::iterator i = rem_tech_contact_.begin(); i != rem_tech_contact_.end(); ++i)
                 {
                     unsigned long long tech_contact_id = get_object_id_by_handle_and_type_with_lock(
                             ctx, false,*i,"contact",&update_keyset_exception,
                             &Exception::add_unknown_technical_contact_handle);
-                    if(tech_contact_id == 0) continue;
+                    if (tech_contact_id == 0) continue;
 
                     Database::QueryParams params_i = params;//query params
                     std::stringstream sql_i;
@@ -230,9 +230,9 @@ namespace LibFred
             }//if delete tech contacts
 
             //delete dns keys - before adding new ones
-            if(!rem_dns_key_.empty())
+            if (!rem_dns_key_.empty())
             {
-                for(std::vector<DnsKey>::iterator i = rem_dns_key_.begin(); i != rem_dns_key_.end(); ++i)
+                for (std::vector<DnsKey>::iterator i = rem_dns_key_.begin(); i != rem_dns_key_.end(); ++i)
                 {
                     Database::Result rem_dns_key_res = ctx.get_conn().exec_params(
                         "DELETE FROM dnskey WHERE keysetid = $1::integer "
@@ -252,9 +252,9 @@ namespace LibFred
             }//if delete dns keys
 
             //add dns keys
-            if(!add_dns_key_.empty())
+            if (!add_dns_key_.empty())
             {
-                for(std::vector<DnsKey>::iterator i = add_dns_key_.begin(); i != add_dns_key_.end(); ++i)
+                for (std::vector<DnsKey>::iterator i = add_dns_key_.begin(); i != add_dns_key_.end(); ++i)
                 {
                     try
                     {
@@ -268,7 +268,7 @@ namespace LibFred
                     catch(const std::exception& ex)
                     {
                         std::string what_string(ex.what());
-                        if(what_string.find("dnskey_unique_key") != std::string::npos)
+                        if (what_string.find("dnskey_unique_key") != std::string::npos)
                         {
                             update_keyset_exception.add_already_set_dns_key(*i);
                             ctx.get_conn().exec("ROLLBACK TO SAVEPOINT add_dns_key");
@@ -281,7 +281,7 @@ namespace LibFred
             }//if add dns keys
 
             //check exception
-            if(update_keyset_exception.throw_me()) {
+            if (update_keyset_exception.throw_me()) {
                 BOOST_THROW_EXCEPTION(update_keyset_exception);
             }
 

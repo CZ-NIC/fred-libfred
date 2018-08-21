@@ -48,7 +48,7 @@ namespace LibFred
         , const std::vector<ContactSelectionFilterType>& filter)
     : contact_handle_(contact_handle)
     {
-        for(std::vector<ContactSelectionFilterType>::const_iterator ci = filter.begin()
+        for (std::vector<ContactSelectionFilterType>::const_iterator ci = filter.begin()
                 ; ci !=  filter.end(); ++ci)
         {
             std::shared_ptr<ContactSelectionFilterBase> filter = ContactSelectionFilterFactory::instance_ref().create_sh_ptr(*ci);
@@ -60,22 +60,22 @@ namespace LibFred
     {
         try
         {
-            if(contact_handle_.empty())
+            if (contact_handle_.empty())
             {
                 BOOST_THROW_EXCEPTION(NoContactHandles());
             }
-            for(std::vector<std::pair<std::string, std::shared_ptr<ContactSelectionFilterBase> > >::iterator f = ff_.begin(); f != ff_.end(); ++f)
+            for (std::vector<std::pair<std::string, std::shared_ptr<ContactSelectionFilterBase> > >::iterator f = ff_.begin(); f != ff_.end(); ++f)
             {
                 std::vector<std::string> current_filter_result;
-                if((f->second).get() != 0) current_filter_result = (f->second).get()->operator()(ctx,contact_handle_);
-                if(current_filter_result.size() > 1) contact_handle_ = current_filter_result;
-                if(current_filter_result.size() == 1) {
+                if ((f->second).get() != 0) current_filter_result = (f->second).get()->operator()(ctx,contact_handle_);
+                if (current_filter_result.size() > 1) contact_handle_ = current_filter_result;
+                if (current_filter_result.size() == 1) {
                     return MergeContactSelectionOutput(current_filter_result[0], f->first);
                 }
                 //if(current_filter_result.empty()) continue;//try next filter
             }
 
-            if(contact_handle_.empty())
+            if (contact_handle_.empty())
             {
                 BOOST_THROW_EXCEPTION(NoContactHandlesLeft());
             }
@@ -98,7 +98,7 @@ namespace LibFred
 
         data.push_back((std::make_pair("contact_handle",Util::format_container(contact_handle_))));
         std::ostringstream os;
-        for(std::vector<std::pair<std::string, std::shared_ptr<ContactSelectionFilterBase> > >::const_iterator ci = ff_.begin()
+        for (std::vector<std::pair<std::string, std::shared_ptr<ContactSelectionFilterBase> > >::const_iterator ci = ff_.begin()
                 ; ci != ff_.end() ; ++ci) os << " " << ci->first;
         data.push_back((std::make_pair("selection filters",os.str())));
         return Util::format_operation_state("MergeContactSelection",data);
@@ -115,7 +115,7 @@ namespace LibFred
         {
 
             std::vector<std::string> filtered;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
                 Database::Result contact_check = ctx.get_conn().exec_params(
                 "SELECT oreg.name FROM contact c JOIN object_registry oreg ON c.id = oreg.id AND oreg.erdate IS NULL "
@@ -124,7 +124,7 @@ namespace LibFred
                 " WHERE eos.name = $1::text AND oreg.name = $2::text"
                 , Database::query_param_list (LibFred::ObjectState::IDENTIFIED_CONTACT)(*i));
 
-                if(contact_check.size() == 1) filtered.push_back(*i);
+                if (contact_check.size() == 1) filtered.push_back(*i);
             }
             return filtered;
         }
@@ -144,7 +144,7 @@ namespace LibFred
                 , const std::vector<std::string>& contact_handle)
         {
             std::vector<std::string> filtered;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
                 Database::Result contact_check = ctx.get_conn().exec_params(
                 "SELECT oreg.name FROM contact c JOIN object_registry oreg ON c.id = oreg.id AND oreg.erdate IS NULL "
@@ -153,7 +153,7 @@ namespace LibFred
                 " WHERE eos.name = $1::text AND oreg.name = $2::text"
                 , Database::query_param_list (LibFred::ObjectState::CONDITIONALLY_IDENTIFIED_CONTACT)(*i));
 
-                if(contact_check.size() == 1) filtered.push_back(*i);
+                if (contact_check.size() == 1) filtered.push_back(*i);
             }
             return filtered;
         }
@@ -174,9 +174,9 @@ namespace LibFred
         {
             boost::regex mojeid_handle_syntax("^[a-z0-9](-?[a-z0-9])*$");
             std::vector<std::string> filtered;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
-                if(boost::regex_match(boost::to_lower_copy(*i), mojeid_handle_syntax)
+                if (boost::regex_match(boost::to_lower_copy(*i), mojeid_handle_syntax)
                         && (*i).length() <= 30)
                 {
                     filtered.push_back(*i);
@@ -201,7 +201,7 @@ namespace LibFred
         {
             std::vector<std::string> filtered;
 
-            if(contact_handle.empty()) return filtered;
+            if (contact_handle.empty()) return filtered;
 
             std::string query_begin("SELECT cc.handle, (cc.domain_registrant_count + cc.domain_admin_count) AS all_domains_count FROM ( "
             " SELECT current_contact.handle "
@@ -219,7 +219,7 @@ namespace LibFred
             Database::QueryParams params;//query params
             std::stringstream sql;
             sql << query_begin;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
                 params.push_back(*i);
                 sql << where_or.get() << "oreg.name = UPPER($" << params.size() << "::text) ";
@@ -228,10 +228,10 @@ namespace LibFred
 
             Database::Result contact_domains = ctx.get_conn().exec_params(sql.str(), params);
 
-            for(Database::Result::size_type i = 0 ; i < contact_domains.size(); ++i)
+            for (Database::Result::size_type i = 0 ; i < contact_domains.size(); ++i)
             {
                 //if it is first contact with maximum of domains bound or another contact with the same maximum number of domains bound
-                if((i == 0) || (std::string(contact_domains[0][1]).compare(std::string(contact_domains[i][1])) == 0 ))
+                if ((i == 0) || (std::string(contact_domains[0][1]).compare(std::string(contact_domains[i][1])) == 0 ))
                 {
                     filtered.push_back(std::string(contact_domains[i][0]));
                 }
@@ -260,7 +260,7 @@ namespace LibFred
         {
             std::vector<std::string> filtered;
 
-            if(contact_handle.empty()) return filtered;
+            if (contact_handle.empty()) return filtered;
 
 
             std::string query_begin("SELECT cc.handle, (cc.domain_registrant_count + cc.domain_admin_count + cc.nsset_tech_count + cc.keyset_tech_count) AS all_domains_count FROM ( "
@@ -283,7 +283,7 @@ namespace LibFred
             Database::QueryParams params;//query params
             std::stringstream sql;
             sql << query_begin;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
                 params.push_back(*i);
                 sql << where_or.get() << "oreg.name = UPPER($" << params.size() << "::text) ";
@@ -292,10 +292,10 @@ namespace LibFred
 
             Database::Result contact_objects = ctx.get_conn().exec_params(sql.str(), params);
 
-            for(Database::Result::size_type i = 0 ; i < contact_objects.size(); ++i)
+            for (Database::Result::size_type i = 0 ; i < contact_objects.size(); ++i)
             {
                 //if it is first contact with maximum of objects bound or another contact with the same maximum number of objects bound
-                if((i == 0) || (std::string(contact_objects[0][1]).compare(std::string(contact_objects[i][1])) == 0 ))
+                if ((i == 0) || (std::string(contact_objects[0][1]).compare(std::string(contact_objects[i][1])) == 0 ))
                 {
                     filtered.push_back(std::string(contact_objects[i][0]));
                 }
@@ -324,7 +324,7 @@ namespace LibFred
         {
             std::vector<std::string> filtered;
 
-            if(contact_handle.empty()) return filtered;
+            if (contact_handle.empty()) return filtered;
 
             std::string query_begin("SELECT oreg.name, o.update FROM object o "
                     " JOIN object_registry oreg ON o.id = oreg.id AND o.update IS NOT NULL AND oreg.erdate IS NULL"
@@ -337,7 +337,7 @@ namespace LibFred
             Database::QueryParams params;//query params
             std::stringstream sql;
             sql << query_begin;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
                 params.push_back(*i);
                 sql << where_or.get() << "oreg.name = UPPER($" << params.size() << "::text) ";
@@ -346,10 +346,10 @@ namespace LibFred
 
             Database::Result contact_updated = ctx.get_conn().exec_params(sql.str(), params);
 
-            for(Database::Result::size_type i = 0 ; i < contact_updated.size(); ++i)
+            for (Database::Result::size_type i = 0 ; i < contact_updated.size(); ++i)
             {
                 //if it is first contact with most recent update timestamp or another contact with the same update timestamp
-                if((i == 0) || (std::string(contact_updated[0][1]).compare(std::string(contact_updated[i][1])) == 0 ))
+                if ((i == 0) || (std::string(contact_updated[0][1]).compare(std::string(contact_updated[i][1])) == 0 ))
                 {
                     filtered.push_back(std::string(contact_updated[i][0]));
                 }
@@ -389,7 +389,7 @@ namespace LibFred
             Database::QueryParams params;//query params
             std::stringstream sql;
             sql << query;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
                 params.push_back(*i);
                 sql << where_or.get() << "oreg.name = UPPER($" << params.size() << "::text) ";
@@ -397,7 +397,7 @@ namespace LibFred
 
             Database::Result contact_not_regcznic = ctx.get_conn().exec_params(sql.str(), params);
 
-            for(Database::Result::size_type i = 0 ; i < contact_not_regcznic.size(); ++i)
+            for (Database::Result::size_type i = 0 ; i < contact_not_regcznic.size(); ++i)
             {
                     filtered.push_back(std::string(contact_not_regcznic[i][0]));
             }
@@ -421,7 +421,7 @@ namespace LibFred
         {
             std::vector<std::string> filtered;
 
-            if(contact_handle.empty()) return filtered;
+            if (contact_handle.empty()) return filtered;
 
             std::string query_begin("SELECT oreg.name "
                     " FROM object_registry oreg "
@@ -434,7 +434,7 @@ namespace LibFred
             Database::QueryParams params;//query params
             std::stringstream sql;
             sql << query_begin;
-            for(std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
+            for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
             {
                 params.push_back(*i);
                 sql << where_or.get() << "oreg.name = UPPER($" << params.size() << "::text) ";
@@ -443,7 +443,7 @@ namespace LibFred
 
             Database::Result contact_created = ctx.get_conn().exec_params(sql.str(), params);
 
-            if(contact_created.size() == 1)
+            if (contact_created.size() == 1)
             {
                 filtered.push_back(std::string(contact_created[0][0]));
             }

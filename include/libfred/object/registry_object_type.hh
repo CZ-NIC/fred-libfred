@@ -55,10 +55,10 @@ inline std::string to_db_handle(object_type _input) {
 
 /** @throws ExceptionUnknownObjectType */
 inline object_type object_type_from_db_handle(const std::string& _handle) {
-    if(_handle == "contact" ) { return contact; }
-    if(_handle == "domain"  ) { return domain;  }
-    if(_handle == "keyset"  ) { return keyset;  }
-    if(_handle == "nsset"   ) { return nsset;   }
+    if (_handle == "contact" ) { return contact; }
+    if (_handle == "domain"  ) { return domain;  }
+    if (_handle == "keyset"  ) { return keyset;  }
+    if (_handle == "nsset"   ) { return nsset;   }
 
     throw ExceptionUnknownObjectType();
 }

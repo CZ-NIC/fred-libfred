@@ -43,11 +43,11 @@ namespace LibFred {
             "SELECT id FROM history WHERE next = $1::integer", Database::query_param_list(history_id)
         );
 
-        if(older_history_id_res.size() > 1) {
+        if (older_history_id_res.size() > 1) {
             throw ExceptionMultipleObjectHistories();
         }
 
-        if(older_history_id_res.size() < 1) {
+        if (older_history_id_res.size() < 1) {
             return Nullable<unsigned long long>();
         }
 

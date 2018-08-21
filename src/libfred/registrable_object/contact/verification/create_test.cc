@@ -68,7 +68,7 @@ namespace LibFred
             "   WHERE handle=$1::uuid ",
             Database::query_param_list(check_handle_)
         );
-        if(check_res.size() != 1) {
+        if (check_res.size() != 1) {
             throw ExceptionUnknownCheckHandle();
         }
         unsigned long long check_id = static_cast<unsigned long long>(check_res[0]["id"]);
@@ -83,7 +83,7 @@ namespace LibFred
             "       AND c_c.handle=$2::uuid ",
             Database::query_param_list(test_handle_)(check_handle_)
         );
-        if(testinsuite_res.size() != 1) {
+        if (testinsuite_res.size() != 1) {
             // is the test really unknown? ... (see ...or below)
             Database::Result test_res = _ctx.get_conn().exec_params(
                 "SELECT id "
@@ -91,7 +91,7 @@ namespace LibFred
                 "   WHERE handle=$1::varchar ",
                 Database::query_param_list(test_handle_)
             );
-            if(test_res.size() != 1) {
+            if (test_res.size() != 1) {
                 throw ExceptionUnknownTestHandle();
             }
 
@@ -106,7 +106,7 @@ namespace LibFred
             "   WHERE handle=$1::varchar ",
             Database::query_param_list(test_handle_)
         );
-        if(test_res.size() != 1) {
+        if (test_res.size() != 1) {
             throw ExceptionUnknownTestHandle();
         }
         unsigned long long test_id = static_cast<unsigned long long>(test_res[0]["id"]);
@@ -136,15 +136,15 @@ namespace LibFred
 
             std::string what_string(_exc.what());
 
-            if(what_string.find("contact_test_result_fk_Contact_check_id") != std::string::npos) {
+            if (what_string.find("contact_test_result_fk_Contact_check_id") != std::string::npos) {
                 throw ExceptionUnknownCheckHandle();
             }
 
-            if(what_string.find("contact_test_result_fk_Enum_contact_test_id") != std::string::npos) {
+            if (what_string.find("contact_test_result_fk_Enum_contact_test_id") != std::string::npos) {
                 throw ExceptionUnknownTestHandle();
             }
 
-            if(what_string.find("idx_contact_test_result_unique_check_test_pair") != std::string::npos) {
+            if (what_string.find("idx_contact_test_result_unique_check_test_pair") != std::string::npos) {
                 throw ExceptionCheckTestPairAlreadyExists();
             }
 

@@ -69,7 +69,7 @@ namespace LibFred
         const Database::ReusableParameter p_local_zone(local_timestamp_pg_time_zone_name, "text");
         Database::ParamQuery info_contact_query;
 
-        if(info_contact_id_filter_cte_.isset())
+        if (info_contact_id_filter_cte_.isset())
         {
             info_contact_query("WITH id_filter(id) as (")(info_contact_id_filter_cte_.get_value())(") ");
         }
@@ -126,7 +126,7 @@ namespace LibFred
         " , (CURRENT_TIMESTAMP AT TIME ZONE ").param(p_local_zone)(")::timestamp AS ")(GetAlias::local_timestamp())(
         " , ct.warning_letter AS ")(GetAlias::domain_expiration_letter_preference())(
         " FROM object_registry cobr ");
-        if(history_query_)
+        if (history_query_)
         {
             info_contact_query(
             " JOIN object_history obj ON obj.id = cobr.id "
@@ -149,17 +149,17 @@ namespace LibFred
         " WHERE "
         " cobr.type = (SELECT id FROM enum_object_type eot WHERE eot.name='contact'::text) ");
 
-        if(info_contact_id_filter_cte_.isset())
+        if (info_contact_id_filter_cte_.isset())
         {
             info_contact_query(" AND cobr.id IN (SELECT id FROM id_filter) ");
         }
 
-        if(!history_query_)
+        if (!history_query_)
         {
             info_contact_query(" AND cobr.erdate IS NULL ");
         }
 
-        if(lock_)
+        if (lock_)
         {
             info_contact_query(" FOR UPDATE of cobr ");
         }
@@ -171,7 +171,7 @@ namespace LibFred
 
         //inline view sub-select locking example at:
         //http://www.postgresql.org/docs/9.1/static/sql-select.html#SQL-FOR-UPDATE-SHARE
-        if(info_contact_inline_view_filter_expr_.isset())
+        if (info_contact_inline_view_filter_expr_.isset())
         {
             info_contact_query(" WHERE ")(info_contact_inline_view_filter_expr_.get_value());
         }
@@ -190,7 +190,7 @@ namespace LibFred
 
         Database::Result query_result = ctx.get_conn().exec_params(make_query(local_timestamp_pg_time_zone_name));
         result.reserve(query_result.size());
-        for(Database::Result::size_type i = 0; i < query_result.size(); ++i)
+        for (Database::Result::size_type i = 0; i < query_result.size(); ++i)
         {
             InfoContactOutput info_contact_output;
 
@@ -283,7 +283,7 @@ namespace LibFred
             Database::QueryParams params;
             params.push_back(info_contact_output.info_contact_data.id);
             std::string sql;
-            if(history_query_) {
+            if (history_query_) {
                 sql = "SELECT type,company_name,street1,street2,street3,"
                              "city,stateorprovince,postalcode,country "
                       "FROM contact_address_history "
@@ -299,7 +299,7 @@ namespace LibFred
             }
             Database::Result subquery_result = ctx.get_conn().exec_params(sql, params);
             ContactAddressList addresses;
-            for(::size_t idx = 0; idx < subquery_result.size(); ++idx) {
+            for (::size_t idx = 0; idx < subquery_result.size(); ++idx) {
                 const ContactAddressType type(ContactAddressType::from_string(
                      static_cast< std::string >(subquery_result[idx]["type"])));
                 ContactAddress address;

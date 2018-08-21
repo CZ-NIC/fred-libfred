@@ -40,10 +40,10 @@ namespace Util
      */
     template<class T>
     bool is_equal( const Nullable<T>& lhs, const Optional<T>& rhs ) {
-        if( lhs.isnull() && !rhs.isset() ) {
+        if (lhs.isnull() && !rhs.isset() ) {
             return true;
         }
-        if( !lhs.isnull() && rhs.isset() ) {
+        if (!lhs.isnull() && rhs.isset() ) {
             return lhs.get_value() == rhs.get_value();
         }
         return false;
@@ -57,10 +57,10 @@ namespace Util
      */
     template<class T>
     bool is_equal( const Optional<T>& lhs, const Nullable<T>& rhs ) {
-        if( rhs.isnull() && !lhs.isset() ) {
+        if (rhs.isnull() && !lhs.isset() ) {
             return true;
         }
-        if( !rhs.isnull() && lhs.isset() ) {
+        if (!rhs.isnull() && lhs.isset() ) {
             return lhs.get_value() == rhs.get_value();
         }
         return false;
@@ -75,10 +75,10 @@ namespace Util
      */
     template<class T>
     bool is_equal( const Nullable<T>& lhs, const Nullable<T>& rhs ) {
-        if( lhs.isnull() && rhs.isnull() ) {
+        if (lhs.isnull() && rhs.isnull() ) {
             return true;
         }
-        if( !lhs.isnull() && !rhs.isnull() ) {
+        if (!lhs.isnull() && !rhs.isnull() ) {
             return lhs.get_value() == rhs.get_value();
         }
         return false;
@@ -93,10 +93,10 @@ namespace Util
      */
     template<class T>
     bool is_equal_upper( const Nullable<T>& lhs, const Nullable<T>& rhs ) {
-        if( lhs.isnull() && rhs.isnull() ) {
+        if (lhs.isnull() && rhs.isnull() ) {
             return true;
         }
-        if( !lhs.isnull() && !rhs.isnull() ) {
+        if (!lhs.isnull() && !rhs.isnull() ) {
             return boost::algorithm::to_upper_copy(lhs.get_value()) == boost::algorithm::to_upper_copy(rhs.get_value());
         }
         return false;
@@ -111,10 +111,10 @@ namespace Util
      */
     template<class T>
     bool is_equal_lower( const Nullable<T>& lhs, const Nullable<T>& rhs ) {
-        if( lhs.isnull() && rhs.isnull() ) {
+        if (lhs.isnull() && rhs.isnull() ) {
             return true;
         }
-        if( !lhs.isnull() && !rhs.isnull() ) {
+        if (!lhs.isnull() && !rhs.isnull() ) {
             return boost::algorithm::to_lower_copy(lhs.get_value()) == boost::algorithm::to_lower_copy(rhs.get_value());
         }
         return false;

@@ -68,7 +68,7 @@ namespace LibFred
             "   WHERE handle=$1::varchar ",
             Database::query_param_list(status_handle_)
         );
-        if(status_res.size() != 1) {
+        if (status_res.size() != 1) {
             throw ExceptionUnknownCheckStatusHandle();
         }
         long status_id = static_cast<long>(status_res[0]["id"]);
@@ -91,7 +91,7 @@ namespace LibFred
             );
 
             if (update_contact_check_res.size() != 1) {
-                if(_ctx.get_conn().
+                if (_ctx.get_conn().
                         exec_params(
                             "SELECT handle FROM contact_check WHERE handle=$1::uuid",
                             Database::query_param_list(check_handle_))
@@ -105,7 +105,7 @@ namespace LibFred
 
             std::string what_string(_exc.what());
 
-            if(what_string.find("contact_check_fk_Enum_contact_check_status_id") != std::string::npos) {
+            if (what_string.find("contact_check_fk_Enum_contact_check_status_id") != std::string::npos) {
                 throw ExceptionUnknownCheckStatusHandle();
             }
 

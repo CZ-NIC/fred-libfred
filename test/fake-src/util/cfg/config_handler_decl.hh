@@ -55,7 +55,7 @@ public:
     {
         HandlerPtrMap::const_iterator it;
         it = hpm_.find( typeid(T).name() );
-        if(it != hpm_.end())//if found
+        if (it != hpm_.end())//if found
             return it->second;
         //not found
         return HandleArgsPtr(static_cast<HandleArgs*>(0));
@@ -65,7 +65,7 @@ public:
     {
         HandlerPtrMap::const_iterator it;
         it = hpm_.find( typeid(T).name() );
-        if(it != hpm_.end())//if found
+        if (it != hpm_.end())//if found
             return dynamic_cast<T*>(it->second.get());
         //not found
         char errmsg[256]={'\0'};
@@ -80,7 +80,7 @@ private:
         : hpv_(hpv) //vector init
     {
         //map init
-        for(HandlerPtrVector::const_iterator i = hpv.begin()
+        for (HandlerPtrVector::const_iterator i = hpv.begin()
                 ; i != hpv.end(); ++i )
         {
             const HandleArgs *ha_ptr = i->get();
@@ -98,7 +98,7 @@ public:
         //initial fa
         fa.init(argc, argv);
 
-        for(HandlerPtrVector::const_iterator i = hpv_.begin()
+        for (HandlerPtrVector::const_iterator i = hpv_.begin()
                 ; i != hpv_.end(); ++i )
         {
             FakedArgs fa_out;
@@ -120,11 +120,11 @@ template <class HELP> CfgArgs* CfgArgs::init(const HandlerPtrVector& hpv)
     HandleArgsPtr ha =
             tmp_instance->get_handler_by_type<HELP>();
     HELP* hga = 0;//nonowning temp child
-    if(ha.get() != 0)
+    if (ha.get() != 0)
         hga = dynamic_cast<HELP*>(ha.get());
-    if(hga != 0)
+    if (hga != 0)
     {
-        for(HandlerPtrVector::const_iterator i = hpv.begin()
+        for (HandlerPtrVector::const_iterator i = hpv.begin()
                 ; i != hpv.end(); ++i )
             hga->po_description.push_back((*i)->get_options_description());
     }
@@ -148,7 +148,7 @@ public:
     {
         HandlerGrpPtrMap::const_iterator it;
         it = hpm_.find( typeid(T).name() );
-        if(it != hpm_.end())//if found
+        if (it != hpm_.end())//if found
             return it->second;
         //not found
         return HandleGrpArgsPtr(static_cast<HandleGrpArgs*>(0));
@@ -158,7 +158,7 @@ public:
     {
         HandlerGrpPtrMap::const_iterator it;
         it = hpm_.find( typeid(T).name() );
-        if(it != hpm_.end())//if found
+        if (it != hpm_.end())//if found
             return dynamic_cast<T*>(it->second.get());
         //not found
         char errmsg[256]={'\0'};
@@ -173,9 +173,9 @@ private:
         : hpg_(hpg) //grid init
     {
         //map init
-        for(HandlerPtrGrid::const_iterator i = hpg_.begin()
+        for (HandlerPtrGrid::const_iterator i = hpg_.begin()
                 ; i != hpg_.end(); ++i )
-            for(HandlerGrpVector::const_iterator j = i->begin()
+            for (HandlerGrpVector::const_iterator j = i->begin()
                     ; j != i->end(); ++j )
             {
                 //overwrites instance of the same type used more than once
@@ -196,7 +196,7 @@ public:
 
         std::size_t group_index = 0;//start index
 
-        for(HandlerPtrGrid::const_iterator i = hpg_.begin()
+        for (HandlerPtrGrid::const_iterator i = hpg_.begin()
                 ; i != hpg_.end(); ++i )
         {
             FakedArgs fa_out;
@@ -218,13 +218,13 @@ template <class HELP> CfgArgGroups* CfgArgGroups::init(const HandlerPtrGrid& hpg
     HandleGrpArgsPtr ha =
             tmp_instance->get_handler_by_type<HELP>();
     HELP* hga = 0;//nonowning temp child
-    if(ha.get() != 0)
+    if (ha.get() != 0)
         hga = dynamic_cast<HELP*>(ha.get());
-    if(hga != 0)
+    if (hga != 0)
     {
-        for(HandlerPtrGrid::const_iterator i = hpg.begin()
+        for (HandlerPtrGrid::const_iterator i = hpg.begin()
                 ; i != hpg.end(); ++i )
-            for(HandlerGrpVector::const_iterator j = i->begin()
+            for (HandlerGrpVector::const_iterator j = i->begin()
                     ; j != i->end(); ++j )
             {
                 try

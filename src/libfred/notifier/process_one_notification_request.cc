@@ -137,7 +137,7 @@ bool process_one_notification_request(LibFred::OperationContext& _ctx, std::shar
 
             } catch(const std::exception& ex) {
                 const std::string what_string(ex.what());
-                if(what_string.find("could not obtain lock on row in relation \"notification_queue\"") != std::string::npos) {
+                if (what_string.find("could not obtain lock on row in relation \"notification_queue\"") != std::string::npos) {
                     throw FailedToLockRequest();
                 }
                 throw;
@@ -149,7 +149,7 @@ bool process_one_notification_request(LibFred::OperationContext& _ctx, std::shar
     {
         const Database::Result notification_to_send_res = process_postgres_locking_exception::get_notification_to_send(_ctx);
 
-        if(notification_to_send_res.size() < 1) {
+        if (notification_to_send_res.size() < 1) {
             _ctx.get_log().info(log_prefix + "no record found in notification_queue");
             return false;
         }

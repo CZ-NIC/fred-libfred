@@ -304,7 +304,7 @@ std::map<std::string, std::string> gather_contact_update_data_change(
                 to_string(diff.discloseaddress.get_value().second));
     }
 
-    if(diff.disclosenotifyemail.isset())
+    if (diff.disclosenotifyemail.isset())
     {
         add_old_new_changes_pair_if_different(
                 result,

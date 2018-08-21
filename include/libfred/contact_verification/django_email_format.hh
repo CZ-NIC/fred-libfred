@@ -48,7 +48,7 @@ public:
             "|^\\[(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\]$"// literal form, ipv4 address (SMTP 4.1.3)
             , boost::regex::icase);
 
-        if(email.empty()) return false;
+        if (email.empty()) return false;
 
         std::string::size_type email_at = email.rfind('@');
         if (email_at == std::string::npos) return false;
@@ -56,14 +56,14 @@ public:
         try
         {
             std::string user_part = email.substr(0,email_at);
-            if(user_part.empty()) return false;
+            if (user_part.empty()) return false;
 
             std::string domain_part = email.substr(email_at+1);
-            if(domain_part.empty()) return false;
+            if (domain_part.empty()) return false;
 
             if (!boost::regex_match(user_part,user_regex)) return false;
 
-            if(std::find(domain_whitelist_.begin(), domain_whitelist_.end()
+            if (std::find(domain_whitelist_.begin(), domain_whitelist_.end()
                 , domain_part)!=domain_whitelist_.end())
             {
                 return true;
@@ -74,9 +74,9 @@ public:
                 //domain part idn conversion
                 std::string converted_domain_part = Util::convert_utf8_to_punnycode(domain_part).get_value_or_default();
 
-                if(converted_domain_part.empty()) return false;
+                if (converted_domain_part.empty()) return false;
 
-                if(!boost::regex_match(converted_domain_part,domain_regex)) return false;
+                if (!boost::regex_match(converted_domain_part,domain_regex)) return false;
             }
         }
         catch(const std::exception& ex)

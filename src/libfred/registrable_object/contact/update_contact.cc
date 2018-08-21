@@ -251,7 +251,7 @@ unsigned long long UpdateContact< DERIVED >::exec(OperationContext& ctx
                                      : Nullable< ::size_t >()).exec(ctx);
     }
     catch(const UpdateObject::Exception& ex) {
-        if(ex.is_set_unknown_registrar_handle()) {
+        if (ex.is_set_unknown_registrar_handle()) {
             //fatal good path, need valid registrar performing update
             BOOST_THROW_EXCEPTION(Exception().set_unknown_registrar_handle(ex.get_unknown_registrar_handle()));
         }
@@ -259,12 +259,12 @@ unsigned long long UpdateContact< DERIVED >::exec(OperationContext& ctx
         bool caught_exception_has_been_handled = false;
 
         //non-fatal good paths, update can continue to check input
-        if(ex.is_set_unknown_object_handle()) {
+        if (ex.is_set_unknown_object_handle()) {
             update_contact_exception.set_unknown_contact_handle(contact.info_contact_data.handle);
             caught_exception_has_been_handled = true;
         }
 
-        if( ! caught_exception_has_been_handled ) {
+        if (! caught_exception_has_been_handled ) {
             throw; //rethrow unexpected
         }
     }
@@ -674,7 +674,7 @@ unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
         }
         catch(const LibFred::InfoContactById::Exception& info_exception)
         {
-            if(info_exception.is_set_unknown_object_id())
+            if (info_exception.is_set_unknown_object_id())
             {
                 update_exception.set_unknown_contact_id(
                     info_exception.get_unknown_object_id());
@@ -690,7 +690,7 @@ unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
         }
         catch(const UpdateContact<UpdateContactById>::Exception& update_contact_exception)
         {
-            if( update_contact_exception.is_set_unknown_registrar_handle() ) {
+            if (update_contact_exception.is_set_unknown_registrar_handle() ) {
                 //fatal good path, need valid registrar performing update
                 BOOST_THROW_EXCEPTION( ExceptionType().set_unknown_registrar_handle( update_contact_exception.get_unknown_registrar_handle()) );
             }
@@ -698,29 +698,29 @@ unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
             bool caught_exception_has_been_handled = false;
 
             //non-fatal good paths, update can continue to check input
-            if(update_contact_exception.is_set_unknown_contact_handle()) {
+            if (update_contact_exception.is_set_unknown_contact_handle()) {
                 update_exception.set_unknown_contact_id(id_);
                 caught_exception_has_been_handled = true;
             }
-            if( update_contact_exception.is_set_unknown_ssntype() ) {
+            if (update_contact_exception.is_set_unknown_ssntype() ) {
                 update_exception.set_unknown_ssntype( update_contact_exception.get_unknown_ssntype() );
                 caught_exception_has_been_handled = true;
             }
-            if( update_contact_exception.is_set_unknown_country() ) {
+            if (update_contact_exception.is_set_unknown_country() ) {
                 update_exception.set_unknown_country( update_contact_exception.get_unknown_country() );
                 caught_exception_has_been_handled = true;
             }
-            if( update_contact_exception.is_set_forbidden_company_name_setting() ) {
+            if (update_contact_exception.is_set_forbidden_company_name_setting() ) {
                 update_exception.set_forbidden_company_name_setting( update_contact_exception.get_forbidden_company_name_setting() );
                 caught_exception_has_been_handled = true;
             }
 
-            if( ! caught_exception_has_been_handled ) {
+            if (! caught_exception_has_been_handled ) {
                 throw; //rethrow unexpected
             }
         }
 
-        if(update_exception.throw_me())
+        if (update_exception.throw_me())
         {
             BOOST_THROW_EXCEPTION(update_exception);
         }
@@ -817,7 +817,7 @@ unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
         }
         catch(const LibFred::InfoContactByHandle::Exception& info_exception)
         {
-            if(info_exception.is_set_unknown_contact_handle())
+            if (info_exception.is_set_unknown_contact_handle())
             {
                 update_exception.set_unknown_contact_handle(
                     info_exception.get_unknown_contact_handle());
@@ -833,7 +833,7 @@ unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
         }
         catch(const UpdateContact<UpdateContactByHandle>::Exception& update_contact_exception)
         {
-            if( update_contact_exception.is_set_unknown_registrar_handle() ) {
+            if (update_contact_exception.is_set_unknown_registrar_handle() ) {
                 //fatal good path, need valid registrar performing update
                 BOOST_THROW_EXCEPTION( ExceptionType().set_unknown_registrar_handle( update_contact_exception.get_unknown_registrar_handle()) );
             }
@@ -841,29 +841,29 @@ unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
             bool caught_exception_has_been_handled = false;
 
             //non-fatal good paths, update can continue to check input
-            if( update_contact_exception.is_set_unknown_contact_handle() ) {
+            if (update_contact_exception.is_set_unknown_contact_handle() ) {
                 update_exception.set_unknown_contact_handle(handle_);
                 caught_exception_has_been_handled = true;
             }
-            if( update_contact_exception.is_set_unknown_ssntype() ) {
+            if (update_contact_exception.is_set_unknown_ssntype() ) {
                 update_exception.set_unknown_ssntype( update_contact_exception.get_unknown_ssntype() );
                 caught_exception_has_been_handled = true;
             }
-            if( update_contact_exception.is_set_unknown_country() ) {
+            if (update_contact_exception.is_set_unknown_country() ) {
                 update_exception.set_unknown_country( update_contact_exception.get_unknown_country() );
                 caught_exception_has_been_handled = true;
             }
-            if( update_contact_exception.is_set_forbidden_company_name_setting() ) {
+            if (update_contact_exception.is_set_forbidden_company_name_setting() ) {
                 update_exception.set_forbidden_company_name_setting( update_contact_exception.get_forbidden_company_name_setting() );
                 caught_exception_has_been_handled = true;
             }
 
-            if( ! caught_exception_has_been_handled ) {
+            if (! caught_exception_has_been_handled ) {
                 throw; //rethrow unexpected
             }
         }
 
-        if(update_exception.throw_me())
+        if (update_exception.throw_me())
         {
             BOOST_THROW_EXCEPTION(update_exception);
         }

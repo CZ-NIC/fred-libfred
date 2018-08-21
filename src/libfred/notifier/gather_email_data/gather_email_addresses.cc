@@ -53,9 +53,9 @@ static std::set<std::string> get_email_addresses(
 
     std::set<std::string> result;
 
-    for(unsigned int i = 0; i < email_addresses.size(); ++i) {
+    for (unsigned int i = 0; i < email_addresses.size(); ++i) {
         const std::string email_addr = boost::algorithm::trim_copy( static_cast<std::string>( email_addresses[i]["notifyemail"] ) );
-        if( !email_addr.empty() ) {
+        if (!email_addr.empty() ) {
             result.insert(email_addr);
         }
     }
@@ -68,13 +68,13 @@ std::set<std::string> gather_email_addresses(
     const EventOnObject& _event_on_object,
     unsigned long long _last_history_id /* XXX always post change but delete ... */
 ) {
-    if( _event_on_object.get_type() == LibFred::contact ) {
+    if (_event_on_object.get_type() == LibFred::contact ) {
         return get_emails_to_notify_contact_event(_ctx, _event_on_object.get_event(), _last_history_id);
     }
 
     std::set<unsigned long long> contact_ids_to_notify;
 
-    if( _event_on_object.get_type() == LibFred::domain ) {
+    if (_event_on_object.get_type() == LibFred::domain ) {
         contact_ids_to_notify = gather_contact_ids_to_notify_domain_event(_ctx, _event_on_object.get_event(), _last_history_id);
 
     } else if( _event_on_object.get_type() == LibFred::keyset ) {

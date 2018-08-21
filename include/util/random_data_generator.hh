@@ -161,7 +161,7 @@ public:
     {
         std::string ret;
         ret.reserve(length);
-        for(std::size_t i = 0; i < length; ++i)
+        for (std::size_t i = 0; i < length; ++i)
         {
             ret.push_back(xletter());
         }
@@ -173,7 +173,7 @@ public:
     {
         std::string ret;
         ret.reserve(length);
-        for(std::size_t i = 0; i < length; ++i)
+        for (std::size_t i = 0; i < length; ++i)
         {
             ret.push_back(xnumletter());
         }
@@ -185,7 +185,7 @@ public:
     {
         std::string ret;
         ret.reserve(length);
-        for(std::size_t i = 0; i < length; ++i)
+        for (std::size_t i = 0; i < length; ++i)
         {
             ret.push_back(xnletter());
         }

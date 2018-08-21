@@ -103,7 +103,7 @@ namespace LibFred
                 std::vector<std::string> wheres;
                 Database::QueryParams params;
 
-                if(testsuite_handle_.isset()) {
+                if (testsuite_handle_.isset()) {
                     // enum_contact_testsuite is already used by the fixed part of query
                     //joins.push_back();
 
@@ -113,7 +113,7 @@ namespace LibFred
                     params.push_back(testsuite_handle_.get_value());
                 }
 
-                if(contact_id_.isset()) {
+                if (contact_id_.isset()) {
                     // contact_historyid is already used by the fixed part of query
                     //joins.push_back();
 
@@ -123,7 +123,7 @@ namespace LibFred
                     params.push_back(contact_id_.get_value());
                 }
 
-                if(status_handle_.isset()) {
+                if (status_handle_.isset()) {
                     joins.push_back(
                         " JOIN enum_contact_check_status AS enum_c_ch_status ON "+ check_alias +".enum_contact_check_status_id = enum_c_ch_status.id " );
 
@@ -190,7 +190,7 @@ namespace LibFred
 
                 ListChecksItem temp_item;
 
-                for(Database::Result::Iterator it = contact_check_records.begin();
+                for (Database::Result::Iterator it = contact_check_records.begin();
                     it != contact_check_records.end();
                     ++it
                 ) {
@@ -214,11 +214,11 @@ namespace LibFred
 
             // set time when tests finished if it is the current state
             {
-                for(std::map<std::string, ListChecksItem>::iterator it = checks.begin();
+                for (std::map<std::string, ListChecksItem>::iterator it = checks.begin();
                     it != checks.end();
                     ++it
                 ) {
-                    if( std::find(
+                    if (std::find(
                             statuses.begin(),
                             statuses.end(),
                             it->second.status_handle
@@ -233,7 +233,7 @@ namespace LibFred
             // note: overrides eventually previously set time in previous block
             {
                 std::vector<std::string> handles;
-                for(std::map<std::string, ListChecksItem>::const_iterator it = checks.begin();
+                for (std::map<std::string, ListChecksItem>::const_iterator it = checks.begin();
                     it != checks.end();
                     ++it
                 ) {
@@ -265,7 +265,7 @@ namespace LibFred
                         ( std::string("{") + boost::join(handles, ",") + "}")
                         ( std::string("{") + boost::join(statuses, ",") + "}")
                 );
-                for(Database::Result::Iterator it = contact_check_records.begin();
+                for (Database::Result::Iterator it = contact_check_records.begin();
                     it != contact_check_records.end();
                     ++it
                 ) {
@@ -275,7 +275,7 @@ namespace LibFred
             }
 
             std::vector<ListChecksItem> result;
-            for(std::map<std::string, ListChecksItem>::const_iterator it = checks.begin();
+            for (std::map<std::string, ListChecksItem>::const_iterator it = checks.begin();
                 it != checks.end();
                 ++it
             ) {

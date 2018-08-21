@@ -26,11 +26,11 @@ static bool equal(const LibFred::DnsHost& a, const LibFred::DnsHost& b) {
 }
 
 static bool equal(const std::vector<LibFred::DnsHost>& a, const std::vector<LibFred::DnsHost>& b) {
-    if( a.size() != b.size() ) {
+    if (a.size() != b.size() ) {
         return false;
     }
-    for(std::vector<LibFred::DnsHost>::size_type i = 0; i < a.size(); ++i) {
-        if( ! equal(a.at(i), b.at(i)) ) { return false; }
+    for (std::vector<LibFred::DnsHost>::size_type i = 0; i < a.size(); ++i) {
+        if (! equal(a.at(i), b.at(i)) ) { return false; }
     }
     return true;
 }
@@ -55,7 +55,7 @@ static std::map<std::string, std::string> gather_nsset_update_data_change(
 
     const LibFred::InfoNssetDiff diff = diff_nsset_data(_before, _after);
 
-    if(diff.authinfopw.isset()) {
+    if (diff.authinfopw.isset()) {
         add_old_new_changes_pair_if_different(
             result, "object.authinfo",
             diff.authinfopw.get_value().first,
@@ -63,7 +63,7 @@ static std::map<std::string, std::string> gather_nsset_update_data_change(
         );
     }
 
-    if(diff.tech_check_level.isset()) {
+    if (diff.tech_check_level.isset()) {
         add_old_new_changes_pair_if_different(
             result, "nsset.check_level",
             diff.tech_check_level.get_value().first.isnull()
@@ -75,7 +75,7 @@ static std::map<std::string, std::string> gather_nsset_update_data_change(
         );
     }
 
-    if(diff.tech_contacts.isset()) {
+    if (diff.tech_contacts.isset()) {
         add_old_new_changes_pair_if_different(
             result, "nsset.tech_c",
             boost::algorithm::join( sort( get_handles( diff.tech_contacts.get_value().first  ) ), " " ),
@@ -83,21 +83,21 @@ static std::map<std::string, std::string> gather_nsset_update_data_change(
         );
     }
 
-    if(diff.dns_hosts.isset()) {
+    if (diff.dns_hosts.isset()) {
         std::vector<LibFred::DnsHost> sorted_nameservers_old = diff.dns_hosts.get_value().first;
         std::sort(sorted_nameservers_old.begin(), sorted_nameservers_old.end(), sort_by_hostname);
 
         std::vector<LibFred::DnsHost> sorted_nameservers_new = diff.dns_hosts.get_value().second;
         std::sort(sorted_nameservers_new.begin(), sorted_nameservers_new.end(), sort_by_hostname);
 
-        if( ! equal(sorted_nameservers_old, sorted_nameservers_new) ) {
+        if (! equal(sorted_nameservers_old, sorted_nameservers_new) ) {
             result["changes.nsset.dns"] = "1";
 
-            for(std::vector<LibFred::DnsHost>::size_type i = 0; i < sorted_nameservers_old.size(); ++i) {
+            for (std::vector<LibFred::DnsHost>::size_type i = 0; i < sorted_nameservers_old.size(); ++i) {
                 result["changes.nsset.dns.old." + boost::lexical_cast<std::string>(i)] = dns_host_to_string( sorted_nameservers_old.at(i) );
             }
 
-            for(std::vector<LibFred::DnsHost>::size_type i = 0; i < sorted_nameservers_new.size(); ++i) {
+            for (std::vector<LibFred::DnsHost>::size_type i = 0; i < sorted_nameservers_new.size(); ++i) {
                 result["changes.nsset.dns.new." + boost::lexical_cast<std::string>(i)] = dns_host_to_string( sorted_nameservers_new.at(i) );
             }
         }
@@ -114,7 +114,7 @@ std::map<std::string, std::string> gather_nsset_data_change(
     unsigned long long _history_id_post_change
 ) {
 
-    if( _event != updated ) {
+    if (_event != updated ) {
 
         return std::map<std::string, std::string>();
 
@@ -158,7 +158,7 @@ std::set<unsigned long long> gather_contact_ids_to_notify_nsset_event(
     }
 
     // if there were possibly other old values notify those as well
-    if( _event == updated ) {
+    if (_event == updated ) {
         const std::set<unsigned long long> nssets_accepting_notifications_before_change = get_ids_of_nssets_accepting_notifications(
             LibFred::InfoNssetHistoryByHistoryid(
                 LibFred::get_previous_object_historyid(_ctx, _history_id_after_change)

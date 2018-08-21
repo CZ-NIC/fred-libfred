@@ -74,9 +74,9 @@ namespace LibFred
            : std::string(" FOR SHARE OF oreg"))
         , Database::query_param_list(object_handle)(object_type));
 
-        if(object_id_res.size() == 0)
+        if (object_id_res.size() == 0)
         {
-            if(ex_ptr == 0)//make new exception instance, set data and throw
+            if (ex_ptr == 0)//make new exception instance, set data and throw
             {
                 BOOST_THROW_EXCEPTION((EXCEPTION().*ex_handle_setter)(object_handle));
             }
@@ -121,9 +121,9 @@ namespace LibFred
             Database::query_param_list(object_id)
         );
 
-        if(locked_res.size() == 0) {
+        if (locked_res.size() == 0) {
             //make new exception instance, set data and throw
-            if(ex_ptr == 0) {
+            if (ex_ptr == 0) {
                 BOOST_THROW_EXCEPTION((EXCEPTION().*ex_handle_setter)(object_id));
             } else {
                 //set unknown handle to given exception instance (don't throw) and return 0

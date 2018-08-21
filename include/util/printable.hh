@@ -161,13 +161,13 @@ namespace Util
         std::string out;
         typename CONTAINER::const_iterator i = in.begin();
 
-        if(i != in.end())
+        if (i != in.end())
         {
             out += printable_conversion_to_string(*i,EnumType<ConversionToString<typename CONTAINER::value_type>::result >());
             ++i;
         }
 
-        for(; i != in.end(); ++i)
+        for (; i != in.end(); ++i)
         {
             out += separator;
             out += printable_conversion_to_string(*i,EnumType<ConversionToString<typename CONTAINER::value_type>::result >());
@@ -181,7 +181,7 @@ namespace Util
     template <class T> std::string format_csv_data(std::vector<std::vector<T> > data)
     {
         std::stringstream ret;
-        for(unsigned long long i = 0; i < data.size(); ++i)
+        for (unsigned long long i = 0; i < data.size(); ++i)
         {
             ret << "#" << i << " |" << Util::format_container(data.at(i),"|") << "|";
         }

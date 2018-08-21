@@ -54,7 +54,7 @@ namespace Test {
 
     static void check_dbname_length(const std::string& db_name)
     {
-        if(db_name.length() > max_postgresql_database_name_length)
+        if (db_name.length() > max_postgresql_database_name_length)
         {
             throw std::runtime_error(std::string("db_name.length(): ") + boost::lexical_cast<std::string>(db_name.length())
                 + " > max_postgresql_database_name_length: "+ boost::lexical_cast<std::string>(max_postgresql_database_name_length)

@@ -18,7 +18,7 @@
 
 setup_testdef::setup_testdef() {
     // prevent handle collisions
-    while(true) {
+    while (true) {
         try {
             ::LibFred::OperationContextCreator ctx;
 
@@ -65,7 +65,7 @@ setup_testdef_in_testsuite::setup_testdef_in_testsuite(const std::string& testde
 
     ctx.commit_transaction();
 
-    if(res.size() != 1) {
+    if (res.size() != 1) {
         throw std::runtime_error("inserting testdef to testsuite");
     }
 
@@ -87,14 +87,14 @@ setup_testdef_in_testsuite_of_check::setup_testdef_in_testsuite_of_check(const s
 
     ctx.commit_transaction();
 
-    if(res.size() != 1) {
+    if (res.size() != 1) {
         throw std::runtime_error("inserting testdef to testsuite");
     }
 }
 
 setup_empty_testsuite::setup_empty_testsuite() {
     // prevent handle collisions
-    while(true) {
+    while (true) {
         try {
             ::LibFred::OperationContextCreator ctx;
 
@@ -119,7 +119,7 @@ setup_empty_testsuite::setup_empty_testsuite(const std::string& _testsuite_handl
     : testsuite_handle(_testsuite_handle)
 {
     // prevent handle collisions
-    while(true) {
+    while (true) {
         try {
             ::LibFred::OperationContextCreator ctx;
 
@@ -164,7 +164,7 @@ setup_logd_request_id::setup_logd_request_id() {
 setup_check_status::setup_check_status() {
     Database::Result res;
     // prevent handle collisions
-    while(true) {
+    while (true) {
         try {
             ::LibFred::OperationContextCreator ctx;
 
@@ -183,7 +183,7 @@ setup_check_status::setup_check_status() {
         break;
     }
 
-    if(res.size()!=1) {
+    if (res.size()!=1) {
         throw std::runtime_error("creating check status failed");
     }
 }
@@ -193,7 +193,7 @@ setup_check_status::setup_check_status(const std::string& _handle)
 {
     Database::Result res;
 
-    while(true) {
+    while (true) {
         try {
             ::LibFred::OperationContextCreator ctx;
 
@@ -210,7 +210,7 @@ setup_check_status::setup_check_status(const std::string& _handle)
     }
     break;
             }
-    if(res.size()!=1) {
+    if (res.size()!=1) {
         throw std::runtime_error("creating check status failed");
     }
 }
@@ -218,7 +218,7 @@ setup_check_status::setup_check_status(const std::string& _handle)
 setup_test_status::setup_test_status() {
     Database::Result res;
     // prevent handle collisions
-    while(true) {
+    while (true) {
         try {
             ::LibFred::OperationContextCreator ctx;
 
@@ -236,7 +236,7 @@ setup_test_status::setup_test_status() {
         }
         break;
     }
-    if(res.size()!=1) {
+    if (res.size()!=1) {
         throw std::runtime_error("creating test status failed");
     }
 }
@@ -246,7 +246,7 @@ setup_test_status::setup_test_status(const std::string& _handle)
 {
     Database::Result res;
 
-    while(true) {
+    while (true) {
         try {
             ::LibFred::OperationContextCreator ctx;
 
@@ -263,7 +263,7 @@ setup_test_status::setup_test_status(const std::string& _handle)
         }
         break;
     }
-    if(res.size()!=1) {
+    if (res.size()!=1) {
         throw std::runtime_error("creating test status failed");
     }
 }

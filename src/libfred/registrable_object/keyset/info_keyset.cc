@@ -60,7 +60,7 @@ namespace LibFred
             InfoKeyset ik;
             ik.set_inline_view_filter(Database::ParamQuery(InfoKeyset::GetAlias::handle())(" = UPPER(").param_text(handle_)(")")).set_history_query(false);
 
-            if(lock_)
+            if (lock_)
             {
                 ik.set_lock();
             }
@@ -115,7 +115,7 @@ namespace LibFred
             InfoKeyset ik;
             ik.set_inline_view_filter(Database::ParamQuery(InfoKeyset::GetAlias::id())(" = ").param_bigint(id_)).set_history_query(false);
 
-            if(lock_)
+            if (lock_)
             {
                 ik.set_lock();
             }
@@ -170,7 +170,7 @@ namespace LibFred
             InfoKeyset ik;
             ik.set_inline_view_filter(Database::ParamQuery(InfoKeyset::GetAlias::roid())(" = ").param_text(roid_)).set_history_query(true);
 
-            if(lock_)
+            if (lock_)
             {
                 ik.set_lock();
             }
@@ -215,7 +215,7 @@ namespace LibFred
             InfoKeyset ik;
             ik.set_inline_view_filter(Database::ParamQuery(InfoKeyset::GetAlias::id())(" = ").param_bigint(id_)).set_history_query(true);
 
-            if(lock_)
+            if (lock_)
             {
                 ik.set_lock();
             }
@@ -259,7 +259,7 @@ namespace LibFred
             InfoKeyset ik;
             ik.set_inline_view_filter(Database::ParamQuery(InfoKeyset::GetAlias::historyid())(" = ").param_bigint(historyid_)).set_history_query(true);
 
-            if(lock_)
+            if (lock_)
             {
                 ik.set_lock();
             }
@@ -327,7 +327,7 @@ namespace LibFred
                         " JOIN keyset_contact_map kcm ON kcm.contactid = oreg.id"
                     " WHERE oreg.name = UPPER(").param_text(tech_contact_handle_)(") AND oreg.erdate IS NULL");
 
-            if(limit_.isset())
+            if (limit_.isset())
             {
                 cte_id_filter_query (" ORDER BY kcm.keysetid LIMIT ").param_bigint(limit_.get_value());
             }
@@ -341,7 +341,7 @@ namespace LibFred
             ik.set_cte_id_filter(cte_id_filter_query)
                 .set_history_query(false);
 
-            if(lock_)
+            if (lock_)
             {
                 ik.set_lock();
             }

@@ -79,7 +79,7 @@ std::map<std::string, std::string> gather_email_content(
 
     std::map<std::string, std::string> object_type_specific_data;
 
-    if( _request.event.get_type()        == LibFred::contact   ) {
+    if (_request.event.get_type()        == LibFred::contact   ) {
         object_type_specific_data = gather_contact_data_change( _ctx, _request.event.get_event(), _request.history_id_post_change );
 
     } else if( _request.event.get_type() == LibFred::domain    ) {
@@ -95,13 +95,13 @@ std::map<std::string, std::string> gather_email_content(
         throw ExceptionObjectTypeNotImplemented();
     }
 
-    if( !object_type_specific_data.empty() ) {
+    if (!object_type_specific_data.empty() ) {
 
-        for(std::map<std::string, std::string>::const_iterator it = object_type_specific_data.begin();
+        for (std::map<std::string, std::string>::const_iterator it = object_type_specific_data.begin();
             it != object_type_specific_data.end();
             ++it
         ) {
-            if(data.find(it->first) != data.end()) {
+            if (data.find(it->first) != data.end()) {
                 /* value for given key is already present in result data */
                 throw ExceptionDataLoss();
             }

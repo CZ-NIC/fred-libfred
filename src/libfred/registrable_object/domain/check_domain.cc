@@ -42,7 +42,7 @@ namespace LibFred
     {
         try
         {
-            if(!Domain::is_rfc1123_compliant_host_name(fqdn_)) {
+            if (!Domain::is_rfc1123_compliant_host_name(fqdn_)) {
                 return true;
             }
 
@@ -57,7 +57,7 @@ namespace LibFred
             }
             catch(const Zone::Exception& ex)
             {
-                if(ex.is_set_unknown_zone_in_fqdn()
+                if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
                 {
                     return true;//zone not found
@@ -68,7 +68,7 @@ namespace LibFred
             }
 
             //domain_name_validation
-            if(!LibFred::Domain::DomainNameValidator(is_system_registrar_)
+            if (!LibFred::Domain::DomainNameValidator(is_system_registrar_)
                 .set_checker_names(LibFred::Domain::get_domain_name_validation_config_for_zone(ctx, zone.name))
                 .set_zone_name(LibFred::Domain::DomainName(zone.name))
                 .set_ctx(ctx)
@@ -101,7 +101,7 @@ namespace LibFred
             }
             catch(const Zone::Exception& ex)
             {
-                if(ex.is_set_unknown_zone_in_fqdn()
+                if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
                 {
                     return true;
@@ -135,7 +135,7 @@ namespace LibFred
             }
             catch(const Zone::Exception& ex)
             {
-                if(ex.is_set_unknown_zone_in_fqdn()
+                if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
                 {
                     return true;//zone not found
@@ -146,7 +146,7 @@ namespace LibFred
             }
 
             //check number of labels
-            if(std::count(no_root_dot_fqdn.begin(), no_root_dot_fqdn.end(),'.')+1//fqdn labels number
+            if (std::count(no_root_dot_fqdn.begin(), no_root_dot_fqdn.end(),'.')+1//fqdn labels number
                 > std::count(zone.name.begin(), zone.name.end(),'.')+1+zone.dots_max)//max labels by zone
             {
                 return true;
@@ -173,7 +173,7 @@ namespace LibFred
                 "WHERE $1::text ~* b.regexp AND NOW()>=b.valid_from "
                 "AND (b.valid_to ISNULL OR NOW()<b.valid_to) "
             , Database::query_param_list(no_root_dot_fqdn));
-            if(bl_res.size() > 0)//positively blacklisted
+            if (bl_res.size() > 0)//positively blacklisted
             {
                 return true;
             }
@@ -201,7 +201,7 @@ namespace LibFred
             }
             catch(const Zone::Exception& ex)
             {
-                if(ex.is_set_unknown_zone_in_fqdn()
+                if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
                 {
                     return false;//zone not found
@@ -211,14 +211,14 @@ namespace LibFred
                 }
             }
 
-            if(zone.is_enum)
+            if (zone.is_enum)
             {
                 Database::Result conflicting_fqdn_res  = ctx.get_conn().exec_params(
                     "SELECT o.name, o.id FROM object_registry o WHERE o.type=get_object_type_id('domain'::text) "
                     "AND o.erdate ISNULL ""AND (($1::text LIKE '%.'|| o.name) "
                     "OR (o.name LIKE '%.'||$1::text) OR o.name=LOWER($1::text)) LIMIT 1"
                 , Database::query_param_list(no_root_dot_fqdn));
-                if(conflicting_fqdn_res.size() > 0)//have conflicting_fqdn
+                if (conflicting_fqdn_res.size() > 0)//have conflicting_fqdn
                 {
                     conflicting_fqdn_out = static_cast<std::string>(conflicting_fqdn_res[0][0]);
                     return true;
@@ -230,7 +230,7 @@ namespace LibFred
                     "SELECT o.name, o.id FROM object_registry o WHERE o.type=get_object_type_id('domain'::text) "
                     "AND o.erdate ISNULL AND o.name=LOWER($1::text) LIMIT 1"
                 , Database::query_param_list(no_root_dot_fqdn));
-                if(conflicting_fqdn_res.size() > 0)//have conflicting_fqdn
+                if (conflicting_fqdn_res.size() > 0)//have conflicting_fqdn
                 {
                     conflicting_fqdn_out = static_cast<std::string>(conflicting_fqdn_res[0][0]);
                     return true;
@@ -257,7 +257,7 @@ namespace LibFred
     {
         try
         {
-            if(is_invalid_syntax(ctx)
+            if (is_invalid_syntax(ctx)
             || is_bad_length(ctx)
             || is_registered(ctx)
             || is_blacklisted(ctx))

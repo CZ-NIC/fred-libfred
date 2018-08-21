@@ -197,7 +197,7 @@ namespace Database
         std::map<std::shared_ptr<int>, std::string > param_lid_position;
         std::pair<std::string,query_param_list> query;
 
-        for(std::vector<Element>::const_iterator
+        for (std::vector<Element>::const_iterator
             ci = param_query_.begin(); ci != param_query_.end(); ++ci)
         {
             switch (ci->get_tag())
@@ -223,10 +223,10 @@ namespace Database
                     std::shared_ptr<int> lid = ci->get_lid();
                     Optional<std::string> pos = optional_map_at<Optional>(param_lid_position, lid);
 
-                    if(!pos.isset()) //new parameter instance
+                    if (!pos.isset()) //new parameter instance
                     {
                         pos = Optional<std::string>(query.second.add(ci->get_param()));
-                        if( ! param_lid_position.insert( std::make_pair(lid, pos.get_value()) ).second )
+                        if (! param_lid_position.insert( std::make_pair(lid, pos.get_value()) ).second )
                         {
                             throw std::runtime_error("ParamQuery::Element::PQE_PARAM_REPETABLE insert failed");
                         }

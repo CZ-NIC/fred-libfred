@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(create_registrar)
 
     test_info.id = registrar_info.info_registrar_data.id;
 
-    if(test_info != registrar_info.info_registrar_data)
+    if (test_info != registrar_info.info_registrar_data)
     {
         BOOST_TEST_MESSAGE(::LibFred::diff_registrar_data(test_info,registrar_info.info_registrar_data).to_string());
     }

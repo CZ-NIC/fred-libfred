@@ -37,18 +37,18 @@ namespace LibFred
             keyset_data = LibFred::InfoKeysetById(_keyset_id).set_lock().exec(_ctx).info_keyset_data;
 
         } catch(const LibFred::InfoKeysetById::Exception& e) {
-            if( e.is_set_unknown_object_id() ) {
+            if (e.is_set_unknown_object_id() ) {
                 throw UnknownKeysetId();
             }
             throw;
         }
 
-        if(keyset_data.authinfopw == _authinfopw_for_authorization) {
+        if (keyset_data.authinfopw == _authinfopw_for_authorization) {
             return true;
         }
 
         BOOST_FOREACH(const ObjectIdHandlePair& tech_contact, keyset_data.tech_contacts) {
-            if( InfoContactByHandle(tech_contact.handle).exec(_ctx).info_contact_data.authinfopw
+            if (InfoContactByHandle(tech_contact.handle).exec(_ctx).info_contact_data.authinfopw
                 == _authinfopw_for_authorization
             ) {
                 return true;
@@ -60,7 +60,7 @@ namespace LibFred
 
     unsigned long long TransferKeyset::exec(OperationContext& _ctx) {
 
-        if( is_transfer_authorized(_ctx, keyset_id_, authinfopw_for_authorization_) ) {
+        if (is_transfer_authorized(_ctx, keyset_id_, authinfopw_for_authorization_) ) {
             unsigned long long new_history_id;
 
             try {

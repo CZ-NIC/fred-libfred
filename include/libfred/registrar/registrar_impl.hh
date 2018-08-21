@@ -53,9 +53,9 @@ namespace Registrar
         Database::Result registrar_res = ctx.get_conn().exec_params(
             "SELECT id FROM registrar WHERE handle = UPPER($1::text) FOR SHARE"
             , Database::query_param_list(registrar_handle));
-        if(registrar_res.size() == 0)//registrar not found
+        if (registrar_res.size() == 0)//registrar not found
         {
-            if(ex_ptr == 0)//make new exception instance, set data and throw
+            if (ex_ptr == 0)//make new exception instance, set data and throw
             {
                 BOOST_THROW_EXCEPTION((EXCEPTION().*ex_setter)(registrar_handle));
             }

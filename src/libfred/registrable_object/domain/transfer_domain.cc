@@ -37,24 +37,24 @@ namespace LibFred
             domain_data = LibFred::InfoDomainById(_domain_id).set_lock().exec(_ctx).info_domain_data;
 
         } catch(const LibFred::InfoDomainById::Exception& e) {
-            if( e.is_set_unknown_object_id() ) {
+            if (e.is_set_unknown_object_id() ) {
                 throw UnknownDomainId();
             }
             throw;
         }
 
-        if(domain_data.authinfopw == _authinfopw_for_authorization) {
+        if (domain_data.authinfopw == _authinfopw_for_authorization) {
             return true;
         }
 
-        if( InfoContactByHandle(domain_data.registrant.handle).exec(_ctx).info_contact_data.authinfopw
+        if (InfoContactByHandle(domain_data.registrant.handle).exec(_ctx).info_contact_data.authinfopw
             == _authinfopw_for_authorization
         ) {
             return true;
         }
 
         BOOST_FOREACH(const ObjectIdHandlePair& admin_contact, domain_data.admin_contacts) {
-            if( InfoContactByHandle(admin_contact.handle).exec(_ctx).info_contact_data.authinfopw
+            if (InfoContactByHandle(admin_contact.handle).exec(_ctx).info_contact_data.authinfopw
                 == _authinfopw_for_authorization
             ) {
                 return true;
@@ -66,7 +66,7 @@ namespace LibFred
 
     unsigned long long TransferDomain::exec(OperationContext& _ctx) {
 
-        if( is_transfer_authorized(_ctx, domain_id_, authinfopw_for_authorization_) ) {
+        if (is_transfer_authorized(_ctx, domain_id_, authinfopw_for_authorization_) ) {
             unsigned long long new_history_id;
 
             try {

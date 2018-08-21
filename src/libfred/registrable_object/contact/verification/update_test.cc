@@ -87,7 +87,7 @@ namespace LibFred
             "   WHERE handle=$1::varchar ",
             Database::query_param_list(status_handle_)
         );
-        if(status_res.size() != 1) {
+        if (status_res.size() != 1) {
             throw ExceptionUnknownTestStatusHandle();
         }
         long status_id = static_cast<long>(status_res[0]["id"]);
@@ -99,7 +99,7 @@ namespace LibFred
             "   WHERE handle=$1::uuid ",
             Database::query_param_list(check_handle_)
         );
-        if(check_res.size() != 1) {
+        if (check_res.size() != 1) {
             throw ExceptionUnknownCheckHandle();
         }
         unsigned long long check_id = static_cast<unsigned long long>(check_res[0]["id"]);
@@ -111,7 +111,7 @@ namespace LibFred
             "   WHERE handle=$1::varchar ",
             Database::query_param_list(test_handle_)
         );
-        if(test_res.size() != 1) {
+        if (test_res.size() != 1) {
             throw ExceptionUnknownTestHandle();
         }
         unsigned long long test_id = static_cast<unsigned long long>(test_res[0]["id"]);
@@ -140,7 +140,7 @@ namespace LibFred
 
             if (update_contact_test_res.size() != 1) {
                 // is specified record existing at all?
-                if( _ctx.get_conn().exec_params(
+                if (_ctx.get_conn().exec_params(
                        "SELECT id "
                        "    FROM contact_test_result "
                        "    WHERE contact_check_id=$1::bigint "
@@ -157,15 +157,15 @@ namespace LibFred
 
             std::string what_string(_exc.what());
 
-            if(what_string.find("contact_test_result_fk_Contact_check_id") != std::string::npos) {
+            if (what_string.find("contact_test_result_fk_Contact_check_id") != std::string::npos) {
                 throw ExceptionUnknownCheckHandle();
             }
 
-            if(what_string.find("contact_test_result_fk_Enum_contact_test_id") != std::string::npos) {
+            if (what_string.find("contact_test_result_fk_Enum_contact_test_id") != std::string::npos) {
                 throw ExceptionUnknownTestHandle();
             }
 
-            if(what_string.find("contact_test_result_history_fk_Enum_contact_test_status_id") != std::string::npos) {
+            if (what_string.find("contact_test_result_history_fk_Enum_contact_test_status_id") != std::string::npos) {
                 throw ExceptionUnknownTestStatusHandle();
             }
 

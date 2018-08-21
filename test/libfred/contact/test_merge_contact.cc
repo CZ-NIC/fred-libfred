@@ -340,7 +340,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_with_added_tech_contact, merge_fixture
 
     std::map<std::string, ::LibFred::InfoNssetDiff> changed_nssets = diff_nssets();
 
-    for(std::map<std::string, ::LibFred::InfoNssetDiff>::const_iterator ci = changed_nssets.begin(); ci != changed_nssets.end(); ++ci)
+    for (std::map<std::string, ::LibFred::InfoNssetDiff>::const_iterator ci = changed_nssets.begin(); ci != changed_nssets.end(); ++ci)
     {
         BOOST_TEST_MESSAGE("changed_nsset handle: " << ci->first);
     }
@@ -623,7 +623,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_with_added_tech_contact, merge_fixtur
     std::map<std::string, ::LibFred::InfoKeysetDiff> changed_keysets = diff_keysets();
     BOOST_CHECK(changed_keysets.size() == 2); //updated keyset, tech contact changed from src contact to dst contact
 
-    for(std::map<std::string, ::LibFred::InfoKeysetDiff>::const_iterator ci = changed_keysets.begin(); ci != changed_keysets.end(); ++ci)
+    for (std::map<std::string, ::LibFred::InfoKeysetDiff>::const_iterator ci = changed_keysets.begin(); ci != changed_keysets.end(); ++ci)
     {
         BOOST_TEST_MESSAGE("changed_keyset handle: " << ci->first);
     }
@@ -1018,7 +1018,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_5, merge_fixture)
     std::map<std::string, ::LibFred::InfoNssetDiff> changed_nssets = diff_nssets();
     BOOST_CHECK(changed_nssets.size() == nsset_quantity); //updated nsset, tech contact changed from src contact to dst contact
 
-    for(unsigned number = 0 ; number < nsset_quantity; ++number)
+    for (unsigned number = 0 ; number < nsset_quantity; ++number)
     {
         std::string nsset_handle= create_nsset_with_tech_contact_handle(
             0//linked_object_state_case
@@ -1140,7 +1140,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_5, merge_fixture)
     std::map<std::string, ::LibFred::InfoKeysetDiff> changed_keysets = diff_keysets();
     BOOST_CHECK(changed_keysets.size() == keyset_quantity); //updated nsset, tech contact changed from src contact to dst contact
 
-    for(unsigned number = 0 ; number < keyset_quantity; ++number)
+    for (unsigned number = 0 ; number < keyset_quantity; ++number)
     {
         std::string keyset_handle= create_keyset_with_tech_contact_handle(
             0//linked_object_state_case
@@ -1264,7 +1264,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_owner_5, merge_fixture)
     std::map<std::string, ::LibFred::InfoDomainDiff> changed_domains = diff_domains();
     BOOST_CHECK(changed_domains.size() == domain_quantity); //updated domain, owner contact changed from src contact to dst contact
 
-    for(unsigned number = 0; number < domain_quantity; ++number)
+    for (unsigned number = 0; number < domain_quantity; ++number)
     {
         std::string fqdn= create_domain_with_owner_contact_fqdn(
             0//linked_object_state_case
@@ -1384,7 +1384,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin_5, merge_fixture)
     //domain changes
     std::map<std::string, ::LibFred::InfoDomainDiff> changed_domains = diff_domains();
     BOOST_CHECK(changed_domains.size() == domain_quantity); //updated domain, owner contact changed from src contact to dst contact
-    for(unsigned number = 0; number < domain_quantity; ++number)
+    for (unsigned number = 0; number < domain_quantity; ++number)
     {
         std::string fqdn= create_domain_with_admin_contact_fqdn(
             0//linked_object_state_case
@@ -1462,7 +1462,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin_5, merge_fixture)
 BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_owner, merge_fixture)
 {
     unsigned accumulated_linked_object_quantity = 0;
-    for(std::vector<unsigned>::const_iterator loq_ci = linked_object_quantities.begin(); loq_ci != linked_object_quantities.end(); ++loq_ci)
+    for (std::vector<unsigned>::const_iterator loq_ci = linked_object_quantities.begin(); loq_ci != linked_object_quantities.end(); ++loq_ci)
     {
         accumulated_linked_object_quantity += *loq_ci;
 
@@ -1536,7 +1536,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
 
         BOOST_CHECK(changed_nssets.size() == accumulated_linked_object_quantity); //updated nsset, tech contact changed from src contact to dst contact
 
-        for(unsigned number = 0; number < *loq_ci; ++number)//if src contact have linked object
+        for (unsigned number = 0; number < *loq_ci; ++number)//if src contact have linked object
         {
             std::string nsset_handle = create_nsset_with_tech_contact_handle(
                 0//linked_object_state_case
@@ -1570,7 +1570,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
         std::map<std::string, ::LibFred::InfoKeysetDiff> changed_keysets = diff_keysets();
         BOOST_CHECK(changed_keysets.size() == accumulated_linked_object_quantity); //updated keyset, tech contact changed from src contact to dst contact
 
-        for(unsigned number = 0; number < *loq_ci; ++number)//if src contact have linked object
+        for (unsigned number = 0; number < *loq_ci; ++number)//if src contact have linked object
         {
             std::string keyset_handle= create_keyset_with_tech_contact_handle(
                 0//linked_object_state_case
@@ -1604,7 +1604,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
         std::map<std::string, ::LibFred::InfoDomainDiff> changed_domains = diff_domains();
         BOOST_CHECK(changed_domains.size() == (accumulated_linked_object_quantity * 2)); //updated domains, owner and admin contact changed from src contact to dst contact
 
-        for(unsigned number = 0; number < *loq_ci; ++number)//if src contact have linked object
+        for (unsigned number = 0; number < *loq_ci; ++number)//if src contact have linked object
         {
             std::string owner_fqdn= create_domain_with_owner_contact_fqdn(
                 0//linked_object_state_case
@@ -2046,7 +2046,7 @@ BOOST_FIXTURE_TEST_CASE(test_src_domain_owner_with_admin_to_different_admin, mer
 
     //domain changes
     std::map<std::string, ::LibFred::InfoDomainDiff> changed_domains = diff_domains();
-    for(std::map<std::string, ::LibFred::InfoDomainDiff>::const_iterator ci = changed_domains.begin(); ci != changed_domains.end(); ++ci)
+    for (std::map<std::string, ::LibFred::InfoDomainDiff>::const_iterator ci = changed_domains.begin(); ci != changed_domains.end(); ++ci)
     {
         BOOST_TEST_MESSAGE("changed_domain fqdn: " << ci->first);
     }
@@ -2734,7 +2734,7 @@ BOOST_FIXTURE_TEST_CASE(test_src_updproh_domain_owner_and_admin_to_other_admin, 
 
     //domain changes
     std::map<std::string, ::LibFred::InfoDomainDiff> changed_domains = diff_domains();
-    for(std::map<std::string, ::LibFred::InfoDomainDiff>::const_iterator ci = changed_domains.begin(); ci != changed_domains.end(); ++ci)
+    for (std::map<std::string, ::LibFred::InfoDomainDiff>::const_iterator ci = changed_domains.begin(); ci != changed_domains.end(); ++ci)
     {
         BOOST_TEST_MESSAGE("changed_domain fqdn: " << ci->first);
     }

@@ -177,7 +177,7 @@ namespace LibFred
     {
         std::ostringstream out;
 
-        for(typename std::map< KEY, VALUE >::const_iterator ptr = in.begin(); ptr != in.end(); ++ptr)
+        for (typename std::map< KEY, VALUE >::const_iterator ptr = in.begin(); ptr != in.end(); ++ptr)
         {
             if (!out.str().empty()) {
                 out << " ";

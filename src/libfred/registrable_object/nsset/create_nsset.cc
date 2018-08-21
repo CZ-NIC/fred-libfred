@@ -113,7 +113,7 @@ namespace LibFred
             catch(const CreateObject::Exception& create_object_exception)
             {
                 //CreateObject implementation sets only one member at once into Exception instance
-                if(create_object_exception.is_set_unknown_registrar_handle())
+                if (create_object_exception.is_set_unknown_registrar_handle())
                 {
                     //fatal good path, need valid registrar performing create
                     BOOST_THROW_EXCEPTION(Exception().set_unknown_registrar_handle(
@@ -141,7 +141,7 @@ namespace LibFred
                 col_sql << col_separator.get() << "id";
                 val_sql << val_separator.get() << "$" << params.size() <<"::integer";
 
-                if(tech_check_level_.isset())
+                if (tech_check_level_.isset())
                 {
                     params.push_back(tech_check_level_.get_value());
                     col_sql << col_separator.get() << "checklevel";
@@ -154,9 +154,9 @@ namespace LibFred
                 ctx.get_conn().exec_params(col_sql.str() + val_sql.str(), params);
 
                 //set dns hosts
-                if(!dns_hosts_.empty())
+                if (!dns_hosts_.empty())
                 {
-                    for(std::vector<DnsHost>::iterator i = dns_hosts_.begin(); i != dns_hosts_.end(); ++i)
+                    for (std::vector<DnsHost>::iterator i = dns_hosts_.begin(); i != dns_hosts_.end(); ++i)
                     {
                         unsigned long long add_host_id = 0;
                         try
@@ -173,7 +173,7 @@ namespace LibFred
                         catch(const std::exception& ex)
                         {
                             std::string what_string(ex.what());
-                            if(what_string.find("host_nssetid_fqdn_key") != std::string::npos)
+                            if (what_string.find("host_nssetid_fqdn_key") != std::string::npos)
                             {
                                 create_nsset_exception.add_already_set_dns_host(i->get_fqdn());
                                 ctx.get_conn().exec("ROLLBACK TO SAVEPOINT dnshost");
@@ -185,7 +185,7 @@ namespace LibFred
 
                         std::vector<boost::asio::ip::address> dns_host_ip = i->get_inet_addr();
 
-                        for(std::vector<boost::asio::ip::address>::iterator j = dns_host_ip.begin(); j != dns_host_ip.end(); ++j)
+                        for (std::vector<boost::asio::ip::address>::iterator j = dns_host_ip.begin(); j != dns_host_ip.end(); ++j)
                         {
                             try
                             {
@@ -199,7 +199,7 @@ namespace LibFred
                             catch(const std::exception& ex)
                             {
                                 std::string what_string(ex.what());
-                                if(what_string.find("syntax for type inet") != std::string::npos)
+                                if (what_string.find("syntax for type inet") != std::string::npos)
                                 {
                                     create_nsset_exception.add_invalid_dns_host_ipaddr(j->to_string());
                                     ctx.get_conn().exec("ROLLBACK TO SAVEPOINT dnshostipaddr");
@@ -214,7 +214,7 @@ namespace LibFred
 
 
                 //set tech contacts
-                if(!tech_contacts_.empty())
+                if (!tech_contacts_.empty())
                 {
                     Database::QueryParams params;//query params
                     std::stringstream sql;
@@ -223,13 +223,13 @@ namespace LibFred
                     sql << "INSERT INTO nsset_contact_map(nssetid, contactid) "
                             " VALUES ($" << params.size() << "::integer, ";
 
-                    for(std::vector<std::string>::iterator i = tech_contacts_.begin(); i != tech_contacts_.end(); ++i)
+                    for (std::vector<std::string>::iterator i = tech_contacts_.begin(); i != tech_contacts_.end(); ++i)
                     {
                         //lock object_registry row for share and get id
                         unsigned long long tech_contact_id = get_object_id_by_handle_and_type_with_lock(
                                 ctx, false,*i,"contact",&create_nsset_exception,
                                 &Exception::add_unknown_technical_contact_handle);
-                        if(tech_contact_id == 0) continue;
+                        if (tech_contact_id == 0) continue;
 
                         Database::QueryParams params_i = params;//query params
                         std::stringstream sql_i;
@@ -247,7 +247,7 @@ namespace LibFred
                         catch(const std::exception& ex)
                         {
                             std::string what_string(ex.what());
-                            if(what_string.find("nsset_contact_map_pkey") != std::string::npos)
+                            if (what_string.find("nsset_contact_map_pkey") != std::string::npos)
                             {
                                 create_nsset_exception.add_already_set_technical_contact_handle(*i);
                                 ctx.get_conn().exec("ROLLBACK TO SAVEPOINT tech_contact");
@@ -260,7 +260,7 @@ namespace LibFred
                 }//if set tech contacts
 
                 //check exception
-                if(create_nsset_exception.throw_me())
+                if (create_nsset_exception.throw_me())
                     BOOST_THROW_EXCEPTION(create_nsset_exception);
 
                 //get crdate from object_registry

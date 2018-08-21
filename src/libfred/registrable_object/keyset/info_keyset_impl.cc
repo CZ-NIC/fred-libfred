@@ -73,7 +73,7 @@ namespace LibFred
         const Database::ReusableParameter p_local_zone(local_timestamp_pg_time_zone_name, "text");
         Database::ParamQuery info_keyset_query;
 
-        if(info_keyset_id_filter_cte_.isset())
+        if (info_keyset_id_filter_cte_.isset())
         {
             info_keyset_query("WITH id_filter(id) as (")(info_keyset_id_filter_cte_.get_value())(") ");
         }
@@ -104,7 +104,7 @@ namespace LibFred
         /* CURRENT_TIMESTAMP is of type TIMESTAMP WITH TIME ZONE Ticket #15178 */
         " , (CURRENT_TIMESTAMP AT TIME ZONE ").param(p_local_zone)(")::timestamp AS ")(GetAlias::local_timestamp())(
         " FROM object_registry kobr ");
-        if(history_query_)
+        if (history_query_)
         {
             info_keyset_query(
             " JOIN object_history obj ON obj.id = kobr.id "
@@ -125,18 +125,18 @@ namespace LibFred
         " WHERE "
         " kobr.type = (SELECT id FROM enum_object_type eot WHERE eot.name='keyset'::text) ");
 
-        if(info_keyset_id_filter_cte_.isset())
+        if (info_keyset_id_filter_cte_.isset())
         {
             info_keyset_query(" AND kobr.id IN (SELECT id FROM id_filter) ");
         }
 
-        if(!history_query_)
+        if (!history_query_)
         {
             info_keyset_query(
             " AND kobr.erdate IS NULL ");
         }
 
-        if(lock_)
+        if (lock_)
         {
             info_keyset_query(
             " FOR UPDATE of kobr ");
@@ -147,7 +147,7 @@ namespace LibFred
         }
         info_keyset_query(") as tmp");
 
-        if(info_keyset_inline_view_filter_expr_.isset())
+        if (info_keyset_inline_view_filter_expr_.isset())
         {
             info_keyset_query(" WHERE ")(info_keyset_inline_view_filter_expr_.get_value());
         }
@@ -166,7 +166,7 @@ namespace LibFred
         Database::ParamQuery query;
 
         query("SELECT cobr.id AS tech_contact_id, cobr.name AS tech_contact_handle");
-        if(history_query_)
+        if (history_query_)
         {
             query(" FROM keyset_contact_map_history kcm "
                 " JOIN object_registry cobr ON kcm.contactid = cobr.id "
@@ -192,7 +192,7 @@ namespace LibFred
         Database::ParamQuery query;
 
         query("SELECT d.id, d.flags AS flags, d.protocol AS protocol, d.alg AS alg, d.key AS key");
-        if(history_query_)
+        if (history_query_)
         {
             query(" FROM dnskey_history d "
                 " WHERE d.keysetid = ").param_bigint(id)
@@ -216,7 +216,7 @@ namespace LibFred
 
         result.reserve(query_result.size());
 
-        for(Database::Result::size_type i = 0; i < query_result.size(); ++i)
+        for (Database::Result::size_type i = 0; i < query_result.size(); ++i)
         {
             InfoKeysetOutput info_keyset_output;
             info_keyset_output.info_keyset_data.id = static_cast<unsigned long long>(query_result[i][GetAlias::id()]);
@@ -250,7 +250,7 @@ namespace LibFred
             Database::Result tech_contact_res = ctx.get_conn().exec_params(make_tech_contact_query(
                 info_keyset_output.info_keyset_data.id, info_keyset_output.info_keyset_data.historyid));
             info_keyset_output.info_keyset_data.tech_contacts.reserve(tech_contact_res.size());
-            for(Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
+            for (Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
             {
                 info_keyset_output.info_keyset_data.tech_contacts.push_back(LibFred::ObjectIdHandlePair(
                     static_cast<unsigned long long>(tech_contact_res[j]["tech_contact_id"]),
@@ -262,7 +262,7 @@ namespace LibFred
             Database::Result dns_keys_res = ctx.get_conn().exec_params(make_dns_keys_query(
                 info_keyset_output.info_keyset_data.id, info_keyset_output.info_keyset_data.historyid));
             info_keyset_output.info_keyset_data.tech_contacts.reserve(dns_keys_res.size());
-            for(Database::Result::size_type j = 0; j < dns_keys_res.size(); ++j)
+            for (Database::Result::size_type j = 0; j < dns_keys_res.size(); ++j)
             {
                 unsigned short flags = static_cast<unsigned int>(dns_keys_res[j]["flags"]);
                 unsigned short protocol = static_cast<unsigned int>(dns_keys_res[j]["protocol"]);

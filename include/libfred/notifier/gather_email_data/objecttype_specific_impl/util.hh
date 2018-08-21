@@ -38,7 +38,7 @@ namespace Notification {
         notified_event _event,
         unsigned long long _last_history_id
     ) {
-        if(
+        if (
                _event != created
             && _event != updated
             && _event != transferred
@@ -61,7 +61,7 @@ namespace Notification {
             p
         );
 
-        if(time_res.size() != 1) {
+        if (time_res.size() != 1) {
             throw ExceptionUnknownHistoryId();
         }
 

@@ -52,11 +52,11 @@ public:
         KeyVector not_found_keys_vector;
 
         KeyVector key_vector = FACTORY::instance_ref().get_keys();
-        for(typename KeyVector::iterator i = key_vector.begin()
+        for (typename KeyVector::iterator i = key_vector.begin()
                         ; i != key_vector.end(); ++i)
         {
             //look for FACTORY keys in required_keys
-            if(std::find(required_keys_.begin(), required_keys_.end(), *i)
+            if (std::find(required_keys_.begin(), required_keys_.end(), *i)
                 == required_keys_.end())
             {
                 throw_not_found_keys = true;
@@ -95,11 +95,11 @@ public:
         KeyVector not_found_keys_vector;
 
         KeyVector key_vector = FACTORY::instance_ref().get_keys();
-        for(typename KeyVector::iterator i = required_keys_.begin()
+        for (typename KeyVector::iterator i = required_keys_.begin()
                         ; i != required_keys_.end(); ++i)
         {
             //look for required keys in FACTORY
-            if(std::find(key_vector.begin(), key_vector.end(), *i)
+            if (std::find(key_vector.begin(), key_vector.end(), *i)
                 == key_vector.end())
             {
                 throw_not_found_keys = true;
@@ -123,10 +123,10 @@ template <class FACTORY> std::vector<std::string> get_names_begining_with_prefix
     typedef  std::vector< typename FACTORY::key_type > KeyVector;
     std::vector<std::string> names;
     KeyVector key_vector = FACTORY::instance_ref().get_keys();
-    for(typename KeyVector::const_iterator i = key_vector.begin()
+    for (typename KeyVector::const_iterator i = key_vector.begin()
                     ; i != key_vector.end(); ++i)
     {
-        if(i->substr(0, prefix.length()).compare(prefix) == 0)
+        if (i->substr(0, prefix.length()).compare(prefix) == 0)
         {
             names.push_back(*i);
         }

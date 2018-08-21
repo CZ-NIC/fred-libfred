@@ -59,11 +59,11 @@ inline std::string to_db_handle(notified_event _input) {
 
 /** @throws ExceptionUnknownNotifiedEvent */
 inline notified_event notified_event_from_db_handle(const std::string& _handle) {
-    if(_handle == "created"     ) { return created;     }
-    if(_handle == "updated"     ) { return updated;     }
-    if(_handle == "transferred" ) { return transferred; }
-    if(_handle == "deleted"     ) { return deleted;     }
-    if(_handle == "renewed"     ) { return renewed;     }
+    if (_handle == "created"     ) { return created;     }
+    if (_handle == "updated"     ) { return updated;     }
+    if (_handle == "transferred" ) { return transferred; }
+    if (_handle == "deleted"     ) { return deleted;     }
+    if (_handle == "renewed"     ) { return renewed;     }
 
     throw ExceptionUnknownNotifiedEvent();
 }
@@ -86,7 +86,7 @@ class EventOnObject {
             type_(_type),
             event_(_event)
         {
-            if(
+            if (
                 event_ == renewed
                 &&
                 ( type_ == LibFred::contact || type_ == LibFred::keyset || type_ == LibFred::nsset )

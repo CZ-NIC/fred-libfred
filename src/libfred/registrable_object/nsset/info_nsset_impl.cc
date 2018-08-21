@@ -74,7 +74,7 @@ namespace LibFred
         const Database::ReusableParameter p_local_zone(local_timestamp_pg_time_zone_name, "text");
         Database::ParamQuery info_nsset_query;
 
-        if(info_nsset_id_filter_cte_.isset())
+        if (info_nsset_id_filter_cte_.isset())
         {
             info_nsset_query("WITH id_filter(id) as (")(info_nsset_id_filter_cte_.get_value())(") ");
         }
@@ -106,7 +106,7 @@ namespace LibFred
         /* CURRENT_TIMESTAMP is of type TIMESTAMP WITH TIME ZONE Ticket #15178 */
         " , (CURRENT_TIMESTAMP AT TIME ZONE ").param(p_local_zone)(")::timestamp AS ")(GetAlias::local_timestamp())(
         " FROM object_registry nobr ");
-        if(history_query_)
+        if (history_query_)
         {
             info_nsset_query(
             " JOIN object_history obj ON obj.id = nobr.id "
@@ -127,18 +127,18 @@ namespace LibFred
         " WHERE "
         " nobr.type = (SELECT id FROM enum_object_type eot WHERE eot.name='nsset'::text) ");
 
-        if(info_nsset_id_filter_cte_.isset())
+        if (info_nsset_id_filter_cte_.isset())
         {
             info_nsset_query(" AND nobr.id IN (SELECT id FROM id_filter) ");
         }
 
-        if(!history_query_)
+        if (!history_query_)
         {
             info_nsset_query(
             " AND nobr.erdate IS NULL ");
         }
 
-        if(lock_)
+        if (lock_)
         {
             info_nsset_query(
             " FOR UPDATE of nobr ");
@@ -151,7 +151,7 @@ namespace LibFred
 
         //inline view sub-select locking example at:
         //http://www.postgresql.org/docs/9.1/static/sql-select.html#SQL-FOR-UPDATE-SHARE
-        if(info_nsset_inline_view_filter_expr_.isset())
+        if (info_nsset_inline_view_filter_expr_.isset())
         {
             info_nsset_query(" WHERE ")(info_nsset_inline_view_filter_expr_.get_value());
         }
@@ -169,7 +169,7 @@ namespace LibFred
         Database::ParamQuery technical_contacts;
 
         technical_contacts("SELECT cobr.id AS tech_contact_id, cobr.name AS tech_contact_handle");
-        if(history_query_)
+        if (history_query_)
         {
             technical_contacts(" FROM nsset_contact_map_history ncm "
                 " JOIN object_registry cobr ON ncm.contactid = cobr.id "
@@ -195,7 +195,7 @@ namespace LibFred
         Database::ParamQuery query;
 
         query("SELECT h.nssetid AS host_nssetid,h.id AS host_id, h.fqdn AS host_fqdn");
-        if(history_query_)
+        if (history_query_)
         {
             query(" FROM host_history h WHERE h.nssetid = ").param_bigint(nssetid)
                 (" AND h.historyid = ").param_bigint(historyid);
@@ -217,7 +217,7 @@ namespace LibFred
         Database::ParamQuery query;
 
         query("SELECT him.ipaddr AS host_ipaddr");
-        if(history_query_)
+        if (history_query_)
         {
             query(" FROM host_ipaddr_map_history him "
             " WHERE him.hostid = ").param_bigint(hostid)
@@ -244,7 +244,7 @@ namespace LibFred
 
         result.reserve(param_query_result.size());
 
-        for(Database::Result::size_type i = 0; i < param_query_result.size(); ++i)
+        for (Database::Result::size_type i = 0; i < param_query_result.size(); ++i)
         {
             InfoNssetOutput info_nsset_output;
             info_nsset_output.info_nsset_data.id = static_cast<unsigned long long>(param_query_result[i][GetAlias::id()]);
@@ -280,7 +280,7 @@ namespace LibFred
             Database::Result tech_contact_res = ctx.get_conn().exec_params(make_tech_contact_query(
                 info_nsset_output.info_nsset_data.id, info_nsset_output.info_nsset_data.historyid));
             info_nsset_output.info_nsset_data.tech_contacts.reserve(tech_contact_res.size());
-            for(Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
+            for (Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
             {
                 info_nsset_output.info_nsset_data.tech_contacts.push_back(LibFred::ObjectIdHandlePair(
                     static_cast<unsigned long long>(tech_contact_res[j]["tech_contact_id"]),
@@ -292,7 +292,7 @@ namespace LibFred
             Database::Result dns_hosts_res = ctx.get_conn().exec_params(make_dns_host_query(
                 info_nsset_output.info_nsset_data.id, info_nsset_output.info_nsset_data.historyid));
             info_nsset_output.info_nsset_data.dns_hosts.reserve(dns_hosts_res.size());
-            for(Database::Result::size_type j = 0; j < dns_hosts_res.size(); ++j)
+            for (Database::Result::size_type j = 0; j < dns_hosts_res.size(); ++j)
             {
                 unsigned long long dns_host_id = static_cast<unsigned long long>(dns_hosts_res[j]["host_id"]);
                 std::string dns_host_fqdn = static_cast<std::string>(dns_hosts_res[j]["host_fqdn"]);
@@ -301,7 +301,7 @@ namespace LibFred
                     dns_host_id, info_nsset_output.info_nsset_data.historyid ));
                 std::vector<boost::asio::ip::address> dns_ip;
                 dns_ip.reserve(dns_ip_res.size());
-                for(Database::Result::size_type k = 0; k < dns_ip_res.size(); ++k)
+                for (Database::Result::size_type k = 0; k < dns_ip_res.size(); ++k)
                 {
                     dns_ip.push_back(boost::asio::ip::address::from_string(static_cast<std::string>(dns_ip_res[k]["host_ipaddr"])));
                 }

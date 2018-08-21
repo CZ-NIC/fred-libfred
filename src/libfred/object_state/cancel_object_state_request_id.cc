@@ -108,7 +108,7 @@ namespace LibFred
         Database::Result cmd_result = _ctx.get_conn().exec_params(cmd.str(), param);
 
         std::set<unsigned long long> result_state_id;
-        for(unsigned long long i = 0; i < cmd_result.size(); ++i){
+        for (unsigned long long i = 0; i < cmd_result.size(); ++i){
             result_state_id.insert(cmd_result[i][1]);
         }
 

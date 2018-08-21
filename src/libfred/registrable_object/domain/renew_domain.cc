@@ -122,10 +122,10 @@ namespace LibFred
 
         if (!is_enum_zone)//check ENUM specific parameters
         {
-            if(enum_validation_expiration_.isset()) {
+            if (enum_validation_expiration_.isset()) {
                 BOOST_THROW_EXCEPTION(InternalError("enum_validation_expiration set for non-ENUM domain"));
             }
-            if(enum_publish_flag_.isset()) {
+            if (enum_publish_flag_.isset()) {
                 BOOST_THROW_EXCEPTION(InternalError("enum_publish_flag set for non-ENUM domain"));
             }
         }
@@ -143,7 +143,7 @@ namespace LibFred
         }
 
         //set new domain exdate
-        if(expiration_date_.is_special())
+        if (expiration_date_.is_special())
         {
             BOOST_THROW_EXCEPTION(Exception().set_invalid_expiration_date(expiration_date_));
         }
@@ -157,13 +157,13 @@ namespace LibFred
         }
 
         //check valexdate if set
-        if(enum_validation_expiration_.isset() && enum_validation_expiration_.get_value().is_special())
+        if (enum_validation_expiration_.isset() && enum_validation_expiration_.get_value().is_special())
         {
             BOOST_THROW_EXCEPTION(Exception().set_invalid_enum_validation_expiration_date(enum_validation_expiration_.get_value()));
         }
 
         //update enumval
-        if(enum_validation_expiration_.isset() || enum_publish_flag_.isset())
+        if (enum_validation_expiration_.isset() || enum_publish_flag_.isset())
         {
             Database::QueryParams params;//query params
             std::stringstream sql;
@@ -171,14 +171,14 @@ namespace LibFred
 
             sql <<"UPDATE enumval ";
 
-            if(enum_validation_expiration_.isset())
+            if (enum_validation_expiration_.isset())
             {
                 params.push_back(enum_validation_expiration_.get_value());
                 sql << set_separator.get() << " exdate = $"
                     << params.size() << "::date ";
             }
 
-            if(enum_publish_flag_.isset())
+            if (enum_publish_flag_.isset())
             {
                 params.push_back(enum_publish_flag_.get_value());
                 sql << set_separator.get() << " publish = $"

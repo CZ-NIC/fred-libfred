@@ -257,14 +257,14 @@ void check(
     {
         BOOST_CHECK_EQUAL( data_pre_update.tests.size(), data_post_update.tests .size());
         std::vector<ContactTestResultData>::const_iterator post_it = data_post_update.tests.begin();
-        for(std::vector<ContactTestResultData>::const_iterator it = data_pre_update.tests.begin(); it != data_pre_update.tests.end(); ++it, ++post_it) {
+        for (std::vector<ContactTestResultData>::const_iterator it = data_pre_update.tests.begin(); it != data_pre_update.tests.end(); ++it, ++post_it) {
             BOOST_CHECK_EQUAL(it->to_string(), post_it->to_string());
         }
     }
 
-    if(old_status != new_status || old_logd_request != new_logd_request) {
+    if (old_status != new_status || old_logd_request != new_logd_request) {
         BOOST_CHECK_EQUAL( data_pre_update.check_state_history.size() + 1, data_post_update.check_state_history.size() );
-        for(
+        for (
             std::vector<ContactCheckState>::const_iterator it = data_pre_update.check_state_history.begin(), post_it = data_post_update.check_state_history.begin();
             it != data_pre_update.check_state_history.end();
             ++it, ++post_it)
@@ -294,7 +294,7 @@ void check(
     } else {
         BOOST_CHECK_EQUAL( data_pre_update.check_state_history.size(), data_post_update.check_state_history.size() );
         std::vector<ContactCheckState>::const_iterator post_it = data_post_update.check_state_history.begin();
-        for(std::vector<ContactCheckState>::const_iterator it = data_pre_update.check_state_history.begin(); it != data_pre_update.check_state_history.end(); ++it, ++post_it) {
+        for (std::vector<ContactCheckState>::const_iterator it = data_pre_update.check_state_history.begin(); it != data_pre_update.check_state_history.end(); ++it, ++post_it) {
             BOOST_CHECK_EQUAL(it->to_string(), post_it->to_string());
         }
     }
@@ -520,7 +520,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_nonexistent_check_handle)
         BOOST_FAIL("incorrect exception caught");
     }
 
-    if(! caught_the_right_exception) {
+    if (! caught_the_right_exception) {
         BOOST_FAIL("should have caught the exception");
     }
 }
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_nonexistent_status_handle)
         BOOST_FAIL("incorrect exception caught");
     }
 
-    if(! caught_the_right_exception) {
+    if (! caught_the_right_exception) {
         BOOST_FAIL("should have caught the exception");
     }
 }

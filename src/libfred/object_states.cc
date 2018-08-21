@@ -90,7 +90,7 @@ std::vector<std::string> states_conversion(const std::vector<int>& state_codes)
     std::vector<int>::const_iterator it = state_codes.begin();
     ostr << "{" << *it;
 
-    for(++it; it != state_codes.end(); ++it)
+    for (++it; it != state_codes.end(); ++it)
     {
         ostr << ",";
         ostr << *it;

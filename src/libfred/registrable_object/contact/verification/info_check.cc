@@ -54,7 +54,7 @@ namespace LibFred
             + _each_line_prefix + _each_line_prefix + " local_create_time: " + boost::posix_time::to_simple_string(local_create_time) + "\n"
             + _each_line_prefix + _each_line_prefix + " state_history: \n";
 
-        for(std::vector<ContactTestResultState>::const_iterator it = state_history.begin(); it != state_history.end(); ++it) {
+        for (std::vector<ContactTestResultState>::const_iterator it = state_history.begin(); it != state_history.end(); ++it) {
             result += _each_line_prefix + it->to_string(_each_line_prefix + _each_line_prefix );
         }
         result += "\n" + _each_line_prefix + "}\n";
@@ -85,11 +85,11 @@ namespace LibFred
             + _each_line_prefix + _each_line_prefix + "contact_history_id: " + boost::lexical_cast<std::string>(contact_history_id) + "\n"
             + _each_line_prefix + _each_line_prefix + "local_create_time:" +   boost::posix_time::to_simple_string(local_create_time) + "\n"
             + _each_line_prefix + _each_line_prefix + "check_state_history: \n";
-        for(std::vector<ContactCheckState>::const_iterator it = check_state_history.begin(); it != check_state_history.end(); ++it) {
+        for (std::vector<ContactCheckState>::const_iterator it = check_state_history.begin(); it != check_state_history.end(); ++it) {
             result += it->to_string(_each_line_prefix + _each_line_prefix );
         }
         result += _each_line_prefix + _each_line_prefix + "tests: \n";
-        for(std::vector<ContactTestResultData>::const_iterator it = tests.begin(); it != tests.end(); ++it) {
+        for (std::vector<ContactTestResultData>::const_iterator it = tests.begin(); it != tests.end(); ++it) {
             result += it->to_string(_each_line_prefix + _each_line_prefix );
         }
         result += "\n" + _each_line_prefix + "}\n";
@@ -133,7 +133,7 @@ namespace LibFred
                 Database::query_param_list(_output_timezone)(handle_) );
 
             if (contact_check_data.size() != 1) {
-                if(_ctx.get_conn().
+                if (_ctx.get_conn().
                         exec_params(
                             "SELECT handle FROM contact_check WHERE handle=$1::uuid",
                             Database::query_param_list(handle_))
@@ -215,7 +215,7 @@ namespace LibFred
             "ORDER BY id_ ASC ",
             Database::query_param_list(_output_timezone)(_check_id));
 
-        if(contact_test_result.size() == 0) {
+        if (contact_test_result.size() == 0) {
             return result;
         }
 
@@ -223,7 +223,7 @@ namespace LibFred
 
         // there can be 0-n tests (zero being check still enqueued to run or trivial empty testcase instance)
         std::vector<std::string> test_ids;
-        for(Database::Result::Iterator it = contact_test_result.begin(); it != contact_test_result.end(); ++it) {
+        for (Database::Result::Iterator it = contact_test_result.begin(); it != contact_test_result.end(); ++it) {
             test_ids.push_back(
                 boost::lexical_cast<std::string>(
                     static_cast<unsigned long long>( (*it)["id_"]) )
@@ -254,15 +254,15 @@ namespace LibFred
         Database::Result::Iterator it_test_histories = contact_test_history_result.begin();
 
         // for each test
-        for(Database::Result::Iterator it_tests = contact_test_result.begin(); it_tests != contact_test_result.end(); ++it_tests) {
+        for (Database::Result::Iterator it_tests = contact_test_result.begin(); it_tests != contact_test_result.end(); ++it_tests) {
 
             InfoContactCheckOutput::ContactTestResultData temp_test_data;
             temp_test_data.local_create_time = boost::posix_time::time_from_string(static_cast<std::string>( (*it_tests)["create_time_"]));
             temp_test_data.test_handle = static_cast<std::string>( (*it_tests)["test_handle_"]);
 
             // for each history state of this test (NOTE - states are clustered by test id)
-            while( it_test_histories != contact_test_history_result.end() ) {
-                if( static_cast<unsigned long long>( (*it_test_histories)["id_"] ) != static_cast<unsigned long long>( (*it_tests)["id_"] ) ) {
+            while (it_test_histories != contact_test_history_result.end() ) {
+                if (static_cast<unsigned long long>( (*it_test_histories)["id_"] ) != static_cast<unsigned long long>( (*it_tests)["id_"] ) ) {
                     break;
                 }
 
@@ -289,7 +289,7 @@ namespace LibFred
             // "save" complete history of the current test (this iteration) to return structure
             result.push_back(temp_test_data);
         }
-        if( it_test_histories != contact_test_history_result.end() ) {
+        if (it_test_histories != contact_test_history_result.end() ) {
             BOOST_THROW_EXCEPTION(LibFred::InternalError("found state history(s) for non-existent contact_tests"));
         }
 
@@ -318,14 +318,14 @@ namespace LibFred
             "ORDER BY update_time_ ASC, history.id ASC ",
             Database::query_param_list(_output_timezone)(_check_id) );
 
-        if(contact_check_historical_data.size() == 0) {
+        if (contact_check_historical_data.size() == 0) {
             return result;
         }
 
         result.reserve(contact_check_historical_data.size());
 
         // for each check historical state
-        for(Database::Result::Iterator it_check_history = contact_check_historical_data.begin(); it_check_history != contact_check_historical_data.end(); ++it_check_history) {
+        for (Database::Result::Iterator it_check_history = contact_check_historical_data.begin(); it_check_history != contact_check_historical_data.end(); ++it_check_history) {
 
            InfoContactCheckOutput::ContactCheckState temp_check_history_state;
 

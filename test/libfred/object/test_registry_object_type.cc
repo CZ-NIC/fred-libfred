@@ -32,7 +32,7 @@ BOOST_FIXTURE_TEST_CASE(all_definitions_from_db_are_supported, Test::instantiate
     Database::Result obj_types_res = ctx.get_conn().exec("SELECT name FROM enum_object_type");
     BOOST_CHECK(obj_types_res.size() > 0);
 
-    for(::size_t i = 0; i < obj_types_res.size(); ++i) {
+    for (::size_t i = 0; i < obj_types_res.size(); ++i) {
         ::LibFred::object_type tmp;
 
         BOOST_CHECK_NO_THROW(

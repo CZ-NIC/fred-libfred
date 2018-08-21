@@ -107,9 +107,9 @@ namespace LibFred
                         , Database::query_param_list(result.create_object_result.object_id));
 
                 //set dns keys
-                if(!dns_keys_.empty())
+                if (!dns_keys_.empty())
                 {
-                    for(std::vector<DnsKey>::iterator i = dns_keys_.begin(); i != dns_keys_.end(); ++i)
+                    for (std::vector<DnsKey>::iterator i = dns_keys_.begin(); i != dns_keys_.end(); ++i)
                     {
                         try
                         {
@@ -127,7 +127,7 @@ namespace LibFred
                         catch(const std::exception& ex)
                         {
                             std::string what_string(ex.what());
-                            if(what_string.find("dnskey_unique_key") != std::string::npos)
+                            if (what_string.find("dnskey_unique_key") != std::string::npos)
                             {
                                 create_keyset_exception.add_already_set_dns_key(*i);
                                 _ctx.get_conn().exec("ROLLBACK TO SAVEPOINT dnskey");
@@ -141,7 +141,7 @@ namespace LibFred
 
 
                 //set tech contacts
-                if(!tech_contacts_.empty())
+                if (!tech_contacts_.empty())
                 {
                     Database::QueryParams params;//query params
                     std::stringstream sql;
@@ -150,7 +150,7 @@ namespace LibFred
                     sql << "INSERT INTO keyset_contact_map(keysetid, contactid) "
                             " VALUES ($" << params.size() << "::integer, ";
 
-                    for(std::vector<std::string>::iterator i = tech_contacts_.begin(); i != tech_contacts_.end(); ++i)
+                    for (std::vector<std::string>::iterator i = tech_contacts_.begin(); i != tech_contacts_.end(); ++i)
                     {
                         //lock object_registry row for share and get id
                         unsigned long long tech_contact_id = get_object_id_by_handle_and_type_with_lock(
@@ -158,7 +158,7 @@ namespace LibFred
                                 Conversion::Enums::to_db_handle(Object_Type::contact),
                                 &create_keyset_exception,
                                 &Exception::add_unknown_technical_contact_handle);
-                        if(tech_contact_id == 0) continue;
+                        if (tech_contact_id == 0) continue;
 
                         Database::QueryParams params_i = params;//query params
                         std::stringstream sql_i;
@@ -176,7 +176,7 @@ namespace LibFred
                         catch(const std::exception& ex)
                         {
                             std::string what_string(ex.what());
-                            if(what_string.find("keyset_contact_map_pkey") != std::string::npos)
+                            if (what_string.find("keyset_contact_map_pkey") != std::string::npos)
                             {
                                 create_keyset_exception.add_already_set_technical_contact_handle(*i);
                                 _ctx.get_conn().exec("ROLLBACK TO SAVEPOINT tech_contact");

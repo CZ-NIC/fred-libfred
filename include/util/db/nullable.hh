@@ -169,7 +169,7 @@ public:
      * @throws default-constructed exception of type TException when isnull()
      */
     template<typename TException>T get_value_or_throw() const {
-        if( isnull() ) {
+        if (isnull() ) {
             throw TException();
         }
 

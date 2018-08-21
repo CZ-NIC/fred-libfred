@@ -61,7 +61,7 @@ namespace LibFred
     {
         Database::ParamQuery info_registrar_query;
 
-        if(info_registrar_id_filter_cte_.isset())
+        if (info_registrar_id_filter_cte_.isset())
         {
             info_registrar_query("WITH id_filter(id) as (")(info_registrar_id_filter_cte_.get_value())(") ");
         }
@@ -94,12 +94,12 @@ namespace LibFred
         " , (CURRENT_TIMESTAMP AT TIME ZONE ").param_text(local_timestamp_pg_time_zone_name)(")::timestamp AS ")(GetAlias::local_timestamp())(
         " FROM registrar r ");
 
-        if(info_registrar_id_filter_cte_.isset())
+        if (info_registrar_id_filter_cte_.isset())
         {
             info_registrar_query(" WHERE r.id IN (SELECT id FROM id_filter) ");
         }
 
-        if(lock_)
+        if (lock_)
         {
             info_registrar_query(" FOR UPDATE of r ");
         }
@@ -112,7 +112,7 @@ namespace LibFred
 
         //inline view sub-select locking example at:
         //http://www.postgresql.org/docs/9.1/static/sql-select.html#SQL-FOR-UPDATE-SHARE
-        if(info_registrar_inline_view_filter_expr_.isset())
+        if (info_registrar_inline_view_filter_expr_.isset())
         {
             info_registrar_query(" WHERE ")(info_registrar_inline_view_filter_expr_.get_value());
         }
@@ -132,7 +132,7 @@ namespace LibFred
 
         Database::Result registrar_query_result = ctx.get_conn().exec_params(make_registrar_query(local_timestamp_pg_time_zone_name));
         result.reserve(registrar_query_result.size());
-        for(Database::Result::size_type i = 0; i < registrar_query_result.size(); ++i)
+        for (Database::Result::size_type i = 0; i < registrar_query_result.size(); ++i)
         {
             InfoRegistrarOutput info_registrar_output;
             info_registrar_output.info_registrar_data.id = static_cast<unsigned long long>(registrar_query_result[i][GetAlias::id()]);

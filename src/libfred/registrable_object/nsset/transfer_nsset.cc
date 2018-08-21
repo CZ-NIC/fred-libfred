@@ -37,18 +37,18 @@ namespace LibFred
             nsset_data = LibFred::InfoNssetById(_nsset_id).set_lock().exec(_ctx).info_nsset_data;
 
         } catch(const LibFred::InfoNssetById::Exception& e) {
-            if( e.is_set_unknown_object_id() ) {
+            if (e.is_set_unknown_object_id() ) {
                 throw UnknownNssetId();
             }
             throw;
         }
 
-        if(nsset_data.authinfopw == _authinfopw_for_authorization) {
+        if (nsset_data.authinfopw == _authinfopw_for_authorization) {
             return true;
         }
 
         BOOST_FOREACH(const ObjectIdHandlePair& tech_contact, nsset_data.tech_contacts) {
-            if( InfoContactByHandle(tech_contact.handle).exec(_ctx).info_contact_data.authinfopw
+            if (InfoContactByHandle(tech_contact.handle).exec(_ctx).info_contact_data.authinfopw
                 == _authinfopw_for_authorization
             ) {
                 return true;
@@ -60,7 +60,7 @@ namespace LibFred
 
     unsigned long long TransferNsset::exec(OperationContext& _ctx) {
 
-        if( is_transfer_authorized(_ctx, nsset_id_, authinfopw_for_authorization_) ) {
+        if (is_transfer_authorized(_ctx, nsset_id_, authinfopw_for_authorization_) ) {
             unsigned long long new_history_id;
 
             try {

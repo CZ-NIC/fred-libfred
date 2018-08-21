@@ -17,7 +17,7 @@ namespace LibFred
         boost::uniform_int<> index_dist(0, alphabet.size() - 1);
         std::string result;
         const int authinfo_pw_length = 8;
-        for(int i = 0; i < authinfo_pw_length; ++i) {
+        for (int i = 0; i < authinfo_pw_length; ++i) {
             result += alphabet.at(index_dist(rng));
         }
         return GeneratedAuthInfoPassword(result);

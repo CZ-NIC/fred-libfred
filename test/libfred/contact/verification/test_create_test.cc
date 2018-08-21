@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_nonexistent_check_handle)
         BOOST_FAIL("incorrect exception caught");
     }
 
-    if(! caught_the_right_exception) {
+    if (! caught_the_right_exception) {
         BOOST_FAIL("should have caught the exception");
     }
 }
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_nonexistent_test_handle)
         BOOST_FAIL("incorrect exception caught");
     }
 
-    if(! caught_the_right_exception) {
+    if (! caught_the_right_exception) {
         BOOST_FAIL("should have caught the exception");
     }
 }
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_test_handle_not_in_suite)
         BOOST_FAIL("incorrect exception caught");
     }
 
-    if(! caught_the_right_exception) {
+    if (! caught_the_right_exception) {
         BOOST_FAIL("should have caught the exception");
     }
 }
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_violating_unique_check_test_pair)
         BOOST_FAIL("incorrect exception caught");
     }
 
-    if(! caught_the_right_exception) {
+    if (! caught_the_right_exception) {
         BOOST_FAIL("should have caught the exception");
     }
 }

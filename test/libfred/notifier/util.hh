@@ -54,7 +54,7 @@ inline void check_maps_are_equal(const std::map<std::string, std::string>& _lhs,
 
     std::set<std::string> key_values;
 
-    for(
+    for (
         std::map<std::string, std::string>::const_iterator it = _lhs.begin();
         it != _lhs.end();
         ++it
@@ -62,7 +62,7 @@ inline void check_maps_are_equal(const std::map<std::string, std::string>& _lhs,
         key_values.insert(it->first);
     }
 
-    for(
+    for (
         std::map<std::string, std::string>::const_iterator it = _rhs.begin();
         it != _rhs.end();
         ++it

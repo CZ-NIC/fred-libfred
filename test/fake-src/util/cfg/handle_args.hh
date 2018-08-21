@@ -294,7 +294,7 @@ struct handler_parse_args
         , boost::program_options::variables_map& vm
         , int argc, char* argv[],  FakedArgs &fa)
 {
-    if(argc < 1)
+    if (argc < 1)
     {
         throw std::runtime_error(
                 "handler_parse_args: input cmdline is empty (argc < 1)"
@@ -327,7 +327,7 @@ struct handler_parse_args
     fa.clear();//to be sure that fa is empty
     fa.prealocate_for_argc(to_pass_further.size() + 1);//new number of args + first program name
     fa.add_argv(argv[0]);//program name copy
-    for(string_vector_t::const_iterator i = to_pass_further.begin()
+    for (string_vector_t::const_iterator i = to_pass_further.begin()
             ; i != to_pass_further.end(); ++i)
     {//copying a new arg vector
         fa.add_argv(*i);//string

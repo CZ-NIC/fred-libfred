@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(test_variability_naive)
 {
     /* This test can fail because of probability (bad luck).*/
     std::set<std::string> gen_authinfo_pw_duplicity;
-    for(unsigned i = 0; i < 100; ++i) {//check that generated passwords are unique(no guarantee)
+    for (unsigned i = 0; i < 100; ++i) {//check that generated passwords are unique(no guarantee)
         const ::LibFred::GeneratedAuthInfoPassword temp = ::LibFred::generate_authinfo_pw();
         BOOST_CHECK(gen_authinfo_pw_duplicity.insert(temp.password_).second);
     }
@@ -42,14 +42,14 @@ BOOST_AUTO_TEST_CASE(test_variability_naive)
 BOOST_AUTO_TEST_CASE(test_gen_authinfo_len)
 {
     const int authinfo_pw_length = 8;
-    for(unsigned i = 0; i < 1000; ++i) {
+    for (unsigned i = 0; i < 1000; ++i) {
         BOOST_CHECK(::LibFred::generate_authinfo_pw().password_.length() == authinfo_pw_length);
     }
 }
 
 BOOST_AUTO_TEST_CASE(test_gen_authinfo_chars)
 {
-    for(unsigned i = 0; i < 1000; ++i) {
+    for (unsigned i = 0; i < 1000; ++i) {
         BOOST_CHECK(::LibFred::generate_authinfo_pw().password_.find_first_not_of(
             ::LibFred::get_chars_allowed_in_generated_authinfopw()) == std::string::npos);
     }

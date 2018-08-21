@@ -79,7 +79,7 @@ struct set_of : public std::set<ELEMENT_TYPE>
     set_of& operator()(const ELEMENT_TYPE& t)
     {
         std::pair<typename std::set<ELEMENT_TYPE>::iterator, bool> insert_result = this->insert(t);
-        if(!insert_result.second) throw std::logic_error("not unique");
+        if (!insert_result.second) throw std::logic_error("not unique");
         return *this;
     }
     //inserts set of the same elements

@@ -67,7 +67,7 @@ struct SqlConvert<bool> {
 
   static std::string to(const bool &_in)
   {
-    if(_in) return "t";
+    if (_in) return "t";
     else return "f";
   }
 };

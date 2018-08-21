@@ -20,7 +20,7 @@ namespace LibFred
             registrar_id = LibFred::InfoRegistrarByHandle(_new_registrar_handle).exec(_ctx).info_registrar_data.id;
 
         } catch(const LibFred::InfoRegistrarByHandle::Exception& e) {
-            if(e.is_set_unknown_registrar_handle()) {
+            if (e.is_set_unknown_registrar_handle()) {
                 throw UnknownRegistrar();
             }
             throw;
@@ -32,15 +32,15 @@ namespace LibFred
                 Database::query_param_list(_object_id)
             );
 
-            if(sponsoring_registrar_res.size() < 1) {
+            if (sponsoring_registrar_res.size() < 1) {
                 throw UnknownObjectId();
 
             }
-            if(sponsoring_registrar_res.size() > 1) {
+            if (sponsoring_registrar_res.size() > 1) {
                 throw std::runtime_error("something is really broken - nonunique record in object_registry");
             }
 
-            if(static_cast<unsigned long long>(sponsoring_registrar_res[0]["clid"]) == registrar_id) {
+            if (static_cast<unsigned long long>(sponsoring_registrar_res[0]["clid"]) == registrar_id) {
                 throw NewRegistrarIsAlreadySponsoring();
             }
         }
@@ -51,7 +51,7 @@ namespace LibFred
                 Database::query_param_list(_object_id)
             );
 
-            if(existence_check_res.size() < 1) {
+            if (existence_check_res.size() < 1) {
                 throw UnknownObjectId();
             } else if(existence_check_res.size() > 1) {
                 throw std::runtime_error("something is really broken - nonunique record in object_registry");
@@ -72,7 +72,7 @@ namespace LibFred
                     (_object_id)
             );
 
-            if(transfer_res.rows_affected() != 1) {
+            if (transfer_res.rows_affected() != 1) {
                 throw std::runtime_error("UPDATE object failed");
             }
         }

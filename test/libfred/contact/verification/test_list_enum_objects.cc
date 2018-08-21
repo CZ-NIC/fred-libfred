@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(test_List_test_result_statuses)
 {
     std::vector<std::string> created_statuses;
 
-    for(int i=0; i<5; ++i) {
+    for (int i=0; i<5; ++i) {
         created_statuses.push_back(setup_test_status().status_handle_);
     }
 
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(test_List_test_result_statuses)
     BOOST_CHECK_EQUAL(created_statuses.size(), listed_statuses.size());
 
     std::vector<std::string> listed_status_handles;
-    for(std::vector<::LibFred::test_result_status>::const_iterator it = listed_statuses.begin();
+    for (std::vector<::LibFred::test_result_status>::const_iterator it = listed_statuses.begin();
         it != listed_statuses.end();
         ++it
     ) {
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE(test_List_check_statuses)
 
     created_statuses = ::LibFred::ContactCheckStatus::get_all();
 
-    for(int i=0; i<5; ++i) {
+    for (int i=0; i<5; ++i) {
         created_statuses.push_back(setup_check_status().status_handle);
     }
 
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(test_List_check_statuses)
     BOOST_CHECK_EQUAL(created_statuses.size(), listed_statuses.size());
 
     std::vector<std::string> listed_status_handles;
-    for(std::vector<::LibFred::check_status>::const_iterator it = listed_statuses.begin();
+    for (std::vector<::LibFred::check_status>::const_iterator it = listed_statuses.begin();
         it != listed_statuses.end();
         ++it
     ) {
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(test_List_test_definitions)
     std::vector<std::string> existing_tests;
     std::vector<::LibFred::test_definition> preexisting_tests = ::LibFred::list_test_definitions("en");
 
-    for(std::vector<::LibFred::test_definition>::const_iterator it = preexisting_tests.begin();
+    for (std::vector<::LibFred::test_definition>::const_iterator it = preexisting_tests.begin();
         it != preexisting_tests.end();
         ++it
     ) {
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(test_List_test_definitions)
     }
 
     // creating new tests
-    for(int i=0; i<5; ++i) {
+    for (int i=0; i<5; ++i) {
         existing_tests.push_back(setup_testdef().testdef_handle_);
     }
 
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(test_List_test_definitions)
     BOOST_CHECK_EQUAL(existing_tests.size(), listed_tests.size());
 
     std::vector<std::string> listed_test_handles;
-    for(std::vector<::LibFred::test_definition>::const_iterator it = listed_tests.begin();
+    for (std::vector<::LibFred::test_definition>::const_iterator it = listed_tests.begin();
         it != listed_tests.end();
         ++it
     ) {
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE(test_List_testsuite_definitions)
 {
     std::vector<std::string> created_testsuites;
 
-    for(int i=0; i<5; ++i) {
+    for (int i=0; i<5; ++i) {
         created_testsuites.push_back(setup_testsuite().testsuite_handle);
     }
 
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(test_List_testsuite_definitions)
     BOOST_CHECK_EQUAL(created_testsuites.size(), listed_testsuites.size());
 
     std::vector<std::string> listed_testsuite_handles;
-    for(std::vector<::LibFred::testsuite_definition>::const_iterator it = listed_testsuites.begin();
+    for (std::vector<::LibFred::testsuite_definition>::const_iterator it = listed_testsuites.begin();
         it != listed_testsuites.end();
         ++it
     ) {

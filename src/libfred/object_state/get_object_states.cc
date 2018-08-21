@@ -49,7 +49,7 @@ namespace LibFred
 
         std::vector<ObjectStateData> result;
         result.reserve(domain_states_result.size());
-        for(unsigned long long i = 0 ; i < domain_states_result.size() ; ++i)
+        for (unsigned long long i = 0 ; i < domain_states_result.size() ; ++i)
         {
             ObjectStateData osd;
             osd.state_id = static_cast<unsigned long long>(domain_states_result[i][0]);

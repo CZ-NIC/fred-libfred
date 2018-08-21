@@ -97,7 +97,7 @@ namespace LibFred
             "       AND obj_reg.erdate IS NULL ",
             Database::query_param_list(contact_id_)("contact")
         );
-        if(contact_history_res.size() != 1) {
+        if (contact_history_res.size() != 1) {
             throw ExceptionUnknownContactId();
         }
         unsigned long long contact_history_id = static_cast<unsigned long long>(contact_history_res[0]["historyid_"]);
@@ -108,7 +108,7 @@ namespace LibFred
             "   WHERE handle=$1::varchar ",
             Database::query_param_list(testsuite_handle_)
         );
-        if(testsuite_res.size() != 1) {
+        if (testsuite_res.size() != 1) {
             throw ExceptionUnknownTestsuiteHandle();
         }
         long testsuite_id = static_cast<long>(testsuite_res[0]["id"]);
@@ -141,11 +141,11 @@ namespace LibFred
 
             std::string what_string(_exc.what());
 
-            if(what_string.find("fk_contact_check_contact_history_id") != std::string::npos) {
+            if (what_string.find("fk_contact_check_contact_history_id") != std::string::npos) {
                 throw ExceptionUnknownContactId();
             }
 
-            if(what_string.find("contact_check_fk_Enum_contact_testsuite_id") != std::string::npos) {
+            if (what_string.find("contact_check_fk_Enum_contact_testsuite_id") != std::string::npos) {
                 throw ExceptionUnknownTestsuiteHandle();
             }
 

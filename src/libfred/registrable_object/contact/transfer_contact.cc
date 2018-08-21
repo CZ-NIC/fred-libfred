@@ -25,11 +25,11 @@ namespace LibFred
     unsigned long long TransferContact::exec(OperationContext& _ctx) {
 
         try {
-            if( authinfopw_for_authorization_ != LibFred::InfoContactById(contact_id_).set_lock().exec(_ctx).info_contact_data.authinfopw ) {
+            if (authinfopw_for_authorization_ != LibFred::InfoContactById(contact_id_).set_lock().exec(_ctx).info_contact_data.authinfopw ) {
                 throw IncorrectAuthInfoPw();
             }
         } catch(const LibFred::InfoContactById::Exception& e) {
-            if( e.is_set_unknown_object_id() ) {
+            if (e.is_set_unknown_object_id() ) {
                 throw UnknownContactId();
             }
 

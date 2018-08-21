@@ -206,7 +206,7 @@ namespace LibFred
                 ", upid = $"
                 << params.size() << "::integer " ; //registrar from epp-session container by client_id from epp-params
 
-            if(authinfo_.isset())
+            if (authinfo_.isset())
             {
                 params.push_back(authinfo_);
                 sql << " , authinfopw = $" << params.size() << "::text ";//set authinfo
@@ -216,7 +216,7 @@ namespace LibFred
             sql <<" WHERE id = $" << params.size() << "::integer ";
 
             //check exception
-            if(update_object_exception.throw_me())
+            if (update_object_exception.throw_me())
             {
                 BOOST_THROW_EXCEPTION(update_object_exception);
             }

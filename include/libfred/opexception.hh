@@ -63,7 +63,7 @@ struct ExceptionStack
         std::string operation_stack_info;
         const std::string* ptr = 0;
         ptr = get_data_ptr();
-        if(ptr) operation_stack_info += *ptr;
+        if (ptr) operation_stack_info += *ptr;
         operation_stack_info += info;
         (*this) << ErrorInfoOperationStack(operation_stack_info);
     }
@@ -249,7 +249,7 @@ static std::string to_string(const BOOST_JOIN(ErrorInfo_vector_of_,ex_data_tag)&
 {\
     std::ostringstream oss;\
     oss << "vector data:";\
-    for(BOOST_JOIN(ErrorInfo_vector_of_,ex_data_tag)::value_type::const_iterator ci = info.value().begin()\
+    for (BOOST_JOIN(ErrorInfo_vector_of_,ex_data_tag)::value_type::const_iterator ci = info.value().begin()\
             ; ci != info.value().end(); ++ci) oss << ' ' << *ci;\
     return oss.str();\
 }\

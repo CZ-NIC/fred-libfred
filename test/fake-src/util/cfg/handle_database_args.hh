@@ -82,7 +82,7 @@ public:
         conn_info += vm["database.host"].as<std::string>();
         conn_info += " ";
 
-        if(vm.count("database.port") == 1)
+        if (vm.count("database.port") == 1)
         {
             conn_info += "port=";
             conn_info += boost::lexical_cast<std::string>(vm["database.port"].as<unsigned>());
@@ -97,14 +97,14 @@ public:
         conn_info += vm["database.user"].as<std::string>();
         conn_info += " ";
 
-        if(vm.count("database.password") == 1)
+        if (vm.count("database.password") == 1)
         {
             conn_info += "password=";
             conn_info += vm["database.password"].as<std::string>();
             conn_info += " ";
         }
 
-        if(vm.count("database.timeout") == 1)
+        if (vm.count("database.timeout") == 1)
         {
             conn_info += "connect_timeout=";
             conn_info += boost::lexical_cast<std::string>(vm["database.timeout"].as<unsigned>());
@@ -115,7 +115,7 @@ public:
     }//handle
 
     std::string get_conn_info() {
-        if(conn_info.empty()) {
+        if (conn_info.empty()) {
             throw std::runtime_error("Wrong usage: Connection info not initialized yet");
         }
         return conn_info;

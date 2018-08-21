@@ -425,14 +425,14 @@ std::vector<InfoDomainOutput> InfoDomainByAdminContactHandle::exec(OperationCont
                     " JOIN domain_contact_map dcm ON dcm.contactid = oreg.id"
                 " WHERE oreg.name = UPPER(").param_text(admin_contact_handle_)(") AND oreg.erdate IS NULL");
 
-        if(limit_.isset())
+        if (limit_.isset())
         {
             inline_view_filter_query (" ORDER BY dcm.domainid LIMIT ").param_bigint(limit_.get_value());
         }
 
         Database::Result domain_id_res = ctx.get_conn().exec_params(inline_view_filter_query);
 
-        if(domain_id_res.size() == 0)//no domain id found
+        if (domain_id_res.size() == 0)//no domain id found
         {
             return domain_res;
         }

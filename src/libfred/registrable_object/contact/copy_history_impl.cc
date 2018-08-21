@@ -22,7 +22,7 @@ namespace LibFred
             Database::query_param_list(_historyid)(_contact_id)
         );
 
-        if(res.rows_affected() != 1) {
+        if (res.rows_affected() != 1) {
             throw std::runtime_error("INSERT INTO contact_history failed");
         }
 

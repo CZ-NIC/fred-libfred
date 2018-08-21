@@ -257,7 +257,7 @@ namespace LibFred
             catch(const CreateObject::Exception& create_object_exception)
             {
                 //CreateObject implementation sets only one member at once into Exception instance
-                if(create_object_exception.is_set_unknown_registrar_handle())
+                if (create_object_exception.is_set_unknown_registrar_handle())
                 {
                     //fatal good path, need valid registrar performing create
                     BOOST_THROW_EXCEPTION(Exception().set_unknown_registrar_handle(
@@ -266,14 +266,14 @@ namespace LibFred
 
                 bool caught_exception_has_been_handled = false;
 
-                if(create_object_exception.is_set_invalid_object_handle())
+                if (create_object_exception.is_set_invalid_object_handle())
                 {   //non-fatal good path, create can continue to check input
                     create_contact_exception.set_invalid_contact_handle(
                             create_object_exception.get_invalid_object_handle());
                     caught_exception_has_been_handled = true;
                 }
 
-                if( ! caught_exception_has_been_handled ) {
+                if (! caught_exception_has_been_handled ) {
                     throw; //rethrow unexpected
                 }
             }
@@ -292,35 +292,35 @@ namespace LibFred
                 col_sql << col_separator.get() << "id";
                 val_sql << val_separator.get() << "$" << params.size() <<"::integer";
 
-                if(name_.isset())
+                if (name_.isset())
                 {
                     params.push_back(name_.get_value());
                     col_sql << col_separator.get() << "name";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(organization_.isset())
+                if (organization_.isset())
                 {
                     params.push_back(organization_.get_value());
                     col_sql << col_separator.get() << "organization";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(place_.isset())
+                if (place_.isset())
                 {
                     const LibFred::Contact::PlaceAddress &place = place_.get_value();
                     params.push_back(place.street1);
                     col_sql << col_separator.get() << "street1";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
 
-                    if(place.street2.isset())
+                    if (place.street2.isset())
                     {
                         params.push_back(place.street2.get_value());
                         col_sql << col_separator.get() << "street2";
                         val_sql << val_separator.get() << "$" << params.size() <<"::text";
                     }
 
-                    if(place.street3.isset())
+                    if (place.street3.isset())
                     {
                         params.push_back(place.street3.get_value());
                         col_sql << col_separator.get() << "street3";
@@ -331,7 +331,7 @@ namespace LibFred
                     col_sql << col_separator.get() << "city";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
 
-                    if(place.stateorprovince.isset())
+                    if (place.stateorprovince.isset())
                     {
                         params.push_back(place.stateorprovince.get_value());
                         col_sql << col_separator.get() << "stateorprovince";
@@ -348,42 +348,42 @@ namespace LibFred
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(telephone_.isset())
+                if (telephone_.isset())
                 {
                     params.push_back(telephone_.get_value());
                     col_sql << col_separator.get() << "telephone";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(fax_.isset())
+                if (fax_.isset())
                 {
                     params.push_back(fax_.get_value());
                     col_sql << col_separator.get() << "fax";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(email_.isset())
+                if (email_.isset())
                 {
                     params.push_back(email_.get_value());
                     col_sql << col_separator.get() << "email";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(notifyemail_.isset())
+                if (notifyemail_.isset())
                 {
                     params.push_back(notifyemail_.get_value());
                     col_sql << col_separator.get() << "notifyemail";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(vat_.isset())
+                if (vat_.isset())
                 {
                     params.push_back(vat_.get_value());
                     col_sql << col_separator.get() << "vat";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(ssntype_.isset())
+                if (ssntype_.isset())
                 {
                     params.push_back(Contact::get_ssntype_id(ssntype_,ctx,
                             &create_contact_exception, &Exception::set_unknown_ssntype));
@@ -391,70 +391,70 @@ namespace LibFred
                     val_sql << val_separator.get() << "$" << params.size() <<"::integer";
                 }
 
-                if(ssn_.isset())
+                if (ssn_.isset())
                 {
                     params.push_back(ssn_.get_value());
                     col_sql << col_separator.get() << "ssn";
                     val_sql << val_separator.get() << "$" << params.size() <<"::text";
                 }
 
-                if(disclosename_.isset())
+                if (disclosename_.isset())
                 {
                     params.push_back(disclosename_.get_value());
                     col_sql << col_separator.get() << "disclosename";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(discloseorganization_.isset())
+                if (discloseorganization_.isset())
                 {
                     params.push_back(discloseorganization_.get_value());
                     col_sql << col_separator.get() << "discloseorganization";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(discloseaddress_.isset())
+                if (discloseaddress_.isset())
                 {
                     params.push_back(discloseaddress_.get_value());
                     col_sql << col_separator.get() << "discloseaddress";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(disclosetelephone_.isset())
+                if (disclosetelephone_.isset())
                 {
                     params.push_back(disclosetelephone_.get_value());
                     col_sql << col_separator.get() << "disclosetelephone";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(disclosefax_.isset())
+                if (disclosefax_.isset())
                 {
                     params.push_back(disclosefax_.get_value());
                     col_sql << col_separator.get() << "disclosefax";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(discloseemail_.isset())
+                if (discloseemail_.isset())
                 {
                     params.push_back(discloseemail_.get_value());
                     col_sql << col_separator.get() << "discloseemail";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(disclosevat_.isset())
+                if (disclosevat_.isset())
                 {
                     params.push_back(disclosevat_.get_value());
                     col_sql << col_separator.get() << "disclosevat";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(discloseident_.isset())
+                if (discloseident_.isset())
                 {
                     params.push_back(discloseident_.get_value());
                     col_sql << col_separator.get() << "discloseident";
                     val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
                 }
 
-                if(disclosenotifyemail_.isset())
+                if (disclosenotifyemail_.isset())
                 {
                     params.push_back(disclosenotifyemail_.get_value());
                     col_sql << col_separator.get() << "disclosenotifyemail";
@@ -470,7 +470,7 @@ namespace LibFred
                 col_sql << ")";
                 val_sql << ")";
 
-                if(create_contact_exception.throw_me())
+                if (create_contact_exception.throw_me())
                 {
                     BOOST_THROW_EXCEPTION(create_contact_exception);
                 }

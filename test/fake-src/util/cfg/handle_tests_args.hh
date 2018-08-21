@@ -59,7 +59,7 @@ public:
         gen_opts->add_options()
                 ("help", "print custom help message and boost::test help message for BOOST_VERSION > 103900");
 
-        if(default_config.length() != 0)
+        if (default_config.length() != 0)
         {
             gen_opts->add_options()
                     ("config,C", boost::program_options
@@ -83,7 +83,7 @@ public:
         if (vm.count("help"))
         {
             std::cout << std::endl;
-            for(PoDescs::iterator it = po_description.begin(); it != po_description.end(); ++it)
+            for (PoDescs::iterator it = po_description.begin(); it != po_description.end(); ++it)
             {
                 std::cout << **it << std::endl;
             }
@@ -97,7 +97,7 @@ public:
         {
             std::string fname = vm["config"].as<std::string>();
             std::cout << "HandleTestsArgs::handle config file: " << fname << std::endl;
-            if(fname.length())
+            if (fname.length())
                 parse_config_file_to_faked_args(fname, fa );
         }
     }

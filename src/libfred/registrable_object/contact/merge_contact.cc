@@ -436,7 +436,7 @@ MergeContactOutput MergeContact::merge_contact_impl(OperationContext& ctx, bool 
                     ctx.get_conn().exec("ROLLBACK TO SAVEPOINT merge_contact_update_keyset");
                     UpdateKeyset uk(tmp.handle, registrar_);
                     uk.rem_tech_contact(src_contact_handle_);
-                    if(logd_request_id_.isset()) uk.set_logd_request_id(logd_request_id_.get_value());
+                    if (logd_request_id_.isset()) uk.set_logd_request_id(logd_request_id_.get_value());
                     tmp.history_id = uk.exec(ctx);
                     ctx.get_conn().exec("RELEASE SAVEPOINT merge_contact_update_keyset");
                 }

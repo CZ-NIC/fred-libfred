@@ -30,7 +30,7 @@ namespace Zone {
 
     std::string rem_trailing_dot(const std::string& fqdn)
     {
-        if(!fqdn.empty() && fqdn.at(fqdn.size()-1) == '.') return fqdn.substr(0,fqdn.size()-1);
+        if (!fqdn.empty() && fqdn.at(fqdn.size()-1) == '.') return fqdn.substr(0,fqdn.size()-1);
         return fqdn;
     }
 
@@ -41,7 +41,7 @@ namespace Zone {
             " FROM zone WHERE fqdn=lower($1::text) FOR SHARE"
             , Database::query_param_list(zone_name));
 
-        if(zone_res.size() == 1)
+        if (zone_res.size() == 1)
         {
             return Data(static_cast<unsigned long long>(zone_res[0][0])// zone.id
                 , static_cast<bool>(zone_res[0][1])//is_enum_zone
@@ -77,7 +77,7 @@ namespace Zone {
                 std::string zone  = static_cast<std::string>(available_zones_res[i][0]);
                 std::string dot_zone  = label_separator + zone;
                 int from = domain.length() - dot_zone.length();
-                if(from >= 1)
+                if (from >= 1)
                 {
                     if (domain.find(dot_zone, from) != std::string::npos)
                     {

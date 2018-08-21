@@ -23,11 +23,11 @@ static bool equal(const LibFred::DnsKey& a, const LibFred::DnsKey& b) {
         && a.get_key()      == b.get_key();
 }
 static bool equal(const std::vector<LibFred::DnsKey>& a, const std::vector<LibFred::DnsKey>& b) {
-    if( a.size() != b.size() ) {
+    if (a.size() != b.size() ) {
         return false;
     }
-    for(std::vector<LibFred::DnsKey>::size_type i = 0; i < a.size(); ++i) {
-        if( ! equal(a.at(i), b.at(i)) ) { return false; }
+    for (std::vector<LibFred::DnsKey>::size_type i = 0; i < a.size(); ++i) {
+        if (! equal(a.at(i), b.at(i)) ) { return false; }
     }
     return true;
 }
@@ -51,7 +51,7 @@ static std::map<std::string, std::string> gather_keyset_update_data_change(
     const LibFred::InfoKeysetDiff diff = diff_keyset_data(_before, _after);
 
 
-    if(diff.authinfopw.isset()) {
+    if (diff.authinfopw.isset()) {
         add_old_new_changes_pair_if_different(
             result, "object.authinfo",
             diff.authinfopw.get_value().first,
@@ -59,7 +59,7 @@ static std::map<std::string, std::string> gather_keyset_update_data_change(
         );
     }
 
-    if(diff.tech_contacts.isset()) {
+    if (diff.tech_contacts.isset()) {
         add_old_new_changes_pair_if_different(
             result, "keyset.tech_c",
             boost::algorithm::join( sort( get_handles( diff.tech_contacts.get_value().first  ) ), " " ),
@@ -67,21 +67,21 @@ static std::map<std::string, std::string> gather_keyset_update_data_change(
         );
     }
 
-    if(diff.dns_keys.isset()) {
+    if (diff.dns_keys.isset()) {
         std::vector<LibFred::DnsKey> sorted_keys_old = diff.dns_keys.get_value().first;
         std::sort(sorted_keys_old.begin(), sorted_keys_old.end(), sort_by_key);
 
         std::vector<LibFred::DnsKey> sorted_keys_new = diff.dns_keys.get_value().second;
         std::sort(sorted_keys_new.begin(), sorted_keys_new.end(), sort_by_key);
 
-        if( ! equal(sorted_keys_old, sorted_keys_new) ) {
+        if (! equal(sorted_keys_old, sorted_keys_new) ) {
             result["changes.keyset.dnskey"] = "1";
 
-            for(std::vector<LibFred::DnsKey>::size_type i = 0; i < sorted_keys_old.size(); ++i) {
+            for (std::vector<LibFred::DnsKey>::size_type i = 0; i < sorted_keys_old.size(); ++i) {
                 result["changes.keyset.dnskey.old." + boost::lexical_cast<std::string>(i)] = dns_key_to_string( sorted_keys_old.at(i) );
             }
 
-            for(std::vector<LibFred::DnsKey>::size_type i = 0; i < sorted_keys_new.size(); ++i) {
+            for (std::vector<LibFred::DnsKey>::size_type i = 0; i < sorted_keys_new.size(); ++i) {
                 result["changes.keyset.dnskey.new." + boost::lexical_cast<std::string>(i)] = dns_key_to_string( sorted_keys_new.at(i) );
             }
         }
@@ -98,7 +98,7 @@ std::map<std::string, std::string> gather_keyset_data_change(
     unsigned long long _history_id_post_change
 ) {
 
-    if( _event != updated ) {
+    if (_event != updated ) {
 
         return std::map<std::string, std::string>();
 
@@ -143,7 +143,7 @@ std::set<unsigned long long> gather_contact_ids_to_notify_keyset_event(
     }
 
     // if there were possibly other old values notify those as well
-    if( _event == updated ) {
+    if (_event == updated ) {
         const std::set<unsigned long long> keysets_accepting_notifications_before_change = get_ids_of_keysets_accepting_notifications(
             LibFred::InfoKeysetHistoryByHistoryid(
                 LibFred::get_previous_object_historyid(_ctx, _history_id_after_change)

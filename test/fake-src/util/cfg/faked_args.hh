@@ -50,7 +50,7 @@ public:
 
         argv.reserve( fa.argv_buffers.size() );
         argv.clear();
-        for(argv_buffers_t::iterator i = argv_buffers.begin()
+        for (argv_buffers_t::iterator i = argv_buffers.begin()
                 ; i!=argv_buffers.end();++i)
         {
             argv.push_back( &(i->at(0)) );
@@ -111,7 +111,7 @@ public:
         argv_buffers.at(argv_idx).reserve(strsize+1);
 
         //actual string copy
-        for(std::string::const_iterator si = str.begin()
+        for (std::string::const_iterator si = str.begin()
                 ; si != str.end();  ++si )
         {
             argv_buffers.at(argv_idx).push_back(*si);
@@ -120,7 +120,7 @@ public:
 
         //refresh argv
         argv.clear();
-        for(argv_buffers_t::iterator i = argv_buffers.begin()
+        for (argv_buffers_t::iterator i = argv_buffers.begin()
                 ; i!=argv_buffers.end();++i)
         {
             argv.push_back( &(i->at(0)) );
@@ -135,7 +135,7 @@ public:
         for (int i = 0; i < get_argc(); ++i)
         {
             std::string arg = argv.at(i);
-            if((arg.find(' ') == std::string::npos)
+            if ((arg.find(' ') == std::string::npos)
                 && (arg.find('\t') == std::string::npos))
             {
                 ret.add_argv(arg);

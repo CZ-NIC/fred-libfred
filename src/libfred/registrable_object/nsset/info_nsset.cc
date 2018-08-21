@@ -58,7 +58,7 @@ namespace LibFred
             InfoNsset in;
             in.set_inline_view_filter(Database::ParamQuery(InfoNsset::GetAlias::handle())(" = UPPER(").param_text(handle_)(")"))
                 .set_history_query(false);
-            if(lock_)
+            if (lock_)
             {
                 in.set_lock();
             }
@@ -112,7 +112,7 @@ namespace LibFred
             InfoNsset in;
             in.set_inline_view_filter(Database::ParamQuery(InfoNsset::GetAlias::id())(" = ").param_bigint(id_))
                 .set_history_query(false);
-            if(lock_)
+            if (lock_)
             {
                 in.set_lock();
             }
@@ -174,7 +174,7 @@ namespace LibFred
 
             cte_id_filter_query("SELECT DISTINCT nssetid FROM host WHERE fqdn = ").param_text(dns_fqdn_);
 
-            if(limit_.isset())
+            if (limit_.isset())
             {
                 cte_id_filter_query (" ORDER BY nssetid LIMIT ").param_bigint(limit_.get_value());
             }
@@ -187,7 +187,7 @@ namespace LibFred
             InfoNsset in;
             in.set_cte_id_filter(cte_id_filter_query)
                 .set_history_query(false);
-            if(lock_)
+            if (lock_)
             {
                 in.set_lock();
             }
@@ -244,7 +244,7 @@ namespace LibFred
                         " JOIN nsset_contact_map ncm ON ncm.contactid = oreg.id"
                     " WHERE oreg.name = UPPER(").param_text(tech_contact_handle_)(") AND oreg.erdate IS NULL");
 
-            if(limit_.isset())
+            if (limit_.isset())
             {
                 cte_id_filter_query (" ORDER BY ncm.nssetid LIMIT ").param_bigint(limit_.get_value());
             }
@@ -257,7 +257,7 @@ namespace LibFred
             InfoNsset in;
             in.set_cte_id_filter(cte_id_filter_query)
                 .set_history_query(false);
-            if(lock_)
+            if (lock_)
             {
                 in.set_lock();
             }
@@ -303,7 +303,7 @@ namespace LibFred
             InfoNsset in;
             in.set_inline_view_filter(Database::ParamQuery(InfoNsset::GetAlias::roid())(" = ").param_text(roid_))
                 .set_history_query(true);
-            if(lock_)
+            if (lock_)
             {
                 in.set_lock();
             }
@@ -347,7 +347,7 @@ namespace LibFred
             InfoNsset in;
             in.set_inline_view_filter(Database::ParamQuery(InfoNsset::GetAlias::id())(" = ").param_bigint(id_))
                 .set_history_query(true);
-            if(lock_)
+            if (lock_)
             {
                 in.set_lock();
             }
@@ -390,7 +390,7 @@ namespace LibFred
             InfoNsset in;
             in.set_inline_view_filter(Database::ParamQuery(InfoNsset::GetAlias::historyid())(" = ").param_bigint(historyid_))
                 .set_history_query(true);
-            if(lock_)
+            if (lock_)
             {
                 in.set_lock();
             }

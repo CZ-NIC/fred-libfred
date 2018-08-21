@@ -46,7 +46,7 @@ namespace LibFred
 
             result.reserve(names_res.size());
 
-            for(Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
+            for (Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
                result.push_back(
                    test_result_status(
                        static_cast<std::string>( (*it)["handle"] ),
@@ -81,7 +81,7 @@ namespace LibFred
 
             result.reserve(names_res.size());
 
-            for(Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
+            for (Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
                 result.push_back(
                     check_status(
                         static_cast<std::string>( (*it)["handle"] ),
@@ -114,7 +114,7 @@ namespace LibFred
                 "   FROM enum_contact_test AS enum_c_t "
                 "       LEFT JOIN enum_contact_test_localization AS enum_c_t_loc USING(id) ";
 
-            if( !testsuite_name.empty() ) {
+            if (!testsuite_name.empty() ) {
                 params.push_back(testsuite_name);
                 std::string testsuite_position = boost::lexical_cast<std::string>(params.size());
 
@@ -142,7 +142,7 @@ namespace LibFred
 
             result.reserve(names_res.size());
 
-            for(Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
+            for (Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
                 result.push_back(
                     test_definition(
                         static_cast<std::string>( (*it)["handle_"] ),
@@ -176,7 +176,7 @@ namespace LibFred
 
             result.reserve(names_res.size());
 
-            for(Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
+            for (Database::Result::Iterator it = names_res.begin(); it != names_res.end(); ++it) {
                 result.push_back(
                     testsuite_definition(
                         static_cast<std::string>( (*it)["handle"] ),

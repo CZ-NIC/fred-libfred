@@ -113,7 +113,7 @@ public:
     {
         buffer_ = boost::posix_time::to_iso_extended_string(value);
         size_t idx = buffer_.find('T');
-        if(idx != std::string::npos) {
+        if (idx != std::string::npos) {
             buffer_[idx] = ' ';
         } 
     }
@@ -136,7 +136,7 @@ public:
     : binary_(false)
     , null_(t.isnull())
     {
-        if(!t.isnull())
+        if (!t.isnull())
         {
             buffer_ = boost::lexical_cast<std::string>(t.get_value());
         }
@@ -161,7 +161,7 @@ public:
         }
         else
         {
-            if(binary_)
+            if (binary_)
             {
                 //std::cout << "Binary param: ";
                  for (QueryParamData::const_iterator i = buffer_.begin()

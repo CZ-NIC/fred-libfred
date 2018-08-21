@@ -52,7 +52,7 @@ namespace LibFred
             "   WHERE domainid = $1::integer RETURNING domainid",
             Database::query_param_list(id));    // delete 0..1 row
 
-        if(delete_enumval_res.size() > 1) {
+        if (delete_enumval_res.size() > 1) {
             BOOST_THROW_EXCEPTION(LibFred::InternalError("delete enumval failed"));
         }
 

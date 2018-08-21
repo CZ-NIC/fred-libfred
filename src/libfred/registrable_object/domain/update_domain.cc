@@ -203,10 +203,10 @@ namespace LibFred
 
         if (!is_enum_zone)//check ENUM specific parameters
         {
-            if(enum_validation_expiration_.isset()) {
+            if (enum_validation_expiration_.isset()) {
                 BOOST_THROW_EXCEPTION(InternalError("enum_validation_expiration set for non-ENUM domain"));
             }
-            if(enum_publish_flag_.isset()) {
+            if (enum_publish_flag_.isset()) {
                 BOOST_THROW_EXCEPTION(InternalError("enum_publish_flag set for non-ENUM domain"));
             }
         }
@@ -224,22 +224,22 @@ namespace LibFred
         {
             bool caught_exception_has_been_handled = false;
 
-            if( ex.is_set_unknown_object_handle() ) {
+            if (ex.is_set_unknown_object_handle() ) {
                 update_domain_exception.set_unknown_domain_fqdn( ex.get_unknown_object_handle() );
                 caught_exception_has_been_handled = true;
             }
 
-            if( ex.is_set_unknown_registrar_handle() ) {
+            if (ex.is_set_unknown_registrar_handle() ) {
                 update_domain_exception.set_unknown_registrar_handle( ex.get_unknown_registrar_handle() );
                 caught_exception_has_been_handled = true;
             }
 
-            if( ! caught_exception_has_been_handled ) {
+            if (! caught_exception_has_been_handled ) {
                 throw;
             }
         }
         //update domain
-        if(nsset_.isset() || keyset_.isset() || registrant_.isset() || expiration_date_.isset())
+        if (nsset_.isset() || keyset_.isset() || registrant_.isset() || expiration_date_.isset())
         {
             Database::QueryParams params;//query params
             std::stringstream sql;
@@ -247,10 +247,10 @@ namespace LibFred
 
             sql <<"UPDATE domain ";
 
-            if(nsset_.isset())//change nsset
+            if (nsset_.isset())//change nsset
             {
                 Nullable<std::string> new_nsset_value = nsset_.get_value();
-                if(new_nsset_value.isnull())
+                if (new_nsset_value.isnull())
                 {
                     params.push_back(Database::NullQueryParam);//NULL, no nsset
                 }
@@ -267,10 +267,10 @@ namespace LibFred
                     << params.size() << "::integer ";
             }//if change nsset
 
-            if(keyset_.isset())//change keyset
+            if (keyset_.isset())//change keyset
             {
                 Nullable<std::string> new_keyset_value = keyset_.get_value();
-                if(new_keyset_value.isnull())
+                if (new_keyset_value.isnull())
                 {
                     params.push_back(Database::NullQueryParam);//NULL, no nsset
                 }
@@ -287,7 +287,7 @@ namespace LibFred
                     << params.size() << "::integer ";
             }//if change keyset
 
-            if(registrant_.isset())//change registrant
+            if (registrant_.isset())//change registrant
             {
                 //lock object_registry row for share
                 unsigned long long registrant_id = get_object_id_by_handle_and_type_with_lock(
@@ -299,9 +299,9 @@ namespace LibFred
                     << params.size() << "::integer ";
             }//if change registrant
 
-            if(expiration_date_.isset())
+            if (expiration_date_.isset())
             {
-                if(expiration_date_.get_value().is_special())
+                if (expiration_date_.get_value().is_special())
                 {
                     update_domain_exception.set_invalid_expiration_date(expiration_date_.get_value());
                 }
@@ -312,7 +312,7 @@ namespace LibFred
             }//if change exdate
 
             //check exception
-            if(update_domain_exception.throw_me()) {
+            if (update_domain_exception.throw_me()) {
                 BOOST_THROW_EXCEPTION(update_domain_exception);
             }
 
@@ -327,7 +327,7 @@ namespace LibFred
         }//if update domain
 
         //add admin contacts
-        if(!add_admin_contact_.empty())
+        if (!add_admin_contact_.empty())
         {
             Database::QueryParams params;//query params
             std::stringstream sql;
@@ -336,14 +336,14 @@ namespace LibFred
             sql << "INSERT INTO domain_contact_map(domainid, contactid) "
                     " VALUES ($" << params.size() << "::integer, ";
 
-            for(std::vector<std::string>::iterator i = add_admin_contact_.begin(); i != add_admin_contact_.end(); ++i)
+            for (std::vector<std::string>::iterator i = add_admin_contact_.begin(); i != add_admin_contact_.end(); ++i)
             {
                 //lock object_registry row for share and get id
 
                 unsigned long long admin_contact_id = get_object_id_by_handle_and_type_with_lock(
                         ctx, false, *i,"contact",&update_domain_exception,
                         &Exception::add_unknown_admin_contact_handle);
-                if(admin_contact_id == 0) continue;
+                if (admin_contact_id == 0) continue;
 
                 Database::QueryParams params_i = params;//query params
                 std::stringstream sql_i;
@@ -361,7 +361,7 @@ namespace LibFred
                 catch(const std::exception& ex)
                 {
                     std::string what_string(ex.what());
-                    if(what_string.find("domain_contact_map_pkey") != std::string::npos)
+                    if (what_string.find("domain_contact_map_pkey") != std::string::npos)
                     {
                         update_domain_exception.add_already_set_admin_contact_handle(*i);
                         ctx.get_conn().exec("ROLLBACK TO SAVEPOINT admin_contact");
@@ -374,7 +374,7 @@ namespace LibFred
         }//if add admin contacts
 
         //delete admin contacts
-        if(!rem_admin_contact_.empty())
+        if (!rem_admin_contact_.empty())
         {
             Database::QueryParams params;//query params
             std::stringstream sql;
@@ -382,14 +382,14 @@ namespace LibFred
             params.push_back(domain_id);
             sql << "DELETE FROM domain_contact_map WHERE domainid = $" << params.size() << "::integer AND ";
 
-            for(std::vector<std::string>::iterator i = rem_admin_contact_.begin(); i != rem_admin_contact_.end(); ++i)
+            for (std::vector<std::string>::iterator i = rem_admin_contact_.begin(); i != rem_admin_contact_.end(); ++i)
             {
                 //lock object_registry row for share and get id
 
                 unsigned long long admin_contact_id = get_object_id_by_handle_and_type_with_lock(
                         ctx, false, *i,"contact",&update_domain_exception,
                         &Exception::add_unknown_admin_contact_handle);
-                if(admin_contact_id == 0) continue;
+                if (admin_contact_id == 0) continue;
 
                 Database::QueryParams params_i = params;//query params
                 std::stringstream sql_i;
@@ -413,18 +413,18 @@ namespace LibFred
         }//if delete admin contacts
 
         //check valexdate if set
-        if(enum_validation_expiration_.isset() && enum_validation_expiration_.get_value().is_special())
+        if (enum_validation_expiration_.isset() && enum_validation_expiration_.get_value().is_special())
         {
             update_domain_exception.set_invalid_enum_validation_expiration_date(enum_validation_expiration_.get_value());
         }
 
         //check exception
-        if(update_domain_exception.throw_me())
+        if (update_domain_exception.throw_me())
             BOOST_THROW_EXCEPTION(update_domain_exception);
 
 
         //update enumval
-        if(enum_validation_expiration_.isset() || enum_publish_flag_.isset())
+        if (enum_validation_expiration_.isset() || enum_publish_flag_.isset())
         {
             Database::QueryParams params;//query params
             std::stringstream sql;
@@ -432,14 +432,14 @@ namespace LibFred
 
             sql <<"UPDATE enumval ";
 
-            if(enum_validation_expiration_.isset())
+            if (enum_validation_expiration_.isset())
             {
                 params.push_back(enum_validation_expiration_.get_value());
                 sql << set_separator.get() << " exdate = $"
                     << params.size() << "::date ";
             }
 
-            if(enum_publish_flag_.isset())
+            if (enum_publish_flag_.isset())
             {
                 params.push_back(enum_publish_flag_.get_value());
                 sql << set_separator.get() << " publish = $"
