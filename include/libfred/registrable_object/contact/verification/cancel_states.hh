@@ -21,21 +21,17 @@
  *  delete all contact states related to admin contact verification
  */
 
-#ifndef DELETE_ALL_HH_187A1478735E49EC93BEE97776D5CF35
-#define DELETE_ALL_HH_187A1478735E49EC93BEE97776D5CF35
-
+#ifndef CANCEL_STATES_HH_187A1478735E49EC93BEE97776D5CF35
+#define CANCEL_STATES_HH_187A1478735E49EC93BEE97776D5CF35
 
 #include "libfred/opcontext.hh"
 #include "util/optional_value.hh"
 
 #include <string>
 
-namespace Fred {
-namespace Backend {
-namespace Admin {
+namespace LibFred {
 namespace Contact {
 namespace Verification {
-namespace ContactStates {
 
 /* OperationContext versions */
 
@@ -59,28 +55,21 @@ bool conditionally_cancel_final_states(
         bool ssntype_changed,
         bool ssn_changed);
 
-
 /** @returns true if contact has changed data related to verification false otherwise */
 bool conditionally_cancel_final_states(
         LibFred::OperationContext& ctx,
         unsigned long long contact_id);
 
-
 void cancel_all_states(
         LibFred::OperationContext& ctx,
         unsigned long long contact_id);
-
 
 void cancel_final_states(
         LibFred::OperationContext& ctx,
         unsigned long long contact_id);
 
+}//namespace LibFred::Contact::Verification
+}//namespace LibFred::Contact
+}//namespace LibFred
 
-} // namespace Fred::Backend::Admin::Contact::Verification::ContactStates
-} // namespace Fred::Backend::Admin::Contact::Verification
-} // namespace Fred::Backend::Admin::Contact
-} // namespace Fred::Backend::Admin
-} // namespace Fred::Backend
-} // namespace Fred
-
-#endif // #include guard end
+#endif//CANCEL_STATES_HH_187A1478735E49EC93BEE97776D5CF35

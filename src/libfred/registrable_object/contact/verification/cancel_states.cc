@@ -1,18 +1,15 @@
-#include "backend/admin/contact/verification/contact_states/delete_all.hh"
-#include "backend/admin/contact/verification/contact_states/enum.hh"
+#include "libfred/registrable_object/contact/verification/cancel_states.hh"
 #include "libfred/object_state/cancel_object_state_request_id.hh"
+#include "libfred/object/object_state.hh"
 
 // legacy
 #include "libfred/object_states.hh"
 
-#include <boost/foreach.hpp>
+#include <set>
 
-namespace Fred {
-namespace Backend {
-namespace Admin {
+namespace LibFred {
 namespace Contact {
 namespace Verification {
-namespace ContactStates {
 
 bool conditionally_cancel_final_states(
         LibFred::OperationContext& ctx,
@@ -59,22 +56,34 @@ bool conditionally_cancel_final_states(
 
 namespace {
 
+std::set<Object_State::Enum> get_all()
+{
+    return { Object_State::contact_in_manual_verification,
+             Object_State::contact_passed_manual_verification,
+             Object_State::contact_failed_manual_verification };
+}
+
+std::set<Object_State::Enum> get_final()
+{
+    return { Object_State::contact_passed_manual_verification,
+             Object_State::contact_failed_manual_verification };
+}
+
 void cancel_states(
         LibFred::OperationContext& _ctx,
         unsigned long long _contact_id,
-        const std::vector<std::string>& _states)
+        const std::set<Object_State::Enum>& _states)
 {
     _ctx.get_conn().exec("SAVEPOINT state_savepoint");
 
     // cancel one state at a time because when exception is thrown, all changes would be ROLLBACKed
-    for (const auto& object_state : _states)
+    for (const auto object_state : _states)
     {
-        std::set<std::string> object_states_to_erase = boost::assign::list_of(object_state);
         try
         {
             LibFred::CancelObjectStateRequestId(
                     _contact_id,
-                    object_states_to_erase).exec(_ctx);
+                    { Conversion::Enums::to_db_handle(object_state) }).exec(_ctx);
             _ctx.get_conn().exec("RELEASE SAVEPOINT state_savepoint");
             _ctx.get_conn().exec("SAVEPOINT state_savepoint");
         }
@@ -90,7 +99,7 @@ void cancel_states(
     }
 }
 
-}//namspace Fred::Backend::Admin::Contact::Verification::ContactStates::{anonymous}
+}//namspace LibFred::Contact::Verification::{anonymous}
 
 void cancel_all_states(LibFred::OperationContext& _ctx, unsigned long long _contact_id)
 {
@@ -135,12 +144,15 @@ bool conditionally_cancel_final_states(
     {
         return false;
     }
-    const std::vector<std::string> final_states = get_final();
+    const std::set<Object_State::Enum> final_states = get_final();
+    std::set<std::string> final_states_names;
+    for (const auto state : final_states)
+    {
+        final_states_names.insert(Conversion::Enums::to_db_handle(state));
+    }
     try
     {
-        LibFred::CancelObjectStateRequestId(
-                contact_id,
-                std::set<std::string>(final_states.begin(), final_states.end())).exec(ctx);
+        LibFred::CancelObjectStateRequestId(contact_id, final_states_names).exec(ctx);
         return true;
     }
     catch (const LibFred::CancelObjectStateRequestId::Exception& e)
@@ -154,9 +166,6 @@ bool conditionally_cancel_final_states(
     }
 }
 
-}//namspace Fred::Backend::Admin::Contact::Verification::ContactStates
-}//namspace Fred::Backend::Admin::Contact::Verification
-}//namspace Fred::Backend::Admin::Contact
-}//namspace Fred::Backend::Admin
-}//namspace Fred::Backend
-}//namspace Fred
+}//namespace LibFred::Contact::Verification
+}//namespace LibFred::Contact
+}//namespace LibFred

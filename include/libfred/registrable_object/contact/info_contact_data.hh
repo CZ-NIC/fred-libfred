@@ -213,7 +213,7 @@ struct ContactAddress : Contact::PlaceAddress
 /**
  * Container of additional contact addresses.
  */
-typedef std::map< ContactAddressType, ContactAddress > ContactAddressList;
+typedef std::map<ContactAddressType, ContactAddress> ContactAddressList;
 
 /**
  * Connect ssn and ssnvalue together.

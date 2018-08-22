@@ -11,7 +11,7 @@ endif()
 include(GNUInstallDirs)
 
 add_library(fred SHARED
-    src/backend/admin/contact/verification/contact_states/delete_all.cc
+    src/libfred/registrable_object/contact/verification/cancel_states.cc
     src/libfred/opcontext.cc
     src/libfred/notifier/enqueue_notification.cc
     src/libfred/notifier/process_one_notification_request.cc

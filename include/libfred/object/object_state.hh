@@ -58,7 +58,7 @@ public:
         server_delete_prohibited,           ///< means database `serverDeleteProhibited` state
         server_inzone_manual,               ///< means database `serverInzoneManual` state
         server_outzone_manual,              ///< means database `serverOutzoneManual` state
-        server_registrant_change_prohibited, ///< means database `serverRegistrantChangeProhibited` state
+        server_registrant_change_prohibited,///< means database `serverRegistrantChangeProhibited` state
         server_renew_prohibited,            ///< means database `serverRenewProhibited` state
         server_transfer_prohibited,         ///< means database `serverTransferProhibited` state
         server_update_prohibited,           ///< means database `serverUpdateProhibited` state
@@ -70,7 +70,7 @@ public:
     };
 };
 
-}//Fred
+}//namespace LibFred
 
 namespace Conversion {
 namespace Enums {
@@ -111,41 +111,44 @@ inline std::string to_db_handle(LibFred::Object_State::Enum value)
     throw std::invalid_argument("value doesn't exist in LibFred::Object_State::Enum");
 }
 
-template < >
-inline LibFred::Object_State::Enum from_db_handle< LibFred::Object_State >(const std::string &db_handle)
+template <>
+inline LibFred::Object_State::Enum from_db_handle<LibFred::Object_State>(const std::string& db_handle)
 {
-    if (to_db_handle(LibFred::Object_State::conditionally_identified_contact) == db_handle) { return LibFred::Object_State::conditionally_identified_contact; }
-    if (to_db_handle(LibFred::Object_State::contact_failed_manual_verification) == db_handle) { return LibFred::Object_State::contact_failed_manual_verification; }
-    if (to_db_handle(LibFred::Object_State::contact_in_manual_verification) == db_handle) { return LibFred::Object_State::contact_in_manual_verification; }
-    if (to_db_handle(LibFred::Object_State::contact_passed_manual_verification) == db_handle) { return LibFred::Object_State::contact_passed_manual_verification; }
-    if (to_db_handle(LibFred::Object_State::delete_candidate) == db_handle) { return LibFred::Object_State::delete_candidate; }
-    if (to_db_handle(LibFred::Object_State::delete_warning) == db_handle) { return LibFred::Object_State::delete_warning; }
-    if (to_db_handle(LibFred::Object_State::expiration_warning) == db_handle) { return LibFred::Object_State::expiration_warning; }
-    if (to_db_handle(LibFred::Object_State::expired) == db_handle) { return LibFred::Object_State::expired; }
-    if (to_db_handle(LibFred::Object_State::identified_contact) == db_handle) { return LibFred::Object_State::identified_contact; }
-    if (to_db_handle(LibFred::Object_State::linked) == db_handle) { return LibFred::Object_State::linked; }
-    if (to_db_handle(LibFred::Object_State::mojeid_contact) == db_handle) { return LibFred::Object_State::mojeid_contact; }
-    if (to_db_handle(LibFred::Object_State::not_validated) == db_handle) { return LibFred::Object_State::not_validated; }
-    if (to_db_handle(LibFred::Object_State::nsset_missing) == db_handle) { return LibFred::Object_State::nsset_missing; }
-    if (to_db_handle(LibFred::Object_State::outzone) == db_handle) { return LibFred::Object_State::outzone; }
-    if (to_db_handle(LibFred::Object_State::outzone_unguarded) == db_handle) { return LibFred::Object_State::outzone_unguarded; }
-    if (to_db_handle(LibFred::Object_State::server_blocked) == db_handle) { return LibFred::Object_State::server_blocked; }
-    if (to_db_handle(LibFred::Object_State::server_delete_prohibited) == db_handle) { return LibFred::Object_State::server_delete_prohibited; }
-    if (to_db_handle(LibFred::Object_State::server_inzone_manual) == db_handle) { return LibFred::Object_State::server_inzone_manual; }
-    if (to_db_handle(LibFred::Object_State::server_outzone_manual) == db_handle) { return LibFred::Object_State::server_outzone_manual; }
-    if (to_db_handle(LibFred::Object_State::server_registrant_change_prohibited) == db_handle) { return LibFred::Object_State::server_registrant_change_prohibited; }
-    if (to_db_handle(LibFred::Object_State::server_renew_prohibited) == db_handle) { return LibFred::Object_State::server_renew_prohibited; }
-    if (to_db_handle(LibFred::Object_State::server_transfer_prohibited) == db_handle) { return LibFred::Object_State::server_transfer_prohibited; }
-    if (to_db_handle(LibFred::Object_State::server_update_prohibited) == db_handle) { return LibFred::Object_State::server_update_prohibited; }
-    if (to_db_handle(LibFred::Object_State::unguarded) == db_handle) { return LibFred::Object_State::unguarded; }
-    if (to_db_handle(LibFred::Object_State::validated_contact) == db_handle) { return LibFred::Object_State::validated_contact; }
-    if (to_db_handle(LibFred::Object_State::validation_warning1) == db_handle) { return LibFred::Object_State::validation_warning1; }
-    if (to_db_handle(LibFred::Object_State::validation_warning2) == db_handle) { return LibFred::Object_State::validation_warning2; }
-    if (to_db_handle(LibFred::Object_State::outzone_unguarded_warning) == db_handle) { return LibFred::Object_State::outzone_unguarded_warning; }
-    throw std::invalid_argument("handle \"" + db_handle + "\" isn't convertible to LibFred::Object_State::Enum");
+    constexpr LibFred::Object_State::Enum possible_results[] =
+            {
+                LibFred::Object_State::conditionally_identified_contact,
+                LibFred::Object_State::contact_failed_manual_verification,
+                LibFred::Object_State::contact_in_manual_verification,
+                LibFred::Object_State::contact_passed_manual_verification,
+                LibFred::Object_State::delete_candidate,
+                LibFred::Object_State::delete_warning,
+                LibFred::Object_State::expiration_warning,
+                LibFred::Object_State::expired,
+                LibFred::Object_State::identified_contact,
+                LibFred::Object_State::linked,
+                LibFred::Object_State::mojeid_contact,
+                LibFred::Object_State::not_validated,
+                LibFred::Object_State::nsset_missing,
+                LibFred::Object_State::outzone,
+                LibFred::Object_State::outzone_unguarded,
+                LibFred::Object_State::server_blocked,
+                LibFred::Object_State::server_delete_prohibited,
+                LibFred::Object_State::server_inzone_manual,
+                LibFred::Object_State::server_outzone_manual,
+                LibFred::Object_State::server_registrant_change_prohibited,
+                LibFred::Object_State::server_renew_prohibited,
+                LibFred::Object_State::server_transfer_prohibited,
+                LibFred::Object_State::server_update_prohibited,
+                LibFred::Object_State::unguarded,
+                LibFred::Object_State::validated_contact,
+                LibFred::Object_State::validation_warning1,
+                LibFred::Object_State::validation_warning2,
+                LibFred::Object_State::outzone_unguarded_warning
+            };
+    return inverse_transformation(db_handle, possible_results, to_db_handle);
 }
 
-} // namespace Conversion::Enums
-} // namespace Conversion
+}//namespace Conversion::Enums
+}//namespace Conversion
 
-#endif
+#endif//OBJECT_STATE_HH_A7838AEAF86D4E8D9E6B3269351FA976

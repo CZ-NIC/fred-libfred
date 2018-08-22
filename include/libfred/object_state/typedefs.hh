@@ -28,15 +28,16 @@
 #include <string>
 #include <set>
 
-namespace LibFred
-{
-    typedef unsigned long long ObjectId;
-    typedef unsigned long long ObjectStateId;
-    typedef std::set< ObjectStateId > MultipleObjectStateId;
-    typedef short int ObjectType;
-    typedef std::set< std::string > StatusList;
-    typedef ObjectId PublicRequestId;
-    typedef ObjectId RegistrarId;
-}
+namespace LibFred {
 
-#endif
+typedef unsigned long long ObjectId;
+typedef unsigned long long ObjectStateId;
+typedef std::set<ObjectStateId> MultipleObjectStateId;
+typedef short int ObjectType;
+typedef std::set<std::string> StatusList;
+typedef ObjectId PublicRequestId;
+typedef ObjectId RegistrarId;
+
+}//namespace LibFred
+
+#endif//TYPEDEFS_HH_F871C7189C80499AB88D772CB0034FBE
