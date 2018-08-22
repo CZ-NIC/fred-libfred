@@ -70,14 +70,14 @@ struct delete_enum_domain_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
                 .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
                 .set_disclosename(true)
                 .set_place(place)
@@ -123,14 +123,14 @@ struct delete_domain_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
                 .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
                 .set_disclosename(true)
                 .set_place(place)
@@ -272,7 +272,7 @@ BOOST_FIXTURE_TEST_CASE(delete_domain_with_wrong_fqdn, delete_domain_fixture )
         ::LibFred::DeleteDomainByFqdn(bad_test_domain_fqdn).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::DeleteDomainByFqdn::Exception& ex)
+    catch (const ::LibFred::DeleteDomainByFqdn::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_domain_fqdn());
         BOOST_CHECK(ex.get_unknown_domain_fqdn().compare(bad_test_domain_fqdn) == 0);

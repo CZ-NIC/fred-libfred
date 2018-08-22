@@ -87,14 +87,14 @@ struct check_domain_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
             .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)

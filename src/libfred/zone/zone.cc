@@ -30,13 +30,13 @@ namespace Zone {
 
     std::string rem_trailing_dot(const std::string& fqdn)
     {
-        if (!fqdn.empty() && fqdn.at(fqdn.size()-1) == '.') return fqdn.substr(0,fqdn.size()-1);
+        if (!fqdn.empty() && fqdn.at(fqdn.size()-1) == '.') return fqdn.substr(0, fqdn.size()-1);
         return fqdn;
     }
 
     Data get_zone(OperationContext& ctx, const std::string& zone_name)
     {
-        Database::Result zone_res = ctx.get_conn().exec_params(
+        const Database::Result zone_res = ctx.get_conn().exec_params(
             "SELECT id, enum_zone, fqdn, dots_max, ex_period_min, ex_period_max, val_period"
             " FROM zone WHERE fqdn=lower($1::text) FOR SHARE"
             , Database::query_param_list(zone_name));
@@ -64,7 +64,7 @@ namespace Zone {
 
             std::string domain(boost::to_lower_copy(no_root_dot_fqdn));
 
-            Database::Result available_zones_res = ctx.get_conn().exec(
+            const Database::Result available_zones_res = ctx.get_conn().exec(
                 "SELECT fqdn FROM zone ORDER BY length(fqdn) DESC");
 
             if (available_zones_res.size() == 0)
@@ -83,9 +83,9 @@ namespace Zone {
                     {
                         try
                         {
-                            return get_zone(ctx,zone);
+                            return get_zone(ctx, zone);
                         }
-                        catch(const std::exception& ex)
+                        catch (const std::exception& ex)
                         {
                             BOOST_THROW_EXCEPTION(Exception().set_unknown_zone_in_fqdn(no_root_dot_fqdn));
                         }
@@ -94,8 +94,8 @@ namespace Zone {
             }//for available_zones_res
 
             BOOST_THROW_EXCEPTION(Exception().set_unknown_zone_in_fqdn(no_root_dot_fqdn));
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(std::string("fqdn: ")+no_root_dot_fqdn);
             throw;

@@ -62,7 +62,7 @@ namespace LibFred
             {
                 in.set_lock();
             }
-            nsset_res = in.exec(ctx,local_timestamp_pg_time_zone_name);
+            nsset_res = in.exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (nsset_res.empty())
             {
@@ -75,7 +75,7 @@ namespace LibFred
             }
 
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -86,9 +86,9 @@ namespace LibFred
     std::string InfoNssetByHandle::to_string() const
     {
         return Util::format_operation_state("InfoNssetByHandle",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("handle", handle_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -116,7 +116,7 @@ namespace LibFred
             {
                 in.set_lock();
             }
-            nsset_res = in.exec(ctx,local_timestamp_pg_time_zone_name);
+            nsset_res = in.exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (nsset_res.empty())
             {
@@ -129,7 +129,7 @@ namespace LibFred
             }
 
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -140,9 +140,9 @@ namespace LibFred
     std::string InfoNssetById::to_string() const
     {
         return Util::format_operation_state("InfoNssetById",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -191,9 +191,9 @@ namespace LibFred
             {
                 in.set_lock();
             }
-            nsset_res = in.exec(ctx,local_timestamp_pg_time_zone_name);
+            nsset_res = in.exec(ctx, local_timestamp_pg_time_zone_name);
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -204,10 +204,10 @@ namespace LibFred
     std::string InfoNssetByDNSFqdn::to_string() const
     {
         return Util::format_operation_state("InfoNssetByDNSFqdn",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("dns_fqdn", dns_fqdn_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
-        (std::make_pair("limit",limit_.print_quoted()))
+        (std::make_pair("lock", lock_ ? "true":"false"))
+        (std::make_pair("limit", limit_.print_quoted()))
         );
     }
 
@@ -261,9 +261,9 @@ namespace LibFred
             {
                 in.set_lock();
             }
-            nsset_res = in.exec(ctx,local_timestamp_pg_time_zone_name);
+            nsset_res = in.exec(ctx, local_timestamp_pg_time_zone_name);
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -275,10 +275,10 @@ namespace LibFred
     std::string InfoNssetByTechContactHandle::to_string() const
     {
         return Util::format_operation_state("InfoNssetByTechContactHandle",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("tech_contact_handle", tech_contact_handle_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
-        (std::make_pair("limit",limit_.print_quoted()))
+        (std::make_pair("lock", lock_ ? "true":"false"))
+        (std::make_pair("limit", limit_.print_quoted()))
         );
     }
 
@@ -307,9 +307,9 @@ namespace LibFred
             {
                 in.set_lock();
             }
-            nsset_res = in.exec(ctx,local_timestamp_pg_time_zone_name);
+            nsset_res = in.exec(ctx, local_timestamp_pg_time_zone_name);
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -320,9 +320,9 @@ namespace LibFred
     std::string InfoNssetHistoryByRoid::to_string() const
     {
         return Util::format_operation_state("InfoNssetHistoryByRoid",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("roid",roid_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("roid", roid_))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -351,9 +351,9 @@ namespace LibFred
             {
                 in.set_lock();
             }
-            nsset_history_res = in.exec(ctx,local_timestamp_pg_time_zone_name);
+            nsset_history_res = in.exec(ctx, local_timestamp_pg_time_zone_name);
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -364,9 +364,9 @@ namespace LibFred
     std::string InfoNssetHistoryById::to_string() const
     {
         return Util::format_operation_state("InfoNssetHistoryById",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -394,7 +394,7 @@ namespace LibFred
             {
                 in.set_lock();
             }
-            nsset_history_res = in.exec(ctx,local_timestamp_pg_time_zone_name);
+            nsset_history_res = in.exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (nsset_history_res.empty())
             {
@@ -407,7 +407,7 @@ namespace LibFred
             }
 
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -418,9 +418,9 @@ namespace LibFred
     std::string InfoNssetHistoryByHistoryid::to_string() const
     {
         return Util::format_operation_state("InfoNssetHistoryByHistoryid",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("historyid",boost::lexical_cast<std::string>(historyid_)))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("historyid", boost::lexical_cast<std::string>(historyid_)))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 

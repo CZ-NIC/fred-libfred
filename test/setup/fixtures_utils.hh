@@ -742,7 +742,7 @@ struct keyset
 
     explicit keyset(
             ::LibFred::OperationContext& _ctx,
-             const Optional<std::string>& _handle = Optional<std::string>(),\
+             const Optional<std::string>& _handle = Optional<std::string>(), \
              const Optional<std::string>& _registrar_handle = Optional<std::string>(),
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
     {

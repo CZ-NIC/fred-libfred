@@ -145,17 +145,17 @@ BOOST_AUTO_TEST_CASE(public_request_lock_guard_by_id)
     try {
         ::LibFred::PublicRequestLockGuardById(ctx, bad_id);
     }
-    catch(const ::LibFred::PublicRequestLockGuardById::Exception &e) {
+    catch (const ::LibFred::PublicRequestLockGuardById::Exception &e) {
         BOOST_CHECK(e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(e.get_public_request_doesnt_exist() == bad_id);
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -177,17 +177,17 @@ BOOST_AUTO_TEST_CASE(public_request_lock_guard_by_identification)
     try {
         ::LibFred::PublicRequestLockGuardByIdentification(ctx, bad_identification);
     }
-    catch(const ::LibFred::PublicRequestLockGuardByIdentification::Exception &e) {
+    catch (const ::LibFred::PublicRequestLockGuardByIdentification::Exception &e) {
         BOOST_CHECK(e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(e.get_public_request_doesnt_exist() == bad_identification);
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(update_public_request_without_changes)
         ::LibFred::UpdatePublicRequest()
             .exec(::LibFred::PublicRequestLockGuardById(ctx, create_result.public_request_id), public_request_type);
     }
-    catch(const ::LibFred::UpdatePublicRequest::Exception &e) {
+    catch (const ::LibFred::UpdatePublicRequest::Exception &e) {
         BOOST_CHECK(e.is_set_nothing_to_do());
         BOOST_CHECK(!e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(!e.is_set_unknown_email_id());
@@ -217,11 +217,11 @@ BOOST_AUTO_TEST_CASE(update_public_request_without_changes)
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -258,7 +258,7 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_public_request_id)
             .set_status(::LibFred::PublicRequest::Status::resolved)
             .exec(PublicRequestLockGuardFake(ctx, bad_public_request_id), public_request_type);
     }
-    catch(const ::LibFred::UpdatePublicRequest::Exception &e) {
+    catch (const ::LibFred::UpdatePublicRequest::Exception &e) {
         BOOST_CHECK(!e.is_set_nothing_to_do());
         BOOST_CHECK(e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(!e.is_set_unknown_email_id());
@@ -268,11 +268,11 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_public_request_id)
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -298,7 +298,7 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_email_or_registrar)
             .set_answer_email_id(bad_email_id)
             .exec(::LibFred::PublicRequestLockGuardById(ctx, create_result.public_request_id), public_request_type);
     }
-    catch(const ::LibFred::UpdatePublicRequest::Exception &e) {
+    catch (const ::LibFred::UpdatePublicRequest::Exception &e) {
         BOOST_CHECK(!e.is_set_nothing_to_do());
         BOOST_CHECK(!e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(e.is_set_unknown_email_id());
@@ -308,11 +308,11 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_email_or_registrar)
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_email_or_registrar)
             .set_registrar_id(bad_registrar_id)
             .exec(::LibFred::PublicRequestLockGuardById(ctx, create_result.public_request_id), public_request_type);
     }
-    catch(const ::LibFred::UpdatePublicRequest::Exception &e) {
+    catch (const ::LibFred::UpdatePublicRequest::Exception &e) {
         BOOST_CHECK(!e.is_set_nothing_to_do());
         BOOST_CHECK(!e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(!e.is_set_unknown_email_id());
@@ -335,11 +335,11 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_email_or_registrar)
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_email_or_registrar)
             .set_registrar_id(bad_registrar_id)
             .exec(::LibFred::PublicRequestLockGuardById(ctx, create_result.public_request_id), public_request_type);
     }
-    catch(const ::LibFred::UpdatePublicRequest::Exception &e) {
+    catch (const ::LibFred::UpdatePublicRequest::Exception &e) {
         BOOST_CHECK(!e.is_set_nothing_to_do());
         BOOST_CHECK(!e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(e.is_set_unknown_email_id());
@@ -364,11 +364,11 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_email_or_registrar)
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -393,7 +393,7 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_public_request_status)
             .set_email_to_answer(email)
             .exec(::LibFred::PublicRequestLockGuardById(ctx, create_result.public_request_id), public_request_type);
     }
-    catch(const ::LibFred::UpdatePublicRequest::Exception &e) {
+    catch (const ::LibFred::UpdatePublicRequest::Exception &e) {
         BOOST_CHECK(!e.is_set_nothing_to_do());
         BOOST_CHECK(!e.is_set_public_request_doesnt_exist());
         BOOST_CHECK(!e.is_set_unknown_email_id());
@@ -403,11 +403,11 @@ BOOST_AUTO_TEST_CASE(update_public_request_wrong_public_request_status)
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_CASE(update_public_request_ok)
                 (result.affected_requests[0] == create_result.public_request_id));
     BOOST_CHECK(result.public_request_type == public_request_type.get_public_request_type());
     BOOST_CHECK(result.object_id == contact_id);
-    Database::Result res = ctx.get_conn().exec_params(
+    const Database::Result res = ctx.get_conn().exec_params(
         "SELECT "
             "id,"
             "(SELECT name=$2::TEXT FROM enum_public_request_type WHERE id=pr.request_type),"

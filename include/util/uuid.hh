@@ -50,7 +50,7 @@ class uuid {
                 throw ExceptionInvalidUuid();
             }
         }
-        catch(const std::runtime_error&) {
+        catch (const std::runtime_error&) {
             throw ExceptionInvalidUuid();
         }
     public:

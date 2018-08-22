@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(test_Exec_optional_setup)
     // contact_history_id is correct regarding the create_time
 
     ::LibFred::OperationContextCreator ctx3;
-    Database::Result contact_history_validity_interval = ctx3.get_conn().exec_params(
+    const Database::Result contact_history_validity_interval = ctx3.get_conn().exec_params(
         "SELECT valid_from AT TIME ZONE 'utc' AT TIME ZONE $1::varchar,"
                "valid_to  AT TIME ZONE 'utc' AT TIME ZONE $1::varchar "
         "FROM history "

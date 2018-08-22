@@ -24,69 +24,69 @@
 #ifndef INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324
 #define INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324
 
-#include <string>
-#include <vector>
-
-#include <boost/date_time/posix_time/ptime.hpp>
+#include "libfred/object/object_id_handle_pair.hh"
+#include "libfred/registrable_object/nsset/nsset_dns_host.hh"
 
 #include "util/optional_value.hh"
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
-#include "libfred/object/object_id_handle_pair.hh"
 
-#include "libfred/registrable_object/nsset/nsset_dns_host.hh"
+#include <boost/date_time/posix_time/ptime.hpp>
 
-namespace LibFred
+#include <string>
+#include <vector>
+
+namespace LibFred {
+
+/**
+ * Common data of nsset.
+ * Current or history state of the nsset.
+ */
+struct InfoNssetData : Util::Printable<InfoNssetData>
 {
     /**
-     * Common data of nsset.
-     * Current or history state of the nsset.
-     */
-    struct InfoNssetData : public Util::Printable
-    {
-        unsigned long long crhistoryid;/**< first historyid of nsset history */
-        unsigned long long historyid;/**< last historyid of nsset history */
-        unsigned long long id;/**< id of the nsset object*/
-        Nullable<boost::posix_time::ptime> delete_time; /**< nsset delete time in set local zone */
-        std::string handle;/**< nsset handle */
-        std::string roid;/**< registry object identifier of the nsset */
-        std::string sponsoring_registrar_handle;/**< registrar administering the nsset */
-        std::string create_registrar_handle;/**< registrar that created the nsset */
-        Nullable<std::string> update_registrar_handle;/**< registrar which last time changed the nsset */
-        boost::posix_time::ptime creation_time;/**< creation time of the nsset in set local zone*/
-        Nullable<boost::posix_time::ptime> update_time; /**< last update time of the nsset in set local zone*/
-        Nullable<boost::posix_time::ptime> transfer_time; /**<last transfer time in set local zone*/
-        std::string authinfopw;/**< password for transfer */
-        Nullable<short> tech_check_level; /**< nsset level of technical checks */
-        std::vector<DnsHost> dns_hosts; /**< DNS hosts */
-        std::vector<ObjectIdHandlePair> tech_contacts;/**< list of technical contacts */
+    * Constructor of the nsset data structure.
+    */
+    InfoNssetData();
 
-        /**
-        * Constructor of the nsset data structure.
-        */
-        InfoNssetData();
+    /**
+    * Equality of the nsset data structure operator.
+    * @param rhs is right hand side of the nsset data comparison
+    * @return true if equal, false if not
+    */
+    bool operator==(const InfoNssetData& rhs) const;
 
-        /**
-        * Equality of the nsset data structure operator.
-        * @param rhs is right hand side of the nsset data comparison
-        * @return true if equal, false if not
-        */
-        bool operator==(const InfoNssetData& rhs) const;
+    /**
+    * Inequality of the nsset data structure operator.
+    * @param rhs is right hand side of the nsset data comparison
+    * @return true if not equal, false if equal
+    */
+    bool operator!=(const InfoNssetData& rhs) const;
 
-        /**
-        * Inequality of the nsset data structure operator.
-        * @param rhs is right hand side of the nsset data comparison
-        * @return true if not equal, false if equal
-        */
-        bool operator!=(const InfoNssetData& rhs) const;
+    /**
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
+    */
+    std::string to_string()const;
 
-        /**
-        * Dumps state of the instance into the string
-        * @return string with description of the instance state
-        */
-        std::string to_string() const;
-    };
+    unsigned long long crhistoryid;/**< first historyid of nsset history */
+    unsigned long long historyid;/**< last historyid of nsset history */
+    unsigned long long id;/**< id of the nsset object*/
+    Nullable<boost::posix_time::ptime> delete_time; /**< nsset delete time in set local zone */
+    std::string handle;/**< nsset handle */
+    std::string roid;/**< registry object identifier of the nsset */
+    std::string sponsoring_registrar_handle;/**< registrar administering the nsset */
+    std::string create_registrar_handle;/**< registrar that created the nsset */
+    Nullable<std::string> update_registrar_handle;/**< registrar which last time changed the nsset */
+    boost::posix_time::ptime creation_time;/**< creation time of the nsset in set local zone*/
+    Nullable<boost::posix_time::ptime> update_time; /**< last update time of the nsset in set local zone*/
+    Nullable<boost::posix_time::ptime> transfer_time; /**<last transfer time in set local zone*/
+    std::string authinfopw;/**< password for transfer */
+    Nullable<short> tech_check_level; /**< nsset level of technical checks */
+    std::vector<DnsHost> dns_hosts; /**< DNS hosts */
+    std::vector<ObjectIdHandlePair> tech_contacts;/**< list of technical contacts */
+};
 
-} // namespace LibFred
+}//namespace LibFred
 
-#endif
+#endif//INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324

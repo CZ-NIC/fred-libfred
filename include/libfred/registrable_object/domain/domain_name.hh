@@ -86,7 +86,7 @@ class DomainNameCheckerNeedZoneName
 public:
     virtual void set_zone_name(const DomainName& zone_name) = 0;
 protected:
-   ~DomainNameCheckerNeedZoneName(){}
+   virtual ~DomainNameCheckerNeedZoneName() {}
 };
 
 class DomainNameCheckerNeedOperationContext
@@ -94,7 +94,7 @@ class DomainNameCheckerNeedOperationContext
 public:
     virtual void set_ctx(const OperationContext& ctx) = 0;
 protected:
-   ~DomainNameCheckerNeedOperationContext(){}
+   virtual ~DomainNameCheckerNeedOperationContext() {}
 };
 
 class ExceptionZoneNameNotSet : public std::exception {};

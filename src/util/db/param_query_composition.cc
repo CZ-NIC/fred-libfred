@@ -128,7 +128,7 @@ namespace Database
     {}
 
     ParamQuery::ParamQuery(const std::string& val)
-    : param_query_(1,Element().set_string(val))
+    : param_query_(1, Element().set_string(val))
     {}
 
     ParamQuery& ParamQuery::operator()(const ParamQuery& val)
@@ -192,10 +192,10 @@ namespace Database
         return *this;
     }
 
-    std::pair<std::string,query_param_list> ParamQuery::get_query() const
+    std::pair<std::string, query_param_list> ParamQuery::get_query() const
     {
         std::map<std::shared_ptr<int>, std::string > param_lid_position;
-        std::pair<std::string,query_param_list> query;
+        std::pair<std::string, query_param_list> query;
 
         for (std::vector<Element>::const_iterator
             ci = param_query_.begin(); ci != param_query_.end(); ++ci)

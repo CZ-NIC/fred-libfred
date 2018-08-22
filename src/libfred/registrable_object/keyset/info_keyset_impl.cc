@@ -212,7 +212,7 @@ namespace LibFred
     {
         std::vector<InfoKeysetOutput> result;
 
-        Database::Result query_result = ctx.get_conn().exec_params(make_info_keyset_projection_query(local_timestamp_pg_time_zone_name));
+        const Database::Result query_result = ctx.get_conn().exec_params(make_info_keyset_projection_query(local_timestamp_pg_time_zone_name));
 
         result.reserve(query_result.size());
 
@@ -247,7 +247,7 @@ namespace LibFred
                 : boost::posix_time::time_from_string(static_cast<std::string>(query_result[i][GetAlias::utc_timestamp()]));
 
             //tech contacts
-            Database::Result tech_contact_res = ctx.get_conn().exec_params(make_tech_contact_query(
+            const Database::Result tech_contact_res = ctx.get_conn().exec_params(make_tech_contact_query(
                 info_keyset_output.info_keyset_data.id, info_keyset_output.info_keyset_data.historyid));
             info_keyset_output.info_keyset_data.tech_contacts.reserve(tech_contact_res.size());
             for (Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
@@ -259,7 +259,7 @@ namespace LibFred
             }
 
             //DNS keys
-            Database::Result dns_keys_res = ctx.get_conn().exec_params(make_dns_keys_query(
+            const Database::Result dns_keys_res = ctx.get_conn().exec_params(make_dns_keys_query(
                 info_keyset_output.info_keyset_data.id, info_keyset_output.info_keyset_data.historyid));
             info_keyset_output.info_keyset_data.tech_contacts.reserve(dns_keys_res.size());
             for (Database::Result::size_type j = 0; j < dns_keys_res.size(); ++j)

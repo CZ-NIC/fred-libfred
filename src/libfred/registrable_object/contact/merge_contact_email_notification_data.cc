@@ -103,7 +103,7 @@ namespace LibFred
                     email.removed_list.insert(i->src_contact_handle);
                     email.removed_roid_list.insert(i->merge_output.contactid.src_contact_roid);
 
-                    update_email(i,email);
+                    update_email(i, email);
 
                     //add and erase previous merge record
                     if (email_by_src_contact_it != email_by_dst_contact.end())
@@ -134,7 +134,7 @@ namespace LibFred
                     email.removed_list.insert(i->src_contact_handle);
                     email.removed_roid_list.insert(i->merge_output.contactid.src_contact_roid);
 
-                    update_email(i,email);
+                    update_email(i, email);
 
                     //add and erase previous merge record
                     if (email_by_src_contact_it != email_by_dst_contact.end())
@@ -200,8 +200,8 @@ namespace LibFred
 
                 result.push_back(notifemail);
             }//for it
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -213,8 +213,8 @@ namespace LibFred
     std::string MergeContactEmailNotificationData::to_string() const
     {
         return Util::format_operation_state("MergeContactEmailNotificationData",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("merge_contact_data",Util::format_container(merge_contact_data_)))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("merge_contact_data", Util::format_container(merge_contact_data_)))
         );
     }
 
@@ -232,7 +232,7 @@ namespace LibFred
             for (std::vector<MergeContactNotificationEmail>::const_iterator ci = email_data_.begin()
                 ; ci != email_data_.end(); ++ci)
             {
-                Database::Result  email_result = ctx.get_conn().exec_params(
+                const Database::Result email_result = ctx.get_conn().exec_params(
                     "SELECT trim(BOTH ' ' FROM  COALESCE(c.notifyemail,'')), trim(BOTH ' ' FROM COALESCE(c.email, '')), oreg.name "
                     " FROM object_registry oreg "
                     " JOIN contact c ON  oreg.id = c.id "
@@ -257,8 +257,8 @@ namespace LibFred
                 result.push_back(email_with_addr);
             }//for ci
 
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -270,8 +270,8 @@ namespace LibFred
     std::string MergeContactNotificationEmailAddr::to_string() const
     {
         return Util::format_operation_state("MergeContactNotificationEmailAddr",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("email_data",Util::format_container(email_data_)))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("email_data", Util::format_container(email_data_)))
         );
     }
 

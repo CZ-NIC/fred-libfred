@@ -25,24 +25,19 @@
 #define NULLABLE_HH_7B62E1FA8ED84EFF87B015F3A8BE8DE5
 
 #include "util/db/value.hh"
+
+#include <sstream>
 #include <stdexcept>
 
 /** Nullable value template
  *
  * Maintains value of type T and flag if it has value or is null.
  */
-
-template<typename T>
+template <typename T>
 class Nullable
 {
 public:
     typedef T Type;
-private:
-    bool isnull_;
-    Type value_;
-    template < typename Tc >
-    friend class Nullable; ///< convenient for copy-ctors and assignment operators because Nullable<Tc> is not related to Nullable<T>
-public:
 
     /** default c-tor
      *
@@ -63,8 +58,8 @@ public:
      *
      * Sanity of conversion is implicitly guaranteed by template instantiation mechanism.
      */
-    template < typename Tc >
-    Nullable(const Tc &_value)
+    template <typename Tc>
+    Nullable(const Tc& _value)
         : isnull_(false),
           value_(_value)
     {}
@@ -75,7 +70,7 @@ public:
      *
      * @remark Always used instead of @ref Nullable(const Nullable< Tc > &_rhs) (see 12.8 of C++ standard).
      */
-    Nullable(const Nullable &_rhs)
+    Nullable(const Nullable& _rhs)
         : isnull_(_rhs.isnull_),
           value_(_rhs.value_)
     {}
@@ -89,8 +84,8 @@ public:
      *
      * Sanity of conversion is implicitly guaranteed by template instantiation mechanism.
      */
-    template < typename Tc >
-    Nullable(const Nullable< Tc > &_rhs)
+    template <typename Tc>
+    Nullable(const Nullable<Tc>& _rhs)
         : isnull_(_rhs.isnull_),
           value_(_rhs.value_)
     {}
@@ -104,8 +99,8 @@ public:
      *
      * Sanity of conversion is implicitly guaranteed by template instantiation mechanism.
      */
-    template < typename Tc >
-    Nullable& operator=(const Tc &_value)
+    template <typename Tc>
+    Nullable& operator=(const Tc& _value)
     {
         value_ = _value;
         isnull_ = false;
@@ -118,7 +113,7 @@ public:
      *
      * @remark Always used instead of @ref operator=(const Nullable< Tc > &_rhs) (see 12.8 of C++ standard).
      */
-    Nullable& operator=(const Nullable &_rhs)
+    Nullable& operator=(const Nullable& _rhs)
     {
         value_ = _rhs.value_;
         isnull_ = _rhs.isnull_;
@@ -134,8 +129,8 @@ public:
      *
      * Sanity of conversion is implicitly guaranteed by template instantiation mechanism.
      */
-    template < typename Tc >
-    Nullable& operator=(const Nullable< Tc > &_rhs)
+    template <typename Tc>
+    Nullable& operator=(const Nullable<Tc>& _rhs)
     {
         value_ = _rhs.value_;
         isnull_ = _rhs.isnull_;
@@ -156,11 +151,10 @@ public:
      */
     T get_value() const
     {
-        if (isnull())
+        if (this->isnull())
         {
             throw std::logic_error("value is null");
         }
-
         return value_;
     }
 
@@ -168,11 +162,13 @@ public:
      * @returns "normal" value of the object
      * @throws default-constructed exception of type TException when isnull()
      */
-    template<typename TException>T get_value_or_throw() const {
-        if (isnull() ) {
+    template <typename TException>
+    T get_value_or_throw()const
+    {
+        if (this->isnull())
+        {
             throw TException();
         }
-
         return value_;
     };
 
@@ -187,7 +183,7 @@ public:
     /**
      * @returns either not-null value of object or falls back to provided value in case of null
      */
-    T get_value_or(const T &_null_replacement) const
+    T get_value_or(const T& _null_replacement)const
     {
         return isnull_ ? _null_replacement : value_;
     }
@@ -197,12 +193,14 @@ public:
      *
      * \remark In case the _v is null default value of Database::QueryParam is assigned to the object.
      */
-    Nullable& operator=(const Database::Value &_v)
+    Nullable& operator=(const Database::Value& _v)
     {
-        if (_v.isnull()) {
+        if (_v.isnull())
+        {
             isnull_ = true;
         }
-        else {
+        else
+        {
             isnull_ = false;
             value_ = static_cast<T>(_v);
         }
@@ -212,7 +210,7 @@ public:
     /**
      * overloaded printing to ostream
      */
-    friend std::ostream& operator<<(std::ostream &_os, const Nullable<T> &_v)
+    friend std::ostream& operator<<(std::ostream& _os, const Nullable<T>& _v)
     {
         static const char null_value_look[] = "[NULL]";
         return _v.isnull() ? _os << null_value_look : _os << _v.get_value();
@@ -221,17 +219,24 @@ public:
     /**
      * serialization (conversion to string) of object
      */
-    std::string print_quoted() const
+    std::string print_quoted()const
     {
         std::ostringstream ss;
-        if (isnull()) {
+        if (this->isnull())
+        {
             ss << (*this);               // [NULL]
         }
-        else {
+        else
+        {
             ss << "'" << (*this) << "'"; // 'value'
         }
         return ss.str();
     }
+private:
+    bool isnull_;
+    Type value_;
+    template <typename Tc>
+    friend class Nullable; ///< convenient for copy-ctors and assignment operators because Nullable<Tc> is not related to Nullable<T>
 };
 
 /**
@@ -242,8 +247,8 @@ public:
  * Intentionaly prohibiting Nullable<X> == Nullable<Y> even for implicitly convertible types.
  * Guaranteed by the fact that template instantiation enforces exact type match and precedes overload resolution.
  */
-template < typename T >
-bool operator==(const Nullable< T > &_a, const Nullable< T > &_b)
+template <typename T>
+bool operator==(const Nullable<T>& _a, const Nullable<T>& _b)
 {
     return (!_a.isnull() && !_b.isnull() && (_a.get_value_or_default() == _b.get_value_or_default())) ||
            (_a.isnull() && _b.isnull());
@@ -257,8 +262,8 @@ bool operator==(const Nullable< T > &_a, const Nullable< T > &_b)
  * Intentionaly prohibiting Nullable<X> == Y even for implicitly convertible types.
  * Guaranteed by the fact that template instantiation enforces exact type match and precedes overload resolution.
  */
-template < typename T >
-bool operator==(const Nullable< T > &_a, const T &_b)
+template <typename T>
+bool operator==(const Nullable<T>& _a, const T& _b)
 {
     return !_a.isnull() && (_a.get_value_or_default() == _b);
 }
@@ -271,8 +276,8 @@ bool operator==(const Nullable< T > &_a, const T &_b)
  * Intentionaly prohibiting X == Nullable<Y> even for implicitly convertible types.
  * Guaranteed by the fact that template instantiation enforces exact type match and precedes overload resolution.
  */
-template < typename T >
-bool operator==(const T &_a, const Nullable< T > &_b)
+template <typename T>
+bool operator==(const T& _a, const Nullable<T>& _b)
 {
     return !_b.isnull() && (_a == _b.get_value_or_default());
 }
@@ -285,8 +290,8 @@ bool operator==(const T &_a, const Nullable< T > &_b)
  * Intentionaly prohibiting Nullable<X> != Nullable<Y> even for implicitly convertible types.
  * Guaranteed by the fact that template instantiation enforces exact type match and precedes overload resolution.
  */
-template < typename T >
-bool operator!=(const Nullable< T > &_a, const Nullable< T > &_b)
+template <typename T>
+bool operator!=(const Nullable<T>& _a, const Nullable<T>& _b)
 {
     return !(_a == _b);
 }
@@ -299,8 +304,8 @@ bool operator!=(const Nullable< T > &_a, const Nullable< T > &_b)
  * Intentionaly prohibiting Nullable<X> != Y even for implicitly convertible types.
  * Guaranteed by the fact that template instantiation enforces exact type match and precedes overload resolution.
  */
-template < typename T >
-bool operator!=(const Nullable< T > &_a, const T &_b)
+template <typename T>
+bool operator!=(const Nullable<T>& _a, const T& _b)
 {
     return !(_a == _b);
 }
@@ -313,8 +318,8 @@ bool operator!=(const Nullable< T > &_a, const T &_b)
  * Intentionaly prohibiting X != Nullable<Y> even for implicitly convertible types.
  * Guaranteed by the fact that template instantiation enforces exact type match and precedes overload resolution.
  */
-template < typename T >
-bool operator!=(const T &_a, const Nullable< T > &_b)
+template <typename T>
+bool operator!=(const T& _a, const Nullable<T>& _b)
 {
     return !(_a == _b);
 }
@@ -324,6 +329,6 @@ bool operator!=(const T &_a, const Nullable< T > &_b)
  *
  * \warning Never use Nullable< T* > because isnull() method would be ambiguous.
  */
-template < typename T > class Nullable< T* >;
+template <typename T> class Nullable<T*>;
 
-#endif
+#endif//NULLABLE_HH_7B62E1FA8ED84EFF87B015F3A8BE8DE5

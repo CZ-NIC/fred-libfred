@@ -131,11 +131,17 @@ PSQLResult::PSQLResult(const std::shared_ptr<PGresult>& _psql_result)
     : psql_result_(_psql_result)
 { }
 
+/**
+ * @return number of columns
+ */
 PSQLResult::size_type PSQLResult::cols_()const
 {
     return PQnfields(psql_result_.get());
 }
 
+/**
+ * @return number of rows
+ */
 PSQLResult::size_type PSQLResult::rows_()const
 {
     return PQntuples(psql_result_.get());
@@ -143,35 +149,54 @@ PSQLResult::size_type PSQLResult::rows_()const
 
 namespace {
 
-void check_increasing_sequence(PSQLResult::size_type a0, PSQLResult::size_type a1, PSQLResult::size_type a2)
+template <typename T>
+void check_increasing_sequence(T a0, T a1, T a2)
 {
     if ((a0 <= a1) && (a1 < a2))
     {
         return;
     }
-    throw OutOfRange(a0, a2, a1);
+    throw OutOfRange(a1, {a0, a2});
 }
 
 }//namespace Database::{anonymous}
 
+/**
+ * @param  row_idx row number
+ * @param  col_idx column number
+ */
 void PSQLResult::check_range(size_type row_idx, size_type col_idx)const
 {
-    check_increasing_sequence(0, row_idx, this->rows_());
-    check_increasing_sequence(0, col_idx, this->cols_());
+    check_increasing_sequence(0u, row_idx, this->rows_());
+    check_increasing_sequence(0u, col_idx, this->cols_());
 }
 
+/**
+ * @param  _r row number
+ * @param  _c column number
+ * @return    value from result at position [_r, _c]
+ */
 std::string PSQLResult::value_(size_type _r, size_type _c)const
 {
     this->check_range(_r, _c);
     return PQgetvalue(psql_result_.get(), _r, _c);
 }
 
+/**
+ * @param  _r row number
+ * @param  _c column number
+ * @return    true if value from result at position [_r, _c] is null, false otherwise
+ */
 bool PSQLResult::value_is_null_(size_type _r, size_type _c)const
 {
     this->check_range(_r, _c);
     return PQgetisnull(psql_result_.get(), _r, _c);
 }
 
+/**
+ * @param  _c column name
+ * @return column index
+ */
 int PSQLResult::get_column_number(const std::string& column_name)const
 {
     const int column_number = PQfnumber(psql_result_.get(), column_name.c_str());
@@ -183,15 +208,25 @@ int PSQLResult::get_column_number(const std::string& column_name)const
     return column_number;
 }
 
+/**
+ * @param row_idx row number
+ * @param column_name column name
+ * @return value from result at position [row_idx, column_name]
+ */
 std::string PSQLResult::value_(size_type row_idx, const std::string& column_name)const
 {
-    check_increasing_sequence(0, row_idx, this->rows_());
+    check_increasing_sequence(0u, row_idx, this->rows_());
     return PQgetvalue(psql_result_.get(), row_idx, this->get_column_number(column_name));
 }
 
+/**
+ * @param row_idx row number
+ * @param column_name column name
+ * @return true if value from result at position [row_idx, column_name] is null, false otherwise
+ */
 bool PSQLResult::value_is_null_(size_type row_idx, const std::string& column_name)const
 {
-    check_increasing_sequence(0, row_idx, this->rows_());
+    check_increasing_sequence(0u, row_idx, this->rows_());
     return PQgetisnull(psql_result_.get(), row_idx, this->get_column_number(column_name));
 }
 

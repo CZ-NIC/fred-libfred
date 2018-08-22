@@ -24,11 +24,11 @@
 #ifndef EXCEPTIONS_HH_6E652B2F6EEF4081BF3CD3561D3FB0EE
 #define EXCEPTIONS_HH_6E652B2F6EEF4081BF3CD3561D3FB0EE
 
-#include "util/base_exception.hh"
+#include <exception>
 
 struct WrongIntervalOrder : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "date from is later than date to";
     }
@@ -36,7 +36,7 @@ struct WrongIntervalOrder : std::exception
 
 struct OverlappingRange : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "range of certification overlaps with the other one";
     }
@@ -44,7 +44,7 @@ struct OverlappingRange : std::exception
 
 struct CertificationInPast : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "end date is earlier than current date";
     }
@@ -52,7 +52,7 @@ struct CertificationInPast : std::exception
 
 struct CertificationExtension : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "end date is later than latter value";
     }
@@ -60,7 +60,7 @@ struct CertificationExtension : std::exception
 
 struct ScoreOutOfRange : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "certification got score out of bound";
     }
@@ -68,7 +68,7 @@ struct ScoreOutOfRange : std::exception
 
 struct RegistrarNotFound : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "registrar with this id doesn't exist";
     }

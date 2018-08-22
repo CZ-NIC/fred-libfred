@@ -86,7 +86,7 @@ struct create_object_state_request_id_fixture : public Test::instantiate_db_temp
             .set_admin_contacts(Util::vector_of<std::string>(admin_contact2_handle))
             .exec(ctx);
 
-        Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE manual AND 3=ANY(types)");
+        const Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE manual AND 3=ANY(types)");
         for (::size_t idx = 0; idx < status_result.size(); ++idx) {
             status_list.insert(status_result[idx][0]);
         }
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(create_object_state_request_id)
         ctx.commit_transaction();
     }
     ::LibFred::OperationContextCreator ctx;
-    Database::Result status_result = ctx.get_conn().exec_params(
+    const Database::Result status_result = ctx.get_conn().exec_params(
         "SELECT eos.name "
         "FROM object_state_request osr "
         "JOIN object_registry obr ON obr.id=osr.object_id "
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(create_object_state_request_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
+    catch (const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
         BOOST_CHECK(ex.is_set_object_id_not_found());
         BOOST_CHECK(ex.get_object_id_not_found() == not_used_id);
     }
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE(create_object_state_request_id_bad)
     ::LibFred::StatusList bad_status_list = status_list;
     try {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
-        Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE NOT (manual AND 3=ANY(types))");
+        const Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE NOT (manual AND 3=ANY(types))");
         for (::size_t idx = 0; idx < status_result.size(); ++idx) {
             bad_status_list.insert(status_result[idx][0]);
         }
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(create_object_state_request_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
+    catch (const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
         BOOST_CHECK(ex.is_set_vector_of_state_not_found());
         BOOST_CHECK(ex.get_vector_of_state_not_found().size() == (bad_status_list.size() - status_list.size()));
     }
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(create_object_state_request_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
+    catch (const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
         BOOST_CHECK(ex.is_set_out_of_turn());
     }
 
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(create_object_state_request_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
+    catch (const ::LibFred::CreateObjectStateRequestId::Exception &ex) {
         BOOST_CHECK(ex.is_set_overlayed_time_intervals());
     }
 }

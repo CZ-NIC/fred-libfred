@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(create_registrar)
 
     if (test_info != registrar_info.info_registrar_data)
     {
-        BOOST_TEST_MESSAGE(::LibFred::diff_registrar_data(test_info,registrar_info.info_registrar_data).to_string());
+        BOOST_TEST_MESSAGE(::LibFred::diff_registrar_data(test_info, registrar_info.info_registrar_data).to_string());
     }
 
     BOOST_CHECK(test_info == registrar_info.info_registrar_data);
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(create_registrar_invalid_handle)
         ::LibFred::CreateRegistrar(test_registrar_handle).set_email("test1@nic.cz").exec(ctx);
         BOOST_ERROR("unreported invalid_registrar_handle");
     }
-    catch(const ::LibFred::CreateRegistrar::Exception& ex)
+    catch (const ::LibFred::CreateRegistrar::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_invalid_registrar_handle());
         BOOST_TEST_MESSAGE(boost::diagnostic_information(ex));
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(create_registrar_unknown_country)
         ::LibFred::CreateRegistrar(test_registrar_handle).set_country("XY").exec(ctx);
         BOOST_ERROR("unreported unknown country");
     }
-    catch(const ::LibFred::CreateRegistrar::Exception& ex)
+    catch (const ::LibFred::CreateRegistrar::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_country());
         BOOST_TEST_MESSAGE(boost::diagnostic_information(ex));

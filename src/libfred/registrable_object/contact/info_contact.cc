@@ -87,7 +87,7 @@ std::string InfoContactByHandle::to_string() const
 {
     return Util::format_operation_state(
             "InfoContactByHandle",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                     (std::make_pair("handle", handle_))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
@@ -141,7 +141,7 @@ std::string InfoContactById::to_string()const
 {
     return Util::format_operation_state(
             "InfoContactById",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                     (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
@@ -192,8 +192,8 @@ std::string InfoContactHistoryByRoid::to_string()const
 {
     return Util::format_operation_state(
             "InfoContactHistoryByRoid",
-            Util::vector_of<std::pair<std::string,std::string>>
-                    (std::make_pair("roid",roid_))
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("roid", roid_))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
 
@@ -243,8 +243,8 @@ std::string InfoContactHistoryById::to_string()const
 {
     return Util::format_operation_state(
             "InfoContactHistoryById",
-            Util::vector_of<std::pair<std::string,std::string>>
-                    (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
 
@@ -299,8 +299,8 @@ std::string InfoContactHistoryByHistoryid::to_string()const
 {
     return Util::format_operation_state(
             "InfoContactHistoryByHistoryid",
-            Util::vector_of<std::pair<std::string,std::string>>
-                    (std::make_pair("historyid",boost::lexical_cast<std::string>(historyid_)))
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("historyid", boost::lexical_cast<std::string>(historyid_)))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
 

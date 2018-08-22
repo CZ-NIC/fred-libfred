@@ -91,7 +91,7 @@ struct delete_nsset_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(delete_nsset_with_wrong_handle)
         ::LibFred::DeleteNssetByHandle(bad_test_nsset_handle).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::DeleteNssetByHandle::Exception& ex)
+    catch (const ::LibFred::DeleteNssetByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_nsset_handle());
         BOOST_CHECK(ex.get_unknown_nsset_handle().compare(bad_test_nsset_handle) == 0);
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(delete_linked_nsset)
         ::LibFred::DeleteNssetByHandle(test_nsset_handle).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::DeleteNssetByHandle::Exception& ex)
+    catch (const ::LibFred::DeleteNssetByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_object_linked_to_nsset_handle());
         BOOST_CHECK(ex.get_object_linked_to_nsset_handle().compare(test_nsset_handle) == 0);

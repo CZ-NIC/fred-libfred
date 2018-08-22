@@ -24,73 +24,66 @@
 #ifndef NSSET_DNS_HOST_HH_4D35DC3B927B44738A33B885BE34293B
 #define NSSET_DNS_HOST_HH_4D35DC3B927B44738A33B885BE34293B
 
-#include <string>
-#include <vector>
+#include "util/printable.hh"
 
 #include <boost/asio/ip/address.hpp>
 
-#include "util/printable.hh"
+#include <string>
+#include <vector>
 
-namespace LibFred
+namespace LibFred {
+
+/**
+ * Nameserver data container.
+ */
+class DnsHost : public Util::Printable<DnsHost>
 {
+public:
+    /**
+     * Constructor initializing all attributes.
+     * @param _fqdn sets nameserver name into @ref fqdn_ attribute
+     * @param _inet_addr sets addresses of the nameserver into @ref inet_addr_ attribute.
+     */
+    DnsHost(const std::string& _fqdn, const std::vector<boost::asio::ip::address>& _inet_addr)
+    : fqdn_(_fqdn)
+    , inet_addr_(_inet_addr)
+    {}
 
     /**
-     * Nameserver data container.
+     * Nameserver name getter.
+     * @return name of nameserver viz @ref fqdn_
      */
-    class DnsHost : public Util::Printable
+    std::string get_fqdn() const
     {
-        std::string fqdn_;/**< fully qualified name of the nameserver host*/
-        std::vector<boost::asio::ip::address> inet_addr_;/**< list of IPv4 or IPv6 addresses of the nameserver host*/
-    public:
+        return fqdn_;
+    }
 
-        /**
-         * Empty destructor.
-         */
-        virtual ~DnsHost(){}
+    /**
+     * Nameserver addresses getter.
+     * @return addresses of nameserver field viz @ref inet_addr_
+     */
+    std::vector<boost::asio::ip::address> get_inet_addr() const
+    {
+        return inet_addr_;
+    }
 
-        /**
-         * Constructor initializing all attributes.
-         * @param _fqdn sets nameserver name into @ref fqdn_ attribute
-         * @param _inet_addr sets addresses of the nameserver into @ref inet_addr_ attribute.
-         */
-        DnsHost(const std::string& _fqdn, const std::vector<boost::asio::ip::address>& _inet_addr)
-        : fqdn_(_fqdn)
-        , inet_addr_(_inet_addr)
-        {}
+    /**
+     * Dumps state of the instance into the string
+     * @return string with description of the instance state
+     */
+    std::string to_string()const
+    {
+        return Util::format_data_structure("DnsHost",
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("fqdn", fqdn_))
+        (std::make_pair("inet_addr", Util::format_container(inet_addr_)))
+        );
+    }
+private:
+    std::string fqdn_;/**< fully qualified name of the nameserver host*/
+    std::vector<boost::asio::ip::address> inet_addr_;/**< list of IPv4 or IPv6 addresses of the nameserver host*/
+};
 
-        /**
-         * Nameserver name getter.
-         * @return name of nameserver viz @ref fqdn_
-         */
-        std::string get_fqdn() const
-        {
-            return fqdn_;
-        }
+}//namespace LibFred
 
-        /**
-         * Nameserver addresses getter.
-         * @return addresses of nameserver field viz @ref inet_addr_
-         */
-        std::vector<boost::asio::ip::address> get_inet_addr() const
-        {
-            return inet_addr_;
-        }
-
-        /**
-        * Dumps state of the instance into the string
-        * @return string with description of the instance state
-        */
-        std::string to_string() const
-        {
-            return Util::format_data_structure("DnsHost",
-            Util::vector_of<std::pair<std::string,std::string> >
-            (std::make_pair("fqdn",fqdn_))
-            (std::make_pair("inet_addr",Util::format_container(inet_addr_)))
-            );
-        }
-
-    };
-
-} // namespace LibFred
-
-#endif
+#endif//NSSET_DNS_HOST_HH_4D35DC3B927B44738A33B885BE34293B

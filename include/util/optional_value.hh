@@ -211,7 +211,7 @@ public:
      */
     std::string print_quoted() const
     {
-        std::stringstream ss;
+        std::ostringstream ss;
         if (isset()) ss << (*this);
         return isset() ? std::string("'") + ss.str() + "'" : std::string("[N/A]");
     }

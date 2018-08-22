@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(create_registrar_certification)
     unsigned long long id = LibFred::Registrar::CreateRegistrarCertification(test_registrar.id,
                 valid_from, valid_until, score, file_id)
             .exec(ctx);
-    Database::Result result = ctx.get_conn().exec_params(
+    const Database::Result result = ctx.get_conn().exec_params(
             "SELECT * FROM registrar_certification "
             "WHERE id = $1::bigint",
             Database::query_param_list(id));

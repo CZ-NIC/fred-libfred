@@ -35,7 +35,7 @@ namespace LibFred
 
     std::vector<ObjectStateData> GetObjectStates::exec(OperationContext& ctx)
     {
-        Database::Result domain_states_result = ctx.get_conn().exec_params(
+        const Database::Result domain_states_result = ctx.get_conn().exec_params(
         "SELECT eos.id, eos.name, os.valid_from, os.valid_to , os.ohid_from, os.ohid_to"
         " , eos.external, eos.manual, eos.importance "
         " FROM object_state os "

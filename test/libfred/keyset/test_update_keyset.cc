@@ -68,7 +68,7 @@ struct update_keyset_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact4_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact4_handle, registrar_handle)
             .set_name(admin_contact4_handle+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -76,7 +76,7 @@ struct update_keyset_fixture : public Test::instantiate_db_template
             .exec(ctx);
         BOOST_TEST_MESSAGE(std::string("admin_contact4_handle: ") + admin_contact4_handle);
 
-        ::LibFred::CreateContact(admin_contact5_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact5_handle, registrar_handle)
             .set_name(admin_contact5_handle+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -84,7 +84,7 @@ struct update_keyset_fixture : public Test::instantiate_db_template
             .exec(ctx);
         BOOST_TEST_MESSAGE(std::string("admin_contact5_handle: ") + admin_contact5_handle);
 
-        ::LibFred::CreateContact(admin_contact6_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact6_handle, registrar_handle)
             .set_name(admin_contact6_handle+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -538,7 +538,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_wrong_handle)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_keyset_handle());
         BOOST_CHECK(static_cast<std::string>(ex.get_unknown_keyset_handle()).compare(bad_test_keyset_handle) == 0);
@@ -564,7 +564,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_wrong_registrar)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
         BOOST_CHECK(ex.get_unknown_registrar_handle().compare(bad_registrar_handle) == 0);
@@ -602,7 +602,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_add_wrong_tech_contact)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unknown_technical_contact_handle());
         BOOST_TEST_MESSAGE(boost::diagnostic_information(ex));
@@ -638,7 +638,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_add_already_added_tech_contact)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_already_set_technical_contact_handle());
         BOOST_CHECK(ex.get_vector_of_already_set_technical_contact_handle().at(0).compare(admin_contact6_handle) == 0);
@@ -676,7 +676,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_rem_wrong_tech_contact)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unknown_technical_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unknown_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
@@ -712,7 +712,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_rem_unassigned_tech_contact)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unassigned_technical_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unassigned_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
@@ -748,7 +748,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_add_already_added_dnskey)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_already_set_dns_key());
         BOOST_CHECK(ex.get_vector_of_already_set_dns_key().at(0) == ::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8"));
@@ -783,7 +783,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_unassigned_dnskey)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unassigned_dns_key());
         BOOST_CHECK(ex.get_vector_of_unassigned_dns_key().at(0) == ::LibFred::DnsKey(257, 3, 5, "unassignedkey"));

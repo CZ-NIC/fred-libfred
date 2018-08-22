@@ -80,7 +80,7 @@ struct update_contact_fixture : public Test::instantiate_db_template
         addresses[::LibFred::ContactAddressType::from_string("SHIPPING_2")] = address;
         addresses[::LibFred::ContactAddressType::from_string("SHIPPING_3")] = address;
         BOOST_CHECK(addresses.size() == 5);
-        ::LibFred::CreateContact(test_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(test_contact_handle, registrar_handle)
             .set_name(std::string("TEST-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
     BOOST_CHECK(history_info_data_5.at(1).next_historyid.get_value() == history_info_data_5.at(0).info_contact_data.historyid);
     BOOST_CHECK(history_info_data_5.at(0).info_contact_data.crhistoryid == info_data_5.info_contact_data.crhistoryid);
 
-    //remove more then one additional address (DELETE ... WHERE ... type IN ($2,$3,...))
+    //remove more then one additional address (DELETE ... WHERE ... type IN ($2, $3, ...))
     ::LibFred::UpdateContactByHandle(test_contact_handle, registrar_handle)
     .reset_address< ::LibFred::ContactAddressType::MAILING >()
     .reset_address< ::LibFred::ContactAddressType::BILLING >()
@@ -428,7 +428,7 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
     //updated addresses
     BOOST_CHECK(info_data_6.info_contact_data.addresses.empty());//no additional address
 
-    //insert more then one additional address (INSERT ... VALUES (...),(...),...)
+    //insert more then one additional address (INSERT ... VALUES (...), (...), ...)
     ::LibFred::UpdateContactByHandle(test_contact_handle, registrar_handle)
     .set_address< ::LibFred::ContactAddressType::MAILING >(addresses[::LibFred::ContactAddressType::MAILING])
     .set_address< ::LibFred::ContactAddressType::BILLING >(addresses[::LibFred::ContactAddressType::BILLING])
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle_wrong_handle)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateContactByHandle::ExceptionType& ex)
+    catch (const ::LibFred::UpdateContactByHandle::ExceptionType& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_contact_handle());
         BOOST_CHECK(static_cast<std::string>(ex.get_unknown_contact_handle()).compare(bad_test_contact_handle) == 0);
@@ -490,7 +490,7 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle_wrong_registrar)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateContactByHandle::ExceptionType& ex)
+    catch (const ::LibFred::UpdateContactByHandle::ExceptionType& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
         BOOST_CHECK(ex.get_unknown_registrar_handle().compare(bad_registrar_handle) == 0);
@@ -547,7 +547,7 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle_wrong_country)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateContactByHandle::ExceptionType& ex)
+    catch (const ::LibFred::UpdateContactByHandle::ExceptionType& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_country());
         BOOST_CHECK(ex.get_unknown_country().compare("bad-country") == 0);
@@ -571,7 +571,7 @@ BOOST_AUTO_TEST_CASE(update_contact_by_id)
     ::LibFred::InfoContactOutput info_data_1 = ::LibFred::InfoContactByHandle(test_contact_handle).exec(ctx);
     ::LibFred::Contact::PlaceAddress place = info_data_1.info_contact_data.place.get_value();
     place.street3 = Optional<std::string>("test street 3");
-    ::LibFred::UpdateContactById(info_data_1.info_contact_data.id,registrar_handle).set_place(place).exec(ctx);
+    ::LibFred::UpdateContactById(info_data_1.info_contact_data.id, registrar_handle).set_place(place).exec(ctx);
     ctx.commit_transaction();
 }
 
@@ -609,12 +609,12 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle_company_name)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateContactByHandle::ExceptionType& ex) {
+    catch (const ::LibFred::UpdateContactByHandle::ExceptionType& ex) {
         BOOST_CHECK(ex.is_set_forbidden_company_name_setting());
         BOOST_CHECK(ex.get_forbidden_company_name_setting() ==
                     ::LibFred::ContactAddressType::to_string(::LibFred::ContactAddressType::BILLING));
     }
-    catch(const std::exception &ex) {
+    catch (const std::exception &ex) {
         BOOST_ERROR("unexpected exception thrown: " + std::string(ex.what()));
     }
 
@@ -626,12 +626,12 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle_company_name)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateContactByHandle::ExceptionType& ex) {
+    catch (const ::LibFred::UpdateContactByHandle::ExceptionType& ex) {
         BOOST_CHECK(ex.is_set_forbidden_company_name_setting());
         BOOST_CHECK(ex.get_forbidden_company_name_setting() ==
                     ::LibFred::ContactAddressType::to_string(::LibFred::ContactAddressType::MAILING));
     }
-    catch(const std::exception &ex) {
+    catch (const std::exception &ex) {
         BOOST_ERROR("unexpected exception thrown: " + std::string(ex.what()));
     }
 }
@@ -655,7 +655,7 @@ BOOST_AUTO_TEST_CASE(update_contact_by_id_wrong_id)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateContactById::ExceptionType& ex)
+    catch (const ::LibFred::UpdateContactById::ExceptionType& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_contact_id());
         BOOST_CHECK(ex.get_unknown_contact_id() == 0);

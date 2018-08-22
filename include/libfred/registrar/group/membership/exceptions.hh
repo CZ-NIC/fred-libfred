@@ -28,7 +28,7 @@
 
 struct WrongIntervalOrder : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "date from is later than date to";
     }
@@ -36,7 +36,7 @@ struct WrongIntervalOrder : std::exception
 
 struct IntervalIntersection : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "new membership starts when old one is active";
     }
@@ -44,7 +44,7 @@ struct IntervalIntersection : std::exception
 
 struct MembershipStartChange : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "membership starting date must not be changed";
     }
@@ -52,7 +52,7 @@ struct MembershipStartChange : std::exception
 
 struct WrongMembershipEnd : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "membership infiniteness must not be altered";
     }
@@ -60,7 +60,7 @@ struct WrongMembershipEnd : std::exception
 
 struct WrongRegistrar : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "this membership has different registrar";
     }
@@ -68,7 +68,7 @@ struct WrongRegistrar : std::exception
 
 struct WrongGroup : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "this membership has different registrar group";
     }
@@ -76,7 +76,7 @@ struct WrongGroup : std::exception
 
 struct MembershipNotFound : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "no active membership with given registrar and group found";
     }

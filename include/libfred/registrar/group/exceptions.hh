@@ -28,7 +28,7 @@
 
 struct GroupExists : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "registrar group with this name still exists";
     }
@@ -36,7 +36,7 @@ struct GroupExists : std::exception
 
 struct EmptyGroupName : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "registrar group name has no text";
     }
@@ -44,7 +44,7 @@ struct EmptyGroupName : std::exception
 
 struct NonemptyGroupDelete : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "the registrar group to delete still has some members";
     }
@@ -52,7 +52,7 @@ struct NonemptyGroupDelete : std::exception
 
 struct AlreadyCancelled : std::exception
 {
-    virtual const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "registrar group is already cancelled";
     }

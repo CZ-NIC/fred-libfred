@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE(info_registrar_wrong_handle)
         ::LibFred::InfoRegistrarByHandle(bad_registrar_handle).exec(ctx);
         BOOST_ERROR("unreported bad_registrar_handle");
     }
-    catch(const ::LibFred::InfoRegistrarByHandle::Exception& ex)
+    catch (const ::LibFred::InfoRegistrarByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
         BOOST_TEST_MESSAGE(bad_registrar_handle);
@@ -240,7 +240,7 @@ BOOST_AUTO_TEST_CASE(info_registrar_wrong_id)
         ::LibFred::InfoRegistrarById(bad_registrar_id).exec(ctx);
         BOOST_ERROR("unreported bad_registrar_id");
     }
-    catch(const ::LibFred::InfoRegistrarById::Exception& ex)
+    catch (const ::LibFred::InfoRegistrarById::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrar_id());
         BOOST_TEST_MESSAGE(bad_registrar_id);
@@ -262,35 +262,35 @@ BOOST_AUTO_TEST_CASE(info_registrar_diff)
     ::LibFred::InfoRegistrarDiff test_diff, test_empty_diff;
 
     //differing data
-    test_diff.id = std::make_pair(test_registrar_data_1.id,test_registrar_data_2.id);
-    test_diff.handle = std::make_pair(test_registrar_data_1.handle,test_registrar_data_2.handle);
-    test_diff.name = std::make_pair(test_registrar_data_1.name,test_registrar_data_2.name);
-    test_diff.organization = std::make_pair(test_registrar_data_1.organization,test_registrar_data_2.organization);
-    test_diff.street1 = std::make_pair(test_registrar_data_1.street1,test_registrar_data_2.street1);
-    test_diff.street2 = std::make_pair(test_registrar_data_1.street2,test_registrar_data_2.street2);
-    test_diff.street3 = std::make_pair(test_registrar_data_1.street3,test_registrar_data_2.street3);
-    test_diff.city = std::make_pair(test_registrar_data_1.city,test_registrar_data_2.city);
-    test_diff.stateorprovince = std::make_pair(test_registrar_data_1.stateorprovince,test_registrar_data_2.stateorprovince);
-    test_diff.postalcode = std::make_pair(test_registrar_data_1.postalcode,test_registrar_data_2.postalcode);
-    test_diff.country = std::make_pair(test_registrar_data_1.country,test_registrar_data_2.country);
-    test_diff.telephone = std::make_pair(test_registrar_data_1.telephone,test_registrar_data_2.telephone);
-    test_diff.fax = std::make_pair(test_registrar_data_1.fax,test_registrar_data_2.fax);
-    test_diff.email = std::make_pair(test_registrar_data_1.email,test_registrar_data_2.email);
-    test_diff.url = std::make_pair(test_registrar_data_1.url,test_registrar_data_2.url);
-    test_diff.system= std::make_pair(test_registrar_data_1.system,test_registrar_data_2.system);
-    test_diff.ico = std::make_pair(test_registrar_data_1.ico,test_registrar_data_2.ico);
-    test_diff.dic = std::make_pair(test_registrar_data_1.dic,test_registrar_data_2.dic);
-    test_diff.variable_symbol = std::make_pair(test_registrar_data_1.variable_symbol,test_registrar_data_2.variable_symbol);
-    test_diff.payment_memo_regex = std::make_pair(test_registrar_data_1.payment_memo_regex,test_registrar_data_2.payment_memo_regex);
-    test_diff.vat_payer= std::make_pair(test_registrar_data_1.vat_payer,test_registrar_data_2.vat_payer);
+    test_diff.id = std::make_pair(test_registrar_data_1.id, test_registrar_data_2.id);
+    test_diff.handle = std::make_pair(test_registrar_data_1.handle, test_registrar_data_2.handle);
+    test_diff.name = std::make_pair(test_registrar_data_1.name, test_registrar_data_2.name);
+    test_diff.organization = std::make_pair(test_registrar_data_1.organization, test_registrar_data_2.organization);
+    test_diff.street1 = std::make_pair(test_registrar_data_1.street1, test_registrar_data_2.street1);
+    test_diff.street2 = std::make_pair(test_registrar_data_1.street2, test_registrar_data_2.street2);
+    test_diff.street3 = std::make_pair(test_registrar_data_1.street3, test_registrar_data_2.street3);
+    test_diff.city = std::make_pair(test_registrar_data_1.city, test_registrar_data_2.city);
+    test_diff.stateorprovince = std::make_pair(test_registrar_data_1.stateorprovince, test_registrar_data_2.stateorprovince);
+    test_diff.postalcode = std::make_pair(test_registrar_data_1.postalcode, test_registrar_data_2.postalcode);
+    test_diff.country = std::make_pair(test_registrar_data_1.country, test_registrar_data_2.country);
+    test_diff.telephone = std::make_pair(test_registrar_data_1.telephone, test_registrar_data_2.telephone);
+    test_diff.fax = std::make_pair(test_registrar_data_1.fax, test_registrar_data_2.fax);
+    test_diff.email = std::make_pair(test_registrar_data_1.email, test_registrar_data_2.email);
+    test_diff.url = std::make_pair(test_registrar_data_1.url, test_registrar_data_2.url);
+    test_diff.system= std::make_pair(test_registrar_data_1.system, test_registrar_data_2.system);
+    test_diff.ico = std::make_pair(test_registrar_data_1.ico, test_registrar_data_2.ico);
+    test_diff.dic = std::make_pair(test_registrar_data_1.dic, test_registrar_data_2.dic);
+    test_diff.variable_symbol = std::make_pair(test_registrar_data_1.variable_symbol, test_registrar_data_2.variable_symbol);
+    test_diff.payment_memo_regex = std::make_pair(test_registrar_data_1.payment_memo_regex, test_registrar_data_2.payment_memo_regex);
+    test_diff.vat_payer= std::make_pair(test_registrar_data_1.vat_payer, test_registrar_data_2.vat_payer);
 
     BOOST_CHECK(!test_diff.is_empty());
     BOOST_CHECK(test_empty_diff.is_empty());
 
-    BOOST_TEST_MESSAGE(::LibFred::diff_registrar_data(registrar_info1.info_registrar_data,registrar_info2.info_registrar_data).to_string());
+    BOOST_TEST_MESSAGE(::LibFred::diff_registrar_data(registrar_info1.info_registrar_data, registrar_info2.info_registrar_data).to_string());
     BOOST_TEST_MESSAGE(test_diff.to_string());
 
-    BOOST_CHECK(::LibFred::diff_registrar_data(registrar_info1.info_registrar_data,registrar_info2.info_registrar_data).to_string() == test_diff.to_string());
+    BOOST_CHECK(::LibFred::diff_registrar_data(registrar_info1.info_registrar_data, registrar_info2.info_registrar_data).to_string() == test_diff.to_string());
 }
 
 BOOST_AUTO_TEST_SUITE_END();//TestInfoRegistrar

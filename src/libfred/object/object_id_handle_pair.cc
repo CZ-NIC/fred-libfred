@@ -64,9 +64,9 @@ namespace LibFred
     std::string ObjectIdHandlePair::to_string() const
     {
         return Util::format_data_structure("ObjectIdHandlePair",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("id",boost::lexical_cast<std::string>(id)))
-        (std::make_pair("handle",handle))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("id", boost::lexical_cast<std::string>(id)))
+        (std::make_pair("handle", handle))
         );
     };
 

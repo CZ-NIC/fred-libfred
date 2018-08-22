@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_registrar)
         .set_logd_request_id(0)
         .exec(ctx);
     }
-    catch(const ::LibFred::CreateContact::Exception& ex)
+    catch (const ::LibFred::CreateContact::Exception& ex)
     {
         ex << ErrorInfo_unknown_registrar_handle("modifying const EX& by operator<<");
         //ex.set_internal_error("unable to modify const EX& by setter - ok");
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_ssntype)
         .set_ssn("any")
         .exec(ctx);
     }
-    catch(const ::LibFred::CreateContact::Exception& ex)
+    catch (const ::LibFred::CreateContact::Exception& ex)
     {
         BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
         BOOST_CHECK(ex.is_set_unknown_ssntype());
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_address)
         .set_logd_request_id(0)
         .exec(ctx);
     }
-    catch(const ::LibFred::CreateContact::Exception& ex) {
+    catch (const ::LibFred::CreateContact::Exception& ex) {
         BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
         BOOST_CHECK(ex.is_set_forbidden_company_name_setting());
         throw;
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_address)
         .set_logd_request_id(0)
         .exec(ctx);
     }
-    catch(const ::LibFred::CreateContact::Exception& ex) {
+    catch (const ::LibFred::CreateContact::Exception& ex) {
         BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
         BOOST_CHECK(ex.is_set_forbidden_company_name_setting());
         throw;

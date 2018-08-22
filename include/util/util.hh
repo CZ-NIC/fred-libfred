@@ -6,6 +6,7 @@
 #include <boost/format.hpp>
 
 #include <iterator>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <set>
@@ -102,7 +103,7 @@ std::string container2comma_list(const T &_cont)
         return "";
     }
 
-    std::stringstream tmp;
+    std::ostringstream tmp;
     typename T::const_iterator it = _cont.begin();
     tmp << *it;
     for (++it; it != _cont.end(); ++it)

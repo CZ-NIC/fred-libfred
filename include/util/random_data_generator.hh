@@ -88,7 +88,7 @@ public:
           //generator instances
           letter52(rng, gen_letter52),
           numletter10(rng, gen_numletter10),
-          letter62(rng,gen_letter62),
+          letter62(rng, gen_letter62),
           num1_5(rng, gen_num1_5),
           num1_6(rng, gen_num1_6),
           gint(rng, gen_int),

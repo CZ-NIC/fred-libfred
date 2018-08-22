@@ -70,14 +70,14 @@ struct create_domain_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
                 .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
                 .set_disclosename(true)
                 .set_place(place)
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(create_domain_wrong_registrar)
         .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::CreateDomain::Exception& ex)
+    catch (const ::LibFred::CreateDomain::Exception& ex)
     {
         BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(create_domain_wrong_fqdn_syntax)
         .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::CreateDomain::Exception& ex)
+    catch (const ::LibFred::CreateDomain::Exception& ex)
     {
         BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
         BOOST_CHECK(ex.is_set_invalid_fqdn_syntax());
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(create_domain_wrong_cz_syntax)
         .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::CreateDomain::Exception& ex)
+    catch (const ::LibFred::CreateDomain::Exception& ex)
     {
         BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
         BOOST_CHECK(ex.is_set_invalid_fqdn_syntax());
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(create_domain_set_exdate)
         .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::CreateDomain::Exception& ex)
+    catch (const ::LibFred::CreateDomain::Exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -219,7 +219,7 @@ BOOST_AUTO_TEST_CASE(create_domain_set_wrong_exdate)
         .exec(ctx);
         BOOST_ERROR("set invalid exdate and no exception thrown");
     }
-    catch(const ::LibFred::CreateDomain::Exception& ex)
+    catch (const ::LibFred::CreateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_invalid_expiration_date());
         BOOST_CHECK(ex.get_invalid_expiration_date().is_special());
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(create_domain_set_valexdate)
         .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::CreateDomain::Exception& ex)
+    catch (const ::LibFred::CreateDomain::Exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(create_domain_set_wrong_valexdate)
         .exec(ctx);
         BOOST_ERROR("set invalid ENUM valexdate and no exception thrown");
     }
-    catch(const ::LibFred::CreateDomain::Exception& ex)
+    catch (const ::LibFred::CreateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_invalid_enum_validation_expiration_date());
         BOOST_CHECK(ex.get_invalid_enum_validation_expiration_date().is_special());
@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_CASE(create_domain_set_valexdate_wrong_domain)
         .exec(ctx);
         BOOST_ERROR("set ENUM valexdate to non-ENUM domain and no exception thrown");
     }
-    catch(const ::LibFred::InternalError& ex)
+    catch (const ::LibFred::InternalError& ex)
     {
         BOOST_TEST_MESSAGE(ex.what());
     }
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(create_domain_set_publish_wrong_domain)
         .exec(ctx);
         BOOST_ERROR("set ENUM publish flag to non-ENUM domain and no exception thrown");
     }
-    catch(const ::LibFred::InternalError& ex)
+    catch (const ::LibFred::InternalError& ex)
     {
         BOOST_TEST_MESSAGE(ex.what());
     }

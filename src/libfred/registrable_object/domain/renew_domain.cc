@@ -21,10 +21,6 @@
  *  domain renew
  */
 
-#include <string>
-
-#include <boost/date_time/gregorian/gregorian.hpp>
-
 #include "libfred/registrable_object/domain/renew_domain.hh"
 #include "libfred/registrable_object/domain/copy_history_impl.hh"
 #include "libfred/zone/zone.hh"
@@ -37,68 +33,72 @@
 #include "util/util.hh"
 #include "util/printable.hh"
 
-namespace LibFred
+#include <boost/date_time/gregorian/gregorian.hpp>
+
+#include <sstream>
+#include <string>
+
+namespace LibFred {
+
+RenewDomain::RenewDomain(const std::string& fqdn,
+    const std::string& registrar,
+    const boost::gregorian::date& expiration_date)
+: fqdn_(fqdn),
+registrar_(registrar),
+expiration_date_(expiration_date)
+{}
+
+RenewDomain::RenewDomain(const std::string& fqdn,
+    const std::string& registrar,
+    const boost::gregorian::date& expiration_date,
+    const Optional<boost::gregorian::date>& enum_validation_expiration,
+    const Optional<bool>& enum_publish_flag,
+    const Optional<unsigned long long>& logd_request_id)
+: fqdn_(fqdn),
+registrar_(registrar),
+expiration_date_(expiration_date),
+enum_validation_expiration_(enum_validation_expiration),
+enum_publish_flag_(enum_publish_flag),
+logd_request_id_(logd_request_id.isset()
+    ? Nullable<unsigned long long>(logd_request_id.get_value())
+    : Nullable<unsigned long long>())
+{}
+
+RenewDomain& RenewDomain::set_enum_validation_expiration(const boost::gregorian::date& valexdate)
 {
-    RenewDomain::RenewDomain(const std::string& fqdn,
-        const std::string& registrar,
-        const boost::gregorian::date& expiration_date)
-    : fqdn_(fqdn),
-    registrar_(registrar),
-    expiration_date_(expiration_date)
-    {}
+    enum_validation_expiration_ = valexdate;
+    return *this;
+}
 
-    RenewDomain::RenewDomain(const std::string& fqdn,
-        const std::string& registrar,
-        const boost::gregorian::date& expiration_date,
-        const Optional<boost::gregorian::date>& enum_validation_expiration,
-        const Optional<bool>& enum_publish_flag,
-        const Optional<unsigned long long>& logd_request_id)
-    : fqdn_(fqdn),
-    registrar_(registrar),
-    expiration_date_(expiration_date),
-    enum_validation_expiration_(enum_validation_expiration),
-    enum_publish_flag_(enum_publish_flag),
-    logd_request_id_(logd_request_id.isset()
-        ? Nullable<unsigned long long>(logd_request_id.get_value())
-        : Nullable<unsigned long long>())
-    {}
+RenewDomain& RenewDomain::set_enum_publish_flag(bool enum_publish_flag)
+{
+    enum_publish_flag_ = enum_publish_flag;
+    return *this;
+}
 
-    RenewDomain& RenewDomain::set_enum_validation_expiration(const boost::gregorian::date& valexdate)
+RenewDomain& RenewDomain::set_logd_request_id(unsigned long long logd_request_id)
+{
+    logd_request_id_ = logd_request_id;
+    return *this;
+}
+
+unsigned long long RenewDomain::exec(OperationContext& ctx)
+{
+    try
     {
-        enum_validation_expiration_ = valexdate;
-        return *this;
-    }
+        //check registrar exists
+        Registrar::get_registrar_id_by_handle(
+            ctx, registrar_, static_cast<Exception*>(0)//set throw
+            , &Exception::set_unknown_registrar_handle);
 
-    RenewDomain& RenewDomain::set_enum_publish_flag(bool enum_publish_flag)
-    {
-        enum_publish_flag_ = enum_publish_flag;
-        return *this;
-    }
-
-    RenewDomain& RenewDomain::set_logd_request_id(unsigned long long logd_request_id)
-    {
-        logd_request_id_ = logd_request_id;
-        return *this;
-    }
-
-    unsigned long long RenewDomain::exec(OperationContext& ctx)
-    {
-        unsigned long long history_id=0;//return
-        try
-        {
-            //check registrar exists
-            Registrar::get_registrar_id_by_handle(
-                ctx, registrar_, static_cast<Exception*>(0)//set throw
-                , &Exception::set_unknown_registrar_handle);
-
-            //remove optional root dot from fqdn
-            std::string no_root_dot_fqdn = LibFred::Zone::rem_trailing_dot(fqdn_);
+        //remove optional root dot from fqdn
+        std::string no_root_dot_fqdn = LibFred::Zone::rem_trailing_dot(fqdn_);
 
         //get domain_id, ENUM flag and lock object_registry row for renew
         unsigned long long domain_id =0;
         bool is_enum_zone = false;
         {
-            Database::Result domain_res = ctx.get_conn().exec_params(
+            const Database::Result domain_res = ctx.get_conn().exec_params(
                 "SELECT oreg.id, z.enum_zone FROM domain d "
                 " JOIN zone z ON z.id = d.zone "
                 " JOIN object_registry oreg ON d.id = oreg.id "
@@ -130,10 +130,10 @@ namespace LibFred
             }
         }
 
-        history_id = LibFred::InsertHistory(logd_request_id_, domain_id).exec(ctx);
+        const unsigned long long history_id = LibFred::InsertHistory(logd_request_id_, domain_id).exec(ctx);
 
         //object_registry historyid
-        Database::Result update_historyid_res = ctx.get_conn().exec_params(
+        const Database::Result update_historyid_res = ctx.get_conn().exec_params(
             "UPDATE object_registry SET historyid = $1::bigint "
                 " WHERE id = $2::integer RETURNING id"
                 , Database::query_param_list(history_id)(domain_id));
@@ -148,7 +148,7 @@ namespace LibFred
             BOOST_THROW_EXCEPTION(Exception().set_invalid_expiration_date(expiration_date_));
         }
 
-        Database::Result update_domain_res = ctx.get_conn().exec_params(
+        const Database::Result update_domain_res = ctx.get_conn().exec_params(
             "UPDATE domain SET exdate = $1::date WHERE id = $2::integer RETURNING id",
                 Database::query_param_list(expiration_date_)(domain_id));
         if (update_domain_res.size() != 1)
@@ -166,8 +166,8 @@ namespace LibFred
         if (enum_validation_expiration_.isset() || enum_publish_flag_.isset())
         {
             Database::QueryParams params;//query params
-            std::stringstream sql;
-            Util::HeadSeparator set_separator(" SET "," , ");
+            std::ostringstream sql;
+            Util::HeadSeparator set_separator(" SET ", ",");
 
             sql <<"UPDATE enumval ";
 
@@ -188,37 +188,33 @@ namespace LibFred
             params.push_back(domain_id);
             sql << " WHERE domainid = $" << params.size() << "::integer RETURNING domainid";
 
-            Database::Result update_enumval_res = ctx.get_conn().exec_params(sql.str(), params);
+            const Database::Result update_enumval_res = ctx.get_conn().exec_params(sql.str(), params);
             if (update_enumval_res.size() != 1)
             {
                 BOOST_THROW_EXCEPTION(InternalError("failed to update enumval"));
             }
         }
-
         copy_domain_data_to_domain_history_impl(ctx, domain_id, history_id);
-
-        }//try
-        catch(ExceptionStack& ex)
-        {
-            ex.add_exception_stack_info(to_string());
-            throw;
-        }
-
         return history_id;
-    }//RenewDomain::exec
-
-    std::string RenewDomain::to_string() const
-    {
-        return Util::format_operation_state("RenewDomain",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("fqdn",fqdn_))
-        (std::make_pair("registrar",registrar_))
-        (std::make_pair("expiration_date",boost::gregorian::to_iso_extended_string(expiration_date_)))
-        (std::make_pair("enum_validation_expiration",enum_validation_expiration_.print_quoted()))
-        (std::make_pair("enum_publish_flag",enum_publish_flag_.print_quoted()))
-        (std::make_pair("logd_request_id",logd_request_id_.print_quoted()))
-        );
     }
+    catch (ExceptionStack& ex)
+    {
+        ex.add_exception_stack_info(to_string());
+        throw;
+    }
+}
 
-} // namespace LibFred
+std::string RenewDomain::to_string() const
+{
+    return Util::format_operation_state(
+            "RenewDomain",
+            Util::vector_of<std::pair<std::string, std::string>>
+                (std::make_pair("fqdn", fqdn_))
+                (std::make_pair("registrar", registrar_))
+                (std::make_pair("expiration_date", boost::gregorian::to_iso_extended_string(expiration_date_)))
+                (std::make_pair("enum_validation_expiration", enum_validation_expiration_.print_quoted()))
+                (std::make_pair("enum_publish_flag", enum_publish_flag_.print_quoted()))
+                (std::make_pair("logd_request_id", logd_request_id_.print_quoted())));
+}
 
+}//namespace LibFred

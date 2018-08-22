@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE(throwTestExceptionCallback)
         boost::function<void (const std::string& unknown_registrar_handle)> f;
 
         //exception setter assignment into callback parameter
-        f = boost::bind(&TestException::set_unknown_registrar_handle,&ex,_1);
+        f = boost::bind(&TestException::set_unknown_registrar_handle, &ex, _1);
 
         //implementation callback call
         f("test_registrar");
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(throwTestExceptionCallback)
             BOOST_THROW_EXCEPTION(ex);
         }
     }
-    catch(const TestException& ex)
+    catch (const TestException& ex)
     {
         BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE(throwTestException)
                 throw;
             }
         }
-        catch(boost::exception& ex)
+        catch (boost::exception& ex)
         {
             BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
 
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(throwTestException)
                     BOOST_TEST_MESSAGE(dynamic_cast<const ::LibFred::ExceptionStack&>(ex).get_exception_stack_info());
                 }
             }
-            catch(const std::exception&)
+            catch (const std::exception&)
             {
                 BOOST_TEST_MESSAGE("\nhave no  ExceptionStack info");
             }
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(throwTestException)
             throw;//to check std::exception
         }
     }
-    catch(std::exception& ex)
+    catch (std::exception& ex)
     {
         BOOST_TEST_MESSAGE("catch(std::exception&): ");
         BOOST_TEST_MESSAGE(ex.what());
@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(throwNestedException)
                 throw;
             }
         }
-        catch(boost::exception& ex)
+        catch (boost::exception& ex)
         {
             BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
 
@@ -278,7 +278,7 @@ BOOST_AUTO_TEST_CASE(throwNestedException)
                     BOOST_TEST_MESSAGE(dynamic_cast<const ::LibFred::ExceptionStack&>(ex).get_exception_stack_info());
                 }
             }
-            catch(const std::exception&)
+            catch (const std::exception&)
             {
                 BOOST_TEST_MESSAGE("\nhave no  ExceptionStack info");
             }
@@ -317,7 +317,7 @@ BOOST_AUTO_TEST_CASE(throwNestedException)
             throw;//to check std::exception
         }
     }
-    catch(std::exception& ex)
+    catch (std::exception& ex)
     {
         BOOST_TEST_MESSAGE("catch(std::exception&): ");
         BOOST_TEST_MESSAGE(ex.what());
@@ -341,7 +341,7 @@ BOOST_AUTO_TEST_CASE(throwNestedException)
                 throw;
             }
         }
-        catch(boost::exception& ex)
+        catch (boost::exception& ex)
         {
             BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
 
@@ -352,7 +352,7 @@ BOOST_AUTO_TEST_CASE(throwNestedException)
                     BOOST_TEST_MESSAGE(dynamic_cast<const ::LibFred::ExceptionStack&>(ex).get_exception_stack_info());
                 }
             }
-            catch(const std::exception&)
+            catch (const std::exception&)
             {
                 BOOST_TEST_MESSAGE("\nhave no  ExceptionStack info");
             }
@@ -391,7 +391,7 @@ BOOST_AUTO_TEST_CASE(throwNestedException)
             throw;//to check std::exception
         }
     }
-    catch(std::exception& ex)
+    catch (std::exception& ex)
     {
         BOOST_TEST_MESSAGE("catch(std::exception&): ");
         BOOST_TEST_MESSAGE(ex.what());
@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_CASE(throwInternalError)
                 throw;
             }
         }
-        catch(::LibFred::InternalError& ex)
+        catch (::LibFred::InternalError& ex)
         {
             BOOST_TEST_MESSAGE( boost::diagnostic_information(ex));
 
@@ -432,7 +432,7 @@ BOOST_AUTO_TEST_CASE(throwInternalError)
                     BOOST_TEST_MESSAGE(dynamic_cast<const ::LibFred::ExceptionStack&>(ex).get_exception_stack_info());
                 }
             }
-            catch(const std::exception&)
+            catch (const std::exception&)
             {
                 BOOST_TEST_MESSAGE("\nhave no  ExceptionStack info");
             }
@@ -440,7 +440,7 @@ BOOST_AUTO_TEST_CASE(throwInternalError)
             throw;//to check std::exception
         }
     }
-    catch(std::exception& ex)
+    catch (std::exception& ex)
     {
         BOOST_TEST_MESSAGE("catch(std::exception&): ");
         BOOST_TEST_MESSAGE(ex.what());
@@ -506,13 +506,11 @@ BOOST_AUTO_TEST_CASE(flag_copy)
     {
         BOOST_THROW_EXCEPTION(ex1);
     }
-    catch(const TestExceptionFlag& ex )
+    catch (const TestExceptionFlag& ex )
     {
         BOOST_CHECK(ex.test == 10);
         BOOST_CHECK(ex.base_test == 20);
     }
 }
 
-
-BOOST_AUTO_TEST_SUITE_END();//TestOperationException
-
+BOOST_AUTO_TEST_SUITE_END()//TestOperationException

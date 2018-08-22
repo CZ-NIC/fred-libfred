@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(info_nsset)
     place.city = "Praha";
     place.postalcode = "11150";
     place.country = "CZ";
-    ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+    ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
         .set_name(std::string("TEST-ADMIN-CONTACT2 NAME")+xmark)
         .set_disclosename(true)
         .set_place(place)
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(info_nsset)
         .exec(ctx);
 
     std::string admin_contact3_handle = std::string("TEST-ADMIN-CONTACT3-HANDLE")+xmark;
-    ::LibFred::CreateContact(admin_contact3_handle,registrar_handle)
+    ::LibFred::CreateContact(admin_contact3_handle, registrar_handle)
         .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
         .set_disclosename(true)
         .set_place(place)
@@ -118,14 +118,14 @@ struct update_nsset_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT2 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(admin_contact3_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact3_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -485,7 +485,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset, update_nsset_fixture )
     info_data_7_with_changes.info_nsset_data.tech_contacts.erase(std::remove(
             info_data_7_with_changes.info_nsset_data.tech_contacts.begin(),
             info_data_7_with_changes.info_nsset_data.tech_contacts.end(),
-        ::LibFred::ObjectIdHandlePair(admin_contact3_info.info_contact_data.id,admin_contact3_info.info_contact_data.handle)
+        ::LibFred::ObjectIdHandlePair(admin_contact3_info.info_contact_data.id, admin_contact3_info.info_contact_data.handle)
     ));
 
     //check changes made by last update
@@ -529,7 +529,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset, update_nsset_fixture )
 
     //add tech contact
     info_data_8_with_changes.info_nsset_data.tech_contacts.push_back(
-        ::LibFred::ObjectIdHandlePair(admin_contact3_info.info_contact_data.id,admin_contact3_info.info_contact_data.handle));
+        ::LibFred::ObjectIdHandlePair(admin_contact3_info.info_contact_data.id, admin_contact3_info.info_contact_data.handle));
 
     //check changes made by last update
     BOOST_CHECK(info_data_8_with_changes == info_data_9);
@@ -708,7 +708,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_wrong_handle, update_nsset_fixture )
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_nsset_handle());
         BOOST_CHECK(static_cast<std::string>(ex.get_unknown_nsset_handle()).compare(bad_test_nsset_handle) == 0);
@@ -734,7 +734,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_wrong_registrar, update_nsset_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
         BOOST_CHECK(ex.get_unknown_registrar_handle().compare(bad_registrar_handle) == 0);
@@ -771,7 +771,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_add_wrong_tech_contact, update_nsset_fixtur
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unknown_technical_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unknown_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
@@ -806,7 +806,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_add_already_added_tech_contact, update_nsse
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_already_set_technical_contact_handle());
         BOOST_CHECK(ex.get_vector_of_already_set_technical_contact_handle().at(0).compare(admin_contact3_handle) == 0);
@@ -842,7 +842,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_rem_wrong_tech_contact, update_nsset_fixtur
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unknown_technical_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unknown_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
@@ -878,7 +878,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_rem_unassigned_tech_contact, update_nsset_f
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unassigned_technical_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unassigned_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
@@ -916,7 +916,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_add_already_added_dnshost, update_nsset_fix
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_already_set_dns_host());
         BOOST_CHECK(ex.get_vector_of_already_set_dns_host().at(0).compare("a.ns.nic.cz") == 0);
@@ -951,7 +951,7 @@ BOOST_FIXTURE_TEST_CASE(update_nsset_remove_unassigned_dnshost, update_nsset_fix
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateNsset::Exception& ex)
+    catch (const ::LibFred::UpdateNsset::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unassigned_dns_host());
         BOOST_CHECK(ex.get_vector_of_unassigned_dns_host().at(0).compare("c.ns.nic.cz") == 0);

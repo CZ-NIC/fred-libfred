@@ -64,7 +64,7 @@ namespace LibFred
     std::string InfoNssetDiff::to_string() const
     {
         return Util::format_data_structure("InfoNssetDiff",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("crhistoryid", crhistoryid.print_quoted()))
         (std::make_pair("historyid", historyid.print_quoted()))
         (std::make_pair("delete_time", delete_time.print_quoted()))
@@ -117,17 +117,17 @@ namespace LibFred
         //differing data
         if (first.crhistoryid != second.crhistoryid)
         {
-            diff.crhistoryid = std::make_pair(first.crhistoryid,second.crhistoryid);
+            diff.crhistoryid = std::make_pair(first.crhistoryid, second.crhistoryid);
         }
 
         if (first.historyid != second.historyid)
         {
-            diff.historyid = std::make_pair(first.historyid,second.historyid);
+            diff.historyid = std::make_pair(first.historyid, second.historyid);
         }
 
         if (!Util::is_equal(first.delete_time, second.delete_time))
         {
-            diff.delete_time = std::make_pair(first.delete_time,second.delete_time);
+            diff.delete_time = std::make_pair(first.delete_time, second.delete_time);
         }
 
         if (boost::algorithm::to_upper_copy(first.handle)
@@ -138,54 +138,54 @@ namespace LibFred
 
         if (first.roid.compare(second.roid) != 0)
         {
-            diff.roid = std::make_pair(first.roid,second.roid);
+            diff.roid = std::make_pair(first.roid, second.roid);
         }
 
         if (boost::algorithm::to_upper_copy(first.sponsoring_registrar_handle)
             .compare(boost::algorithm::to_upper_copy(second.sponsoring_registrar_handle)) != 0)
         {
             diff.sponsoring_registrar_handle = std::make_pair(first.sponsoring_registrar_handle
-                    ,second.sponsoring_registrar_handle);
+                    , second.sponsoring_registrar_handle);
         }
 
         if (boost::algorithm::to_upper_copy(first.create_registrar_handle)
         .compare(boost::algorithm::to_upper_copy(second.create_registrar_handle)) != 0)
         {
             diff.create_registrar_handle = std::make_pair(first.create_registrar_handle
-                    ,second.create_registrar_handle);
+                    , second.create_registrar_handle);
         }
 
         if (!Util::is_equal_upper(first.update_registrar_handle, second.update_registrar_handle))
         {
             diff.update_registrar_handle = std::make_pair(first.update_registrar_handle
-                    ,second.update_registrar_handle);
+                    , second.update_registrar_handle);
         }
 
         if (first.creation_time != second.creation_time)
         {
-            diff.creation_time = std::make_pair(first.creation_time,second.creation_time);
+            diff.creation_time = std::make_pair(first.creation_time, second.creation_time);
         }
 
         if (!Util::is_equal(first.update_time, second.update_time))
         {
             diff.update_time = std::make_pair(first.update_time
-                    ,second.update_time);
+                    , second.update_time);
         }
 
         if (!Util::is_equal(first.transfer_time, second.transfer_time))
         {
             diff.transfer_time = std::make_pair(first.transfer_time
-                    ,second.transfer_time);
+                    , second.transfer_time);
         }
 
         if (first.authinfopw.compare(second.authinfopw) != 0)
         {
-            diff.authinfopw = std::make_pair(first.authinfopw,second.authinfopw);
+            diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
         }
 
         if (!Util::is_equal(first.tech_check_level, second.tech_check_level))
         {
-            diff.tech_check_level = std::make_pair(first.tech_check_level,second.tech_check_level);
+            diff.tech_check_level = std::make_pair(first.tech_check_level, second.tech_check_level);
         }
 
         std::set<std::string> lhs_dns_hosts;
@@ -204,7 +204,7 @@ namespace LibFred
 
         if (lhs_dns_hosts != rhs_dns_hosts)
         {
-            diff.dns_hosts = std::make_pair(first.dns_hosts,second.dns_hosts);
+            diff.dns_hosts = std::make_pair(first.dns_hosts, second.dns_hosts);
         }
 
 
@@ -224,13 +224,13 @@ namespace LibFred
 
         if (lhs_tech_contacts != rhs_tech_contacts)
         {
-            diff.tech_contacts = std::make_pair(first.tech_contacts,second.tech_contacts);
+            diff.tech_contacts = std::make_pair(first.tech_contacts, second.tech_contacts);
         }
 
 
         if (first.id != second.id)
         {
-            diff.id = std::make_pair(first.id,second.id);
+            diff.id = std::make_pair(first.id, second.id);
         }
 
         return diff;

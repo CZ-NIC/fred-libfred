@@ -101,7 +101,7 @@ public:
     }
 
     result_type exec_params(
-            const std::string& _stmt,//one command query
+            const std::string& _stmt, //one command query
             const std::vector<std::string>& params)//parameters data
     {
         this->check_open();
@@ -110,7 +110,7 @@ public:
 #ifdef HAVE_LOGGER
             LOGGER(PACKAGE).debug(boost::format("exec query [%1%]") % _stmt);
 #endif
-            return result_type(this->get_opened_connection().exec_params(_stmt,//one command query
+            return result_type(this->get_opened_connection().exec_params(_stmt, //one command query
                                                                          params));//parameters data
         }
         catch (const ResultFailed&)
@@ -123,7 +123,7 @@ public:
         }
     }
 
-    result_type exec_params(const std::string& _stmt,//one command query
+    result_type exec_params(const std::string& _stmt, //one command query
                             const QueryParams& params)//parameters data
     {
         this->check_open();
@@ -144,7 +144,7 @@ public:
                 LOGGER(PACKAGE).debug(boost::format("exec query [%1%] params %2%") % _stmt % params_dump);
             }
 #endif
-            return result_type(this->get_opened_connection().exec_params(_stmt,//one command query
+            return result_type(this->get_opened_connection().exec_params(_stmt, //one command query
                                                                          params));//parameters data
         }
         catch (const ResultFailed&)

@@ -76,15 +76,15 @@ void enum_to_db_handle_conversion_test(::LibFred::OperationContext &ctx, const c
             BOOST_CHECK(db_handles.count(*incorrect_db_handle_ptr) == 0);
             Conversion::Enums::from_db_handle< ENUM_HOST_TYPE >(*incorrect_db_handle_ptr);
         }
-        catch(const std::invalid_argument &e) {
+        catch (const std::invalid_argument &e) {
             BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
             throw;
         }
-        catch(const std::exception &e) {
+        catch (const std::exception &e) {
             BOOST_ERROR(boost::diagnostic_information(e));
             throw;
         }
-        catch(...) {
+        catch (...) {
             BOOST_ERROR("unexpected exception occurs");
             throw;
         },
@@ -96,15 +96,15 @@ void enum_to_db_handle_conversion_test(::LibFred::OperationContext &ctx, const c
         try {
             Conversion::Enums::to_db_handle(Enum(min_enum_value - 1));
         }
-        catch(const std::invalid_argument &e) {
+        catch (const std::invalid_argument &e) {
             BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
             throw;
         }
-        catch(const std::exception &e) {
+        catch (const std::exception &e) {
             BOOST_ERROR(boost::diagnostic_information(e));
             throw;
         }
-        catch(...) {
+        catch (...) {
             BOOST_ERROR("unexpected exception occurs");
             throw;
         },
@@ -115,15 +115,15 @@ void enum_to_db_handle_conversion_test(::LibFred::OperationContext &ctx, const c
         try {
             Conversion::Enums::to_db_handle(Enum(max_enum_value + 1));
         }
-        catch(const std::invalid_argument &e) {
+        catch (const std::invalid_argument &e) {
             BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
             throw;
         }
-        catch(const std::exception &e) {
+        catch (const std::exception &e) {
             BOOST_ERROR(boost::diagnostic_information(e));
             throw;
         }
-        catch(...) {
+        catch (...) {
             BOOST_ERROR("unexpected exception occurs");
             throw;
         },

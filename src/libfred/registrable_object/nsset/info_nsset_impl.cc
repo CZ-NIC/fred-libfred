@@ -239,7 +239,7 @@ namespace LibFred
     {
         std::vector<InfoNssetOutput> result;
 
-        Database::Result param_query_result = ctx.get_conn().exec_params(
+        const Database::Result param_query_result = ctx.get_conn().exec_params(
             make_info_nsset_projection_query(local_timestamp_pg_time_zone_name));
 
         result.reserve(param_query_result.size());
@@ -277,7 +277,7 @@ namespace LibFred
                 : boost::posix_time::time_from_string(static_cast<std::string>(param_query_result[i][GetAlias::utc_timestamp()]));
 
             //tech contacts
-            Database::Result tech_contact_res = ctx.get_conn().exec_params(make_tech_contact_query(
+            const Database::Result tech_contact_res = ctx.get_conn().exec_params(make_tech_contact_query(
                 info_nsset_output.info_nsset_data.id, info_nsset_output.info_nsset_data.historyid));
             info_nsset_output.info_nsset_data.tech_contacts.reserve(tech_contact_res.size());
             for (Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
@@ -289,7 +289,7 @@ namespace LibFred
             }
 
             //DNS keys
-            Database::Result dns_hosts_res = ctx.get_conn().exec_params(make_dns_host_query(
+            const Database::Result dns_hosts_res = ctx.get_conn().exec_params(make_dns_host_query(
                 info_nsset_output.info_nsset_data.id, info_nsset_output.info_nsset_data.historyid));
             info_nsset_output.info_nsset_data.dns_hosts.reserve(dns_hosts_res.size());
             for (Database::Result::size_type j = 0; j < dns_hosts_res.size(); ++j)
@@ -297,7 +297,7 @@ namespace LibFred
                 unsigned long long dns_host_id = static_cast<unsigned long long>(dns_hosts_res[j]["host_id"]);
                 std::string dns_host_fqdn = static_cast<std::string>(dns_hosts_res[j]["host_fqdn"]);
 
-                Database::Result dns_ip_res = ctx.get_conn().exec_params(make_dns_ip_query(
+                const Database::Result dns_ip_res = ctx.get_conn().exec_params(make_dns_ip_query(
                     dns_host_id, info_nsset_output.info_nsset_data.historyid ));
                 std::vector<boost::asio::ip::address> dns_ip;
                 dns_ip.reserve(dns_ip_res.size());

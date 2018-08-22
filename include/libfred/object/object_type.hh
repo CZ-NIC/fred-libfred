@@ -41,7 +41,7 @@ struct Object_Type
      */
     enum Enum
     {
-        contact,///< object is contact
+        contact, ///< object is contact
         nsset,  ///< object is nsset
         domain, ///< object is domain
         keyset, ///< object is keyset

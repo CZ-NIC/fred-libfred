@@ -54,9 +54,10 @@ UpdateZoneNs& UpdateZoneNs::set_nameserver_ip_addresses(
 
 unsigned long long UpdateZoneNs::exec(OperationContext& _ctx) const
 {
-    const bool values_for_update_are_set = (zone_fqdn_ != boost::none
-            || nameserver_fqdn_ != boost::none
-            || nameserver_ip_addresses_ != boost::none);
+    const bool values_for_update_are_set =
+            (zone_fqdn_ != boost::none) ||
+            (nameserver_fqdn_ != boost::none) ||
+            (nameserver_ip_addresses_ != boost::none);
     if (!values_for_update_are_set)
     {
         throw NoZoneNsData();
@@ -64,7 +65,7 @@ unsigned long long UpdateZoneNs::exec(OperationContext& _ctx) const
 
     Database::QueryParams params;
     std::ostringstream object_sql;
-    Util::HeadSeparator set_separator(" SET ", ", ");
+    Util::HeadSeparator set_separator(" SET ", ",");
 
     object_sql << "UPDATE zone_ns";
     if (zone_fqdn_ != boost::none)

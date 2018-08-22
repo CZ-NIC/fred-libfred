@@ -55,13 +55,13 @@ public:
 
         try
         {
-            std::string user_part = email.substr(0,email_at);
+            std::string user_part = email.substr(0, email_at);
             if (user_part.empty()) return false;
 
             std::string domain_part = email.substr(email_at+1);
             if (domain_part.empty()) return false;
 
-            if (!boost::regex_match(user_part,user_regex)) return false;
+            if (!boost::regex_match(user_part, user_regex)) return false;
 
             if (std::find(domain_whitelist_.begin(), domain_whitelist_.end()
                 , domain_part)!=domain_whitelist_.end())
@@ -69,17 +69,17 @@ public:
                 return true;
             }
 
-            if (!boost::regex_match(domain_part,domain_regex))
+            if (!boost::regex_match(domain_part, domain_regex))
             {
                 //domain part idn conversion
                 std::string converted_domain_part = Util::convert_utf8_to_punnycode(domain_part).get_value_or_default();
 
                 if (converted_domain_part.empty()) return false;
 
-                if (!boost::regex_match(converted_domain_part,domain_regex)) return false;
+                if (!boost::regex_match(converted_domain_part, domain_regex)) return false;
             }
         }
-        catch(const std::exception& ex)
+        catch (const std::exception& ex)
         {
             return false;
         }

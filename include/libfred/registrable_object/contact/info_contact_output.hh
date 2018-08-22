@@ -24,57 +24,56 @@
 #ifndef INFO_CONTACT_OUTPUT_HH_AA246BCE6413406AA423241C8797A25D
 #define INFO_CONTACT_OUTPUT_HH_AA246BCE6413406AA423241C8797A25D
 
-#include <string>
-
-#include <boost/date_time/posix_time/ptime.hpp>
-
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
 #include "libfred/registrable_object/contact/info_contact_data.hh"
 
-namespace LibFred
+#include <boost/date_time/posix_time/ptime.hpp>
+
+#include <string>
+
+namespace LibFred {
+
+/**
+ * Element of contact info data.
+ */
+struct InfoContactOutput : public Util::Printable<InfoContactOutput>
 {
     /**
-    * Element of contact info data.
+    * Empty constructor of the contact info data structure.
     */
-    struct InfoContactOutput : public Util::Printable
-    {
-        InfoContactData info_contact_data;/**< data of the contact */
-        boost::posix_time::ptime utc_timestamp;/**< timestamp of getting the contact data in UTC */
+    InfoContactOutput()
+    {}
 
-        Nullable<unsigned long long> next_historyid; /**< next historyid of the contact history*/
-        boost::posix_time::ptime history_valid_from;/**< history data valid from time in local time zone viz @ref local_timestamp_pg_time_zone_name*/
-        Nullable<boost::posix_time::ptime> history_valid_to;/**< history data valid to time in local time zone viz @ref local_timestamp_pg_time_zone_name, null means open end */
-        Nullable<unsigned long long> logd_request_id; /**< id of the request that changed contact data*/
+    /**
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
+    */
+    std::string to_string()const;
 
-        /**
-        * Empty constructor of the contact info data structure.
-        */
-        InfoContactOutput()
-        {}
+    /**
+    * Equality of the contact info data structure operator. Compares only InfoContactData member.
+    * @param rhs is right hand side of the contact data comparison
+    * @return true if equal, false if not
+    */
+    bool operator==(const InfoContactOutput& rhs)const;
 
-        /**
-        * Dumps state of the instance into the string
-        * @return string with description of the instance state
-        */
-        std::string to_string() const;
+    /**
+    * Inequality of the contact info data structure operator. Compares only InfoContactData member.
+    * @param rhs is right hand side of the contact data comparison
+    * @return true if not equal, false if equal
+    */
+    bool operator!=(const InfoContactOutput& rhs)const;
 
-        /**
-        * Equality of the contact info data structure operator. Compares only InfoContactData member.
-        * @param rhs is right hand side of the contact data comparison
-        * @return true if equal, false if not
-        */
-        bool operator==(const InfoContactOutput& rhs) const;
+    InfoContactData info_contact_data;/**< data of the contact */
+    boost::posix_time::ptime utc_timestamp;/**< timestamp of getting the contact data in UTC */
 
-        /**
-        * Inequality of the contact info data structure operator. Compares only InfoContactData member.
-        * @param rhs is right hand side of the contact data comparison
-        * @return true if not equal, false if equal
-        */
-        bool operator!=(const InfoContactOutput& rhs) const;
+    Nullable<unsigned long long> next_historyid; /**< next historyid of the contact history*/
+    boost::posix_time::ptime history_valid_from;/**< history data valid from time in local time zone viz @ref local_timestamp_pg_time_zone_name*/
+    Nullable<boost::posix_time::ptime> history_valid_to;/**< history data valid to time in local time zone viz @ref local_timestamp_pg_time_zone_name, null means open end */
+    Nullable<unsigned long long> logd_request_id; /**< id of the request that changed contact data*/
+};
 
-    };
+}//namespace LibFred
 
-} // namespace LibFred
-
-#endif
+#endif//INFO_CONTACT_OUTPUT_HH_AA246BCE6413406AA423241C8797A25D

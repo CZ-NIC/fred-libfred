@@ -30,7 +30,7 @@ namespace Test {
 
         std::string pid_column_name;
         {
-            Database::Result dbres = conn->exec("SELECT column_name "
+            const Database::Result dbres = conn->exec("SELECT column_name "
                                                 "FROM information_schema.columns "
                                                 "WHERE table_name = 'pg_stat_activity' AND "
                                                       "column_name IN ('procpid', 'pid')");

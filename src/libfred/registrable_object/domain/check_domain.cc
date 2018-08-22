@@ -55,7 +55,7 @@ namespace LibFred
             {
                 zone = Zone::find_zone_in_fqdn(ctx, no_root_dot_fqdn);
             }
-            catch(const Zone::Exception& ex)
+            catch (const Zone::Exception& ex)
             {
                 if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
@@ -77,8 +77,8 @@ namespace LibFred
             {
                 return true;
             }
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -99,7 +99,7 @@ namespace LibFred
             {
                 zone = Zone::find_zone_in_fqdn(ctx, no_root_dot_fqdn);
             }
-            catch(const Zone::Exception& ex)
+            catch (const Zone::Exception& ex)
             {
                 if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
@@ -110,8 +110,8 @@ namespace LibFred
                     throw;
                 }
             }
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -133,7 +133,7 @@ namespace LibFred
             {
                 zone = Zone::find_zone_in_fqdn(ctx, no_root_dot_fqdn);
             }
-            catch(const Zone::Exception& ex)
+            catch (const Zone::Exception& ex)
             {
                 if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
@@ -146,13 +146,13 @@ namespace LibFred
             }
 
             //check number of labels
-            if (std::count(no_root_dot_fqdn.begin(), no_root_dot_fqdn.end(),'.')+1//fqdn labels number
-                > std::count(zone.name.begin(), zone.name.end(),'.')+1+zone.dots_max)//max labels by zone
+            if (std::count(no_root_dot_fqdn.begin(), no_root_dot_fqdn.end(), '.')+1//fqdn labels number
+                > std::count(zone.name.begin(), zone.name.end(), '.')+1+zone.dots_max)//max labels by zone
             {
                 return true;
             }
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -177,8 +177,8 @@ namespace LibFred
             {
                 return true;
             }
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -199,7 +199,7 @@ namespace LibFred
             {
                 zone = Zone::find_zone_in_fqdn(ctx, no_root_dot_fqdn);
             }
-            catch(const Zone::Exception& ex)
+            catch (const Zone::Exception& ex)
             {
                 if (ex.is_set_unknown_zone_in_fqdn()
                         && (ex.get_unknown_zone_in_fqdn().compare(no_root_dot_fqdn) == 0))
@@ -237,8 +237,8 @@ namespace LibFred
                 }
 
             }
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -264,8 +264,8 @@ namespace LibFred
             {
                 return false;
             }
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -276,8 +276,8 @@ namespace LibFred
     std::string CheckDomain::to_string() const
     {
         return Util::format_operation_state("CheckDomain",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("fqdn",fqdn_))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("fqdn", fqdn_))
         );
     }
 

@@ -136,7 +136,7 @@ namespace LibFred
                 std::string timezone_param_order = boost::lexical_cast<std::string>(params.size()+1);
                 params.push_back(_output_timezone);
 
-                Database::Result contact_check_records = _ctx.get_conn().exec_params(
+                const Database::Result contact_check_records = _ctx.get_conn().exec_params(
                     "SELECT "
                     "    "+ check_alias +".handle               AS handle_, "
 
@@ -240,7 +240,7 @@ namespace LibFred
                     handles.push_back(it->second.check_handle);
                 }
 
-                Database::Result contact_check_records = _ctx.get_conn().exec_params(
+                const Database::Result contact_check_records = _ctx.get_conn().exec_params(
                     // looking for time when check tests finished ~ check.status was set to auto_*
                     "SELECT"
                     "   "+ check_alias +".handle    AS handle_, "

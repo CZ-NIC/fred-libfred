@@ -72,7 +72,7 @@ GetBlockingStatusDescList::StatusDescList& GetBlockingStatusDescList::exec(Opera
         query += " AND $2=ANY(eos.types)";
         param(object_type_.get_value());
     }
-    Database::Result nameDescResult = _ctx.get_conn().exec_params(query.c_str(), param);
+    const Database::Result nameDescResult = _ctx.get_conn().exec_params(query.c_str(), param);
     if (nameDescResult.size() <= 0)
     {
         BOOST_THROW_EXCEPTION(Exception().set_lang_not_found(lang));

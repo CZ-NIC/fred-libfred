@@ -24,34 +24,25 @@
 #ifndef KEYSET_DNS_KEY_HH_31FCB2F7C5E4404F9819430431D20BAB
 #define KEYSET_DNS_KEY_HH_31FCB2F7C5E4404F9819430431D20BAB
 
-#include <string>
-#include <sstream>
-#include <vector>
-
 #include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"
+
 #include "util/optional_value.hh"
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
 
-namespace LibFred
-{
+#include <string>
+#include <sstream>
+#include <vector>
+
+namespace LibFred {
 
 /**
  * Container for DNSKEY record data as specified in RFC4034.
  */
-class DnsKey  : public Util::Printable
+class DnsKey : public Util::Printable<DnsKey>
 {
-    unsigned short flags_;/**< the flags field */
-    unsigned short protocol_;/**< the protocol field, only valid value is 3*/
-    unsigned short alg_;/**< the algorithm field identifies the public key's cryptographic algorithm, values can be found in RFC 4034 Apendix A.1. */
-    std::string key_;/**< the public key field in base64 encoding */
 public:
-    /**
-     * Virtual destructor.
-     */
-    virtual ~DnsKey(){}
-
     /**
      * Constructor initializing all attributes. Removes whitespaces from @ref _key parameter.
      * @param _flags sets @ref flags_ field
@@ -122,11 +113,10 @@ public:
     */
     bool operator==(const DnsKey& rhs) const
     {
-        return (flags_ == rhs.flags_)
-            && (protocol_ == rhs.protocol_)
-            && (alg_ == rhs.alg_)
-            && (key_.compare( rhs.key_) == 0)
-            ;
+        return (flags_ == rhs.flags_) &&
+               (protocol_ == rhs.protocol_) &&
+               (alg_ == rhs.alg_) &&
+               (key_== rhs.key_);
     }
 
     /**
@@ -177,17 +167,21 @@ public:
     */
     std::string to_string() const
     {
-        return Util::format_data_structure("DnsKey",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("flags",boost::lexical_cast<std::string>(flags_)))
-        (std::make_pair("protocol",boost::lexical_cast<std::string>(protocol_)))
-        (std::make_pair("alg",boost::lexical_cast<std::string>(alg_)))
-        (std::make_pair("key",key_))
-        );
+        return Util::format_data_structure(
+                "DnsKey",
+                Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("flags", boost::lexical_cast<std::string>(flags_)))
+                    (std::make_pair("protocol", boost::lexical_cast<std::string>(protocol_)))
+                    (std::make_pair("alg", boost::lexical_cast<std::string>(alg_)))
+                    (std::make_pair("key", key_)));
     }
-}; //class DnsKey
+private:
+    unsigned short flags_;/**< the flags field */
+    unsigned short protocol_;/**< the protocol field, only valid value is 3*/
+    unsigned short alg_;/**< the algorithm field identifies the public key's cryptographic algorithm, values can be found in RFC 4034 Apendix A.1. */
+    std::string key_;/**< the public key field in base64 encoding */
+};
 
+}//namespace LibFred
 
-} // namespace LibFred
-
-#endif
+#endif//KEYSET_DNS_KEY_HH_31FCB2F7C5E4404F9819430431D20BAB

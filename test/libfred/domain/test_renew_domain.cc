@@ -88,14 +88,14 @@ struct renew_domain_fixture : virtual public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
                 .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
                 .set_disclosename(true)
                 .set_place(place)
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(renew_domain_wrong_fqdn)
             ).exec(ctx);
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::RenewDomain::Exception& ex)
+    catch (const ::LibFred::RenewDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_domain_fqdn());
         BOOST_CHECK(ex.get_unknown_domain_fqdn().compare(bad_test_fqdn) == 0);
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(renew_domain_wrong_registrar)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::RenewDomain::Exception& ex)
+    catch (const ::LibFred::RenewDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
         BOOST_CHECK(ex.get_unknown_registrar_handle().compare(bad_registrar_handle) == 0);
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(renew_domain)
         ::LibFred::RenewDomain(test_fqdn, registrar_handle, exdate).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::RenewDomain::Exception& ex)
+    catch (const ::LibFred::RenewDomain::Exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -298,7 +298,7 @@ BOOST_FIXTURE_TEST_CASE(renew_domain_set_wrong_exdate, renew_domain_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::RenewDomain::Exception& ex)
+    catch (const ::LibFred::RenewDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_invalid_expiration_date());
         BOOST_CHECK(ex.get_invalid_expiration_date().is_special());
@@ -335,7 +335,7 @@ BOOST_FIXTURE_TEST_CASE(renew_domain_set_valexdate, renew_domain_fixture)
                 .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::RenewDomain::Exception& ex)
+    catch (const ::LibFred::RenewDomain::Exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -373,7 +373,7 @@ BOOST_FIXTURE_TEST_CASE(renew_domain_set_wrong_valexdate, renew_domain_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::RenewDomain::Exception& ex)
+    catch (const ::LibFred::RenewDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_invalid_enum_validation_expiration_date());
         BOOST_CHECK(ex.get_invalid_enum_validation_expiration_date().is_special());
@@ -411,7 +411,7 @@ BOOST_FIXTURE_TEST_CASE(renew_domain_set_valexdate_wrong_domain, renew_domain_fi
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InternalError& ex)
+    catch (const ::LibFred::InternalError& ex)
     {
         BOOST_TEST_MESSAGE(ex.what());
     }
@@ -446,7 +446,7 @@ BOOST_FIXTURE_TEST_CASE(renew_domain_set_publish_wrong_domain, renew_domain_fixt
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InternalError& ex)
+    catch (const ::LibFred::InternalError& ex)
     {
         BOOST_TEST_MESSAGE(ex.what());
     }

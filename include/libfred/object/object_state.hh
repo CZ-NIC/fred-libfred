@@ -58,7 +58,7 @@ public:
         server_delete_prohibited,           ///< means database `serverDeleteProhibited` state
         server_inzone_manual,               ///< means database `serverInzoneManual` state
         server_outzone_manual,              ///< means database `serverOutzoneManual` state
-        server_registrant_change_prohibited,///< means database `serverRegistrantChangeProhibited` state
+        server_registrant_change_prohibited, ///< means database `serverRegistrantChangeProhibited` state
         server_renew_prohibited,            ///< means database `serverRenewProhibited` state
         server_transfer_prohibited,         ///< means database `serverTransferProhibited` state
         server_update_prohibited,           ///< means database `serverUpdateProhibited` state

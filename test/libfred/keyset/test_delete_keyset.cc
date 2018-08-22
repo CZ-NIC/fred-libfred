@@ -72,7 +72,7 @@ struct delete_keyset_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(delete_keyset_with_wrong_handle)
         ::LibFred::DeleteKeysetByHandle(bad_test_keyset_handle).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::DeleteKeysetByHandle::Exception& ex)
+    catch (const ::LibFred::DeleteKeysetByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_keyset_handle());
         BOOST_CHECK(ex.get_unknown_keyset_handle().compare(bad_test_keyset_handle) == 0);
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE(delete_linked_keyset)
         ::LibFred::DeleteKeysetByHandle(test_keyset_handle).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::DeleteKeysetByHandle::Exception& ex)
+    catch (const ::LibFred::DeleteKeysetByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_object_linked_to_keyset_handle());
         BOOST_CHECK(ex.get_object_linked_to_keyset_handle().compare(test_keyset_handle) == 0);

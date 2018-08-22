@@ -54,7 +54,7 @@ setup_nonexistent_testdef_handle::setup_nonexistent_testdef_handle() {
 setup_testdef_in_testsuite::setup_testdef_in_testsuite(const std::string& testdef_handle, const std::string& testsuite_handle) {
     ::LibFred::OperationContextCreator ctx;
 
-    Database::Result res = ctx.get_conn().exec(
+    const Database::Result res = ctx.get_conn().exec(
         "INSERT INTO contact_testsuite_map "
         "   (enum_contact_test_id, enum_contact_testsuite_id) "
         "   VALUES ("
@@ -74,7 +74,7 @@ setup_testdef_in_testsuite::setup_testdef_in_testsuite(const std::string& testde
 setup_testdef_in_testsuite_of_check::setup_testdef_in_testsuite_of_check(const std::string testdef_handle, const std::string check_handle) {
     ::LibFred::OperationContextCreator ctx;
 
-    Database::Result res =
+    const Database::Result res =
         ctx.get_conn().exec(
             "INSERT INTO contact_testsuite_map "
             "   (enum_contact_test_id, enum_contact_testsuite_id) "

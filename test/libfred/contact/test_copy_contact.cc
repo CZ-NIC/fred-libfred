@@ -48,7 +48,7 @@ struct copy_contact_fixture : public Test::instantiate_db_template
         dst_contact_handle(std::string("TEST-COPY-CONTACT-DST-HANDLE") + xmark)
     {
         ::LibFred::OperationContextCreator ctx;
-        Database::Result registrar_result = ctx.get_conn().exec(
+        const Database::Result registrar_result = ctx.get_conn().exec(
             "SELECT (SELECT handle FROM registrar WHERE system ORDER BY id LIMIT 1),"
                    "(SELECT handle FROM registrar WHERE NOT system ORDER BY id LIMIT 1)");
         sys_registrar_handle = static_cast<std::string>(registrar_result[0][0]);
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(copy_contact_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CopyContact::Exception &ex) {
+    catch (const ::LibFred::CopyContact::Exception &ex) {
         BOOST_CHECK(ex.is_set_src_contact_handle_not_found());
         BOOST_CHECK(ex.get_src_contact_handle_not_found().compare(bad_src_contact_handle) == 0);
     }
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(copy_contact_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CopyContact::Exception &ex) {
+    catch (const ::LibFred::CopyContact::Exception &ex) {
         BOOST_CHECK(ex.is_set_dst_contact_handle_already_exist());
         BOOST_CHECK(ex.get_dst_contact_handle_already_exist().compare(bad_dst_contact_handle) == 0);
     }
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE(copy_contact_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CopyContact::Exception &ex) {
+    catch (const ::LibFred::CopyContact::Exception &ex) {
         BOOST_CHECK(ex.is_set_create_contact_failed());
     }
 }

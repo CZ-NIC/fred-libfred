@@ -122,17 +122,17 @@ BOOST_AUTO_TEST_CASE(public_request_object_lock_guard_wrong_id)
     try {
         ::LibFred::PublicRequestsOfObjectLockGuardByObjectId(ctx, bad_object_id);
     }
-    catch(const ::LibFred::PublicRequestsOfObjectLockGuardByObjectId::Exception &e) {
+    catch (const ::LibFred::PublicRequestsOfObjectLockGuardByObjectId::Exception &e) {
         BOOST_CHECK(e.is_set_object_doesnt_exist());
         BOOST_CHECK(e.get_object_doesnt_exist() == bad_object_id);
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -156,18 +156,18 @@ BOOST_AUTO_TEST_CASE(create_public_request_wrong_registrar)
             .exec(::LibFred::PublicRequestsOfObjectLockGuardByObjectId(ctx, contact_id),
                   PublicRequestTypeFake("mojeid_contact_identification"));
     }
-    catch(const ::LibFred::CreatePublicRequest::Exception &e) {
+    catch (const ::LibFred::CreatePublicRequest::Exception &e) {
         BOOST_CHECK(!e.is_set_unknown_type());
         BOOST_CHECK(e.is_set_unknown_registrar_id());
         BOOST_CHECK(e.get_unknown_registrar_id() == bad_registrar_id);
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -189,18 +189,18 @@ BOOST_AUTO_TEST_CASE(create_public_request_wrong_type)
             .exec(::LibFred::PublicRequestsOfObjectLockGuardByObjectId(ctx, contact_id),
                   PublicRequestTypeFake(bad_type));
     }
-    catch(const ::LibFred::CreatePublicRequest::Exception &e) {
+    catch (const ::LibFred::CreatePublicRequest::Exception &e) {
         BOOST_CHECK(e.is_set_unknown_type());
         BOOST_CHECK(!e.is_set_unknown_registrar_id());
         BOOST_CHECK(e.get_unknown_type() == bad_type);
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },

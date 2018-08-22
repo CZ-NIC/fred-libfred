@@ -1,6 +1,7 @@
 #include "libfred/object_states.hh"
-#include <memory>
 
+#include <memory>
+#include <sstream>
 
 namespace LibFred {
 
@@ -10,7 +11,7 @@ bool object_has_state(
 {
     Database::Connection conn = Database::Manager::acquire();
     lock_object_state_request_lock(_object_id);
-    Database::Result rcheck = conn.exec_params(
+    const Database::Result rcheck = conn.exec_params(
             "SELECT count(*) FROM object_state os "
             "JOIN enum_object_states eos ON eos.id=os.state_id "
             "WHERE os.object_id=$1::integer AND "
@@ -86,7 +87,7 @@ std::vector<std::string> states_conversion(const std::vector<int>& state_codes)
         return ret;
     }
 
-    std::stringstream ostr;
+    std::ostringstream ostr;
     std::vector<int>::const_iterator it = state_codes.begin();
     ostr << "{" << *it;
 
@@ -202,7 +203,7 @@ void cancel_multiple_object_states(
     }
 
     // generate string representing an array with state names
-    std::stringstream states;
+    std::ostringstream states;
     states << "{";
 
     std::vector<std::string>::const_iterator it = _states_names.begin();

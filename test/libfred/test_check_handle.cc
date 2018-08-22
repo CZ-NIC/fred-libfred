@@ -84,14 +84,14 @@ struct check_handle_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(admin_contact_handle_rem,registrar_handle)
+        ::LibFred::CreateContact(admin_contact_handle_rem, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAMEREM")+xmark)
             .set_disclosename(true)
             .set_place(place)

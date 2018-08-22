@@ -29,6 +29,8 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include <sstream>
+
 namespace LibFred {
 
 CreateDomainNameBlacklistId::CreateDomainNameBlacklistId(ObjectId _object_id, const std::string& _reason)
@@ -142,7 +144,7 @@ void CreateDomainNameBlacklistId::exec(OperationContext& _ctx)
     //check time
     if (valid_to_.isset())
     {
-        if (valid_from_.isset()) // <from,to)
+        if (valid_from_.isset()) // <from, to)
         {
             if (valid_to_.get_value() < valid_from_.get_value())
             {
@@ -152,9 +154,9 @@ void CreateDomainNameBlacklistId::exec(OperationContext& _ctx)
                 BOOST_THROW_EXCEPTION(Exception().set_out_of_turn(errmsg));
             }
         }
-        else // <now,to)
+        else // <now, to)
         {
-            Database::Result out_of_turn_result = _ctx.get_conn().exec_params(
+            const Database::Result out_of_turn_result = _ctx.get_conn().exec_params(
                     "SELECT $1::timestamp<CURRENT_TIMESTAMP",
                     Database::query_param_list(valid_to_.get_value()));
             if (static_cast<bool>(out_of_turn_result[0][0]))
@@ -169,7 +171,7 @@ void CreateDomainNameBlacklistId::exec(OperationContext& _ctx)
     std::string domain_regexp;
     {
         Database::query_param_list param(object_id_);
-        Database::Result object_type_result = _ctx.get_conn().exec_params(
+        const Database::Result object_type_result = _ctx.get_conn().exec_params(
             "SELECT name "
             "FROM object_registry "
             "WHERE id=$1::bigint AND "

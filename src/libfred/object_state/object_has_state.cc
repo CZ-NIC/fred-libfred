@@ -38,7 +38,7 @@ namespace LibFred
     {
         LockObjectStateRequestLock(object_id_).exec(ctx);
 
-        Database::Result rcheck = ctx.get_conn().exec_params(
+        const Database::Result rcheck = ctx.get_conn().exec_params(
             "SELECT count(*) FROM object_state os"
             " JOIN enum_object_states eos ON eos.id = os.state_id"
             " WHERE os.object_id = $1::integer AND eos.name = $2::text"

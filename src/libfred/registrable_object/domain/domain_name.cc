@@ -361,7 +361,7 @@ void set_domain_name_validation_config_into_database(
         const std::string& zone_name,
         const std::vector<std::string>& checker_names)
 {
-    Zone::Data zone = Zone::get_zone(ctx,zone_name);
+    Zone::Data zone = Zone::get_zone(ctx, zone_name);
     ctx.get_conn().exec_params(
             "DELETE FROM zone_domain_name_validation_checker_map WHERE zone_id = $1::bigint",
             Database::query_param_list(zone.id));

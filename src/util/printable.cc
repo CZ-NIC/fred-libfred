@@ -39,7 +39,7 @@ public:
         : s_(s),
           separator_(separator)
     {}
-    void operator()(const std::pair<std::string,std::string>& string_pair_to_be_added_into_string)
+    void operator()(const std::pair<std::string, std::string>& string_pair_to_be_added_into_string)
     {
         if (!string_pair_to_be_added_into_string.first.empty())
         {
@@ -64,7 +64,7 @@ std::string format_operation_state(const std::string& operation_name,
     const std::vector<std::pair<std::string, std::string>>& key_value_list)
 {
     std::string s;
-    SeparatorWithDataIntoStringFunctor add_to_ss(s," ");
+    SeparatorWithDataIntoStringFunctor add_to_ss(s, " ");
 
     s += "#";
     s += operation_name;
@@ -76,7 +76,7 @@ std::string format_data_structure(const std::string& data_structure_name,
     const std::vector<std::pair<std::string, std::string>>& key_value_list)
 {
     std::string s;
-    SeparatorWithDataIntoStringFunctor add_to_ss(s," ");
+    SeparatorWithDataIntoStringFunctor add_to_ss(s, " ");
 
     s += " ";
     s += data_structure_name;

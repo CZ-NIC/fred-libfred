@@ -188,7 +188,7 @@ namespace LibFred
     {
         std::vector<InfoContactOutput> result;
 
-        Database::Result query_result = ctx.get_conn().exec_params(make_query(local_timestamp_pg_time_zone_name));
+        const Database::Result query_result = ctx.get_conn().exec_params(make_query(local_timestamp_pg_time_zone_name));
         result.reserve(query_result.size());
         for (Database::Result::size_type i = 0; i < query_result.size(); ++i)
         {
@@ -297,7 +297,7 @@ namespace LibFred
                       "FROM contact_address "
                       "WHERE contactid=$1::bigint";
             }
-            Database::Result subquery_result = ctx.get_conn().exec_params(sql, params);
+            const Database::Result subquery_result = ctx.get_conn().exec_params(sql, params);
             ContactAddressList addresses;
             for (::size_t idx = 0; idx < subquery_result.size(); ++idx) {
                 const ContactAddressType type(ContactAddressType::from_string(

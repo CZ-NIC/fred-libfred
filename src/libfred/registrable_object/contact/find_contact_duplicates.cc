@@ -3,8 +3,8 @@
 
 #include <boost/algorithm/string/join.hpp>
 
+#include <sstream>
 #include <string>
-
 
 namespace LibFred {
 namespace Contact {
@@ -35,7 +35,7 @@ std::set<std::string> FindContactDuplicates::exec(LibFred::OperationContext& _ct
             ("SHIPPING")
             ("SHIPPING_2")
             ("SHIPPING_3");
-    std::stringstream dup_sql;
+    std::ostringstream dup_sql;
     dup_sql << "SELECT unnest(dup_set)"
         " FROM (SELECT array_agg(oreg.name) AS dup_set,";
         for (std::vector<std::string>::const_iterator contact_address_type = contact_address_types.begin();
@@ -120,7 +120,7 @@ std::set<std::string> FindContactDuplicates::exec(LibFred::OperationContext& _ct
     }
     dup_sql << " LIMIT 1) as dup_q";
 
-    Database::Result dup_result = _ctx.get_conn().exec_params(dup_sql.str(), dup_params);
+    const Database::Result dup_result = _ctx.get_conn().exec_params(dup_sql.str(), dup_params);
 
     for (Database::Result::size_type i = 0; i < dup_result.size(); i++) {
         result.insert(static_cast<std::string>(dup_result[i][0]));
@@ -129,5 +129,5 @@ std::set<std::string> FindContactDuplicates::exec(LibFred::OperationContext& _ct
     return result;
 }
 
-}
-}
+}//namespace LibFred::Contact
+}//namespace LibFred

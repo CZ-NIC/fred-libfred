@@ -24,62 +24,62 @@
 #ifndef OBJECT_ID_HANDLE_PAIR_HH_B98F5620CB614CC4AD93C8CF08D46449
 #define OBJECT_ID_HANDLE_PAIR_HH_B98F5620CB614CC4AD93C8CF08D46449
 
-#include <string>
 #include "util/printable.hh"
 
-namespace LibFred
+#include <string>
+
+namespace LibFred {
+
+/**
+ * Object identification structure.
+ * Id is unique object identifier but not very illustrative
+ * , handle is humanly readable but when object gets deleted
+ * , the same handle might be reused for different object.
+ */
+struct ObjectIdHandlePair : public Util::Printable<ObjectIdHandlePair>
 {
+    unsigned long long id;/**< database id of the object*/
+    std::string handle;/**< handle of the object*/
 
     /**
-     * Object identification structure.
-     * Id is unique object identifier but not very illustrative
-     * , handle is humanly readable but when object gets deleted
-     * , the same handle might be reused for different object.
+    * Constructor of data structure.
+    * @param id sets object database id into @ref id attribute
+    * @param handle sets object handle into @ref handle attribute
+    */
+    ObjectIdHandlePair(const unsigned long long id, const std::string& handle);
+
+    /**
+    * Default constructor of data structure.
+    */
+    ObjectIdHandlePair();
+
+    /**
+     * Comparison operator comparing both attributes.
+     * Handle is compared converted to uppercase
+     * @param rhs data compared with this instance
      */
-    struct ObjectIdHandlePair: public Util::Printable
-    {
-        unsigned long long id;/**< database id of the object*/
-        std::string handle;/**< handle of the object*/
+    bool operator==(const ObjectIdHandlePair& rhs)const;
+    /**
+     * Comparison operator comparing both attributes.
+     * Handle is compared converted to uppercase
+     * @param rhs data compared with this instance
+     */
+    bool operator!=(const ObjectIdHandlePair& rhs)const;
 
-        /**
-        * Constructor of data structure.
-        * @param _id sets object database id into @ref id attribute
-        * @param _handle sets object handle into @ref handle attribute
-        */
-        ObjectIdHandlePair(const unsigned long long _id, const std::string& _handle);
+    /**
+     * Comparison operator comparing both attributes in string.
+     * Handle is compared converted to uppercase
+     * @param rhs data compared with this instance
+     */
+    bool operator<(const ObjectIdHandlePair& rhs)const;
 
-        /**
-        * Default constructor of data structure.
-        */
-        ObjectIdHandlePair();
+    /**
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
+    */
+    std::string to_string()const;
+};
 
-        /**
-         * Comparison operator comparing both attributes.
-         * Handle is compared converted to uppercase
-         * @param rhs data compared with this instance
-         */
-        bool operator==(const ObjectIdHandlePair& rhs) const;
-        /**
-         * Comparison operator comparing both attributes.
-         * Handle is compared converted to uppercase
-         * @param rhs data compared with this instance
-         */
-        bool operator!=(const ObjectIdHandlePair& rhs) const;
+}//namespace LibFred
 
-        /**
-         * Comparison operator comparing both attributes in string.
-         * Handle is compared converted to uppercase
-         * @param rhs data compared with this instance
-         */
-        bool operator<(const ObjectIdHandlePair& rhs) const;
-
-        /**
-        * Dumps state of the instance into the string
-        * @return string with description of the instance state
-        */
-        std::string to_string() const;
-    };
-
-} // namespace LibFred
-
-#endif
+#endif//OBJECT_ID_HANDLE_PAIR_HH_B98F5620CB614CC4AD93C8CF08D46449

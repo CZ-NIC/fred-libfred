@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
 
     Test::domain domain(ctx);
 
-    Database::Result ids_res = ctx.get_conn().exec(
+    const Database::Result ids_res = ctx.get_conn().exec(
         "SELECT id AS count_ "
         "   FROM message "
     );
@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
 
     ::LibFred::Poll::CreateUpdateObjectPollMessage().exec(ctx, domain.info_data.historyid);
 
-    Database::Result ids2_res = ctx.get_conn().exec(
+    const Database::Result ids2_res = ctx.get_conn().exec(
         "SELECT id AS count_ "
         "   FROM message "
     );
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
     BOOST_CHECK_MESSAGE(new_message_id != -1, "SOMETHING IS TERRIBLY WRONG");
     BOOST_CHECK_EQUAL(ids_before.size() + 1, ids_after.size());
 
-    Database::Result message_res = ctx.get_conn().exec_params(
+    const Database::Result message_res = ctx.get_conn().exec_params(
         "SELECT seen "
         "   FROM message "
         "   WHERE id=$1::integer",
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
     BOOST_CHECK_EQUAL(message_res.size(), 1);
     BOOST_CHECK_EQUAL(static_cast<bool>(message_res[0]["seen"]), false);
 
-    Database::Result polleppaction_res = ctx.get_conn().exec_params(
+    const Database::Result polleppaction_res = ctx.get_conn().exec_params(
         "SELECT msgid, objid "
         "   FROM poll_eppaction "
         "   WHERE msgid=$1::integer",
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
     for (int i=0; i<3; ++i) {
         ::LibFred::OperationContextCreator ctx;
 
-        Database::Result ids_res = ctx.get_conn().exec(
+        const Database::Result ids_res = ctx.get_conn().exec(
             "SELECT id AS count_ "
             "   FROM message "
         );
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
                 ::LibFred::Poll::CreateUpdateObjectPollMessage().exec(ctx, nsset.info_data.historyid);
                 break;
         }
-        Database::Result ids2_res = ctx.get_conn().exec(
+        const Database::Result ids2_res = ctx.get_conn().exec(
             "SELECT id AS count_ "
             "   FROM message "
         );
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
         BOOST_CHECK_MESSAGE(new_message_id != -1, "SOMETHING IS TERRIBLY WRONG");
         BOOST_CHECK_EQUAL(ids_before.size() + 1, ids_after.size());
 
-        Database::Result message_res = ctx.get_conn().exec_params(
+        const Database::Result message_res = ctx.get_conn().exec_params(
             "SELECT mt.name     AS msgtype_name_ "
             "   FROM message AS m "
             "       JOIN messagetype AS mt "

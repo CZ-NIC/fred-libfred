@@ -90,25 +90,25 @@ OperationContext::~OperationContext()
     {
         conn_ptr->exec("ROLLBACK");
     }
-    catch(...)
+    catch (...)
     {
         try
         {
             log_.error("OperationContext::~OperationContext: rollback failed");
         }
-        catch(...) { }
+        catch (...) { }
     }
     try
     {
         conn_.reset();
     }
-    catch(...)
+    catch (...)
     {
         try
         {
             log_.error("OperationContext::~OperationContext: database connection destroying failed");
         }
-        catch(...) { }
+        catch (...) { }
     }
 }
 

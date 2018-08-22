@@ -52,7 +52,7 @@ namespace LibFred
             "   WHERE keysetid = $1::integer",
             Database::query_param_list(id));
 
-        Database::Result delete_keyset_res = ctx.get_conn().exec_params(
+        const Database::Result delete_keyset_res = ctx.get_conn().exec_params(
             "DELETE FROM keyset "
             "   WHERE id = $1::integer RETURNING id",
             Database::query_param_list(id));

@@ -33,7 +33,7 @@ namespace LibFred {
 /**
 * Checking of registrar properties.
 */
-class CheckRegistrar : public Util::Printable
+class CheckRegistrar : public Util::Printable<CheckRegistrar>
 {
 public:
     /**
@@ -52,7 +52,7 @@ public:
     * Dumps state of the instance into the string
     * @return string with description of the instance state
     */
-    std::string to_string()const override;
+    std::string to_string()const;
 private:
     const std::string handle_;/**< registrar identifier */
 };

@@ -24,12 +24,6 @@
 #ifndef INFO_REGISTRAR_OUTPUT_HH_B02F3193B41A4A21ACFC4224FE193452
 #define INFO_REGISTRAR_OUTPUT_HH_B02F3193B41A4A21ACFC4224FE193452
 
-#include <string>
-#include <vector>
-
-#include <boost/date_time/posix_time/ptime.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-
 #include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"
 #include "util/optional_value.hh"
@@ -37,43 +31,48 @@
 #include "util/printable.hh"
 #include "libfred/registrar/info_registrar_data.hh"
 
-namespace LibFred
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+
+#include <string>
+#include <vector>
+
+namespace LibFred {
+
+/**
+* Element of registrar info data.
+*/
+struct InfoRegistrarOutput : Util::Printable<InfoRegistrarOutput>
 {
     /**
-    * Element of registrar info data.
+    * Empty constructor of the registrar info data structure.
     */
-    struct InfoRegistrarOutput : public Util::Printable
-    {
-        InfoRegistrarData info_registrar_data;/**< data of the registrar */
-        boost::posix_time::ptime utc_timestamp;/**< timestamp of getting the registrar data in UTC */
+    InfoRegistrarOutput() {}
 
-        /**
-        * Empty constructor of the registrar info data structure.
-        */
-        InfoRegistrarOutput()
-        {}
+    /**
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
+    */
+    std::string to_string()const;
 
-        /**
-        * Dumps state of the instance into the string
-        * @return string with description of the instance state
-        */
-        std::string to_string() const;
+    /**
+    * Equality of the registrar info data structure operator. Compares only InfoRegistrarData member.
+    * @param rhs is right hand side of the registrar data comparison
+    * @return true if equal, false if not
+    */
+    bool operator==(const InfoRegistrarOutput& rhs) const;
 
-        /**
-        * Equality of the registrar info data structure operator. Compares only InfoRegistrarData member.
-        * @param rhs is right hand side of the registrar data comparison
-        * @return true if equal, false if not
-        */
-        bool operator==(const InfoRegistrarOutput& rhs) const;
+    /**
+    * Inequality of the registrar info data structure operator. Compares only InfoRegistrarData member.
+    * @param rhs is right hand side of the registrar data comparison
+    * @return true if not equal, false if equal
+    */
+    bool operator!=(const InfoRegistrarOutput& rhs) const;
 
-        /**
-        * Inequality of the registrar info data structure operator. Compares only InfoRegistrarData member.
-        * @param rhs is right hand side of the registrar data comparison
-        * @return true if not equal, false if equal
-        */
-        bool operator!=(const InfoRegistrarOutput& rhs) const;
+    InfoRegistrarData info_registrar_data;/**< data of the registrar */
+    boost::posix_time::ptime utc_timestamp;/**< timestamp of getting the registrar data in UTC */
+};
 
-    };
-} // namespace LibFred
+}//namespace LibFred
 
-#endif
+#endif//INFO_REGISTRAR_OUTPUT_HH_B02F3193B41A4A21ACFC4224FE193452

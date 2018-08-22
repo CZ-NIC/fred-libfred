@@ -72,14 +72,14 @@ struct create_admin_object_state_restore_request_id_fixture : public Test::insta
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-CAOSRR-ADMIN-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
             .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -90,7 +90,7 @@ struct create_admin_object_state_restore_request_id_fixture : public Test::insta
             .set_admin_contacts(Util::vector_of<std::string>(admin_contact2_handle))
             .exec(ctx);
 
-        Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE manual AND 3=ANY(types) AND name!='serverBlocked'");
+        const Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE manual AND 3=ANY(types) AND name!='serverBlocked'");
         for (::size_t idx = 0; idx < status_result.size(); ++idx) {
             status_list.insert(status_result[idx][0]);
         }

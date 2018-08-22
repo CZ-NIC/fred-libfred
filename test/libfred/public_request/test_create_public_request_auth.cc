@@ -34,8 +34,8 @@ const std::string server_name = "test-create-public-request-auth";
 struct create_public_request_auth_fixture : public virtual Test::instantiate_db_template
 {
     create_public_request_auth_fixture()
-    :   xmark(RandomDataGenerator().xnumstring(6)),
-        password("Km92bm8ga2xlc2xv")
+        : xmark(RandomDataGenerator().xnumstring(6)),
+          password("Km92bm8ga2xlc2xv")
     {
         ::LibFred::OperationContextCreator ctx;
         Database::Result dbres = ctx.get_conn().exec(
@@ -106,7 +106,7 @@ private:
     const std::string password_;
 };
 
-}
+}//namespace {anonymous}
 
 BOOST_FIXTURE_TEST_SUITE(TestCreatePublicRequestAuth, create_public_request_auth_fixture)
 
@@ -117,7 +117,7 @@ BOOST_AUTO_TEST_CASE(public_request_status_conversions)
 {
     ::LibFred::OperationContextCreator ctx;
     static const char *const sql = "SELECT name FROM enum_public_request_status";
-    enum_to_db_handle_conversion_test< ::LibFred::PublicRequest::Status, 3 >(ctx, sql);
+    enum_to_db_handle_conversion_test<::LibFred::PublicRequest::Status, 3>(ctx, sql);
 }
 
 /**
@@ -136,18 +136,18 @@ BOOST_AUTO_TEST_CASE(create_public_request_auth_wrong_registrar)
             .exec(::LibFred::PublicRequestsOfObjectLockGuardByObjectId(ctx, contact_id),
                   PublicRequestAuthTypeFake("mojeid_contact_identification", password));
     }
-    catch(const ::LibFred::CreatePublicRequestAuth::Exception &e) {
+    catch (const ::LibFred::CreatePublicRequestAuth::Exception &e) {
         BOOST_CHECK(!e.is_set_unknown_type());
         BOOST_CHECK(e.is_set_unknown_registrar_id());
         BOOST_CHECK(e.get_unknown_registrar_id() == bad_registrar_id);
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },
@@ -169,18 +169,18 @@ BOOST_AUTO_TEST_CASE(create_public_request_auth_wrong_type)
             .exec(::LibFred::PublicRequestsOfObjectLockGuardByObjectId(ctx, contact_id),
                   PublicRequestAuthTypeFake(bad_type, password));
     }
-    catch(const ::LibFred::CreatePublicRequestAuth::Exception &e) {
+    catch (const ::LibFred::CreatePublicRequestAuth::Exception &e) {
         BOOST_CHECK(e.is_set_unknown_type());
         BOOST_CHECK(!e.is_set_unknown_registrar_id());
         BOOST_CHECK(e.get_unknown_type() == bad_type);
         BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
         throw;
     }
-    catch(const std::exception &e) {
+    catch (const std::exception &e) {
         BOOST_ERROR(boost::diagnostic_information(e));
         throw;
     }
-    catch(...) {
+    catch (...) {
         BOOST_ERROR("unexpected exception occurs");
         throw;
     },

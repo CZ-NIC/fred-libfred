@@ -80,7 +80,7 @@ unsigned long long UpdateZone::exec(OperationContext& _ctx) const
 
     Database::QueryParams params;
     std::ostringstream object_sql;
-    Util::HeadSeparator set_separator(" SET ", ", ");
+    Util::HeadSeparator set_separator(" SET ", ",");
 
     object_sql << "UPDATE zone";
     if (expiration_period_min_in_months_ != boost::none)

@@ -25,6 +25,7 @@
 #define PLACE_ADDRESS_HH_2E5EE8A3E6DE409AB8A0D01800797A6E
 
 #include "util/optional_value.hh"
+
 #include <iosfwd>
 #include <string>
 
@@ -38,13 +39,18 @@ namespace Contact {
  */
 struct PlaceAddress
 {
-    std::string street1;/**< address part 1 (required) */
-    Optional< std::string > street2;/**< address part 2 (optional) */
-    Optional< std::string > street3;/**< address part 3 (optional) */
-    std::string city;/**< city (required) */
-    Optional< std::string > stateorprovince;/**< state or province (optional) */
-    std::string postalcode;/**< postal code (required) */
-    std::string country;/**< country (required) */
+    PlaceAddress();
+
+    /**
+     * Constructor with custom initialization of attributes
+     */
+    PlaceAddress(const std::string& _street1,
+        const Optional<std::string>& _street2,
+        const Optional<std::string>& _street3,
+        const std::string& _city,
+        const Optional<std::string>& _stateorprovince,
+        const std::string& _postalcode,
+        const std::string& _country);
 
     /**
      * Dumps content into the string.
@@ -56,24 +62,15 @@ struct PlaceAddress
      * @param _b compares @a this instance with @a _b instance
      * @return true if they are the same.
      */
-    bool operator==(const PlaceAddress &_b)const;
+    bool operator==(const PlaceAddress& _b)const;
 
-    /**
-     * Default ctor
-     */
-    PlaceAddress();
-
-    /**
-     * Constructor with custom initialization of attributes
-     */
-    PlaceAddress(const std::string& _street1,
-        const Optional< std::string >& _street2,
-        const Optional< std::string >& _street3,
-        const std::string& _city,
-        const Optional< std::string >& _stateorprovince,
-        const std::string& _postalcode,
-        const std::string& _country);
-
+    std::string street1;/**< address part 1 (required) */
+    Optional< std::string > street2;/**< address part 2 (optional) */
+    Optional< std::string > street3;/**< address part 3 (optional) */
+    std::string city;/**< city (required) */
+    Optional< std::string > stateorprovince;/**< state or province (optional) */
+    std::string postalcode;/**< postal code (required) */
+    std::string country;/**< country (required) */
 };
 
 /**
@@ -82,9 +79,9 @@ struct PlaceAddress
  * @param src object with the content to insert
  * @return the same as parameter @a out
  */
-std::ostream& operator<<(std::ostream &out, const PlaceAddress &src);
+std::ostream& operator<<(std::ostream& out, const PlaceAddress& src);
 
-} // namespace Contact
-} // namespace LibFred
+}//namespace LibFred::Contact
+}//namespace LibFred
 
-#endif
+#endif//PLACE_ADDRESS_HH_2E5EE8A3E6DE409AB8A0D01800797A6E

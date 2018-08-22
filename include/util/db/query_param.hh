@@ -24,6 +24,13 @@
 #ifndef QUERY_PARAM_HH_FD0ED5831EF844BA88032F67BC9E2554
 #define QUERY_PARAM_HH_FD0ED5831EF844BA88032F67BC9E2554
 
+#include "util/db/nullable.hh"
+#include "util/uuid.hh"
+
+#include <boost/lexical_cast.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+
 #include <vector>
 #include <string>
 #include <ios>
@@ -31,15 +38,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-
-#include "util/db/nullable.hh"
-#include "util/uuid.hh"
-
-namespace Database
-{
+namespace Database {
 
 //buffer type
 typedef std::string QueryParamData;
@@ -52,18 +51,8 @@ typedef std::string QueryParamData;
 
 class QueryParam
 {
-    //text or binary data flag
-    bool binary_;
-    //isnull flag
-    bool null_;
-
-    //text or binary
-    QueryParamData buffer_;
-
 public:
-
-    //copy
-    QueryParam(const QueryParam& param )
+    QueryParam(const QueryParam& param)
     : binary_(param.binary_)
     , null_(param.null_)
     , buffer_(param.buffer_)
@@ -80,25 +69,19 @@ public:
         return *this;
     }//operator=
 
-    //ctors
-
-    //null
     QueryParam()
     : binary_(false)
     , null_ (true)
     , buffer_("")
     {}
 
-
-    //custom init
-    QueryParam(const bool binary, const QueryParamData& data  )
+    QueryParam(const bool binary, const QueryParamData& data)
     : binary_(binary)
     , null_(false)
     , buffer_(data)
     {}
 
-    //blob
-    QueryParam( const std::vector<unsigned char>& blob )
+    QueryParam( const std::vector<unsigned char>& blob)
     : binary_(true)
     , null_(false)
     {
@@ -107,7 +90,7 @@ public:
     }
 
     //posix time
-    QueryParam(const boost::posix_time::ptime& value )
+    QueryParam(const boost::posix_time::ptime& value)
     : binary_(false)
     , null_(false)
     {
@@ -115,24 +98,25 @@ public:
         size_t idx = buffer_.find('T');
         if (idx != std::string::npos) {
             buffer_[idx] = ' ';
-        } 
+        }
     }
 
     //gregorian date
-    QueryParam(const boost::gregorian::date& value )
+    QueryParam(const boost::gregorian::date& value)
     : binary_(false)
     , null_(false)
     , buffer_( boost::gregorian::to_iso_extended_string(value))
     {}
 
     //uuid
-    QueryParam(const uuid& value )
+    QueryParam(const uuid& value)
     : binary_(false)
     , null_(false)
     , buffer_(value)
     {}
 
-    template <class T> QueryParam( const Nullable<T>& t )
+    template <class T>
+    QueryParam(const Nullable<T>& t)
     : binary_(false)
     , null_(t.isnull())
     {
@@ -143,7 +127,8 @@ public:
     }
 
     //all others
-    template <class T> QueryParam( T t )
+    template <class T>
+    QueryParam(T t)
     : binary_(false)
     , null_(false)
     {
@@ -152,38 +137,32 @@ public:
         buffer_ = boost::lexical_cast<std::string>(t);
     }
 
-    std::string print_buffer() const
+    std::string print_buffer()const
     {
-        std::string ret = "not set";
         if (null_)
         {
-            ret = std::string("null");
+            return "null";
         }
-        else
+        if (!binary_)
         {
-            if (binary_)
-            {
-                //std::cout << "Binary param: ";
-                 for (QueryParamData::const_iterator i = buffer_.begin()
-                         ; i != buffer_.end(); ++i)
-                 {
-                     std::stringstream hexdump;
-                     hexdump <<  std::setw( 2 ) << std::setfill( '0' )
-                         << std::hex << std::uppercase
-                         << static_cast<unsigned short>(static_cast<unsigned char>(*i));
-                     //std::cout << " " << hexdump.str();
-                     ret = hexdump.str();
-                 }
-                 //std::cout << std::endl;
-            }
-            else
-            {
-                //std::cout << "Text param: " <<  buffer_<< std::endl;
-                ret=buffer_;
-            }
-        }//if not null
-        return ret;
-    }//print_buffer
+            //std::cout << "Text param: " <<  buffer_<< std::endl;
+            return buffer_;
+        }
+        if (buffer_.empty())
+        {
+            return "not set";
+        }
+        std::ostringstream hexdump;
+        //std::cout << "Binary param: ";
+        for (QueryParamData::const_iterator i = buffer_.begin(); i != buffer_.end(); ++i)
+        {
+            hexdump <<  std::setw(2) << std::setfill('0') << std::hex << std::uppercase
+                    << static_cast<unsigned short>(static_cast<unsigned char>(*i));
+            //std::cout << " " << hexdump.str();
+        }
+        //std::cout << std::endl;
+        return hexdump.str();
+    }
 
     std::string to_string() const
     {
@@ -205,7 +184,15 @@ public:
     {
         return null_;
     }
-};//class QueryParam
+private:
+    //text or binary data flag
+    bool binary_;
+    //isnull flag
+    bool null_;
+
+    //text or binary
+    QueryParamData buffer_;
+};
 
 //vector od query params initializable by query_param_list
 typedef std::vector<QueryParam> QueryParams;
@@ -245,7 +232,6 @@ typedef list_of_params<QueryParams> query_param_list;
 const QueryParam QPNull;
 const QueryParam NullQueryParam;
 
+}//namespace Database
 
-};//namespace Database
-
-#endif
+#endif//QUERY_PARAM_HH_FD0ED5831EF844BA88032F67BC9E2554

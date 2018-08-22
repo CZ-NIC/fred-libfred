@@ -113,7 +113,7 @@ public:
                 LOGGER(PACKAGE).debug(boost::format("(%1%) Rollback failed: %2% ") % this % e.what());
 #endif
             }
-            catch(...)
+            catch (...)
             {
 #ifdef HAVE_LOGGER
                 LOGGER(PACKAGE).debug(boost::format("(%1%) rollback failed - unknown excepiton") % this);

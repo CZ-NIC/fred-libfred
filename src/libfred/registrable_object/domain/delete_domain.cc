@@ -47,7 +47,7 @@ namespace LibFred
             "   WHERE domainid = $1::integer",
             Database::query_param_list(id));    // delete 0..n rows, nothing to be checked in result
 
-        Database::Result delete_enumval_res = ctx.get_conn().exec_params(
+        const Database::Result delete_enumval_res = ctx.get_conn().exec_params(
             "DELETE FROM enumval"
             "   WHERE domainid = $1::integer RETURNING domainid",
             Database::query_param_list(id));    // delete 0..1 row
@@ -56,7 +56,7 @@ namespace LibFred
             BOOST_THROW_EXCEPTION(LibFred::InternalError("delete enumval failed"));
         }
 
-        Database::Result delete_contact_res = ctx.get_conn().exec_params(
+        const Database::Result delete_contact_res = ctx.get_conn().exec_params(
             "DELETE FROM domain "
             "   WHERE id = $1::integer RETURNING id",
             Database::query_param_list(id));
@@ -85,7 +85,7 @@ namespace LibFred
 
             delete_domain_impl(_ctx, domain_id);
 
-            LibFred::DeleteObjectByHandle(no_root_dot_fqdn,"domain").exec(_ctx);
+            LibFred::DeleteObjectByHandle(no_root_dot_fqdn, "domain").exec(_ctx);
 
         } catch(ExceptionStack& ex) {
 

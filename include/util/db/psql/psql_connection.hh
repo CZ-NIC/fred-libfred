@@ -58,11 +58,11 @@ public:
     ResultType exec(const std::string& query);// throw (ResultFailed)
 
     ResultType exec_params(
-            const std::string& query,//one command query
+            const std::string& query, //one command query
             const std::vector<std::string>& params);//parameters data
 
     ResultType exec_params(
-            const std::string& _query,//one command query
+            const std::string& _query, //one command query
             const QueryParams& params);//parameters data
 
     void setQueryTimeout(unsigned t);

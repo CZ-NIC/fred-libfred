@@ -53,7 +53,7 @@ namespace LibFred
             registrar_res = InfoRegistrar()
                 .set_inline_view_filter(Database::ParamQuery(InfoRegistrar::GetAlias::handle())(" = UPPER(").param_text(handle_)(")"))
                     .set_lock(lock_)
-                    .exec(ctx,local_timestamp_pg_time_zone_name);
+                    .exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (registrar_res.empty())
             {
@@ -65,8 +65,8 @@ namespace LibFred
                 BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
             }
 
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -77,9 +77,9 @@ namespace LibFred
     std::string InfoRegistrarByHandle::to_string() const
     {
         return Util::format_operation_state("InfoRegistrarByHandle",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("handle", handle_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -104,7 +104,7 @@ namespace LibFred
             registrar_res = InfoRegistrar()
                 .set_inline_view_filter(Database::ParamQuery(InfoRegistrar::GetAlias::id())(" = ").param_bigint(id_))
                     .set_lock(lock_)
-                    .exec(ctx,local_timestamp_pg_time_zone_name);
+                    .exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (registrar_res.empty())
             {
@@ -116,8 +116,8 @@ namespace LibFred
                 BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
             }
 
-        }//try
-        catch(ExceptionStack& ex)
+        }
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -128,9 +128,9 @@ namespace LibFred
     std::string InfoRegistrarById::to_string() const
     {
         return Util::format_operation_state("InfoRegistrarById",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -150,14 +150,14 @@ namespace LibFred
             return InfoRegistrar()
                     .set_inline_view_filter(Database::ParamQuery(InfoRegistrar::GetAlias::system())(" = FALSE"))
                     .set_lock(lock_)
-                    .exec(ctx,local_timestamp_pg_time_zone_name);
+                    .exec(ctx, local_timestamp_pg_time_zone_name);
     }
 
     std::string InfoRegistrarAllExceptSystem::to_string() const
     {
         return Util::format_operation_state("InfoRegistrarAllExceptSystem",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 

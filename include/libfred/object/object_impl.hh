@@ -64,7 +64,7 @@ namespace LibFred
     {
         get_object_type_id(ctx, object_type);
 
-        Database::Result object_id_res = ctx.get_conn().exec_params(std::string(
+        const Database::Result object_id_res = ctx.get_conn().exec_params(std::string(
         "SELECT oreg.id FROM object_registry oreg "
         " JOIN enum_object_type eot ON eot.id = oreg.type AND eot.name = $2::text "
         " WHERE oreg.name = CASE WHEN $2::text = 'domain'::text THEN LOWER($1::text) "
@@ -112,7 +112,7 @@ namespace LibFred
             unsigned long long object_id,
             EXCEPTION* ex_ptr, EXCEPTION_HANDLE_SETTER ex_handle_setter
     ) {
-        Database::Result locked_res = ctx.get_conn().exec_params(
+        const Database::Result locked_res = ctx.get_conn().exec_params(
             "SELECT oreg.id AS id_ "
             "   FROM object_registry AS oreg "
             "   WHERE oreg.id = $1::integer "

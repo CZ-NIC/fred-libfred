@@ -54,7 +54,7 @@ namespace Notification {
             :   "valid_to";
 
         Database::query_param_list p;
-        Database::Result time_res = _ctx.get_conn().exec_params(
+        const Database::Result time_res = _ctx.get_conn().exec_params(
             "SELECT " + column_of_interest + " AS the_time_ "
             "FROM history "
             "WHERE id = $" + p.add(_last_history_id) + "::INT ",

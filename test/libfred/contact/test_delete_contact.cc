@@ -79,7 +79,7 @@ struct test_contact_fixture  : public Test::instantiate_db_template
         addr_list[::LibFred::ContactAddressType::from_string("SHIPPING_2")] = address_with_company_name;
         addr_list[::LibFred::ContactAddressType::from_string("SHIPPING_3")] = address_with_company_name;
 
-        ::LibFred::CreateContact(test_contact_handle,registrar_handle).set_name(std::string("TEST-CONTACT NAME")+xmark)
+        ::LibFred::CreateContact(test_contact_handle, registrar_handle).set_name(std::string("TEST-CONTACT NAME")+xmark)
             .set_name(std::string("TEST-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE(delete_contact_with_wrong_handle)
         ::LibFred::DeleteContactByHandle(bad_test_contact_handle).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::DeleteContactByHandle::Exception& ex)
+    catch (const ::LibFred::DeleteContactByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_contact_handle());
         BOOST_CHECK(ex.get_unknown_contact_handle().compare(bad_test_contact_handle) == 0);
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(delete_linked_contact)
         ::LibFred::DeleteContactByHandle(test_contact_handle).exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::DeleteContactByHandle::Exception& ex)
+    catch (const ::LibFred::DeleteContactByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_object_linked_to_contact_handle());
         BOOST_CHECK(ex.get_object_linked_to_contact_handle().compare(test_contact_handle) == 0);

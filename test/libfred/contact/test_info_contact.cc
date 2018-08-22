@@ -59,21 +59,21 @@ struct test_contact_fixture_6da88b63b0bc46e29f6d0ce3181fd5d8 : public Test::inst
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(test_contact_handle,registrar_handle).set_name(std::string("TEST-CONTACT NAME")+xmark)
+        ::LibFred::CreateContact(test_contact_handle, registrar_handle).set_name(std::string("TEST-CONTACT NAME")+xmark)
             .set_name(std::string("TEST-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(test_contact_history_handle,registrar_handle)
+        ::LibFred::CreateContact(test_contact_history_handle, registrar_handle)
             .set_name(std::string("TEST-CONTACT-HISTORY NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::UpdateContactByHandle(test_contact_history_handle,registrar_handle)
+        ::LibFred::UpdateContactByHandle(test_contact_history_handle, registrar_handle)
             .set_name(std::string("TEST-CONTACT-HISTORY NAME1")+xmark)
             .exec(ctx);
 
@@ -156,24 +156,24 @@ BOOST_FIXTURE_TEST_CASE(info_contact_diff, test_contact_fixture_6da88b63b0bc46e2
     ::LibFred::InfoContactDiff test_diff, test_empty_diff;
 
     //differing data
-    test_diff.crhistoryid = std::make_pair(1ull,2ull);
-    test_diff.historyid = std::make_pair(1ull,2ull);
-    test_diff.id = std::make_pair(1ull,2ull);
+    test_diff.crhistoryid = std::make_pair(1ull, 2ull);
+    test_diff.historyid = std::make_pair(1ull, 2ull);
+    test_diff.id = std::make_pair(1ull, 2ull);
     test_diff.delete_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.handle = std::make_pair(std::string("testhandle1"),std::string("testhandle2"));
-    test_diff.roid = std::make_pair(std::string("testroid1"),std::string("testroid2"));
-    test_diff.sponsoring_registrar_handle = std::make_pair(std::string("testspreg1"),std::string("testspreg2"));
-    test_diff.create_registrar_handle = std::make_pair(std::string("testcrreg1"),std::string("testcrreg2"));
-    test_diff.update_registrar_handle = std::make_pair(Nullable<std::string>("testcrreg1"),Nullable<std::string>());
-    test_diff.creation_time = std::make_pair(boost::posix_time::ptime(),boost::posix_time::second_clock::local_time());
+            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.handle = std::make_pair(std::string("testhandle1"), std::string("testhandle2"));
+    test_diff.roid = std::make_pair(std::string("testroid1"), std::string("testroid2"));
+    test_diff.sponsoring_registrar_handle = std::make_pair(std::string("testspreg1"), std::string("testspreg2"));
+    test_diff.create_registrar_handle = std::make_pair(std::string("testcrreg1"), std::string("testcrreg2"));
+    test_diff.update_registrar_handle = std::make_pair(Nullable<std::string>("testcrreg1"), Nullable<std::string>());
+    test_diff.creation_time = std::make_pair(boost::posix_time::ptime(), boost::posix_time::second_clock::local_time());
     test_diff.update_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-                ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.authinfopw = std::make_pair(std::string("testpass1"),std::string("testpass2"));
-    test_diff.name = std::make_pair(Nullable<std::string>(),Nullable<std::string>("testname2"));
-    test_diff.organization = std::make_pair(Nullable<std::string>(),Nullable<std::string>("test2"));
+                , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.authinfopw = std::make_pair(std::string("testpass1"), std::string("testpass2"));
+    test_diff.name = std::make_pair(Nullable<std::string>(), Nullable<std::string>("testname2"));
+    test_diff.organization = std::make_pair(Nullable<std::string>(), Nullable<std::string>("test2"));
     ::LibFred::Contact::PlaceAddress place;
     place.street1 = "test2";
     place.street2 = std::string("test2");
@@ -183,11 +183,11 @@ BOOST_FIXTURE_TEST_CASE(info_contact_diff, test_contact_fixture_6da88b63b0bc46e2
     place.postalcode = "test2";
     place.country = "test2";
     test_diff.place = std::make_pair(Nullable< ::LibFred::Contact::PlaceAddress >(), Nullable< ::LibFred::Contact::PlaceAddress >(place));
-    test_diff.telephone = std::make_pair(Nullable<std::string>(),Nullable<std::string>("test2"));
-    test_diff.fax = std::make_pair(Nullable<std::string>(),Nullable<std::string>("test2"));
-    test_diff.email = std::make_pair(Nullable<std::string>(),Nullable<std::string>("test2"));
-    test_diff.notifyemail = std::make_pair(Nullable<std::string>(),Nullable<std::string>("test2"));
-    test_diff.vat = std::make_pair(Nullable<std::string>(),Nullable<std::string>("test2"));
+    test_diff.telephone = std::make_pair(Nullable<std::string>(), Nullable<std::string>("test2"));
+    test_diff.fax = std::make_pair(Nullable<std::string>(), Nullable<std::string>("test2"));
+    test_diff.email = std::make_pair(Nullable<std::string>(), Nullable<std::string>("test2"));
+    test_diff.notifyemail = std::make_pair(Nullable<std::string>(), Nullable<std::string>("test2"));
+    test_diff.vat = std::make_pair(Nullable<std::string>(), Nullable<std::string>("test2"));
     test_diff.personal_id = std::make_pair(Nullable< ::LibFred::PersonalIdUnion >(),
                                            Nullable< ::LibFred::PersonalIdUnion >(
                                                ::LibFred::PersonalIdUnion::get_any_type("test2", "test2")));
@@ -207,7 +207,7 @@ BOOST_FIXTURE_TEST_CASE(info_contact_diff, test_contact_fixture_6da88b63b0bc46e2
     BOOST_CHECK(!test_diff.is_empty());
     BOOST_CHECK(test_empty_diff.is_empty());
 
-    BOOST_TEST_MESSAGE(::LibFred::diff_contact_data(contact_info1.info_contact_data,contact_info2.info_contact_data).to_string());
+    BOOST_TEST_MESSAGE(::LibFred::diff_contact_data(contact_info1.info_contact_data, contact_info2.info_contact_data).to_string());
 }
 
 /**

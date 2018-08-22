@@ -32,54 +32,54 @@
 #include "util/optional_value.hh"
 #include "util/uuid.hh"
 
-namespace LibFred
+namespace LibFred {
+
+/**
+ * Creates new record in contact_check table with status @ref ContactCheckStatus::ENQUEUE_REQ
+ */
+class CreateContactCheck : public Util::Printable<CreateContactCheck>
 {
+public:
     /**
-     * Creates new record in contact_check table with status @ref ContactCheckStatus::ENQUEUE_REQ
+     * constructor only with mandatory parameters
+     * @param _contact_id       identifies contact to be checked - current "snapshot" of historical data is used during check.
+     * @param _testsuite_handle denotes testsuite to be run when this check is started.
      */
-    class CreateContactCheck : public Util::Printable
-    {
-            unsigned long long              contact_id_;
-            std::string                     testsuite_handle_;
-            Nullable<unsigned long long>    logd_request_id_;
+    CreateContactCheck(
+            unsigned long long _contact_id,
+            const std::string& _testsuite_handle);
+    /**
+     * constructor with all available parameters including optional ones
+     * @param _contact_id       identifies contact to be checked - data realated to current history_id will be used during check.
+     * @param _testsuite_handle denotes testsuite to be run when this check is started.
+     * @param _logd_request_id  identifies optional log entry in logd related to this operation.
+     */
+    CreateContactCheck(
+            unsigned long long _contact_id,
+            const std::string& _testsuite_handle,
+            const Optional<unsigned long long>& _logd_request_id);
 
-        public:
-            /**
-             * constructor only with mandatory parameters
-             * @param _contact_id       identifies contact to be checked - current "snapshot" of historical data is used during check.
-             * @param _testsuite_handle denotes testsuite to be run when this check is started.
-             */
-            CreateContactCheck(
-                unsigned long long _contact_id,
-                const std::string& _testsuite_handle
-            );
-            /**
-             * constructor with all available parameters including optional ones
-             * @param _contact_id       identifies contact to be checked - data realated to current history_id will be used during check.
-             * @param _testsuite_handle denotes testsuite to be run when this check is started.
-             * @param _logd_request_id  identifies optional log entry in logd related to this operation.
-             */
-            CreateContactCheck(
-                unsigned long long              _contact_id,
-                const std::string&              _testsuite_handle,
-                Optional<unsigned long long>    _logd_request_id
-            );
+    /**
+     * setter of optional logd_request_id
+     * Call with another value for re-set, no need to unset first.
+     */
+    CreateContactCheck& set_logd_request_id(unsigned long long _logd_request_id);
 
-            /**
-             * setter of optional logd_request_id
-             * Call with another value for re-set, no need to unset first.
-             */
-            CreateContactCheck& set_logd_request_id(unsigned long long _logd_request_id);
+    /**
+     * Commits operation.
+     * @throws LibFred::ExceptionUnknownContactId
+     * @throws LibFred::ExceptionUnknownTestsuiteHandle
+     * @return handle of created contact_check record.
+     */
+    std::string exec(OperationContext& ctx);
+    // serialization
+    std::string to_string()const;
+private:
+    unsigned long long contact_id_;
+    std::string testsuite_handle_;
+    Nullable<unsigned long long> logd_request_id_;
+};
 
-            /**
-             * Commits operation.
-             * @throws LibFred::ExceptionUnknownContactId
-             * @throws LibFred::ExceptionUnknownTestsuiteHandle
-             * @return handle of created contact_check record.
-             */
-            std::string exec(OperationContext& ctx);
-            // serialization
-            virtual std::string to_string() const;
-    };
-}
-#endif
+}//namespace LibFred
+
+#endif//CREATE_CHECK_HH_E7C18731A8B34B26BD3EE1B1DB989BAC

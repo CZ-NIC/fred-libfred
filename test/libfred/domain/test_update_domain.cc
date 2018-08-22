@@ -88,14 +88,14 @@ struct update_domain_fixture : virtual public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
                 .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
                 .set_disclosename(true)
                 .set_place(place)
@@ -148,14 +148,14 @@ struct update_domain_admin_nsset_keyset_fixture
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(admin_contact1_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact1_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT2 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -1048,7 +1048,7 @@ BOOST_FIXTURE_TEST_CASE(update_domain, update_domain_admin_nsset_keyset_fixture 
         " FROM object_registry oreg "
         " JOIN object o ON o.id = oreg.id "
         " WHERE oreg.name = $2::text"
-        ,Database::query_param_list("testauthinfo")(test_fqdn))[0][0]));
+        , Database::query_param_list("testauthinfo")(test_fqdn))[0][0]));
 
     //commit db transaction
     ctx.commit_transaction();
@@ -1070,7 +1070,7 @@ BOOST_AUTO_TEST_CASE(update_domain_wrong_fqdn)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_domain_fqdn());
         BOOST_CHECK(ex.get_unknown_domain_fqdn().compare(bad_test_fqdn) == 0);
@@ -1097,7 +1097,7 @@ BOOST_AUTO_TEST_CASE(update_domain_wrong_registrar)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrar_handle());
         BOOST_CHECK(ex.get_unknown_registrar_handle().compare(bad_registrar_handle) == 0);
@@ -1134,7 +1134,7 @@ BOOST_AUTO_TEST_CASE(update_domain_wrong_registrant)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_registrant_handle());
         BOOST_TEST_MESSAGE(bad_registrant_handle);
@@ -1173,7 +1173,7 @@ BOOST_AUTO_TEST_CASE(update_domain_add_wrong_admin)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unknown_admin_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unknown_admin_contact_handle().at(0).compare(bad_admin_contact_handle) == 0);
@@ -1210,7 +1210,7 @@ BOOST_AUTO_TEST_CASE(update_domain_add_already_added_admin)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_already_set_admin_contact_handle());
         BOOST_CHECK(ex.get_vector_of_already_set_admin_contact_handle().at(0).compare(admin_contact2_handle) == 0);
@@ -1248,7 +1248,7 @@ BOOST_AUTO_TEST_CASE(update_domain_rem_wrong_admin)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unknown_admin_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unknown_admin_contact_handle().at(0).compare(bad_admin_contact_handle) == 0);
@@ -1286,7 +1286,7 @@ BOOST_AUTO_TEST_CASE(update_domain_rem_unassigned_admin)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_vector_of_unassigned_admin_contact_handle());
         BOOST_CHECK(ex.get_vector_of_unassigned_admin_contact_handle().at(0).compare(bad_admin_contact_handle) == 0);
@@ -1366,7 +1366,7 @@ BOOST_AUTO_TEST_CASE(update_domain_set_exdate)
         .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -1401,7 +1401,7 @@ BOOST_FIXTURE_TEST_CASE(update_domain_set_wrong_exdate, update_domain_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_invalid_expiration_date());
         BOOST_CHECK(ex.get_invalid_expiration_date().is_special());
@@ -1437,7 +1437,7 @@ BOOST_FIXTURE_TEST_CASE(update_domain_set_valexdate, update_domain_fixture)
         .exec(ctx);
         ctx.commit_transaction();
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -1474,7 +1474,7 @@ BOOST_FIXTURE_TEST_CASE(update_domain_set_wrong_valexdate, update_domain_fixture
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::UpdateDomain::Exception& ex)
+    catch (const ::LibFred::UpdateDomain::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_invalid_enum_validation_expiration_date());
         BOOST_CHECK(ex.get_invalid_enum_validation_expiration_date().is_special());
@@ -1511,7 +1511,7 @@ BOOST_FIXTURE_TEST_CASE(update_domain_set_valexdate_wrong_domain, update_domain_
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InternalError& ex)
+    catch (const ::LibFred::InternalError& ex)
     {
         BOOST_TEST_MESSAGE(ex.what());
     }
@@ -1545,7 +1545,7 @@ BOOST_FIXTURE_TEST_CASE(update_domain_set_publish_wrong_domain, update_domain_fi
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InternalError& ex)
+    catch (const ::LibFred::InternalError& ex)
     {
         BOOST_TEST_MESSAGE(ex.what());
     }

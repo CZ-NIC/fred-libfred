@@ -195,7 +195,7 @@ public:
     }//get_options_description
     std::size_t handle( int argc, char* argv[],  FakedArgs &fa, std::size_t option_group_index)
     {
-        HandleHelpArg::handle(argc, argv,fa);
+        HandleHelpArg::handle(argc, argv, fa);
         return option_group_index;
     }//handle
 

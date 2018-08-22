@@ -1,23 +1,23 @@
-/*  
+/*
  * Copyright (C) 2007  CZ.NIC, z.s.p.o.
- * 
+ *
  * This file is part of FRED.
- * 
+ *
  * FRED is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, version 2 of the License.
- * 
+ *
  * FRED is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
- *  @file result.h
+ *  @file result.hh
  *  Interface definition of result object.
  */
 
@@ -25,13 +25,13 @@
 #ifndef RESULT_HH_CA92D2D532584D05959A5136D4454265
 #define RESULT_HH_CA92D2D532584D05959A5136D4454265
 
-#include <string>
-
 #include "config.h"
 
 #ifdef HAVE_LOGGER
 #include "util/log/logger.hh"
 #endif
+
+#include <string>
 
 namespace Database {
 
@@ -46,35 +46,38 @@ namespace Database {
  * file.
  *
  */
-template<class _ResultType>
-class Result_ {
+template <class _ResultType>
+class Result_
+{
 public:
   typedef _ResultType result_type;
   typedef typename result_type::size_type size_type;
   typedef typename result_type::Iterator Iterator;
   typedef typename result_type::Row      Row;
-  
 
   /**
    * Constructors and destructor
    */
-  Result_(const result_type &_result) : result_(_result) {
+  Result_(const result_type &_result) : result_(_result)
+  {
 #ifdef HAVE_LOGGER
       LOGGER(PACKAGE).debug(boost::format("result created -- rows=%1%") % size());
 #endif
   }
 
   Result_() : result_()
-  {  }
+  { }
 
-  virtual ~Result_() {
+  ~Result_()
+  {
     result_.clear();
   }
 
   /**
    * @return size of result (number of rows)
    */
-  size_type size() const {
+  size_type size() const
+  {
     return result_.size();
   }
 
@@ -90,15 +93,16 @@ public:
   /**
    * @return Iterator pointing at first row
    */
-  Iterator begin() const {
+  Iterator begin() const
+  {
     return result_.begin();
   }
-
 
   /**
    * @return Iterator pointing at last row
    */
-  Iterator end() const {
+  Iterator end() const
+  {
     return result_.end();
   }
 
@@ -106,17 +110,14 @@ public:
    * @param _n  requested row from result
    * @return    row
    */
-  Row operator[](size_type _n) const {
+  Row operator[](size_type _n) const
+  {
     return *(begin() + _n);
   }
-
 protected:
   result_type result_; /**< pointer on concrete result object */
-
 };
 
-}
+}//namespace Database
 
-
-#endif /*RESULT_H_*/
-
+#endif//RESULT_HH_CA92D2D532584D05959A5136D4454265

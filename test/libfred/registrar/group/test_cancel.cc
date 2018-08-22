@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(cancel_registrar_group)
 {
     LibFred::OperationContextCreator ctx;
     LibFred::Registrar::CancelRegistrarGroup(id).exec(ctx);
-    Database::Result result = ctx.get_conn().exec_params(
+    const Database::Result result = ctx.get_conn().exec_params(
             "SELECT id, short_name, cancelled FROM registrar_group "
             "WHERE id = $1::bigint",
             Database::query_param_list(id));

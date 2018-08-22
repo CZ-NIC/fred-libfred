@@ -73,14 +73,14 @@ struct info_nsset_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT2 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(admin_contact3_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact3_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -105,7 +105,7 @@ struct info_nsset_fixture : public Test::instantiate_db_template
                 .exec(ctx);
 
         //id query
-        Database::Result id_res = ctx.get_conn().exec_params("SELECT"
+        const Database::Result id_res = ctx.get_conn().exec_params("SELECT"
         " (SELECT id FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='nsset'::text) AND name = UPPER($1::text)) AS test_nsset_id"
         ",  (SELECT roid FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='nsset'::text) AND name = UPPER($1::text)) AS test_nsset_roid"
         ",  (SELECT crhistoryid FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='nsset'::text) AND name = UPPER($1::text)) AS test_nsset_crhistoryid"
@@ -133,7 +133,7 @@ struct info_nsset_fixture : public Test::instantiate_db_template
         test_info_nsset_output.info_nsset_data.transfer_time = Nullable<boost::posix_time::ptime>();
         test_info_nsset_output.info_nsset_data.authinfopw = "testauthinfo1";
         test_info_nsset_output.info_nsset_data.tech_contacts = Util::vector_of<::LibFred::ObjectIdHandlePair>
-            (::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["admin_contact3_handle_id"]),admin_contact3_handle));
+            (::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["admin_contact3_handle_id"]), admin_contact3_handle));
         test_info_nsset_output.info_nsset_data.delete_time = Nullable<boost::posix_time::ptime>();
         test_info_nsset_output.info_nsset_data.dns_hosts = Util::vector_of<::LibFred::DnsHost>
             (::LibFred::DnsHost("a.ns.nic.cz", Util::vector_of<ip::address>(ip::address::from_string("127.0.0.3"))(ip::address::from_string("127.1.1.3"))))
@@ -216,7 +216,7 @@ BOOST_FIXTURE_TEST_CASE(info_nsset_wrong_handle, info_nsset_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InfoNssetByHandle::Exception& ex)
+    catch (const ::LibFred::InfoNssetByHandle::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_handle());
         BOOST_TEST_MESSAGE(wrong_handle);
@@ -239,7 +239,7 @@ BOOST_FIXTURE_TEST_CASE(info_nsset_wrong_id, info_nsset_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InfoNssetById::Exception& ex)
+    catch (const ::LibFred::InfoNssetById::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_object_id());
         BOOST_TEST_MESSAGE(wrong_id);
@@ -262,7 +262,7 @@ BOOST_FIXTURE_TEST_CASE(info_nsset_history_wrong_historyid, info_nsset_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InfoNssetHistoryByHistoryid::Exception& ex)
+    catch (const ::LibFred::InfoNssetHistoryByHistoryid::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_object_historyid());
         BOOST_TEST_MESSAGE(wrong_id);
@@ -307,22 +307,22 @@ BOOST_FIXTURE_TEST_CASE(info_nsset_diff, info_nsset_fixture)
     ::LibFred::InfoNssetDiff test_diff, test_empty_diff;
 
     //differing data
-    test_diff.crhistoryid = std::make_pair(1ull,2ull);
-    test_diff.historyid = std::make_pair(1ull,2ull);
-    test_diff.id = std::make_pair(1ull,2ull);
+    test_diff.crhistoryid = std::make_pair(1ull, 2ull);
+    test_diff.historyid = std::make_pair(1ull, 2ull);
+    test_diff.id = std::make_pair(1ull, 2ull);
     test_diff.delete_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.handle = std::make_pair(std::string("test1"),std::string("test2"));
-    test_diff.roid = std::make_pair(std::string("testroid1"),std::string("testroid2"));
-    test_diff.sponsoring_registrar_handle = std::make_pair(std::string("testspreg1"),std::string("testspreg2"));
-    test_diff.create_registrar_handle = std::make_pair(std::string("testcrreg1"),std::string("testcrreg2"));
-    test_diff.update_registrar_handle = std::make_pair(Nullable<std::string>("testcrreg1"),Nullable<std::string>());
-    test_diff.creation_time = std::make_pair(boost::posix_time::ptime(),boost::posix_time::second_clock::local_time());
+            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.handle = std::make_pair(std::string("test1"), std::string("test2"));
+    test_diff.roid = std::make_pair(std::string("testroid1"), std::string("testroid2"));
+    test_diff.sponsoring_registrar_handle = std::make_pair(std::string("testspreg1"), std::string("testspreg2"));
+    test_diff.create_registrar_handle = std::make_pair(std::string("testcrreg1"), std::string("testcrreg2"));
+    test_diff.update_registrar_handle = std::make_pair(Nullable<std::string>("testcrreg1"), Nullable<std::string>());
+    test_diff.creation_time = std::make_pair(boost::posix_time::ptime(), boost::posix_time::second_clock::local_time());
     test_diff.update_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-                ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.authinfopw = std::make_pair(std::string("testpass1"),std::string("testpass2"));
+                , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.authinfopw = std::make_pair(std::string("testpass1"), std::string("testpass2"));
 
     BOOST_TEST_MESSAGE(test_diff.to_string());
     BOOST_TEST_MESSAGE(test_empty_diff.to_string());
@@ -330,7 +330,7 @@ BOOST_FIXTURE_TEST_CASE(info_nsset_diff, info_nsset_fixture)
     BOOST_CHECK(!test_diff.is_empty());
     BOOST_CHECK(test_empty_diff.is_empty());
 
-    BOOST_TEST_MESSAGE(::LibFred::diff_nsset_data(nsset_info1.info_nsset_data,nsset_info2.info_nsset_data).to_string());
+    BOOST_TEST_MESSAGE(::LibFred::diff_nsset_data(nsset_info1.info_nsset_data, nsset_info2.info_nsset_data).to_string());
 
 }
 

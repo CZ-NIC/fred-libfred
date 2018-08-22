@@ -24,79 +24,80 @@
 #ifndef INFO_NSSET_DIFF_HH_90CCBE2D77FA4C68BEBE583D68FD17E5
 #define INFO_NSSET_DIFF_HH_90CCBE2D77FA4C68BEBE583D68FD17E5
 
+#include "libfred/registrable_object/nsset/info_nsset_data.hh"
+
+#include "util/optional_value.hh"
+#include "util/db/nullable.hh"
+#include "util/printable.hh"
+
+#include <boost/date_time/posix_time/ptime.hpp>
+
 #include <string>
 #include <vector>
 #include <set>
 #include <utility>
 
-#include <boost/date_time/posix_time/ptime.hpp>
+namespace LibFred {
 
-#include "libfred/registrable_object/nsset/info_nsset_data.hh"
-#include "util/optional_value.hh"
-#include "util/db/nullable.hh"
-#include "util/printable.hh"
-
-
-namespace LibFred
+/**
+ * Diff of nsset data.
+ * Data of the nsset difference with the same members as nsset data but in optional pairs. Optional pair member is set in case of difference in compared nsset data.
+ */
+struct InfoNssetDiff : Util::Printable<InfoNssetDiff>
 {
     /**
-     * Diff of nsset data.
-     * Data of the nsset difference with the same members as nsset data but in optional pairs. Optional pair member is set in case of difference in compared nsset data.
-     */
-    struct InfoNssetDiff : public Util::Printable
-    {
-        template <class T> struct DiffMemeber { typedef Optional<std::pair<T,T> > Type;};
-
-        DiffMemeber<unsigned long long>::Type crhistoryid;/**< first historyid of nsset history*/
-        DiffMemeber<unsigned long long>::Type historyid;/**< last historyid of nsset history*/
-        DiffMemeber<Nullable<boost::posix_time::ptime> >::Type delete_time; /**< nsset delete time in set local zone*/
-        DiffMemeber<std::string>::Type handle;/**< nsset handle */
-        DiffMemeber<std::string>::Type roid;/**< registry object identifier of the nsset */
-        DiffMemeber<std::string>::Type sponsoring_registrar_handle;/**< registrar administering the nsset */
-        DiffMemeber<std::string>::Type create_registrar_handle;/**< registrar that created the nsset */
-        DiffMemeber<Nullable<std::string> >::Type update_registrar_handle;/**< registrar which last time changed the nsset */
-        DiffMemeber<boost::posix_time::ptime>::Type creation_time;/**< creation time of the nsset in set local zone*/
-        DiffMemeber<Nullable<boost::posix_time::ptime> >::Type update_time; /**< last update time of the nsset in set local zone*/
-        DiffMemeber<Nullable<boost::posix_time::ptime> >::Type transfer_time; /**<last transfer time in set local zone*/
-        DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
-
-        DiffMemeber<Nullable<short> >::Type tech_check_level; /**< nsset level of technical checks */
-        DiffMemeber<std::vector<DnsHost> >::Type dns_hosts;/**< DNS hosts */
-        DiffMemeber<std::vector<ObjectIdHandlePair> >::Type tech_contacts;/**< list of technical contacts */
-
-        DiffMemeber<unsigned long long>::Type id;/**< id of the nsset object*/
-        /**
-        * Constructor of the nsset data diff structure.
-        */
-        InfoNssetDiff();
-
-        /**
-        * Get names of set fields.
-        * @return string names of fields that actually changed
-        */
-        std::set<std::string> changed_fields() const;
-
-        /**
-        * Dumps state of the instance into the string
-        * @return string with description of the instance state
-        */
-        std::string to_string() const;
-
-        /**
-        * Check if some data is set into the instance
-        * @return false if instance contains differing data and true if not
-        */
-        bool is_empty() const;
-    };
+    * Constructor of the nsset data diff structure.
+    */
+    InfoNssetDiff();
 
     /**
-     * Diff data of the nsset.
-     * @param first
-     * @param second
-     * @return diff of given nsset
-     */
-    InfoNssetDiff diff_nsset_data(const InfoNssetData& first, const InfoNssetData& second);
+    * Get names of set fields.
+    * @return string names of fields that actually changed
+    */
+    std::set<std::string> changed_fields() const;
 
-} // namespace LibFred
+    /**
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
+    */
+    std::string to_string()const;
+
+    /**
+    * Check if some data is set into the instance
+    * @return false if instance contains differing data and true if not
+    */
+    bool is_empty() const;
+
+    template <class T> struct DiffMemeber { typedef Optional<std::pair<T, T> > Type;};
+
+    DiffMemeber<unsigned long long>::Type crhistoryid;/**< first historyid of nsset history*/
+    DiffMemeber<unsigned long long>::Type historyid;/**< last historyid of nsset history*/
+    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type delete_time; /**< nsset delete time in set local zone*/
+    DiffMemeber<std::string>::Type handle;/**< nsset handle */
+    DiffMemeber<std::string>::Type roid;/**< registry object identifier of the nsset */
+    DiffMemeber<std::string>::Type sponsoring_registrar_handle;/**< registrar administering the nsset */
+    DiffMemeber<std::string>::Type create_registrar_handle;/**< registrar that created the nsset */
+    DiffMemeber<Nullable<std::string> >::Type update_registrar_handle;/**< registrar which last time changed the nsset */
+    DiffMemeber<boost::posix_time::ptime>::Type creation_time;/**< creation time of the nsset in set local zone*/
+    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type update_time; /**< last update time of the nsset in set local zone*/
+    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type transfer_time; /**<last transfer time in set local zone*/
+    DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
+
+    DiffMemeber<Nullable<short> >::Type tech_check_level; /**< nsset level of technical checks */
+    DiffMemeber<std::vector<DnsHost> >::Type dns_hosts;/**< DNS hosts */
+    DiffMemeber<std::vector<ObjectIdHandlePair> >::Type tech_contacts;/**< list of technical contacts */
+
+    DiffMemeber<unsigned long long>::Type id;/**< id of the nsset object*/
+};
+
+/**
+ * Diff data of the nsset.
+ * @param first
+ * @param second
+ * @return diff of given nsset
+ */
+InfoNssetDiff diff_nsset_data(const InfoNssetData& first, const InfoNssetData& second);
+
+}//namespace LibFred
 
 #endif

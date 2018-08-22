@@ -23,37 +23,38 @@
 #ifndef TRANSFER_NSSET_HH_9FEE728C0EE448DCB9F7D79194625F0E
 #define TRANSFER_NSSET_HH_9FEE728C0EE448DCB9F7D79194625F0E
 
-#include <string>
-
 #include "libfred/opcontext.hh"
 #include "util/db/nullable.hh"
 
+#include <string>
 
-namespace LibFred
+namespace LibFred {
+
+class TransferNsset
 {
-    class TransferNsset {
+public:
+    TransferNsset(
+        const unsigned long long _nsset_id,
+        const std::string& _new_registrar_handle,
+        const std::string& _authinfopw_for_authorization,
+        const Nullable<unsigned long long>& _logd_request_id
+    );
 
-        public:
-            TransferNsset(
-                const unsigned long long _nsset_id,
-                const std::string& _new_registrar_handle,
-                const std::string& _authinfopw_for_authorization,
-                const Nullable<unsigned long long>& _logd_request_id
-            );
+    /**
+     * @throws UnknownNssetId
+     * @throws UnknownRegistrar
+     * @throws IncorrectAuthInfoPw
+     * @throws NewRegistrarIsAlreadySponsoring
+     */
+    unsigned long long exec(OperationContext& _ctx);
 
-            /**
-             * @throws UnknownNssetId
-             * @throws UnknownRegistrar
-             * @throws IncorrectAuthInfoPw
-             * @throws NewRegistrarIsAlreadySponsoring
-             */
-            unsigned long long exec(OperationContext& _ctx);
+private:
+    const unsigned long long nsset_id_;
+    const std::string new_registrar_handle_;
+    const std::string authinfopw_for_authorization_;
+    const Nullable<unsigned long long> logd_request_id_;
+};
 
-        private:
-            const unsigned long long nsset_id_;
-            const std::string new_registrar_handle_;
-            const std::string authinfopw_for_authorization_;
-            const Nullable<unsigned long long> logd_request_id_;
-    };
-}
-#endif
+}//namespace LibFred
+
+#endif//TRANSFER_NSSET_HH_9FEE728C0EE448DCB9F7D79194625F0E

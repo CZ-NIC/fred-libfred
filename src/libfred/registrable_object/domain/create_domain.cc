@@ -41,6 +41,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <sstream>
 #include <string>
 #include <vector>
 #include <set>
@@ -152,7 +153,7 @@ CreateDomain::Result CreateDomain::exec(OperationContext& ctx, const std::string
         Registrar::get_registrar_id_by_handle(
             ctx,
             registrar_,
-            static_cast<Exception*>(nullptr),//set throw
+            static_cast<Exception*>(nullptr), //set throw
             &Exception::set_unknown_registrar_handle);
 
         //check general domain name syntax
@@ -489,7 +490,7 @@ std::string CreateDomain::to_string() const
 {
     return Util::format_operation_state(
             "CreateDomain",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                 (std::make_pair("fqdn", fqdn_))
                 (std::make_pair("registrar", registrar_))
                 (std::make_pair("authinfo", authinfo_.print_quoted()))

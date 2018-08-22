@@ -92,28 +92,28 @@ struct test_domain_fixture : public Test::instantiate_db_template
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(admin_contact1_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact1_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT2 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
             .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -145,7 +145,7 @@ struct test_domain_fixture : public Test::instantiate_db_template
                     ).exec(ctx);
 
         //id query
-        Database::Result id_res = ctx.get_conn().exec_params("SELECT"
+        const Database::Result id_res = ctx.get_conn().exec_params("SELECT"
         " (SELECT id FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='domain'::text) AND name = LOWER($1::text)) AS test_fqdn_id"
         ",  (SELECT roid FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='domain'::text) AND name = LOWER($1::text)) AS test_fqdn_roid"
         ",  (SELECT crhistoryid FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='domain'::text) AND name = LOWER($1::text)) AS test_fqdn_crhistoryid"
@@ -167,8 +167,8 @@ struct test_domain_fixture : public Test::instantiate_db_template
         test_info_domain_output.info_domain_data.roid = static_cast<std::string>(id_res[0]["test_fqdn_roid"]);
         test_info_domain_output.info_domain_data.fqdn = test_fqdn;
         test_info_domain_output.info_domain_data.registrant = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["registrant_contact_handle_id"]), registrant_contact_handle);
-        test_info_domain_output.info_domain_data.nsset = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["test_nsset_handle_id"]),test_nsset_handle);
-        test_info_domain_output.info_domain_data.keyset = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["test_keyset_handle_id"]),test_keyset_handle);
+        test_info_domain_output.info_domain_data.nsset = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["test_nsset_handle_id"]), test_nsset_handle);
+        test_info_domain_output.info_domain_data.keyset = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["test_keyset_handle_id"]), test_keyset_handle);
         test_info_domain_output.info_domain_data.sponsoring_registrar_handle = registrar_handle;
         test_info_domain_output.info_domain_data.create_registrar_handle = registrar_handle;
         test_info_domain_output.info_domain_data.update_registrar_handle = Nullable<std::string>();
@@ -178,13 +178,13 @@ struct test_domain_fixture : public Test::instantiate_db_template
         test_info_domain_output.info_domain_data.expiration_date = boost::gregorian::from_simple_string("2012-06-30");
         test_info_domain_output.info_domain_data.authinfopw = "testauthinfo1";
         test_info_domain_output.info_domain_data.admin_contacts = Util::vector_of<::LibFred::ObjectIdHandlePair>
-            (::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["admin_contact1_handle_id"]),admin_contact1_handle));
+            (::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["admin_contact1_handle_id"]), admin_contact1_handle));
         test_info_domain_output.info_domain_data.enum_domain_validation = Nullable<::LibFred::ENUMValidationExtension>();
         test_info_domain_output.info_domain_data.delete_time = Nullable<boost::posix_time::ptime>();
         test_info_domain_output.info_domain_data.crhistoryid = static_cast<unsigned long long>(id_res[0]["test_fqdn_crhistoryid"]);
         test_info_domain_output.info_domain_data.historyid = static_cast<unsigned long long>(id_res[0]["test_fqdn_historyid"]);
         test_info_domain_output.info_domain_data.id = static_cast<unsigned long long>(id_res[0]["test_fqdn_id"]);
-        test_info_domain_output.info_domain_data.zone = ::LibFred::ObjectIdHandlePair(2,"cz");
+        test_info_domain_output.info_domain_data.zone = ::LibFred::ObjectIdHandlePair(2, "cz");
 
     }
     ~test_domain_fixture()
@@ -261,7 +261,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain_wrong_handle, test_domain_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InfoDomainByFqdn::Exception& ex)
+    catch (const ::LibFred::InfoDomainByFqdn::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_fqdn());
         BOOST_TEST_MESSAGE(wrong_fqdn);
@@ -284,7 +284,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain_wrong_id, test_domain_fixture)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InfoDomainById::Exception& ex)
+    catch (const ::LibFred::InfoDomainById::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_object_id());
         BOOST_TEST_MESSAGE(wrong_id);
@@ -307,7 +307,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain_history_wrong_historyid, test_domain_fixture
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch(const ::LibFred::InfoDomainHistoryByHistoryid::Exception& ex)
+    catch (const ::LibFred::InfoDomainHistoryByHistoryid::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_object_historyid());
         BOOST_TEST_MESSAGE(wrong_historyid);
@@ -375,22 +375,22 @@ BOOST_FIXTURE_TEST_CASE(info_domain_diff, test_domain_fixture)
     ::LibFred::InfoDomainDiff test_diff, test_empty_diff;
 
     //differing data
-    test_diff.crhistoryid = std::make_pair(1ull,2ull);
-    test_diff.historyid = std::make_pair(1ull,2ull);
-    test_diff.id = std::make_pair(1ull,2ull);
+    test_diff.crhistoryid = std::make_pair(1ull, 2ull);
+    test_diff.historyid = std::make_pair(1ull, 2ull);
+    test_diff.id = std::make_pair(1ull, 2ull);
     test_diff.delete_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.fqdn = std::make_pair(std::string("testfqdn1"),std::string("testfqdn2"));
-    test_diff.roid = std::make_pair(std::string("testroid1"),std::string("testroid2"));
-    test_diff.sponsoring_registrar_handle = std::make_pair(std::string("testspreg1"),std::string("testspreg2"));
-    test_diff.create_registrar_handle = std::make_pair(std::string("testcrreg1"),std::string("testcrreg2"));
-    test_diff.update_registrar_handle = std::make_pair(Nullable<std::string>("testcrreg1"),Nullable<std::string>());
-    test_diff.creation_time = std::make_pair(boost::posix_time::ptime(),boost::posix_time::second_clock::local_time());
+            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.fqdn = std::make_pair(std::string("testfqdn1"), std::string("testfqdn2"));
+    test_diff.roid = std::make_pair(std::string("testroid1"), std::string("testroid2"));
+    test_diff.sponsoring_registrar_handle = std::make_pair(std::string("testspreg1"), std::string("testspreg2"));
+    test_diff.create_registrar_handle = std::make_pair(std::string("testcrreg1"), std::string("testcrreg2"));
+    test_diff.update_registrar_handle = std::make_pair(Nullable<std::string>("testcrreg1"), Nullable<std::string>());
+    test_diff.creation_time = std::make_pair(boost::posix_time::ptime(), boost::posix_time::second_clock::local_time());
     test_diff.update_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-                ,Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.authinfopw = std::make_pair(std::string("testpass1"),std::string("testpass2"));
+                , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.authinfopw = std::make_pair(std::string("testpass1"), std::string("testpass2"));
 
     BOOST_TEST_MESSAGE(test_diff.to_string());
     BOOST_TEST_MESSAGE(test_empty_diff.to_string());
@@ -398,7 +398,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain_diff, test_domain_fixture)
     BOOST_CHECK(!test_diff.is_empty());
     BOOST_CHECK(test_empty_diff.is_empty());
 
-    BOOST_TEST_MESSAGE(::LibFred::diff_domain_data(domain_info1.info_domain_data,domain_info2.info_domain_data).to_string());
+    BOOST_TEST_MESSAGE(::LibFred::diff_domain_data(domain_info1.info_domain_data, domain_info2.info_domain_data).to_string());
 }
 
 struct test_info_domain_order_fixture : public test_domain_fixture

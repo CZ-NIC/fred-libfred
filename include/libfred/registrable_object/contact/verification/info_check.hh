@@ -24,111 +24,118 @@
 #ifndef INFO_CHECK_HH_78A1015DB35948E7AFA58CF421DE454F
 #define INFO_CHECK_HH_78A1015DB35948E7AFA58CF421DE454F
 
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <vector>
-
 #include "util/printable.hh"
 
 #include "libfred/registrable_object/contact/verification/exceptions.hh"
 #include "libfred/opcontext.hh"
 #include "util/db/nullable.hh"
 
-namespace LibFred
+#include <boost/date_time/posix_time/posix_time.hpp>
+
+#include <vector>
+
+namespace LibFred {
+
+/**
+ * Return structure of operation @ref InfoContactCheck. Includes type definition of it's own parts.
+ * All times are returned as local @ref InfoContactCheck::exec().
+ */
+struct InfoContactCheckOutput
 {
-    /**
-     * Return structure of operation @ref InfoContactCheck. Includes type definition of it's own parts.
-     * All times are returned as local @ref InfoContactCheck::exec().
-     */
-    struct InfoContactCheckOutput {
-        struct ContactTestResultState {
-            std::string                     status_handle;
-            Nullable<std::string>           error_msg;
-            boost::posix_time::ptime        local_update_time;
-            Nullable<unsigned long long>    logd_request_id;
-
-            std::string to_string(const std::string& _each_line_prefix = "\t") const;
-            bool operator==(const ContactTestResultState& rhs) const {
-                return this->to_string() == rhs.to_string();
-            }
-        };
-
-        struct ContactTestResultData {
-            std::string                         test_handle;
-            boost::posix_time::ptime            local_create_time;
-            std::vector<ContactTestResultState> state_history;  /* current state is also included */
-
-            std::string to_string(const std::string& _each_line_prefix = "\t") const;
-            bool operator==(const ContactTestResultData& rhs) const {
-                return this->to_string() == rhs.to_string();
-            }
-        };
-
-        struct ContactCheckState {
-            std::string                     status_handle;
-            boost::posix_time::ptime        local_update_time;
-            Nullable<unsigned long long>    logd_request_id;
-
-            std::string to_string(const std::string& _each_line_prefix = "\t") const;
-            bool operator==(const ContactCheckState& rhs) const {
-                return this->to_string() == rhs.to_string();
-            }
-        };
-
-
-        std::string                        handle;
-        std::string                        testsuite_handle;
-        unsigned long long                 contact_history_id;
-        boost::posix_time::ptime           local_create_time;
-        std::vector<ContactCheckState>     check_state_history; ///< current state is also included */
-        std::vector<ContactTestResultData> tests;
-
+    struct ContactTestResultState
+    {
         std::string to_string(const std::string& _each_line_prefix = "\t") const;
-        bool operator==(const InfoContactCheckOutput& rhs) const {
+        bool operator==(const ContactTestResultState& rhs) const
+        {
             return this->to_string() == rhs.to_string();
         }
+        std::string                     status_handle;
+        Nullable<std::string>           error_msg;
+        boost::posix_time::ptime        local_update_time;
+        Nullable<unsigned long long>    logd_request_id;
     };
+
+    struct ContactTestResultData
+    {
+        std::string to_string(const std::string& _each_line_prefix = "\t") const;
+        bool operator==(const ContactTestResultData& rhs) const
+        {
+            return this->to_string() == rhs.to_string();
+        }
+        std::string                         test_handle;
+        boost::posix_time::ptime            local_create_time;
+        std::vector<ContactTestResultState> state_history;  /* current state is also included */
+    };
+
+    struct ContactCheckState
+    {
+        std::string to_string(const std::string& _each_line_prefix = "\t") const;
+        bool operator==(const ContactCheckState& rhs) const
+        {
+            return this->to_string() == rhs.to_string();
+        }
+        std::string                     status_handle;
+        boost::posix_time::ptime        local_update_time;
+        Nullable<unsigned long long>    logd_request_id;
+    };
+
+    std::string to_string(const std::string& _each_line_prefix = "\t") const;
+
+    bool operator==(const InfoContactCheckOutput& rhs) const
+    {
+        return this->to_string() == rhs.to_string();
+    }
+
+    std::string                        handle;
+    std::string                        testsuite_handle;
+    unsigned long long                 contact_history_id;
+    boost::posix_time::ptime           local_create_time;
+    std::vector<ContactCheckState>     check_state_history; ///< current state is also included */
+    std::vector<ContactTestResultData> tests;
+};
+
+/**
+ * Get info from existing record in contact_check table. Has no sideeffects.
+ */
+class InfoContactCheck : public Util::Printable<InfoContactCheck>
+{
+public:
+    /**
+     * constructor with only parameter
+     * @param _handle     identifies which contact_check to update by it's handle.
+     */
+    InfoContactCheck(const uuid& _handle);
 
     /**
-     * Get info from existing record in contact_check table. Has no sideeffects.
+     * commit operation
+     * @param _output_timezone Postgres time zone input type (as string e. g. "Europe/Prague") for conversion to local time values.
+     * @throws LibFred::ExceptionUnknownCheckHandle
+     * @return Data of existing check in InfoContactCheckOutput structure.
      */
-    class InfoContactCheck : public Util::Printable {
-            uuid handle_;
+    InfoContactCheckOutput exec(OperationContext& _ctx, const std::string& _output_timezone = "Europe/Prague");
 
-        public:
-            /**
-             * constructor with only parameter
-             * @param _handle     identifies which contact_check to update by it's handle.
-             */
-            InfoContactCheck( const uuid& _handle);
+    std::string to_string()const;
+private:
+    /**
+     * Get data for tests of specific check.
+     * @param _check_id     specifies check which tests data should be retrieved
+     */
+    static std::vector<InfoContactCheckOutput::ContactTestResultData> get_test_data(
+            OperationContext& _ctx,
+            unsigned long long _check_id,
+            const std::string& _output_timezone = "Europe/Prague");
+    /**
+     * Get data for historical states (explicitly: except the current state) of specific check.
+     * @param _check_id     specifies check which history should be retrieved
+     */
+    static std::vector<InfoContactCheckOutput::ContactCheckState> get_check_historical_states(
+            OperationContext& _ctx,
+            unsigned long long _check_id,
+            const std::string& _output_timezone = "Europe/Prague");
 
-            /**
-             * commit operation
-             * @param _output_timezone Postgres time zone input type (as string e. g. "Europe/Prague") for conversion to local time values.
-             * @throws LibFred::ExceptionUnknownCheckHandle
-             * @return Data of existing check in InfoContactCheckOutput structure.
-             */
-            InfoContactCheckOutput exec(OperationContext& _ctx, const std::string& _output_timezone = "Europe/Prague");
-            // serialization
-            virtual std::string to_string() const;
+    uuid handle_;
+};
 
-        private:
-            /**
-             * Get data for tests of specific check.
-             * @param _check_id     specifies check which tests data should be retrieved
-             */
-            static std::vector<InfoContactCheckOutput::ContactTestResultData> get_test_data(
-                OperationContext& _ctx,
-                unsigned long long _check_id,
-                const std::string& _output_timezone = "Europe/Prague");
+}//namespace LibFred
 
-            /**
-             * Get data for historical states (explicitly: except the current state) of specific check.
-             * @param _check_id     specifies check which history should be retrieved
-             */
-            static std::vector<InfoContactCheckOutput::ContactCheckState> get_check_historical_states(
-                OperationContext& _ctx,
-                unsigned long long _check_id,
-                const std::string& _output_timezone = "Europe/Prague");
-    };
-}
-#endif
+#endif//INFO_CHECK_HH_78A1015DB35948E7AFA58CF421DE454F

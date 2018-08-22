@@ -39,7 +39,7 @@ namespace LibFred
         const Database::query_param_list params(_id);
         _ctx.get_conn().exec_params(
             "DELETE FROM contact_address WHERE contactid=$1::BIGINT", params);
-        Database::Result delete_contact_res = _ctx.get_conn().exec_params(
+        const Database::Result delete_contact_res = _ctx.get_conn().exec_params(
             "DELETE FROM contact WHERE id=$1::BIGINT RETURNING id", params);
 
         if (delete_contact_res.size() != 1) {
@@ -69,7 +69,7 @@ namespace LibFred
 
             delete_contact_impl(_ctx, contact_id);
 
-            LibFred::DeleteObjectByHandle(handle_,"contact").exec(_ctx);
+            LibFred::DeleteObjectByHandle(handle_, "contact").exec(_ctx);
 
         } catch(ExceptionStack& ex) {
             ex.add_exception_stack_info(to_string());

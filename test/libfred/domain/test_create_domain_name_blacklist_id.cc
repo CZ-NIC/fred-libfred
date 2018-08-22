@@ -69,14 +69,14 @@ struct create_domain_name_blacklist_id_fixture : public Test::instantiate_db_tem
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-CDNB-ADMIN-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
             .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(create_domain_name_blacklist_id)
         ctx.commit_transaction();
     }
     ::LibFred::OperationContextCreator ctx;
-    Database::Result blacklist_result = ctx.get_conn().exec_params(
+    const Database::Result blacklist_result = ctx.get_conn().exec_params(
         "SELECT COUNT(*) "
         "FROM domain_blacklist "
         "WHERE regexp=$1::text AND "
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE(create_domain_name_blacklist_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
+    catch (const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
         BOOST_CHECK(ex.is_set_object_id_not_found());
         BOOST_CHECK(ex.get_object_id_not_found() == not_used_id);
     }
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(create_domain_name_blacklist_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
+    catch (const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
         BOOST_CHECK(ex.is_set_already_blacklisted_domain());
         BOOST_CHECK(ex.get_already_blacklisted_domain() == test_domain_id);
     }
@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE(create_domain_name_blacklist_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
+    catch (const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
         BOOST_CHECK(ex.is_set_out_of_turn());
     }
 
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE(create_domain_name_blacklist_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
+    catch (const ::LibFred::CreateDomainNameBlacklistId::Exception &ex) {
         BOOST_CHECK(ex.is_set_out_of_turn());
     }
 }

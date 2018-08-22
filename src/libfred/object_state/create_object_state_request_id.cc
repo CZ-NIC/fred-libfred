@@ -30,6 +30,8 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <sstream>
+
 namespace LibFred {
 
 CreateObjectStateRequestId::CreateObjectStateRequestId(
@@ -87,7 +89,7 @@ std::pair<std::string, unsigned long long> CreateObjectStateRequestId::exec(Oper
     //check time
     if (valid_to_.isset())
     {
-        if (valid_from_.isset()) // <from,to)
+        if (valid_from_.isset()) // <from, to)
         {
             if (valid_to_.get_value() < valid_from_.get_value())
             {
@@ -97,9 +99,9 @@ std::pair<std::string, unsigned long long> CreateObjectStateRequestId::exec(Oper
                 BOOST_THROW_EXCEPTION(Exception().set_out_of_turn(errmsg));
             }
         }
-        else // <now,to)
+        else // <now, to)
         {
-            Database::Result out_of_turn_result = _ctx.get_conn().exec_params(
+            const Database::Result out_of_turn_result = _ctx.get_conn().exec_params(
                     "SELECT $1<CURRENT_TIMESTAMP",
                     Database::query_param_list(valid_to_.get_value()));
             if (static_cast<bool>(out_of_turn_result[0][0]))
@@ -156,23 +158,23 @@ std::pair<std::string, unsigned long long> CreateObjectStateRequestId::exec(Oper
     std::string new_valid_column;
     if (valid_from_.isset())
     {
-        if (valid_to_.isset()) // <from,to)
+        if (valid_to_.isset()) // <from, to)
         {
             new_valid_column = "$2::timestamp AS new_valid_from,$3::timestamp AS new_valid_to";
             param(valid_from_.get_value())(valid_to_.get_value());
         }
-        else // <from,oo)
+        else // <from, oo)
         {
             new_valid_column = "$2::timestamp AS new_valid_from,NULL::timestamp AS new_valid_to";
             param(valid_from_.get_value());
         }
     }
-    else if (valid_to_.isset()) // <now,to)
+    else if (valid_to_.isset()) // <now, to)
     {
         new_valid_column = "CURRENT_TIMESTAMP::timestamp AS new_valid_from,$2::timestamp AS new_valid_to";
         param(valid_to_.get_value());
     }
-    else // <now,oo)
+    else // <now, oo)
     {
         new_valid_column = "CURRENT_TIMESTAMP::timestamp AS new_valid_from,NULL::timestamp AS new_valid_to";
     }

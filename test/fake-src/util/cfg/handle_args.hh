@@ -303,7 +303,7 @@ struct handler_parse_args
     using namespace boost::program_options::command_line_style;
 
     boost::program_options::parsed_options parsed
-        = boost::program_options::command_line_parser(argc,argv)
+        = boost::program_options::command_line_parser(argc, argv)
             .options(*opts_descs).allow_unregistered().style(
                     allow_short
                     | short_allow_adjacent

@@ -70,7 +70,7 @@ namespace LibFred
     std::string InfoDomainDiff::to_string() const
     {
         return Util::format_data_structure("InfoDomainDiff",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("crhistoryid", crhistoryid.print_quoted()))
         (std::make_pair("historyid", historyid.print_quoted()))
         (std::make_pair("delete_time", delete_time.print_quoted()))
@@ -131,17 +131,17 @@ namespace LibFred
         //differing data
         if (first.crhistoryid != second.crhistoryid)
         {
-            diff.crhistoryid = std::make_pair(first.crhistoryid,second.crhistoryid);
+            diff.crhistoryid = std::make_pair(first.crhistoryid, second.crhistoryid);
         }
 
         if (first.historyid != second.historyid)
         {
-            diff.historyid = std::make_pair(first.historyid,second.historyid);
+            diff.historyid = std::make_pair(first.historyid, second.historyid);
         }
 
         if (!Util::is_equal(first.delete_time, second.delete_time))
         {
-            diff.delete_time = std::make_pair(first.delete_time,second.delete_time);
+            diff.delete_time = std::make_pair(first.delete_time, second.delete_time);
         }
 
         if (boost::algorithm::to_lower_copy(first.fqdn).compare(boost::algorithm::to_lower_copy(second.fqdn)) != 0)
@@ -151,69 +151,69 @@ namespace LibFred
 
         if (first.roid.compare(second.roid) != 0)
         {
-            diff.roid = std::make_pair(first.roid,second.roid);
+            diff.roid = std::make_pair(first.roid, second.roid);
         }
 
         if (boost::algorithm::to_upper_copy(first.sponsoring_registrar_handle)
             .compare(boost::algorithm::to_upper_copy(second.sponsoring_registrar_handle)) != 0)
         {
             diff.sponsoring_registrar_handle = std::make_pair(first.sponsoring_registrar_handle
-                    ,second.sponsoring_registrar_handle);
+                    , second.sponsoring_registrar_handle);
         }
 
         if (boost::algorithm::to_upper_copy(first.create_registrar_handle)
         .compare(boost::algorithm::to_upper_copy(second.create_registrar_handle)) != 0)
         {
             diff.create_registrar_handle = std::make_pair(first.create_registrar_handle
-                    ,second.create_registrar_handle);
+                    , second.create_registrar_handle);
         }
 
         if (!Util::is_equal_upper(first.update_registrar_handle, second.update_registrar_handle))
         {
             diff.update_registrar_handle = std::make_pair(first.update_registrar_handle
-                    ,second.update_registrar_handle);
+                    , second.update_registrar_handle);
         }
 
         if (first.creation_time != second.creation_time)
         {
-            diff.creation_time = std::make_pair(first.creation_time,second.creation_time);
+            diff.creation_time = std::make_pair(first.creation_time, second.creation_time);
         }
 
         if (!Util::is_equal(first.update_time, second.update_time))
         {
             diff.update_time = std::make_pair(first.update_time
-                    ,second.update_time);
+                    , second.update_time);
         }
 
         if (!Util::is_equal(first.transfer_time, second.transfer_time))
         {
             diff.transfer_time = std::make_pair(first.transfer_time
-                    ,second.transfer_time);
+                    , second.transfer_time);
         }
 
         if (first.authinfopw.compare(second.authinfopw) != 0)
         {
-            diff.authinfopw = std::make_pair(first.authinfopw,second.authinfopw);
+            diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
         }
 
         if (first.registrant != second.registrant)
         {
-            diff.registrant = std::make_pair(first.registrant,second.registrant);
+            diff.registrant = std::make_pair(first.registrant, second.registrant);
         }
 
         if (!Util::is_equal(first.nsset, second.nsset))
         {
-            diff.nsset = std::make_pair(first.nsset,second.nsset);
+            diff.nsset = std::make_pair(first.nsset, second.nsset);
         }
 
         if (!Util::is_equal(first.keyset, second.keyset))
         {
-            diff.keyset = std::make_pair(first.keyset,second.keyset);
+            diff.keyset = std::make_pair(first.keyset, second.keyset);
         }
 
         if (first.expiration_date != second.expiration_date)
         {
-            diff.expiration_date = std::make_pair(first.expiration_date,second.expiration_date);
+            diff.expiration_date = std::make_pair(first.expiration_date, second.expiration_date);
         }
 
         std::set<ObjectIdHandlePair> lhs_admin_contacts;
@@ -232,12 +232,12 @@ namespace LibFred
 
         if (lhs_admin_contacts != rhs_admin_contacts)
         {
-            diff.admin_contacts = std::make_pair(first.admin_contacts,second.admin_contacts);
+            diff.admin_contacts = std::make_pair(first.admin_contacts, second.admin_contacts);
         }
 
         if (!Util::is_equal(first.enum_domain_validation, second.enum_domain_validation))
         {
-            diff.enum_domain_validation = std::make_pair(first.enum_domain_validation,second.enum_domain_validation);
+            diff.enum_domain_validation = std::make_pair(first.enum_domain_validation, second.enum_domain_validation);
         }
 
         if (first.zone != second.zone)
@@ -247,7 +247,7 @@ namespace LibFred
 
         if (first.id != second.id)
         {
-            diff.id = std::make_pair(first.id,second.id);
+            diff.id = std::make_pair(first.id, second.id);
         }
 
         return diff;

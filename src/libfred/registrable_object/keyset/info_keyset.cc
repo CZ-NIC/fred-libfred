@@ -65,7 +65,7 @@ namespace LibFred
                 ik.set_lock();
             }
 
-            keyset_res = ik.exec(ctx,local_timestamp_pg_time_zone_name);
+            keyset_res = ik.exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (keyset_res.empty())
             {
@@ -78,7 +78,7 @@ namespace LibFred
             }
 
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -89,9 +89,9 @@ namespace LibFred
     std::string InfoKeysetByHandle::to_string() const
     {
         return Util::format_operation_state("InfoKeysetByHandle",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("handle", handle_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -120,7 +120,7 @@ namespace LibFred
                 ik.set_lock();
             }
 
-            keyset_res = ik.exec(ctx,local_timestamp_pg_time_zone_name);
+            keyset_res = ik.exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (keyset_res.empty())
             {
@@ -133,7 +133,7 @@ namespace LibFred
             }
 
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -144,9 +144,9 @@ namespace LibFred
     std::string InfoKeysetById::to_string() const
     {
         return Util::format_operation_state("InfoKeysetById",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -175,9 +175,9 @@ namespace LibFred
                 ik.set_lock();
             }
 
-            keyset_res = ik.exec(ctx,local_timestamp_pg_time_zone_name);
+            keyset_res = ik.exec(ctx, local_timestamp_pg_time_zone_name);
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -188,9 +188,9 @@ namespace LibFred
     std::string InfoKeysetHistoryByRoid::to_string() const
     {
         return Util::format_operation_state("InfoKeysetHistoryByRoid",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("roid",roid_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("roid", roid_))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -220,9 +220,9 @@ namespace LibFred
                 ik.set_lock();
             }
 
-            keyset_history_res = ik.exec(ctx,local_timestamp_pg_time_zone_name);
+            keyset_history_res = ik.exec(ctx, local_timestamp_pg_time_zone_name);
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -233,9 +233,9 @@ namespace LibFred
     std::string InfoKeysetHistoryById::to_string() const
     {
         return Util::format_operation_state("InfoKeysetHistoryById",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -264,7 +264,7 @@ namespace LibFred
                 ik.set_lock();
             }
 
-            keyset_history_res = ik.exec(ctx,local_timestamp_pg_time_zone_name);
+            keyset_history_res = ik.exec(ctx, local_timestamp_pg_time_zone_name);
 
             if (keyset_history_res.empty())
             {
@@ -277,7 +277,7 @@ namespace LibFred
             }
 
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -288,9 +288,9 @@ namespace LibFred
     std::string InfoKeysetHistoryByHistoryid::to_string() const
     {
         return Util::format_operation_state("InfoKeysetHistoryByHistoryid",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("historyid",boost::lexical_cast<std::string>(historyid_)))
-        (std::make_pair("lock",lock_ ? "true":"false"))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("historyid", boost::lexical_cast<std::string>(historyid_)))
+        (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
 
@@ -346,9 +346,9 @@ namespace LibFred
                 ik.set_lock();
             }
 
-            keyset_res = ik.exec(ctx,local_timestamp_pg_time_zone_name);
+            keyset_res = ik.exec(ctx, local_timestamp_pg_time_zone_name);
         }
-        catch(ExceptionStack& ex)
+        catch (ExceptionStack& ex)
         {
             ex.add_exception_stack_info(to_string());
             throw;
@@ -360,10 +360,10 @@ namespace LibFred
     std::string InfoKeysetByTechContactHandle::to_string() const
     {
         return Util::format_operation_state("InfoKeysetByTechContactHandle",
-        Util::vector_of<std::pair<std::string,std::string> >
+        Util::vector_of<std::pair<std::string, std::string> >
         (std::make_pair("tech_contact_handle", tech_contact_handle_))
-        (std::make_pair("lock",lock_ ? "true":"false"))
-        (std::make_pair("limit",limit_.print_quoted()))
+        (std::make_pair("lock", lock_ ? "true":"false"))
+        (std::make_pair("limit", limit_.print_quoted()))
         );
     }
 

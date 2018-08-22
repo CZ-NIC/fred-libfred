@@ -49,14 +49,14 @@ BOOST_AUTO_TEST_CASE( test_correct_data )
     const unsigned long long message_id = ::LibFred::Poll::CreatePollMessage<::LibFred::Poll::MessageType::delete_contact>()
             .exec(ctx, contact.info_data.historyid);
 
-    Database::Result count_res2 = ctx.get_conn().exec(
+    const Database::Result count_res2 = ctx.get_conn().exec(
         "SELECT COUNT(id) AS count_ "
         "   FROM message "
     );
 
     BOOST_CHECK_EQUAL(count_before + 1, static_cast<int>(count_res2[0]["count_"]));
 
-    Database::Result message_res = ctx.get_conn().exec_params(
+    const Database::Result message_res = ctx.get_conn().exec_params(
         "SELECT "
         "       m.seen      AS seen_, "
         "       mt.name     AS msgtype_name_ "
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( test_correct_data )
     BOOST_CHECK_EQUAL(static_cast<std::string>(message_res[0]["msgtype_name_"]),
                       Conversion::Enums::to_db_handle(::LibFred::Poll::MessageType::delete_contact));
 
-    Database::Result polleppaction_res = ctx.get_conn().exec_params(
+    const Database::Result polleppaction_res = ctx.get_conn().exec_params(
         "SELECT objid "
         "   FROM poll_eppaction "
         "   WHERE msgid=$1::integer",

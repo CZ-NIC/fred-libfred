@@ -34,7 +34,7 @@ namespace LibFred
 
     unsigned long long get_object_type_id(OperationContext& ctx, const std::string& obj_type)
     {
-        Database::Result object_type_res = ctx.get_conn().exec_params(
+        const Database::Result object_type_res = ctx.get_conn().exec_params(
             "SELECT id FROM enum_object_type WHERE name = $1::text FOR SHARE"
             , Database::query_param_list(obj_type));
         if (object_type_res.size() != 1)

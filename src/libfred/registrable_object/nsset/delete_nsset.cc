@@ -52,7 +52,7 @@ namespace LibFred
             "   WHERE nssetid = $1::integer",
             Database::query_param_list(id));
 
-        Database::Result delete_nsset_res = ctx.get_conn().exec_params(
+        const Database::Result delete_nsset_res = ctx.get_conn().exec_params(
             "DELETE FROM nsset "
             "   WHERE id = $1::integer RETURNING id",
             Database::query_param_list(id));
@@ -83,7 +83,7 @@ namespace LibFred
 
             delete_nsset_impl(_ctx, nsset_id);
 
-            LibFred::DeleteObjectByHandle(handle_,"nsset").exec(_ctx);
+            LibFred::DeleteObjectByHandle(handle_, "nsset").exec(_ctx);
 
         } catch(ExceptionStack& ex) {
             ex.add_exception_stack_info(to_string());

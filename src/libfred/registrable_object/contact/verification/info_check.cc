@@ -111,7 +111,7 @@ namespace LibFred
 
             // get check data and lock record
             // check_history data SHOULD remain safe - are updated only via trigger at check table
-            Database::Result contact_check_data = _ctx.get_conn().exec_params(
+            const Database::Result contact_check_data = _ctx.get_conn().exec_params(
                 "SELECT "
                 "    check_.id                 AS id_, "
                 "    check_.create_time "
@@ -193,7 +193,7 @@ namespace LibFred
         std::vector<InfoContactCheckOutput::ContactTestResultData> result;
 
         // test_history data SHOULD remain safe - are updated only via trigger
-        Database::Result contact_test_result = _ctx.get_conn().exec_params(
+        const Database::Result contact_test_result = _ctx.get_conn().exec_params(
             "SELECT "
             "    test.id                   AS id_, "
             "    test.create_time "
@@ -231,7 +231,7 @@ namespace LibFred
         }
 
         // get history "timelines" for all tests at once - IMPORTANT are clustered by test id
-        Database::Result contact_test_history_result = _ctx.get_conn().exec_params(
+        const Database::Result contact_test_history_result = _ctx.get_conn().exec_params(
             "SELECT "
             "    history.contact_test_result_id AS id_, "
             "    history.error_msg         AS error_msg_, "
@@ -304,7 +304,7 @@ namespace LibFred
         std::vector<InfoContactCheckOutput::ContactCheckState> result;
 
         // get check state history
-        Database::Result contact_check_historical_data = _ctx.get_conn().exec_params(
+        const Database::Result contact_check_historical_data = _ctx.get_conn().exec_params(
             "SELECT "
             "    history.logd_request_id   AS logd_request_id_, "
             "    history.update_time "

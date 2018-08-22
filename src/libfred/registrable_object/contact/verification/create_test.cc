@@ -62,7 +62,7 @@ namespace LibFred
         _ctx.get_log().info(to_string());
 
         // using solo select for easy checking of existence (subselect would be strange)
-        Database::Result check_res = _ctx.get_conn().exec_params(
+        const Database::Result check_res = _ctx.get_conn().exec_params(
             "SELECT id "
             "   FROM contact_check "
             "   WHERE handle=$1::uuid ",
@@ -74,7 +74,7 @@ namespace LibFred
         unsigned long long check_id = static_cast<unsigned long long>(check_res[0]["id"]);
 
         // get test is in testsuite of this check
-        Database::Result testinsuite_res = _ctx.get_conn().exec_params(
+        const Database::Result testinsuite_res = _ctx.get_conn().exec_params(
             "SELECT c_t.id "
             "   FROM enum_contact_test AS c_t "
             "       JOIN contact_testsuite_map AS c_t_m ON c_t.id = c_t_m.enum_contact_test_id "
@@ -85,7 +85,7 @@ namespace LibFred
         );
         if (testinsuite_res.size() != 1) {
             // is the test really unknown? ... (see ...or below)
-            Database::Result test_res = _ctx.get_conn().exec_params(
+            const Database::Result test_res = _ctx.get_conn().exec_params(
                 "SELECT id "
                 "   FROM enum_contact_test "
                 "   WHERE handle=$1::varchar ",
@@ -100,7 +100,7 @@ namespace LibFred
         }
 
 
-        Database::Result test_res = _ctx.get_conn().exec_params(
+        const Database::Result test_res = _ctx.get_conn().exec_params(
             "SELECT id "
             "   FROM enum_contact_test "
             "   WHERE handle=$1::varchar ",

@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_SUITE(TestRegistryObjectType)
 BOOST_FIXTURE_TEST_CASE(all_definitions_from_db_are_supported, Test::instantiate_db_template)
 {
     ::LibFred::OperationContextCreator ctx;
-    Database::Result obj_types_res = ctx.get_conn().exec("SELECT name FROM enum_object_type");
+    const Database::Result obj_types_res = ctx.get_conn().exec("SELECT name FROM enum_object_type");
     BOOST_CHECK(obj_types_res.size() > 0);
 
     for (::size_t i = 0; i < obj_types_res.size(); ++i) {

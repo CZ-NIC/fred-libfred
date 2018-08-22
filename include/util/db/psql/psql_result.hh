@@ -102,55 +102,13 @@ public:
     Iterator end()const;
 private:
     PSQLResult(const std::shared_ptr<PGresult>& _psql_result);
-
-    /**
-     * @return number of columns
-     */
     size_type cols_()const;
-
-    /**
-     * @return number of rows
-     */
     size_type rows_()const;
-
-    /**
-     * @param  row_idx row number
-     * @param  col_idx column number
-     */
     void check_range(size_type row_idx, size_type col_idx)const;// throw(OutOfRange)
-
-    /**
-     * @param  _r row number
-     * @param  _c column number
-     * @return    value from result at position [_r, _c]
-     */
     std::string value_(size_type _r, size_type _c)const;// throw(OutOfRange)
-
-    /**
-     * @param  _r row number
-     * @param  _c column number
-     * @return    true if value from result at position [_r, _c] is null, false otherwise
-     */
     bool value_is_null_(size_type _r, size_type _c)const;// throw(OutOfRange)
-
-    /**
-     * @param  _c column name
-     * @return column index
-     */
     int get_column_number(const std::string& column_name)const;// throw(NoSuchField)
-
-    /**
-     * @param row_idx row number
-     * @param column_name column name
-     * @return value from result at position [row_idx, column_name]
-     */
     std::string value_(size_type row_idx, const std::string& column_name)const;// throw(NoSuchField)
-
-    /**
-     * @param row_idx row number
-     * @param column_name column name
-     * @return true if value from result at position [row_idx, column_name] is null, false otherwise
-     */
     bool value_is_null_(size_type row_idx, const std::string& column_name)const;// throw(NoSuchField)
     friend class Row_<PSQLResult, value_type>;
     friend class Row_<PSQLResult, value_type>::Iterator;

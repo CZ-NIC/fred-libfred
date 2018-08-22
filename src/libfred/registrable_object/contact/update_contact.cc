@@ -250,7 +250,7 @@ unsigned long long UpdateContact< DERIVED >::exec(OperationContext& ctx
             logd_request_id_.isset() ? Nullable< ::size_t >(logd_request_id_.get_value())
                                      : Nullable< ::size_t >()).exec(ctx);
     }
-    catch(const UpdateObject::Exception& ex) {
+    catch (const UpdateObject::Exception& ex) {
         if (ex.is_set_unknown_registrar_handle()) {
             //fatal good path, need valid registrar performing update
             BOOST_THROW_EXCEPTION(Exception().set_unknown_registrar_handle(ex.get_unknown_registrar_handle()));
@@ -273,7 +273,7 @@ unsigned long long UpdateContact< DERIVED >::exec(OperationContext& ctx
     {
         Database::query_param_list params;
         std::ostringstream update_set;
-        Util::HeadSeparator set_separator("SET ",",");
+        Util::HeadSeparator set_separator("SET ", ",");
 
         update_set << update_value(name_,         "name",         set_separator, params);
         update_set << update_value(organization_, "organization", set_separator, params);
@@ -357,7 +357,7 @@ unsigned long long UpdateContact< DERIVED >::exec(OperationContext& ctx
             params.push_back(contact.info_contact_data.id);
             sql << "UPDATE contact " << update_set.str() << " "
                    "WHERE id=$" << params.size() << "::integer RETURNING id";
-            Database::Result update_contact_res = ctx.get_conn().exec_params(sql.str(), params);
+            const Database::Result update_contact_res = ctx.get_conn().exec_params(sql.str(), params);
             if (update_contact_res.size() != 1) {
                 BOOST_THROW_EXCEPTION(InternalError("failed to update contact"));
             }
@@ -388,7 +388,7 @@ unsigned long long UpdateContact< DERIVED >::exec(OperationContext& ctx
             const ContactAddressToUpdate::ToUpdate &to_update = addresses_.to_update();
             params.clear();
             params.push_back(contact.info_contact_data.id);
-            Database::Result address_types_res = ctx.get_conn().exec_params(
+            const Database::Result address_types_res = ctx.get_conn().exec_params(
                 "SELECT type FROM contact_address WHERE contactid=$1::bigint", params);
             ContactAddressToUpdate::ToRemove updatable;//exists
             for (::size_t idx = 0; idx < address_types_res.size(); ++idx) {
@@ -572,33 +572,33 @@ template < class DERIVED >
 std::string UpdateContact< DERIVED >::to_string() const
 {
     return Util::format_operation_state("UpdateContact",
-    Util::vector_of<std::pair<std::string,std::string> >
-    (std::make_pair("registrar",registrar_))
-    (std::make_pair("authinfo",authinfo_.print_quoted()))
-    (std::make_pair("name",name_.print_quoted()))
-    (std::make_pair("organization",organization_.print_quoted()))
-    (std::make_pair("place",place_.print_quoted()))
-    (std::make_pair("telephone",telephone_.print_quoted()))
-    (std::make_pair("fax",fax_.print_quoted()))
-    (std::make_pair("email",email_.print_quoted()))
-    (std::make_pair("notifyemail_",notifyemail_.print_quoted()))
-    (std::make_pair("vat",vat_.print_quoted()))
-    (std::make_pair("personal_id",personal_id_.print_quoted()))
-    (std::make_pair("addresses",addresses_.to_string()))
-    (std::make_pair("disclosename",disclosename_.print_quoted()))
-    (std::make_pair("discloseorganization",discloseorganization_.print_quoted()))
-    (std::make_pair("discloseaddress",discloseaddress_.print_quoted()))
-    (std::make_pair("disclosetelephone",disclosetelephone_.print_quoted()))
-    (std::make_pair("disclosefax",disclosefax_.print_quoted()))
-    (std::make_pair("discloseemail",discloseemail_.print_quoted()))
-    (std::make_pair("disclosevat",disclosevat_.print_quoted()))
-    (std::make_pair("discloseident",discloseident_.print_quoted()))
-    (std::make_pair("disclosenotifyemail",disclosenotifyemail_.print_quoted()))
+    Util::vector_of<std::pair<std::string, std::string> >
+    (std::make_pair("registrar", registrar_))
+    (std::make_pair("authinfo", authinfo_.print_quoted()))
+    (std::make_pair("name", name_.print_quoted()))
+    (std::make_pair("organization", organization_.print_quoted()))
+    (std::make_pair("place", place_.print_quoted()))
+    (std::make_pair("telephone", telephone_.print_quoted()))
+    (std::make_pair("fax", fax_.print_quoted()))
+    (std::make_pair("email", email_.print_quoted()))
+    (std::make_pair("notifyemail_", notifyemail_.print_quoted()))
+    (std::make_pair("vat", vat_.print_quoted()))
+    (std::make_pair("personal_id", personal_id_.print_quoted()))
+    (std::make_pair("addresses", addresses_.to_string()))
+    (std::make_pair("disclosename", disclosename_.print_quoted()))
+    (std::make_pair("discloseorganization", discloseorganization_.print_quoted()))
+    (std::make_pair("discloseaddress", discloseaddress_.print_quoted()))
+    (std::make_pair("disclosetelephone", disclosetelephone_.print_quoted()))
+    (std::make_pair("disclosefax", disclosefax_.print_quoted()))
+    (std::make_pair("discloseemail", discloseemail_.print_quoted()))
+    (std::make_pair("disclosevat", disclosevat_.print_quoted()))
+    (std::make_pair("discloseident", discloseident_.print_quoted()))
+    (std::make_pair("disclosenotifyemail", disclosenotifyemail_.print_quoted()))
     (std::make_pair("domain_expiration_warning_letter_enabled",
         domain_expiration_warning_letter_enabled_.isset()
         ? domain_expiration_warning_letter_enabled_.get_value().print_quoted()
         : domain_expiration_warning_letter_enabled_.print_quoted()))
-    (std::make_pair("logd_request_id",logd_request_id_.print_quoted()))
+    (std::make_pair("logd_request_id", logd_request_id_.print_quoted()))
     );
 }
 
@@ -672,7 +672,7 @@ unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
         {
             contact = select_contact_by_id_.exec(ctx);
         }
-        catch(const LibFred::InfoContactById::Exception& info_exception)
+        catch (const LibFred::InfoContactById::Exception& info_exception)
         {
             if (info_exception.is_set_unknown_object_id())
             {
@@ -686,9 +686,9 @@ unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
 
         try
         {
-            history_id = UpdateContact<UpdateContactById>::exec(ctx,contact);
+            history_id = UpdateContact<UpdateContactById>::exec(ctx, contact);
         }
-        catch(const UpdateContact<UpdateContactById>::Exception& update_contact_exception)
+        catch (const UpdateContact<UpdateContactById>::Exception& update_contact_exception)
         {
             if (update_contact_exception.is_set_unknown_registrar_handle() ) {
                 //fatal good path, need valid registrar performing update
@@ -725,8 +725,8 @@ unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
             BOOST_THROW_EXCEPTION(update_exception);
         }
 
-    }//try
-    catch(ExceptionStack& ex)
+    }
+    catch (ExceptionStack& ex)
     {
         ex.add_exception_stack_info(to_string());
         throw;
@@ -738,10 +738,10 @@ unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
 std::string UpdateContactById::to_string() const
 {
     return Util::format_operation_state("UpdateContactById",
-    Util::vector_of<std::pair<std::string,std::string> >
-    (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
+    Util::vector_of<std::pair<std::string, std::string> >
+    (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
     (std::make_pair("select_contact_by_id", select_contact_by_id_.to_string()))//member operation
-    (std::make_pair("UpdateContact<UpdateContactById>",UpdateContact<UpdateContactById>::to_string()))//parent operation
+    (std::make_pair("UpdateContact<UpdateContactById>", UpdateContact<UpdateContactById>::to_string()))//parent operation
     );
 }
 
@@ -815,7 +815,7 @@ unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
         {
             contact = select_contact_by_handle_.exec(ctx);
         }
-        catch(const LibFred::InfoContactByHandle::Exception& info_exception)
+        catch (const LibFred::InfoContactByHandle::Exception& info_exception)
         {
             if (info_exception.is_set_unknown_contact_handle())
             {
@@ -829,9 +829,9 @@ unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
 
         try
         {
-            history_id = UpdateContact<UpdateContactByHandle>::exec(ctx,contact);
+            history_id = UpdateContact<UpdateContactByHandle>::exec(ctx, contact);
         }
-        catch(const UpdateContact<UpdateContactByHandle>::Exception& update_contact_exception)
+        catch (const UpdateContact<UpdateContactByHandle>::Exception& update_contact_exception)
         {
             if (update_contact_exception.is_set_unknown_registrar_handle() ) {
                 //fatal good path, need valid registrar performing update
@@ -868,8 +868,8 @@ unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
             BOOST_THROW_EXCEPTION(update_exception);
         }
 
-    }//try
-    catch(ExceptionStack& ex)
+    }
+    catch (ExceptionStack& ex)
     {
         ex.add_exception_stack_info(to_string());
         throw;
@@ -881,10 +881,10 @@ unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
 std::string UpdateContactByHandle::to_string() const
 {
     return Util::format_operation_state("UpdateContactByHandle",
-    Util::vector_of<std::pair<std::string,std::string> >
-    (std::make_pair("handle",handle_))
+    Util::vector_of<std::pair<std::string, std::string> >
+    (std::make_pair("handle", handle_))
     (std::make_pair("select_contact_by_handle", select_contact_by_handle_.to_string()))//member operation
-    (std::make_pair("UpdateContact<UpdateContactByHandle>",UpdateContact<UpdateContactByHandle>::to_string()))//parent operation
+    (std::make_pair("UpdateContact<UpdateContactByHandle>", UpdateContact<UpdateContactByHandle>::to_string()))//parent operation
     );
 }
 

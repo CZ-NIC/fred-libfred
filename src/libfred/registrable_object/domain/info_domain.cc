@@ -70,7 +70,7 @@ InfoDomainOutput InfoDomainByFqdn::exec(OperationContext& ctx, const std::string
             id.set_lock();
         }
 
-        domain_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
 
         if (domain_res.empty())
         {
@@ -95,7 +95,7 @@ std::string InfoDomainByFqdn::to_string() const
 {
     return Util::format_operation_state(
             "InfoDomainByFqdn",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                     (std::make_pair("handle", fqdn_))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
@@ -125,7 +125,7 @@ InfoDomainOutput InfoDomainById::exec(OperationContext& ctx, const std::string& 
             id.set_lock();
         }
 
-        domain_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
 
         if (domain_res.empty())
         {
@@ -150,8 +150,8 @@ std::string InfoDomainById::to_string() const
 {
     return Util::format_operation_state(
             "InfoDomainById",
-            Util::vector_of<std::pair<std::string,std::string>>
-                    (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
 
@@ -182,7 +182,7 @@ std::vector<InfoDomainOutput> InfoDomainHistoryByRoid::exec(
             id.set_lock();
         }
 
-        domain_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
     }
     catch (ExceptionStack& ex)
     {
@@ -196,8 +196,8 @@ std::string InfoDomainHistoryByRoid::to_string() const
 {
     return Util::format_operation_state(
             "InfoDomainHistoryByRoid",
-            Util::vector_of<std::pair<std::string,std::string>>
-                    (std::make_pair("roid",roid_))
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("roid", roid_))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
 
@@ -229,7 +229,7 @@ std::vector<InfoDomainOutput> InfoDomainHistoryById::exec(
             id.set_lock();
         }
 
-        domain_history_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_history_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
     }
     catch (ExceptionStack& ex)
     {
@@ -243,8 +243,8 @@ std::string InfoDomainHistoryById::to_string() const
 {
     return Util::format_operation_state(
             "InfoDomainHistoryById",
-            Util::vector_of<std::pair<std::string,std::string>>
-                    (std::make_pair("id",boost::lexical_cast<std::string>(id_)))
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("id", boost::lexical_cast<std::string>(id_)))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
 
@@ -276,7 +276,7 @@ InfoDomainOutput InfoDomainHistoryByHistoryid::exec(
             id.set_lock();
         }
 
-        domain_history_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_history_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
 
         if (domain_history_res.empty())
         {
@@ -300,7 +300,7 @@ std::string InfoDomainHistoryByHistoryid::to_string() const
 {
     return Util::format_operation_state(
             "InfoDomainHistoryByHistoryid",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                     (std::make_pair("historyid", boost::lexical_cast<std::string>(historyid_)))
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
@@ -370,7 +370,7 @@ std::vector<InfoDomainOutput> InfoDomainByRegistrantHandle::exec(
             id.set_lock();
         }
 
-        domain_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
     }
     catch (ExceptionStack& ex)
     {
@@ -383,10 +383,10 @@ std::vector<InfoDomainOutput> InfoDomainByRegistrantHandle::exec(
 std::string InfoDomainByRegistrantHandle::to_string() const
 {
     return Util::format_operation_state("InfoDomainByRegistrantHandle",
-    Util::vector_of<std::pair<std::string,std::string> >
+    Util::vector_of<std::pair<std::string, std::string> >
     (std::make_pair("registrant_handle", registrant_handle_))
     (std::make_pair("lock", lock_ ? "true" : "false"))
-    (std::make_pair("limit",limit_.print_quoted()))
+    (std::make_pair("limit", limit_.print_quoted()))
     );
 }
 
@@ -430,7 +430,7 @@ std::vector<InfoDomainOutput> InfoDomainByAdminContactHandle::exec(OperationCont
             inline_view_filter_query (" ORDER BY dcm.domainid LIMIT ").param_bigint(limit_.get_value());
         }
 
-        Database::Result domain_id_res = ctx.get_conn().exec_params(inline_view_filter_query);
+        const Database::Result domain_id_res = ctx.get_conn().exec_params(inline_view_filter_query);
 
         if (domain_id_res.size() == 0)//no domain id found
         {
@@ -456,7 +456,7 @@ std::vector<InfoDomainOutput> InfoDomainByAdminContactHandle::exec(OperationCont
             id.set_lock();
         }
 
-        domain_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
     }
     catch (ExceptionStack& ex)
     {
@@ -470,7 +470,7 @@ std::string InfoDomainByAdminContactHandle::to_string() const
 {
     return Util::format_operation_state(
             "InfoDomainByAdminContactHandle",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                     (std::make_pair("admin_contact_handle", admin_contact_handle_))
                     (std::make_pair("lock", lock_ ? "true" : "false"))
                     (std::make_pair("limit", limit_.print_quoted())));
@@ -543,7 +543,7 @@ std::vector<InfoDomainOutput> InfoDomainByNssetHandle::exec(
             id.set_lock();
         }
 
-        domain_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
     }
     catch (ExceptionStack& ex)
     {
@@ -557,7 +557,7 @@ std::string InfoDomainByNssetHandle::to_string()const
 {
     return Util::format_operation_state(
             "InfoDomainByNssetHandle",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                     (std::make_pair("nsset_handle", nsset_handle_))
                     (std::make_pair("lock", lock_ ? "true" : "false"))
                     (std::make_pair("limit", limit_.print_quoted())));
@@ -627,7 +627,7 @@ std::vector<InfoDomainOutput> InfoDomainByKeysetHandle::exec(
             id.set_lock();
         }
 
-        domain_res = id.exec(ctx,local_timestamp_pg_time_zone_name);
+        domain_res = id.exec(ctx, local_timestamp_pg_time_zone_name);
     }
     catch (ExceptionStack& ex)
     {
@@ -641,7 +641,7 @@ std::string InfoDomainByKeysetHandle::to_string()const
 {
     return Util::format_operation_state(
             "InfoDomainByKeysetHandle",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                     (std::make_pair("keyset_handle", keyset_handle_))
                     (std::make_pair("lock", lock_ ? "true" : "false"))
                     (std::make_pair("limit", limit_.print_quoted())));

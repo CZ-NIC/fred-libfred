@@ -45,6 +45,7 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <sstream>
 #include <string>
 
 namespace LibFred {
@@ -146,18 +147,18 @@ void MergeContact::diff_contacts(OperationContext& ctx)
 {
     if (diff_contacts_impl_)
     {
-        const bool contact_differs = diff_contacts_impl_(ctx,src_contact_handle_, dst_contact_handle_);
+        const bool contact_differs = diff_contacts_impl_(ctx, src_contact_handle_, dst_contact_handle_);
 
         if (contact_differs)
         {
             BOOST_THROW_EXCEPTION(Exception().set_contacts_differ(
-                    InvalidContacts(src_contact_handle_,dst_contact_handle_)));
+                    InvalidContacts(src_contact_handle_, dst_contact_handle_)));
         }
     }
     else
     {
         BOOST_THROW_EXCEPTION(Exception().set_unable_to_get_difference_of_contacts(
-                InvalidContacts(src_contact_handle_,dst_contact_handle_)));
+                InvalidContacts(src_contact_handle_, dst_contact_handle_)));
     }
 }
 
@@ -522,7 +523,7 @@ std::string MergeContact::to_string() const
 {
     return Util::format_operation_state(
             "MergeContact",
-            Util::vector_of<std::pair<std::string,std::string>>
+            Util::vector_of<std::pair<std::string, std::string>>
                 (std::make_pair("src_contact_handle", src_contact_handle_))
                 (std::make_pair("dst_contact_handle", dst_contact_handle_))
                 (std::make_pair("registrar", registrar_))
@@ -548,7 +549,7 @@ bool MergeContact::DefaultDiffContacts::operator()(
             ("SHIPPING_3");
     std::ostringstream dup_sql;
     dup_sql <<
-    "SELECT "//c1.name,oreg1.name,o1.clid,c2.name,oreg2.name,o2.clid,
+    "SELECT "//c1.name, oreg1.name,o1.clid,c2.name,oreg2.name,o2.clid,
             "(trim(BOTH ' ' FROM COALESCE(c1.name,''))!=trim(BOTH ' ' FROM COALESCE(c2.name,''))) OR "
             "(trim(BOTH ' ' FROM COALESCE(c1.organization,''))!=trim(BOTH ' ' FROM COALESCE(c2.organization,''))) OR "
             "(trim(BOTH ' ' FROM COALESCE(c1.street1,''))!=trim(BOTH ' ' FROM COALESCE(c2.street1,''))) OR "
@@ -616,7 +617,7 @@ bool MergeContact::DefaultDiffContacts::operator()(
     if (diff_result.size() != 1)
     {
         BOOST_THROW_EXCEPTION(MergeContact::Exception().set_unable_to_get_difference_of_contacts(
-                MergeContact::InvalidContacts(src_contact_handle,dst_contact_handle)));
+                MergeContact::InvalidContacts(src_contact_handle, dst_contact_handle)));
     }
 
     const unsigned long long dst_contact_id = static_cast<unsigned long long>(diff_result[0]["dst_contact_id"]);

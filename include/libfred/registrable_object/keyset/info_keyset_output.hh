@@ -24,58 +24,59 @@
 #ifndef INFO_KEYSET_OUTPUT_HH_2906766BA0734F9394B24C5FBD8F158C
 #define INFO_KEYSET_OUTPUT_HH_2906766BA0734F9394B24C5FBD8F158C
 
-#include <string>
-#include <vector>
+#include "libfred/registrable_object/keyset/info_keyset_data.hh"
+
+#include "util/db/nullable.hh"
+#include "util/printable.hh"
 
 #include <boost/date_time/posix_time/ptime.hpp>
 
-#include "util/db/nullable.hh"
-#include "libfred/registrable_object/keyset/info_keyset_data.hh"
-#include "util/printable.hh"
-namespace LibFred
+#include <string>
+#include <vector>
+
+namespace LibFred {
+
+/**
+* Element of keyset info data.
+*/
+struct InfoKeysetOutput : Util::Printable<InfoKeysetOutput>
 {
+    /**
+    * Empty constructor of the keyset info data structure.
+    */
+    InfoKeysetOutput()
+    {}
 
     /**
-    * Element of keyset info data.
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
     */
-    struct InfoKeysetOutput : public Util::Printable
-    {
-        InfoKeysetData info_keyset_data;/**< data of the keyset */
+    std::string to_string()const;
 
-        boost::posix_time::ptime utc_timestamp;/**< timestamp of getting the keyset data in UTC */
+    /**
+    * Equality of the keyset info data structure operator. Compares only InfoKeysetData member.
+    * @param rhs is right hand side of the keyset data comparison
+    * @return true if equal, false if not
+    */
+    bool operator==(const InfoKeysetOutput& rhs) const;
 
-        Nullable<unsigned long long> next_historyid; /**< next historyid of the keyset history*/
-        boost::posix_time::ptime history_valid_from;/**< history data valid from time in local time zone viz @ref local_timestamp_pg_time_zone_name */
-        Nullable<boost::posix_time::ptime> history_valid_to;/**< history data valid to time in local time zone viz @ref local_timestamp_pg_time_zone_name, null means open end */
-        Nullable<unsigned long long> logd_request_id; /**< id of the request that changed keyset data*/
+    /**
+    * Inequality of the keyset info data structure operator. Compares only InfoKeysetData member.
+    * @param rhs is right hand side of the keyset data comparison
+    * @return true if not equal, false if equal
+    */
+    bool operator!=(const InfoKeysetOutput& rhs) const;
 
-        /**
-        * Empty constructor of the keyset info data structure.
-        */
-        InfoKeysetOutput()
-        {}
+    InfoKeysetData info_keyset_data;/**< data of the keyset */
 
-        /**
-        * Dumps state of the instance into the string
-        * @return string with description of the instance state
-        */
-        std::string to_string() const;
+    boost::posix_time::ptime utc_timestamp;/**< timestamp of getting the keyset data in UTC */
 
-        /**
-        * Equality of the keyset info data structure operator. Compares only InfoKeysetData member.
-        * @param rhs is right hand side of the keyset data comparison
-        * @return true if equal, false if not
-        */
-        bool operator==(const InfoKeysetOutput& rhs) const;
+    Nullable<unsigned long long> next_historyid; /**< next historyid of the keyset history*/
+    boost::posix_time::ptime history_valid_from;/**< history data valid from time in local time zone viz @ref local_timestamp_pg_time_zone_name */
+    Nullable<boost::posix_time::ptime> history_valid_to;/**< history data valid to time in local time zone viz @ref local_timestamp_pg_time_zone_name, null means open end */
+    Nullable<unsigned long long> logd_request_id; /**< id of the request that changed keyset data*/
+};
 
-        /**
-        * Inequality of the keyset info data structure operator. Compares only InfoKeysetData member.
-        * @param rhs is right hand side of the keyset data comparison
-        * @return true if not equal, false if equal
-        */
-        bool operator!=(const InfoKeysetOutput& rhs) const;
-    };
+}//namespace LibFred
 
-} // namespace LibFred
-
-#endif
+#endif//INFO_KEYSET_OUTPUT_HH_2906766BA0734F9394B24C5FBD8F158C

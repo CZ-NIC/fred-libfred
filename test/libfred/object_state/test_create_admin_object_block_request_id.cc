@@ -69,14 +69,14 @@ struct create_administrative_object_block_request_id_fixture : public Test::inst
         place.city = "Praha";
         place.postalcode = "11150";
         place.country = "CZ";
-        ::LibFred::CreateContact(admin_contact2_handle,registrar_handle)
+        ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
             .set_name(std::string("TEST-AOB-ADMIN-CONTACT NAME")+xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
-        ::LibFred::CreateContact(registrant_contact_handle,registrar_handle)
+        ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
                 .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
                 .set_disclosename(true)
                 .set_place(place)
@@ -91,7 +91,7 @@ struct create_administrative_object_block_request_id_fixture : public Test::inst
         .set_admin_contacts(Util::vector_of<std::string>(admin_contact2_handle))
         .exec(ctx);
 
-        Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE manual AND 3=ANY(types) AND name!='serverBlocked'");
+        const Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE manual AND 3=ANY(types) AND name!='serverBlocked'");
         for (::size_t idx = 0; idx < status_result.size(); ++idx) {
             status_list.insert(status_result[idx][0]);
         }
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id)
         ctx.commit_transaction();
     }
     ::LibFred::OperationContextCreator ctx;
-    Database::Result status_result = ctx.get_conn().exec_params(
+    const Database::Result status_result = ctx.get_conn().exec_params(
         "SELECT eos.name "
         "FROM object_state_request osr "
         "JOIN object_registry obr ON obr.id=osr.object_id "
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id_bad)
     ::LibFred::StatusList bad_status_list = status_list;
     try {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
-        Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE NOT (manual AND 3=ANY(types))");
+        const Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE NOT (manual AND 3=ANY(types))");
         for (::size_t idx = 0; idx < status_result.size(); ++idx) {
             bad_status_list.insert(status_result[idx][0]);
         }
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateAdminObjectBlockRequestId::Exception &ex) {
+    catch (const ::LibFred::CreateAdminObjectBlockRequestId::Exception &ex) {
         BOOST_CHECK(ex.is_set_vector_of_state_not_found());
         BOOST_CHECK(ex.get_vector_of_state_not_found().size() == (bad_status_list.size() - status_list.size()));
     }
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id_bad)
         ctx.commit_transaction();
         BOOST_CHECK(false);
     }
-    catch(const ::LibFred::CreateAdminObjectBlockRequestId::Exception &ex) {
+    catch (const ::LibFred::CreateAdminObjectBlockRequestId::Exception &ex) {
         BOOST_CHECK(ex.is_set_server_blocked_present());
         BOOST_CHECK(ex.get_server_blocked_present() == test_domain_id);
     }

@@ -50,7 +50,7 @@ namespace Registrar
     unsigned long long get_registrar_id_by_handle(OperationContext& ctx, const std::string& registrar_handle
             , EXCEPTION* ex_ptr, EXCEPTION_SETTER ex_setter)
     {//check registrar
-        Database::Result registrar_res = ctx.get_conn().exec_params(
+        const Database::Result registrar_res = ctx.get_conn().exec_params(
             "SELECT id FROM registrar WHERE handle = UPPER($1::text) FOR SHARE"
             , Database::query_param_list(registrar_handle));
         if (registrar_res.size() == 0)//registrar not found

@@ -11,7 +11,7 @@ namespace LibFred
 {
   namespace Mailer
   {
-    typedef std::map<std::string,std::string> Parameters;
+    typedef std::map<std::string, std::string> Parameters;
     typedef std::vector<std::string> Handles;
     typedef std::vector<TID> Attachments;
     // Exception thrown when mail cannot be send

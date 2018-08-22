@@ -26,86 +26,93 @@
 
 #include <boost/assign/list_of.hpp>
 
-namespace LibFred
+namespace LibFred {
+
+/**
+ * Available statuses for Contact check.
+ * Should be in sync with enum_contact_check_status.handle in db.
+ */
+namespace ContactCheckStatus {
+
+static const std::string ENQUEUE_REQ = "enqueue_req";
+static const std::string ENQUEUED = "enqueued";
+static const std::string RUNNING = "running";
+static const std::string AUTO_TO_BE_DECIDED = "auto_to_be_decided";
+static const std::string AUTO_OK = "auto_ok";
+static const std::string AUTO_FAIL = "auto_fail";
+static const std::string OK = "ok";
+static const std::string FAIL_REQ = "fail_req";
+static const std::string FAIL = "fail";
+static const std::string INVALIDATED = "invalidated";
+
+/**
+ * Check statuses sorted into semantical groups
+ */
+
+inline std::vector<std::string> get_resolution_awaiting()
 {
-    /**
-     * Available statuses for Contact check.
-     * Should be in sync with enum_contact_check_status.handle in db.
-     */
-    namespace ContactCheckStatus
-    {
-        const std::string ENQUEUE_REQ           = "enqueue_req";
-        const std::string ENQUEUED              = "enqueued";
-        const std::string RUNNING               = "running";
-        const std::string AUTO_TO_BE_DECIDED    = "auto_to_be_decided";
-        const std::string AUTO_OK               = "auto_ok";
-        const std::string AUTO_FAIL             = "auto_fail";
-        const std::string OK                    = "ok";
-        const std::string FAIL_REQ              = "fail_req";
-        const std::string FAIL                  = "fail";
-        const std::string INVALIDATED           = "invalidated";
-
-        /**
-         * Check statuses sorted into semantical groups
-         */
-
-        inline std::vector<std::string> get_resolution_awaiting() {
-            return boost::assign::list_of
-                (AUTO_OK)
-                (AUTO_FAIL)
-                (AUTO_TO_BE_DECIDED)
-                (FAIL_REQ)
-                (ENQUEUE_REQ);  // XXX hack - ugly (but simple) way to enable rejection of ENQUEUE_REQ
-        }
-
-        inline std::vector<std::string> get_after_tests_finished() {
-            return boost::assign::list_of
-                (AUTO_OK)
-                (AUTO_FAIL)
-                (AUTO_TO_BE_DECIDED);
-        }
-
-        inline std::vector<std::string> get_tests_updateable() {
-           return boost::assign::list_of
-                (AUTO_OK)
-                (AUTO_FAIL)
-                (AUTO_TO_BE_DECIDED)
-                (FAIL_REQ);
-        }
-
-        inline std::vector<std::string> get_not_yet_resolved() {
-            return boost::assign::list_of
-                (ENQUEUE_REQ)
-                (ENQUEUED)
-                (RUNNING)
-                (AUTO_OK)
-                (AUTO_FAIL)
-                (AUTO_TO_BE_DECIDED)
-                (FAIL_REQ);
-        }
-
-        inline std::vector<std::string> get_possible_resolutions() {
-            return boost::assign::list_of
-                (OK)
-                (FAIL_REQ)
-                (FAIL)
-                (INVALIDATED);
-        }
-
-        inline std::vector<std::string> get_all() {
-            return boost::assign::list_of
-                (ENQUEUE_REQ)
-                (ENQUEUED)
-                (RUNNING)
-                (AUTO_OK)
-                (AUTO_FAIL)
-                (AUTO_TO_BE_DECIDED)
-                (OK)
-                (FAIL_REQ)
-                (FAIL)
-                (INVALIDATED);
-        }
-    }
+    return boost::assign::list_of
+        (AUTO_OK)
+        (AUTO_FAIL)
+        (AUTO_TO_BE_DECIDED)
+        (FAIL_REQ)
+        (ENQUEUE_REQ);  // XXX hack - ugly (but simple) way to enable rejection of ENQUEUE_REQ
 }
-#endif // #include guard end
 
+inline std::vector<std::string> get_after_tests_finished()
+{
+    return boost::assign::list_of
+        (AUTO_OK)
+        (AUTO_FAIL)
+        (AUTO_TO_BE_DECIDED);
+}
+
+inline std::vector<std::string> get_tests_updateable()
+{
+   return boost::assign::list_of
+        (AUTO_OK)
+        (AUTO_FAIL)
+        (AUTO_TO_BE_DECIDED)
+        (FAIL_REQ);
+}
+
+inline std::vector<std::string> get_not_yet_resolved()
+{
+    return boost::assign::list_of
+        (ENQUEUE_REQ)
+        (ENQUEUED)
+        (RUNNING)
+        (AUTO_OK)
+        (AUTO_FAIL)
+        (AUTO_TO_BE_DECIDED)
+        (FAIL_REQ);
+}
+
+inline std::vector<std::string> get_possible_resolutions()
+{
+    return boost::assign::list_of
+        (OK)
+        (FAIL_REQ)
+        (FAIL)
+        (INVALIDATED);
+}
+
+inline std::vector<std::string> get_all()
+{
+    return boost::assign::list_of
+        (ENQUEUE_REQ)
+        (ENQUEUED)
+        (RUNNING)
+        (AUTO_OK)
+        (AUTO_FAIL)
+        (AUTO_TO_BE_DECIDED)
+        (OK)
+        (FAIL_REQ)
+        (FAIL)
+        (INVALIDATED);
+}
+
+}//namespace LibFred::ContactCheckStatus
+}//namespace LibFred
+
+#endif // #include guard end

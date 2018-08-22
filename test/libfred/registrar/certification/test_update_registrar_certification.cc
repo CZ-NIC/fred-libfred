@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(update_registrar_certification_date)
     LibFred::OperationContextCreator ctx;
     valid_until -= boost::gregorian::date_duration(1);
     LibFred::Registrar::UpdateRegistrarCertification(certification_id, valid_until).exec(ctx);
-    Database::Result result = ctx.get_conn().exec_params(
+    const Database::Result result = ctx.get_conn().exec_params(
             "SELECT * FROM registrar_certification "
             "WHERE id = $1::bigint",
             Database::query_param_list(certification_id));
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(update_registrar_certification_score_file)
     LibFred::OperationContextCreator ctx;
     const int new_score = 2;
     LibFred::Registrar::UpdateRegistrarCertification(certification_id, new_score, file_id).exec(ctx);
-    Database::Result result = ctx.get_conn().exec_params(
+    const Database::Result result = ctx.get_conn().exec_params(
             "SELECT * FROM registrar_certification "
             "WHERE id = $1::bigint",
             Database::query_param_list(certification_id));

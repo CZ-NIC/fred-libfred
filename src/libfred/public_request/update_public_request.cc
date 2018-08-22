@@ -235,7 +235,7 @@ UpdatePublicRequest::Result UpdatePublicRequest::update(OperationContext &_ctx,
     if (bad_params.throw_me()) {
         BOOST_THROW_EXCEPTION(bad_params);
     }
-    const std::string to_set = sql_set.str().substr(0, sql_set.str().length() - 1);//last ',' removed
+    const std::string to_set = sql_set.str().substr(0, sql_set.str().length() - 1);//last ', ' removed
     const Database::Result res = _ctx.get_conn().exec_params(
         "WITH public_request_before_update AS ("
             "SELECT pr.id AS id,eprs.name AS status "

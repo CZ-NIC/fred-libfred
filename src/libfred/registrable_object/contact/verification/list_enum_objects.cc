@@ -31,7 +31,7 @@ namespace LibFred
         try {
             LibFred::OperationContextCreator ctx;
 
-            Database::Result names_res = ctx.get_conn().exec_params(
+            const Database::Result names_res = ctx.get_conn().exec_params(
                 "SELECT "
                 "   handle, name, description "
                 "   FROM enum_contact_test_status AS status "
@@ -67,7 +67,7 @@ namespace LibFred
         try {
             LibFred::OperationContextCreator ctx;
 
-            Database::Result names_res = ctx.get_conn().exec_params(
+            const Database::Result names_res = ctx.get_conn().exec_params(
                 "SELECT "
                 "   handle, name, description "
                 "   FROM enum_contact_check_status "
@@ -133,7 +133,7 @@ namespace LibFred
                 "           OR enum_c_t_loc.lang IS NULL ) ";
 
 
-            Database::Result names_res = ctx.get_conn().exec_params(
+            const Database::Result names_res = ctx.get_conn().exec_params(
                 query,
                 params
             );
@@ -163,7 +163,7 @@ namespace LibFred
         try {
             LibFred::OperationContextCreator ctx;
 
-            Database::Result names_res = ctx.get_conn().exec_params(
+            const Database::Result names_res = ctx.get_conn().exec_params(
                 "SELECT "
                 "   handle, name, description "
                 "   FROM enum_contact_testsuite "

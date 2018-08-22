@@ -20,12 +20,6 @@
  *  @file
  *  merge contact tests with separated fixture
  */
-#include <boost/test/unit_test.hpp>
-#include <string>
-#include <vector>
-#include <map>
-#include <boost/lexical_cast.hpp>
-
 #include "util/util.hh"
 #include "util/printable.hh"
 #include "util/map_at.hh"
@@ -33,6 +27,13 @@
 #include "test/setup/fixtures.hh"
 
 #include "test/libfred/contact/test_merge_contact_fixture.hh"
+
+#include <boost/test/unit_test.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include <string>
+#include <vector>
+#include <map>
 
 namespace Test {
 namespace LibFred {
@@ -54,8 +55,8 @@ struct merge_fixture : MergeContactAutoProc::mergeable_contact_grps_with_linked_
     merge_fixture()
     : MergeContactAutoProc::mergeable_contact_grps_with_linked_objects_and_blocking_states(
         ""//empty db name suffix
-        ,1//mergeable_contact_group_count
-        ,Util::set_of<unsigned>(0)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(20)//linked_object_cases
+        , 1//mergeable_contact_group_count
+        , Util::set_of<unsigned>(0)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(20)//linked_object_cases
         , Util::vector_of<std::set<std::string> > (std::set<std::string>())(std::set<std::string>())//contact_state_combinations//stateless states 0, 1
         , Util::vector_of<std::set<std::string> > (std::set<std::string>())//linked_object_state_combinations
         , init_linked_object_quantities()//linked_object_quantities
@@ -99,7 +100,7 @@ BOOST_FIXTURE_TEST_CASE(test_no_linked_objects_no_states, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -109,32 +110,32 @@ BOOST_FIXTURE_TEST_CASE(test_no_linked_objects_no_states, merge_fixture)
 
     //src contact
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     //dst contact
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no other changes
     BOOST_CHECK(diff_nssets().empty());
@@ -186,7 +187,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -195,32 +196,32 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     std::map<std::string, ::LibFred::InfoNssetDiff> changed_nssets = diff_nssets();
     BOOST_CHECK(changed_nssets.size() == 1); //updated nsset, tech contact changed from src contact to dst contact
@@ -234,24 +235,24 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset, merge_fixture)
     BOOST_TEST_MESSAGE(nsset_handle);
 
     BOOST_TEST_MESSAGE(std::string("changed nsset fields: (\"")
-            + Util::format_container(map_at(changed_nssets,nsset_handle).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).changed_fields()
+            + Util::format_container(map_at(changed_nssets, nsset_handle).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).changed_fields()
         == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).historyid.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.isset());
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().first.size() == 1);
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().first.size() == 1);
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_nssets,nsset_handle).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_nssets, nsset_handle).update_time.get_value().second.isnull());
 
     //no other changes
     BOOST_CHECK(diff_keysets().empty());
@@ -303,7 +304,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_with_added_tech_contact, merge_fixture
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -312,31 +313,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_with_added_tech_contact, merge_fixture
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     std::map<std::string, ::LibFred::InfoNssetDiff> changed_nssets = diff_nssets();
 
@@ -357,28 +358,28 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_with_added_tech_contact, merge_fixture
     BOOST_TEST_MESSAGE(nsset1_handle);
 
     BOOST_TEST_MESSAGE(std::string("changed nsset fields: (\"")
-            + Util::format_container(map_at(changed_nssets,nsset1_handle).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).changed_fields()
+            + Util::format_container(map_at(changed_nssets, nsset1_handle).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).changed_fields()
         == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).historyid.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).tech_contacts.isset());
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).tech_contacts.get_value().first.size() == 2);
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).tech_contacts.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).tech_contacts.get_value().first.size() == 2);
 
-    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_nssets,nsset1_handle).tech_contacts.get_value().first.at(0).handle)
-        (map_at(changed_nssets,nsset1_handle).tech_contacts.get_value().first.at(1).handle)
+    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_nssets, nsset1_handle).tech_contacts.get_value().first.at(0).handle)
+        (map_at(changed_nssets, nsset1_handle).tech_contacts.get_value().first.at(1).handle)
         == Util::set_of<std::string> (contact_handle_src)(contact_handle_dst));
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).tech_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).tech_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_nssets,nsset1_handle).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_nssets,nsset1_handle).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_nssets, nsset1_handle).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_nssets, nsset1_handle).update_time.get_value().second.isnull());
 
     std::string nsset2_handle= create_nsset_with_tech_contact_handle(
         0//linked_object_state_case
@@ -390,28 +391,28 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_with_added_tech_contact, merge_fixture
     BOOST_TEST_MESSAGE(nsset2_handle);
 
     BOOST_TEST_MESSAGE(std::string("changed nsset fields: (\"")
-            + Util::format_container(map_at(changed_nssets,nsset2_handle).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).changed_fields()
+            + Util::format_container(map_at(changed_nssets, nsset2_handle).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).changed_fields()
         == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).historyid.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).tech_contacts.isset());
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).tech_contacts.get_value().first.size() == 2);
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).tech_contacts.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).tech_contacts.get_value().first.size() == 2);
 
-    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_nssets,nsset2_handle).tech_contacts.get_value().first.at(0).handle)
-        (map_at(changed_nssets,nsset2_handle).tech_contacts.get_value().first.at(1).handle)
+    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_nssets, nsset2_handle).tech_contacts.get_value().first.at(0).handle)
+        (map_at(changed_nssets, nsset2_handle).tech_contacts.get_value().first.at(1).handle)
         == Util::set_of<std::string> (contact_handle_src)(contact_handle_dst));
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).tech_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).tech_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_nssets,nsset2_handle).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_nssets,nsset2_handle).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_nssets, nsset2_handle).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_nssets, nsset2_handle).update_time.get_value().second.isnull());
 
     //no other changes
     BOOST_CHECK(diff_keysets().empty());
@@ -462,7 +463,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -471,31 +472,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no nsset changes
     BOOST_CHECK(diff_nssets().empty());
@@ -513,24 +514,24 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset, merge_fixture)
     BOOST_TEST_MESSAGE(keyset_handle);
 
     BOOST_TEST_MESSAGE(std::string("changed keyset fields: (\"")
-        + Util::format_container(map_at(changed_keysets,keyset_handle).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).changed_fields()
+        + Util::format_container(map_at(changed_keysets, keyset_handle).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).changed_fields()
         == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).historyid.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.isset());
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().first.size() == 1);
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().first.size() == 1);
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_keysets,keyset_handle).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_keysets, keyset_handle).update_time.get_value().second.isnull());
 
     //no other changes
     BOOST_CHECK(diff_domains().empty());
@@ -581,7 +582,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_with_added_tech_contact, merge_fixtur
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -590,31 +591,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_with_added_tech_contact, merge_fixtur
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no nsset changes
     BOOST_CHECK(diff_nssets().empty());
@@ -638,28 +639,28 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_with_added_tech_contact, merge_fixtur
     BOOST_TEST_MESSAGE(keyset1_handle);
 
     BOOST_TEST_MESSAGE(std::string("changed keyset fields: (\"")
-        + Util::format_container(map_at(changed_keysets,keyset1_handle).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).changed_fields()
+        + Util::format_container(map_at(changed_keysets, keyset1_handle).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).changed_fields()
         == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).historyid.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).tech_contacts.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).tech_contacts.isset());
 
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).tech_contacts.get_value().first.size() == 2);
-    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_keysets,keyset1_handle).tech_contacts.get_value().first.at(0).handle)
-        (map_at(changed_keysets,keyset1_handle).tech_contacts.get_value().first.at(1).handle)
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).tech_contacts.get_value().first.size() == 2);
+    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_keysets, keyset1_handle).tech_contacts.get_value().first.at(0).handle)
+        (map_at(changed_keysets, keyset1_handle).tech_contacts.get_value().first.at(1).handle)
         == Util::set_of<std::string> (contact_handle_src)(contact_handle_dst));
 
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).tech_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).tech_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_keysets,keyset1_handle).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_keysets, keyset1_handle).update_time.get_value().second.isnull());
 
 
     std::string keyset2_handle= create_keyset_with_tech_contact_handle(
@@ -672,27 +673,27 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_with_added_tech_contact, merge_fixtur
     BOOST_TEST_MESSAGE(keyset2_handle);
 
     BOOST_TEST_MESSAGE(std::string("changed keyset fields: (\"")
-        + Util::format_container(map_at(changed_keysets,keyset2_handle).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).changed_fields()
+        + Util::format_container(map_at(changed_keysets, keyset2_handle).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).changed_fields()
         == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).historyid.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).tech_contacts.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).tech_contacts.isset());
 
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).tech_contacts.get_value().first.size() == 2);
-    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_keysets,keyset2_handle).tech_contacts.get_value().first.at(0).handle)
-        (map_at(changed_keysets,keyset2_handle).tech_contacts.get_value().first.at(1).handle)
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).tech_contacts.get_value().first.size() == 2);
+    BOOST_CHECK(Util::set_of<std::string> (map_at(changed_keysets, keyset2_handle).tech_contacts.get_value().first.at(0).handle)
+        (map_at(changed_keysets, keyset2_handle).tech_contacts.get_value().first.at(1).handle)
         == Util::set_of<std::string> (contact_handle_src)(contact_handle_dst));
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).tech_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).tech_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_keysets,keyset1_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_keysets, keyset1_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_keysets,keyset2_handle).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_keysets,keyset2_handle).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_keysets, keyset2_handle).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_keysets, keyset2_handle).update_time.get_value().second.isnull());
 
     //no other changes
     BOOST_CHECK(diff_domains().empty());
@@ -742,7 +743,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_owner, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -751,31 +752,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_owner, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no nsset changes
     BOOST_CHECK(diff_nssets().empty());
@@ -796,22 +797,22 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_owner, merge_fixture)
     BOOST_TEST_MESSAGE(fqdn);
 
     BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-        + Util::format_container(map_at(changed_domains,fqdn).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_domains,fqdn).changed_fields()
+        + Util::format_container(map_at(changed_domains, fqdn).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_domains, fqdn).changed_fields()
         == Util::set_of<std::string>("historyid")("registrant")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).historyid.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).registrant.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn).registrant.get_value().first.handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_domains,fqdn).registrant.get_value().second.handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_domains, fqdn).registrant.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn).registrant.get_value().first.handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_domains, fqdn).registrant.get_value().second.handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_domains,fqdn).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_domains, fqdn).update_time.get_value().second.isnull());
 
     //no registrar changes
     BOOST_CHECK(diff_registrars().empty());
@@ -860,7 +861,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -869,31 +870,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no nsset changes
     BOOST_CHECK(diff_nssets().empty());
@@ -915,22 +916,22 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin, merge_fixture)
     BOOST_TEST_MESSAGE(fqdn);
 
     BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-        + Util::format_container(map_at(changed_domains,fqdn).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_domains,fqdn).changed_fields()
+        + Util::format_container(map_at(changed_domains, fqdn).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_domains, fqdn).changed_fields()
         == Util::set_of<std::string>("admin_contacts")("historyid")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).historyid.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).admin_contacts.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn).admin_contacts.get_value().first.at(0).handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_domains,fqdn).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_domains, fqdn).admin_contacts.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn).admin_contacts.get_value().first.at(0).handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_domains, fqdn).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_domains,fqdn).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_domains, fqdn).update_time.get_value().second.isnull());
 
     //no registrar changes
     BOOST_CHECK(diff_registrars().empty());
@@ -980,7 +981,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_5, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -989,31 +990,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_5, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     std::map<std::string, ::LibFred::InfoNssetDiff> changed_nssets = diff_nssets();
     BOOST_CHECK(changed_nssets.size() == nsset_quantity); //updated nsset, tech contact changed from src contact to dst contact
@@ -1028,24 +1029,24 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_5, merge_fixture)
         );
         BOOST_TEST_MESSAGE(nsset_handle);
         BOOST_TEST_MESSAGE(std::string("changed nsset fields: (\"")
-                + Util::format_container(map_at(changed_nssets,nsset_handle).changed_fields(), "\")(\"") + "\")");
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).changed_fields()
+                + Util::format_container(map_at(changed_nssets, nsset_handle).changed_fields(), "\")(\"") + "\")");
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).changed_fields()
             == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).historyid.isset());
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).historyid.isset());
 
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.isset());
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().first.size() == 1);
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().second.size() == 1);
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.isset());
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().first.size() == 1);
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().second.size() == 1);
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.isset());
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.get_value().first.isnull());
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.isset());
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.get_value().first.isnull());
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-        BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_time.get_value().first.isnull());
-        BOOST_CHECK(!map_at(changed_nssets,nsset_handle).update_time.get_value().second.isnull());
+        BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_time.get_value().first.isnull());
+        BOOST_CHECK(!map_at(changed_nssets, nsset_handle).update_time.get_value().second.isnull());
     }
 
     //no other changes
@@ -1098,7 +1099,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_5, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -1107,31 +1108,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_5, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no nsset changes
     BOOST_CHECK(diff_nssets().empty());
@@ -1151,24 +1152,24 @@ BOOST_FIXTURE_TEST_CASE(test_linked_keyset_5, merge_fixture)
         BOOST_TEST_MESSAGE(keyset_handle);
 
         BOOST_TEST_MESSAGE(std::string("changed keyset fields: (\"")
-            + Util::format_container(map_at(changed_keysets,keyset_handle).changed_fields(), "\")(\"") + "\")");
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).changed_fields()
+            + Util::format_container(map_at(changed_keysets, keyset_handle).changed_fields(), "\")(\"") + "\")");
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).changed_fields()
             == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).historyid.isset());
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).historyid.isset());
 
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.isset());
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().first.size() == 1);
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().second.size() == 1);
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.isset());
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().first.size() == 1);
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().second.size() == 1);
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.isset());
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.get_value().first.isnull());
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.isset());
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.get_value().first.isnull());
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-        BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_time.get_value().first.isnull());
-        BOOST_CHECK(!map_at(changed_keysets,keyset_handle).update_time.get_value().second.isnull());
+        BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_time.get_value().first.isnull());
+        BOOST_CHECK(!map_at(changed_keysets, keyset_handle).update_time.get_value().second.isnull());
     }
     //no other changes
     BOOST_CHECK(diff_domains().empty());
@@ -1219,7 +1220,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_owner_5, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -1228,31 +1229,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_owner_5, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no nsset changes
     BOOST_CHECK(diff_nssets().empty());
@@ -1275,22 +1276,22 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_owner_5, merge_fixture)
         BOOST_TEST_MESSAGE(fqdn);
 
         BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-            + Util::format_container(map_at(changed_domains,fqdn).changed_fields(), "\")(\"") + "\")");
-        BOOST_CHECK(map_at(changed_domains,fqdn).changed_fields()
+            + Util::format_container(map_at(changed_domains, fqdn).changed_fields(), "\")(\"") + "\")");
+        BOOST_CHECK(map_at(changed_domains, fqdn).changed_fields()
             == Util::set_of<std::string>("historyid")("registrant")("update_registrar_handle")("update_time"));
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).historyid.isset());
+        BOOST_CHECK(map_at(changed_domains, fqdn).historyid.isset());
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).registrant.isset());
-        BOOST_CHECK(map_at(changed_domains,fqdn).registrant.get_value().first.handle == contact_handle_src);
-        BOOST_CHECK(map_at(changed_domains,fqdn).registrant.get_value().second.handle == contact_handle_dst);
+        BOOST_CHECK(map_at(changed_domains, fqdn).registrant.isset());
+        BOOST_CHECK(map_at(changed_domains, fqdn).registrant.get_value().first.handle == contact_handle_src);
+        BOOST_CHECK(map_at(changed_domains, fqdn).registrant.get_value().second.handle == contact_handle_dst);
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.isset());
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().first.isnull());
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.isset());
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().first.isnull());
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_time.get_value().first.isnull());
-        BOOST_CHECK(!map_at(changed_domains,fqdn).update_time.get_value().second.isnull());
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_time.get_value().first.isnull());
+        BOOST_CHECK(!map_at(changed_domains, fqdn).update_time.get_value().second.isnull());
     }
     //no registrar changes
     BOOST_CHECK(diff_registrars().empty());
@@ -1340,7 +1341,7 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin_5, merge_fixture)
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -1349,31 +1350,31 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin_5, merge_fixture)
     BOOST_CHECK(changed_contacts.size() == 2); //deleted src contact, updated dst contact authinfo
 
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no nsset changes
     BOOST_CHECK(diff_nssets().empty());
@@ -1396,22 +1397,22 @@ BOOST_FIXTURE_TEST_CASE(test_linked_domain_via_admin_5, merge_fixture)
         BOOST_TEST_MESSAGE(fqdn);
 
         BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-            + Util::format_container(map_at(changed_domains,fqdn).changed_fields(), "\")(\"") + "\")");
-        BOOST_CHECK(map_at(changed_domains,fqdn).changed_fields()
+            + Util::format_container(map_at(changed_domains, fqdn).changed_fields(), "\")(\"") + "\")");
+        BOOST_CHECK(map_at(changed_domains, fqdn).changed_fields()
             == Util::set_of<std::string>("admin_contacts")("historyid")("update_registrar_handle")("update_time"));
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).historyid.isset());
+        BOOST_CHECK(map_at(changed_domains, fqdn).historyid.isset());
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).admin_contacts.isset());
-        BOOST_CHECK(map_at(changed_domains,fqdn).admin_contacts.get_value().first.at(0).handle == contact_handle_src);
-        BOOST_CHECK(map_at(changed_domains,fqdn).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
+        BOOST_CHECK(map_at(changed_domains, fqdn).admin_contacts.isset());
+        BOOST_CHECK(map_at(changed_domains, fqdn).admin_contacts.get_value().first.at(0).handle == contact_handle_src);
+        BOOST_CHECK(map_at(changed_domains, fqdn).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.isset());
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().first.isnull());
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.isset());
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().first.isnull());
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-        BOOST_CHECK(map_at(changed_domains,fqdn).update_time.get_value().first.isnull());
-        BOOST_CHECK(!map_at(changed_domains,fqdn).update_time.get_value().second.isnull());
+        BOOST_CHECK(map_at(changed_domains, fqdn).update_time.get_value().first.isnull());
+        BOOST_CHECK(!map_at(changed_domains, fqdn).update_time.get_value().second.isnull());
     }
     //no registrar changes
     BOOST_CHECK(diff_registrars().empty());
@@ -1495,42 +1496,42 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
                 ctx.commit_transaction();
                 BOOST_TEST_MESSAGE(merge_data);
         }
-        catch(boost::exception& ex)
+        catch (boost::exception& ex)
         {
             BOOST_ERROR(boost::diagnostic_information(ex));
         }
 
         std::map<std::string, ::LibFred::InfoContactDiff> changed_contacts = diff_contacts();
 
-        //accumulated changed contacts 2,4,8,...
-        BOOST_CHECK(changed_contacts.size() == static_cast<std::size_t>(2+2*(loq_ci - linked_object_quantities.begin()))); //deleted src contact, updated dst contact authinfo
+        //accumulated changed contacts 2, 4, 8, ...
+        BOOST_CHECK_EQUAL(changed_contacts.size(), static_cast<std::size_t>(2 + 2 * (loq_ci - linked_object_quantities.begin()))); //deleted src contact, updated dst contact authinfo
 
         BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-            + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+            + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-        BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+        BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
         BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-            + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+            + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
             == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-        BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+        BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-                != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+                != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-        BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+        BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
         std::map<std::string, ::LibFred::InfoNssetDiff> changed_nssets = diff_nssets();
 
@@ -1547,24 +1548,24 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
             BOOST_TEST_MESSAGE(nsset_handle);
 
             BOOST_TEST_MESSAGE(std::string("changed nsset fields: (\"")
-                    + Util::format_container(map_at(changed_nssets,nsset_handle).changed_fields(), "\")(\"") + "\")");
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).changed_fields()
+                    + Util::format_container(map_at(changed_nssets, nsset_handle).changed_fields(), "\")(\"") + "\")");
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).changed_fields()
                 == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).historyid.isset());
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).historyid.isset());
 
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.isset());
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().first.size() == 1);
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().second.size() == 1);
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.isset());
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().first.size() == 1);
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().second.size() == 1);
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.isset());
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.get_value().first.isnull());
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.isset());
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.get_value().first.isnull());
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-            BOOST_CHECK(map_at(changed_nssets,nsset_handle).update_time.get_value().first.isnull());
-            BOOST_CHECK(!map_at(changed_nssets,nsset_handle).update_time.get_value().second.isnull());
+            BOOST_CHECK(map_at(changed_nssets, nsset_handle).update_time.get_value().first.isnull());
+            BOOST_CHECK(!map_at(changed_nssets, nsset_handle).update_time.get_value().second.isnull());
         }
 
         std::map<std::string, ::LibFred::InfoKeysetDiff> changed_keysets = diff_keysets();
@@ -1581,24 +1582,24 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
             BOOST_TEST_MESSAGE(keyset_handle);
 
             BOOST_TEST_MESSAGE(std::string("changed keyset fields: (\"")
-                + Util::format_container(map_at(changed_keysets,keyset_handle).changed_fields(), "\")(\"") + "\")");
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).changed_fields()
+                + Util::format_container(map_at(changed_keysets, keyset_handle).changed_fields(), "\")(\"") + "\")");
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).changed_fields()
                 == Util::set_of<std::string>("historyid")("tech_contacts")("update_registrar_handle")("update_time"));
 
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).historyid.isset());
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).historyid.isset());
 
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.isset());
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().first.size() == 1);
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().second.size() == 1);
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.isset());
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().first.size() == 1);
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().first.at(0).handle == contact_handle_src);
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().second.size() == 1);
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).tech_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.isset());
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.get_value().first.isnull());
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.isset());
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.get_value().first.isnull());
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-            BOOST_CHECK(map_at(changed_keysets,keyset_handle).update_time.get_value().first.isnull());
-            BOOST_CHECK(!map_at(changed_keysets,keyset_handle).update_time.get_value().second.isnull());
+            BOOST_CHECK(map_at(changed_keysets, keyset_handle).update_time.get_value().first.isnull());
+            BOOST_CHECK(!map_at(changed_keysets, keyset_handle).update_time.get_value().second.isnull());
         }
 
         std::map<std::string, ::LibFred::InfoDomainDiff> changed_domains = diff_domains();
@@ -1615,22 +1616,22 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
             BOOST_TEST_MESSAGE(owner_fqdn);
 
             BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-                + Util::format_container(map_at(changed_domains,owner_fqdn).changed_fields(), "\")(\"") + "\")");
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).changed_fields()
+                + Util::format_container(map_at(changed_domains, owner_fqdn).changed_fields(), "\")(\"") + "\")");
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).changed_fields()
                 == Util::set_of<std::string>("historyid")("registrant")("update_registrar_handle")("update_time"));
 
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).historyid.isset());
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).historyid.isset());
 
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).registrant.isset());
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).registrant.get_value().first.handle == contact_handle_src);
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).registrant.get_value().second.handle == contact_handle_dst);
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).registrant.isset());
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).registrant.get_value().first.handle == contact_handle_src);
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).registrant.get_value().second.handle == contact_handle_dst);
 
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).update_registrar_handle.isset());
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).update_registrar_handle.get_value().first.isnull());
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).update_registrar_handle.isset());
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).update_registrar_handle.get_value().first.isnull());
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-            BOOST_CHECK(map_at(changed_domains,owner_fqdn).update_time.get_value().first.isnull());
-            BOOST_CHECK(!map_at(changed_domains,owner_fqdn).update_time.get_value().second.isnull());
+            BOOST_CHECK(map_at(changed_domains, owner_fqdn).update_time.get_value().first.isnull());
+            BOOST_CHECK(!map_at(changed_domains, owner_fqdn).update_time.get_value().second.isnull());
 
             std::string admin_fqdn = create_domain_with_admin_contact_fqdn(
                 0//linked_object_state_case
@@ -1642,22 +1643,22 @@ BOOST_FIXTURE_TEST_CASE(test_linked_nsset_keyset_domain_via_admin_domain_via_own
             BOOST_TEST_MESSAGE(admin_fqdn);
 
             BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-                + Util::format_container(map_at(changed_domains,admin_fqdn).changed_fields(), "\")(\"") + "\")");
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).changed_fields()
+                + Util::format_container(map_at(changed_domains, admin_fqdn).changed_fields(), "\")(\"") + "\")");
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).changed_fields()
                 == Util::set_of<std::string>("admin_contacts")("historyid")("update_registrar_handle")("update_time"));
 
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).admin_contacts.isset());
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).admin_contacts.get_value().first.at(0).handle == contact_handle_src);
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).admin_contacts.isset());
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).admin_contacts.get_value().first.at(0).handle == contact_handle_src);
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).historyid.isset());
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).historyid.isset());
 
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).update_registrar_handle.isset());
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).update_registrar_handle.get_value().first.isnull());
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).update_registrar_handle.isset());
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).update_registrar_handle.get_value().first.isnull());
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-            BOOST_CHECK(map_at(changed_domains,admin_fqdn).update_time.get_value().first.isnull());
-            BOOST_CHECK(!map_at(changed_domains,admin_fqdn).update_time.get_value().second.isnull());
+            BOOST_CHECK(map_at(changed_domains, admin_fqdn).update_time.get_value().first.isnull());
+            BOOST_CHECK(!map_at(changed_domains, admin_fqdn).update_time.get_value().second.isnull());
         }
 
         BOOST_CHECK(diff_registrars().empty());
@@ -1694,7 +1695,7 @@ BOOST_FIXTURE_TEST_CASE(test_non_existing_src_contact, merge_fixture)
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_source_contact_handle());
         BOOST_CHECK(ex.get_unknown_source_contact_handle().compare(contact_handle_src) == 0);
@@ -1754,7 +1755,7 @@ BOOST_FIXTURE_TEST_CASE(test_non_existing_dst_contact, merge_fixture)
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_unknown_destination_contact_handle());
         BOOST_CHECK(ex.get_unknown_destination_contact_handle().compare(contact_handle_dst) == 0);
@@ -1814,7 +1815,7 @@ BOOST_FIXTURE_TEST_CASE(test_different_dst_contact, merge_fixture)
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_contacts_differ());
         BOOST_CHECK(ex.get_contacts_differ().source_handle == contact_handle_src);
@@ -1875,7 +1876,7 @@ BOOST_FIXTURE_TEST_CASE(test_different_src_contact, merge_fixture)
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_contacts_differ());
         BOOST_CHECK(ex.get_contacts_differ().source_handle == contact_handle_src);
@@ -1936,7 +1937,7 @@ BOOST_FIXTURE_TEST_CASE(test_identical_contact, merge_fixture)
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_identical_contacts_handle());
         BOOST_CHECK(ex.get_identical_contacts_handle() == contact_handle_src);
@@ -2001,7 +2002,7 @@ BOOST_FIXTURE_TEST_CASE(test_src_domain_owner_with_admin_to_different_admin, mer
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -2012,33 +2013,33 @@ BOOST_FIXTURE_TEST_CASE(test_src_domain_owner_with_admin_to_different_admin, mer
 
     //src contact
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     //dst contact
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no changes
     BOOST_CHECK(diff_nssets().empty());
@@ -2063,32 +2064,32 @@ BOOST_FIXTURE_TEST_CASE(test_src_domain_owner_with_admin_to_different_admin, mer
     BOOST_TEST_MESSAGE(fqdn1);
 
     BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-        + Util::format_container(map_at(changed_domains,fqdn1).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_domains,fqdn1).changed_fields()
+        + Util::format_container(map_at(changed_domains, fqdn1).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_domains, fqdn1).changed_fields()
         == Util::set_of<std::string>("admin_contacts")("historyid")("registrant")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.get_value().first.size() == 2);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.get_value().first.size() == 2);
 
-    BOOST_CHECK(Util::set_of<std::string>(map_at(changed_domains,fqdn1).admin_contacts.get_value().first.at(0).handle)
-        (map_at(changed_domains,fqdn1).admin_contacts.get_value().first.at(1).handle)
+    BOOST_CHECK(Util::set_of<std::string>(map_at(changed_domains, fqdn1).admin_contacts.get_value().first.at(0).handle)
+        (map_at(changed_domains, fqdn1).admin_contacts.get_value().first.at(1).handle)
         == Util::set_of<std::string>(contact_handle_src)(contact_handle_dst));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).historyid.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).registrant.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).registrant.get_value().first.handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_domains,fqdn1).registrant.get_value().second.handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).registrant.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).registrant.get_value().first.handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).registrant.get_value().second.handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_domains,fqdn1).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_domains, fqdn1).update_time.get_value().second.isnull());
 
     std::string fqdn2= create_domain_with_owner_contact_fqdn(
         0//linked_object_state_case
@@ -2100,34 +2101,34 @@ BOOST_FIXTURE_TEST_CASE(test_src_domain_owner_with_admin_to_different_admin, mer
     BOOST_TEST_MESSAGE(fqdn2);
 
     BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-        + Util::format_container(map_at(changed_domains,fqdn2).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_domains,fqdn2).changed_fields()
+        + Util::format_container(map_at(changed_domains, fqdn2).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_domains, fqdn2).changed_fields()
         == Util::set_of<std::string>("admin_contacts")("historyid")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn2).admin_contacts.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn2).admin_contacts.get_value().first.size() == 2);
+    BOOST_CHECK(map_at(changed_domains, fqdn2).admin_contacts.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn2).admin_contacts.get_value().first.size() == 2);
 
-    BOOST_CHECK(Util::set_of<std::string>(map_at(changed_domains,fqdn2).admin_contacts.get_value().first.at(0).handle)
-        (map_at(changed_domains,fqdn2).admin_contacts.get_value().first.at(1).handle)
+    BOOST_CHECK(Util::set_of<std::string>(map_at(changed_domains, fqdn2).admin_contacts.get_value().first.at(0).handle)
+        (map_at(changed_domains, fqdn2).admin_contacts.get_value().first.at(1).handle)
         == Util::set_of<std::string>(contact_handle_src)(contact_handle_dst));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn2).admin_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_domains,fqdn2).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_domains, fqdn2).admin_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_domains, fqdn2).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn2).historyid.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn2).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_domains,fqdn2).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn2).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_domains,fqdn2).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_domains, fqdn2).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn2).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn2).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn2).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_domains,fqdn2).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn2).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_domains, fqdn2).update_time.get_value().second.isnull());
 
     //no registrar changes
     BOOST_CHECK(diff_registrars().empty());
 }
 
-BOOST_AUTO_TEST_SUITE_END(); // Test::LibFred::MergeContact::ObjectCombinations
+BOOST_AUTO_TEST_SUITE_END()//ObjectCombinations
 
 /**
  * @namespace StateCombinations
@@ -2145,8 +2146,8 @@ struct merge_with_states_fixture : MergeContactAutoProc::mergeable_contact_grps_
     merge_with_states_fixture()
     : MergeContactAutoProc::mergeable_contact_grps_with_linked_objects_and_blocking_states(
         ""//empty db name suffix
-        ,1//mergeable_contact_group_count
-        ,Util::set_of<unsigned>(15)(18)(19)(20)//linked_object_cases
+        , 1//mergeable_contact_group_count
+        , Util::set_of<unsigned>(15)(18)(19)(20)//linked_object_cases
         , init_set_of_contact_state_combinations()//contact_state_combinations//stateless states 0, 1
         , init_set_of_linked_object_state_combinations()//linked_object_state_combinations
         , init_linked_object_quantities()//linked_object_quantities
@@ -2230,7 +2231,7 @@ BOOST_FIXTURE_TEST_CASE(test_invalid_src_mojeid_contact, merge_with_states_fixtu
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_src_contact_invalid());
         BOOST_CHECK(ex.get_src_contact_invalid() == contact_handle_src);
@@ -2307,7 +2308,7 @@ BOOST_FIXTURE_TEST_CASE(test_invalid_src_serverblocked_contact, merge_with_state
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_src_contact_invalid());
         BOOST_CHECK(ex.get_src_contact_invalid() == contact_handle_src);
@@ -2384,7 +2385,7 @@ BOOST_FIXTURE_TEST_CASE(test_invalid_src_deleteprohibited_contact, merge_with_st
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_src_contact_invalid());
         BOOST_CHECK(ex.get_src_contact_invalid() == contact_handle_src);
@@ -2462,7 +2463,7 @@ BOOST_FIXTURE_TEST_CASE(test_invalid_dst_serverblocked_contact, merge_with_state
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_dst_contact_invalid());
         BOOST_CHECK(ex.get_dst_contact_invalid() == contact_handle_dst);
@@ -2538,7 +2539,7 @@ BOOST_FIXTURE_TEST_CASE(test_src_contact_linked_domain_via_admin_serverblocked, 
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_object_blocked());
         BOOST_CHECK(ex.get_object_blocked() == create_domain_with_admin_contact_fqdn(
@@ -2620,7 +2621,7 @@ BOOST_FIXTURE_TEST_CASE(test_src_contact_linked_domain_via_owner_serverblocked, 
             ctx.commit_transaction();
             BOOST_ERROR(merge_data);
     }
-    catch(::LibFred::MergeContact::Exception& ex)
+    catch (::LibFred::MergeContact::Exception& ex)
     {
         BOOST_CHECK(ex.is_set_object_blocked());
         BOOST_CHECK(ex.get_object_blocked() == create_domain_with_owner_contact_fqdn(
@@ -2690,7 +2691,7 @@ BOOST_FIXTURE_TEST_CASE(test_src_updproh_domain_owner_and_admin_to_other_admin, 
             ctx.commit_transaction();
             BOOST_TEST_MESSAGE(merge_data);
     }
-    catch(boost::exception& ex)
+    catch (boost::exception& ex)
     {
         BOOST_ERROR(boost::diagnostic_information(ex));
     }
@@ -2701,32 +2702,32 @@ BOOST_FIXTURE_TEST_CASE(test_src_updproh_domain_owner_and_admin_to_other_admin, 
 
     //src contact
     BOOST_TEST_MESSAGE(std::string("changed src contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_src).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
+        + Util::format_container(map_at(changed_contacts, contact_handle_src).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).changed_fields() == Util::set_of<std::string>("delete_time"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_src).delete_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_src).delete_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_src).delete_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_src).delete_time.get_value().second.isnull());
 
     //dst contact
     BOOST_TEST_MESSAGE(std::string("changed dst contact fields: (\"")
-        + Util::format_container(map_at(changed_contacts,contact_handle_dst).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).changed_fields()
+        + Util::format_container(map_at(changed_contacts, contact_handle_dst).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).changed_fields()
         == Util::set_of<std::string>("update_time")("authinfopw")("historyid")("update_registrar_handle"));
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_contacts,contact_handle_dst).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_contacts, contact_handle_dst).update_time.get_value().second.isnull());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().first
-            != map_at(changed_contacts,contact_handle_dst).authinfopw.get_value().second);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().first
+            != map_at(changed_contacts, contact_handle_dst).authinfopw.get_value().second);
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).historyid.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_contacts,contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_contacts, contact_handle_dst).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
     //no changes
     BOOST_CHECK(diff_nssets().empty());
@@ -2751,40 +2752,40 @@ BOOST_FIXTURE_TEST_CASE(test_src_updproh_domain_owner_and_admin_to_other_admin, 
     BOOST_TEST_MESSAGE(fqdn1);
 
     BOOST_TEST_MESSAGE(std::string("changed domain fields: (\"")
-        + Util::format_container(map_at(changed_domains,fqdn1).changed_fields(), "\")(\"") + "\")");
-    BOOST_CHECK(map_at(changed_domains,fqdn1).changed_fields()
+        + Util::format_container(map_at(changed_domains, fqdn1).changed_fields(), "\")(\"") + "\")");
+    BOOST_CHECK(map_at(changed_domains, fqdn1).changed_fields()
         == Util::set_of<std::string>("admin_contacts")("historyid")("registrant")("update_registrar_handle")("update_time"));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.get_value().first.size() == 2);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.get_value().first.size() == 2);
 
-    BOOST_CHECK(Util::set_of<std::string>(map_at(changed_domains,fqdn1).admin_contacts.get_value().first.at(0).handle)
-        (map_at(changed_domains,fqdn1).admin_contacts.get_value().first.at(1).handle)
+    BOOST_CHECK(Util::set_of<std::string>(map_at(changed_domains, fqdn1).admin_contacts.get_value().first.at(0).handle)
+        (map_at(changed_domains, fqdn1).admin_contacts.get_value().first.at(1).handle)
         == Util::set_of<std::string>(contact_handle_src)(contact_handle_dst));
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.get_value().second.size() == 1);
-    BOOST_CHECK(map_at(changed_domains,fqdn1).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.get_value().second.size() == 1);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).admin_contacts.get_value().second.at(0).handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).historyid.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).historyid.isset());
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).registrant.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).registrant.get_value().first.handle == contact_handle_src);
-    BOOST_CHECK(map_at(changed_domains,fqdn1).registrant.get_value().second.handle == contact_handle_dst);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).registrant.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).registrant.get_value().first.handle == contact_handle_src);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).registrant.get_value().second.handle == contact_handle_dst);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_registrar_handle.isset());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_registrar_handle.get_value().first.isnull());
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_registrar_handle.isset());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_registrar_handle.get_value().first.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_registrar_handle.get_value().second.get_value() == registrar_sys_handle);
 
-    BOOST_CHECK(map_at(changed_domains,fqdn1).update_time.get_value().first.isnull());
-    BOOST_CHECK(!map_at(changed_domains,fqdn1).update_time.get_value().second.isnull());
+    BOOST_CHECK(map_at(changed_domains, fqdn1).update_time.get_value().first.isnull());
+    BOOST_CHECK(!map_at(changed_domains, fqdn1).update_time.get_value().second.isnull());
 
     //no registrar changes
     BOOST_CHECK(diff_registrars().empty());
 }
 
-BOOST_AUTO_TEST_SUITE_END(); // Test::LibFred::MergeContact::StateCombinations
+BOOST_AUTO_TEST_SUITE_END()//StateCombinations
 
-} // namespace Test::LibFred::MergeContact
-} // namespace Test::LibFred::Contact
-} // namespace Test::LibFred
-} // namespace Test
+}//namespace Test::LibFred::MergeContact
+}//namespace Test::LibFred::Contact
+}//namespace Test::LibFred
+}//namespace Test

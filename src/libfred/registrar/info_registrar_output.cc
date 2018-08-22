@@ -46,9 +46,9 @@ namespace LibFred
     std::string InfoRegistrarOutput::to_string() const
     {
         return Util::format_data_structure("InfoRegistrarOutput",
-        Util::vector_of<std::pair<std::string,std::string> >
-        (std::make_pair("info_registrar_data",info_registrar_data.to_string()))
-        (std::make_pair("utc_timestamp",boost::lexical_cast<std::string>(utc_timestamp)))
+        Util::vector_of<std::pair<std::string, std::string> >
+        (std::make_pair("info_registrar_data", info_registrar_data.to_string()))
+        (std::make_pair("utc_timestamp", boost::lexical_cast<std::string>(utc_timestamp)))
         );
     }
 

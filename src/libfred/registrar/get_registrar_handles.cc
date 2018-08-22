@@ -60,7 +60,7 @@ namespace Registrar
             Database::QueryParams params;
             params.reserve(excluded_registrar_handles_.size());
 
-            Util::HeadSeparator array_separator ("",",");
+            Util::HeadSeparator array_separator ("", ",");
             std::ostringstream sql;
             sql << "SELECT handle FROM unnest(array[";
 
@@ -73,7 +73,7 @@ namespace Registrar
             sql <<"]::text[]) as excluded_registrar(handle)"
             " WHERE NOT EXISTS (SELECT handle FROM registrar r WHERE r.handle = excluded_registrar.handle)";
 
-            Database::Result not_existing_excluded_registrar_handles_res = ctx.get_conn().exec_params(sql.str(),params);
+            const Database::Result not_existing_excluded_registrar_handles_res = ctx.get_conn().exec_params(sql.str(), params);
 
             if (not_existing_excluded_registrar_handles_res.size() > 0)
             {
@@ -92,7 +92,7 @@ namespace Registrar
         Database::QueryParams params;
         params.reserve(excluded_registrar_handles_.size());
 
-        Util::HeadSeparator where_and ("WHERE","AND");
+        Util::HeadSeparator where_and ("WHERE", "AND");
         std::ostringstream sql;
         sql << "SELECT handle FROM registrar ";
 
@@ -106,7 +106,7 @@ namespace Registrar
 
         if (read_lock_) sql << " FOR SHARE";
 
-        Database::Result registrar_handles_res = ctx.get_conn().exec_params(sql.str(),params);
+        const Database::Result registrar_handles_res = ctx.get_conn().exec_params(sql.str(), params);
         registrar_handles.reserve(registrar_handles_res.size());
         for (Database::Result::size_type i = 0; i < registrar_handles_res.size(); ++i)
         {
