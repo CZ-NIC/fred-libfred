@@ -24,16 +24,18 @@ namespace LibFred {
 namespace Zone {
 
 namespace {
+
 constexpr int seconds_per_hour = 60 * 60;
 
 constexpr int default_ttl_in_seconds = 5 * seconds_per_hour;
-const std::string default_hostmaster = "hostmaster@localhost";
+constexpr const char* const default_hostmaster = "hostmaster@localhost";
 constexpr int default_refresh_in_seconds  = 3 * seconds_per_hour;
 constexpr int default_update_retr_in_seconds = seconds_per_hour;
 constexpr int default_expiry_in_seconds = 2 * 7 * 24 * seconds_per_hour;
 constexpr int default_minimum_in_seconds = 2 * seconds_per_hour;
-const std::string default_ns_fqdn = "localhost";
-}
+constexpr const char* const default_ns_fqdn = "localhost";
+
+}//namespace LibFred::Zone::{anonymous}
 
 CreateZoneSoa::CreateZoneSoa(const std::string& _fqdn)
         : fqdn_(_fqdn)
@@ -84,22 +86,19 @@ CreateZoneSoa& CreateZoneSoa::set_ns_fqdn(const boost::optional<std::string>& _n
 
 unsigned long long CreateZoneSoa::exec(OperationContext& _ctx) const
 {
-    const LibFred::Zone::InfoZoneData zone_info = LibFred::Zone::InfoZone(fqdn_).exec(_ctx);
-
-    const unsigned long long zone_id = LibFred::Zone::get_zone_id(zone_info);
-
-    const Database::Result select_result = _ctx.get_conn().exec_params(
-            // clang-format off
-            "SELECT zone FROM zone_soa WHERE zone=$1::bigint",
-            // clang-format on
-            Database::query_param_list(zone_id));
-    if (select_result.size() > 0)
-    {
-        throw AlreadyExistingZoneSoa();
-    }
-
     try
     {
+        const LibFred::Zone::InfoZoneData zone_info = LibFred::Zone::InfoZone(fqdn_).exec(_ctx);
+
+        const unsigned long long zone_id = LibFred::Zone::get_zone_id(zone_info);
+
+        const bool zone_soa_exists = _ctx.get_conn().exec_params(
+                "SELECT 0 FROM zone_soa WHERE zone=$1::bigint",
+                Database::query_param_list(zone_id)).size() != 0;
+        if (zone_soa_exists)
+        {
+            throw AlreadyExistingZoneSoa();
+        }
         const Database::Result insert_result = _ctx.get_conn().exec_params(
                 // clang-format off
                 "INSERT INTO zone_soa (zone, ttl, hostmaster, refresh, update_retr, expiry, minimum, ns_fqdn) "
@@ -113,14 +112,17 @@ unsigned long long CreateZoneSoa::exec(OperationContext& _ctx) const
                                         (update_retr_.get_value_or(default_update_retr_in_seconds))
                                         (expiry_.get_value_or(default_expiry_in_seconds))
                                         (minimum_.get_value_or(default_minimum_in_seconds))
-                                        (ns_fqdn_.get_value_or(default_ns_fqdn))
-                );
+                                        (ns_fqdn_.get_value_or(default_ns_fqdn)));
 
         if (insert_result.size() == 1)
         {
             const unsigned long long id = static_cast<unsigned long long>(insert_result[0][0]);
             return id;
         }
+    }
+    catch (const AlreadyExistingZoneSoa&)
+    {
+        throw;
     }
     catch (const std::exception&)
     {
@@ -129,5 +131,5 @@ unsigned long long CreateZoneSoa::exec(OperationContext& _ctx) const
     throw CreateZoneSoaException();
 }
 
-} // namespace LibFred::Zone
-} // namespace LibFred
+}//namespace LibFred::Zone
+}//namespace LibFred

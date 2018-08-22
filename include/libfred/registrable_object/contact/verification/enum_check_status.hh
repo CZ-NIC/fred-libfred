@@ -24,7 +24,8 @@
 #ifndef ENUM_CHECK_STATUS_HH_531FE5928B7C498E8904ECE61BD94BAD
 #define ENUM_CHECK_STATUS_HH_531FE5928B7C498E8904ECE61BD94BAD
 
-#include <boost/assign/list_of.hpp>
+#include <string>
+#include <vector>
 
 namespace LibFred {
 
@@ -51,68 +52,62 @@ static const std::string INVALIDATED = "invalidated";
 
 inline std::vector<std::string> get_resolution_awaiting()
 {
-    return boost::assign::list_of
-        (AUTO_OK)
-        (AUTO_FAIL)
-        (AUTO_TO_BE_DECIDED)
-        (FAIL_REQ)
-        (ENQUEUE_REQ);  // XXX hack - ugly (but simple) way to enable rejection of ENQUEUE_REQ
+    return { AUTO_OK,
+             AUTO_FAIL,
+             AUTO_TO_BE_DECIDED,
+             FAIL_REQ,
+             ENQUEUE_REQ };  // XXX hack - ugly (but simple) way to enable rejection of ENQUEUE_REQ
 }
 
 inline std::vector<std::string> get_after_tests_finished()
 {
-    return boost::assign::list_of
-        (AUTO_OK)
-        (AUTO_FAIL)
-        (AUTO_TO_BE_DECIDED);
+    return { AUTO_OK,
+             AUTO_FAIL,
+             AUTO_TO_BE_DECIDED };
 }
 
 inline std::vector<std::string> get_tests_updateable()
 {
-   return boost::assign::list_of
-        (AUTO_OK)
-        (AUTO_FAIL)
-        (AUTO_TO_BE_DECIDED)
-        (FAIL_REQ);
+    return { AUTO_OK,
+             AUTO_FAIL,
+             AUTO_TO_BE_DECIDED,
+             FAIL_REQ };
 }
 
 inline std::vector<std::string> get_not_yet_resolved()
 {
-    return boost::assign::list_of
-        (ENQUEUE_REQ)
-        (ENQUEUED)
-        (RUNNING)
-        (AUTO_OK)
-        (AUTO_FAIL)
-        (AUTO_TO_BE_DECIDED)
-        (FAIL_REQ);
+    return { ENQUEUE_REQ,
+             ENQUEUED,
+             RUNNING,
+             AUTO_OK,
+             AUTO_FAIL,
+             AUTO_TO_BE_DECIDED,
+             FAIL_REQ };
 }
 
 inline std::vector<std::string> get_possible_resolutions()
 {
-    return boost::assign::list_of
-        (OK)
-        (FAIL_REQ)
-        (FAIL)
-        (INVALIDATED);
+    return { OK,
+             FAIL_REQ,
+             FAIL,
+             INVALIDATED };
 }
 
 inline std::vector<std::string> get_all()
 {
-    return boost::assign::list_of
-        (ENQUEUE_REQ)
-        (ENQUEUED)
-        (RUNNING)
-        (AUTO_OK)
-        (AUTO_FAIL)
-        (AUTO_TO_BE_DECIDED)
-        (OK)
-        (FAIL_REQ)
-        (FAIL)
-        (INVALIDATED);
+    return { ENQUEUE_REQ,
+             ENQUEUED,
+             RUNNING,
+             AUTO_OK,
+             AUTO_FAIL,
+             AUTO_TO_BE_DECIDED,
+             OK,
+             FAIL_REQ,
+             FAIL,
+             INVALIDATED };
 }
 
 }//namespace LibFred::ContactCheckStatus
 }//namespace LibFred
 
-#endif // #include guard end
+#endif//ENUM_CHECK_STATUS_HH_531FE5928B7C498E8904ECE61BD94BAD

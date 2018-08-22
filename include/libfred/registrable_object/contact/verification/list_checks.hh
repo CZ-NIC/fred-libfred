@@ -44,16 +44,16 @@ struct ListChecksItem
 {
     std::string to_string(const std::string& _each_line_prefix = "\t") const;
 
-    std::string                         check_handle;
-    std::string                         testsuite_handle;
-    unsigned long long                  contact_history_id;
-    unsigned long long                  contact_id;
-    std::string                         contact_handle;
-    boost::posix_time::ptime            local_create_time;
-    boost::posix_time::ptime            local_update_time;
-    boost::posix_time::ptime            local_last_contact_update;
-    Nullable<boost::posix_time::ptime>  last_test_finished_local_time;
-    std::string                         status_handle;
+    std::string check_handle;
+    std::string testsuite_handle;
+    unsigned long long contact_history_id;
+    unsigned long long contact_id;
+    std::string contact_handle;
+    boost::posix_time::ptime local_create_time;
+    boost::posix_time::ptime local_update_time;
+    boost::posix_time::ptime local_last_contact_update;
+    Nullable<boost::posix_time::ptime> last_test_finished_local_time;
+    std::string status_handle;
 };
 
 /**
@@ -76,10 +76,10 @@ public:
      * @param _status_handle    filter: only checks with given status are returned
      */
     ListContactChecks(
-        Optional<unsigned long>         _max_item_count,
-        Optional<std::string>           _testsuite_handle,
-        Optional<unsigned long long>    _contact_id,
-        Optional<std::string>           _status_handle);
+            const Optional<unsigned long>& _max_item_count,
+            const Optional<std::string>& _testsuite_handle,
+            const Optional<unsigned long long>& _contact_id,
+            const Optional<std::string>& _status_handle);
 
     /**
      * setter of optional max_item_count_
@@ -114,10 +114,10 @@ public:
 
     std::string to_string()const;
 private:
-    Optional<unsigned long>          max_item_count_;
-    Optional<std::string>            testsuite_handle_;
-    Optional<unsigned long long>     contact_id_;
-    Optional<std::string>            status_handle_;
+    Optional<unsigned long> max_item_count_;
+    Optional<std::string> testsuite_handle_;
+    Optional<unsigned long long> contact_id_;
+    Optional<std::string> status_handle_;
 };
 
 }//namespace LibFred
