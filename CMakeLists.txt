@@ -243,7 +243,7 @@ find_package(Boost 1.53.0
     REQUIRED)
 find_package(PkgConfig REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_include_directories(fred
     PUBLIC
