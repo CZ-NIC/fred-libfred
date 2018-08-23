@@ -33,12 +33,11 @@ public:
     explicit InfoZone(const std::string& _fqdn);
 
     InfoZoneData exec(OperationContext& _ctx) const;
-
 private:
     std::string fqdn_;
 };
 
-} // namespace LibFred::Zone
-} // namespace LibFred
+}//namespace LibFred::Zone
+}//namespace LibFred
 
-#endif
+#endif//INFO_ZONE_HH_C7120B856BB24F0DBF1C2B9BCD170541

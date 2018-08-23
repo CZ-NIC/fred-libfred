@@ -1,7 +1,6 @@
 .cproject
 .project
 .settings/
+CMakeLists.txt.user
 COPYING
 INSTALL
-builddir/
-builddir.eclipse/

@@ -16,6 +16,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "libfred/zone/exceptions.hh"
 #include "libfred/zone/info_zone.hh"
 #include "libfred/zone/zone_soa/create_zone_soa.hh"
 #include "libfred/zone/zone_soa/exceptions.hh"
@@ -119,6 +120,10 @@ unsigned long long CreateZoneSoa::exec(OperationContext& _ctx) const
             const unsigned long long id = static_cast<unsigned long long>(insert_result[0][0]);
             return id;
         }
+    }
+    catch (const NonExistentZone&)
+    {
+        throw;
     }
     catch (const AlreadyExistingZoneSoa&)
     {

@@ -46,4 +46,5 @@ bool operator==(const ::LibFred::Zone::EnumZone& _lhs, const ::LibFred::Zone::En
 bool operator==(const ::LibFred::Zone::NonEnumZone& _lhs, const ::LibFred::Zone::NonEnumZone& _rhs);
 
 } // namespace Test
-#endif
+
+#endif//UTIL_HH_768620FFC83747FE8C6479F25B1F4031
