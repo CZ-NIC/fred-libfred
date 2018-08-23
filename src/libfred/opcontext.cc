@@ -49,11 +49,9 @@ const std::string& check_transaction_id(const std::string &_value)
     return _value;
 }
 
-using namespace Database;
-
-std::unique_ptr<StandaloneConnection> get_database_conn()
+std::unique_ptr<Database::StandaloneConnection> get_database_conn()
 {
-    return get_default_manager<StandaloneConnectionFactory>().acquire();
+    return Database::get_default_manager<Database::StandaloneConnectionFactory>().acquire();
 }
 
 }//namespace LibFred::{anonymous}

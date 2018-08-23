@@ -39,7 +39,7 @@
 #include <memory>
 #include <typeinfo>
 
-typedef std::map<std::string, HandleArgsPtr > HandlerPtrMap;
+typedef std::map<std::string, HandleArgsPtr> HandlerPtrMap;
 
 /**
  * \class CfgArgs
