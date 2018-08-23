@@ -10,7 +10,7 @@ endif()
 
 include(GNUInstallDirs)
 
-add_library(fred SHARED
+set(LIBFRED_SOURCES
     src/libfred/registrable_object/contact/verification/cancel_states.cc
     src/libfred/opcontext.cc
     src/libfred/notifier/enqueue_notification.cc
@@ -175,6 +175,8 @@ add_library(fred SHARED
     src/util/types/datetime.cc
     src/util/types/datetime_interval.cc
     src/util/types/id.cc)
+
+add_library(fred SHARED ${LIBFRED_SOURCES})
 add_library(fred::library ALIAS fred)
 
 set_target_properties(fred PROPERTIES
@@ -184,9 +186,26 @@ set_target_properties(fred PROPERTIES
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    PUBLIC_HEADER src/libfred/db_settings.hh)
+    PUBLIC_HEADER include/libfred/db_settings.hh)
 
 target_compile_options(fred
+    PUBLIC "-ggdb"
+    PUBLIC "-grecord-gcc-switches"
+    PUBLIC "-Wall"
+    PUBLIC "-Wextra"
+    PUBLIC "-fdiagnostics-color=auto")
+
+add_library(fred-static STATIC ${LIBFRED_SOURCES})
+
+set_target_properties(fred-static PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    CXX_STANDARD 14
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    OUTPUT_NAME "fred")
+
+target_compile_options(fred-static
     PUBLIC "-ggdb"
     PUBLIC "-grecord-gcc-switches"
     PUBLIC "-Wall"
@@ -224,8 +243,15 @@ find_package(Boost 1.53.0
     REQUIRED)
 find_package(PkgConfig REQUIRED)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 target_include_directories(fred
-    PRIVATE . include
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_BINARY_DIR}
+        ${PostgreSQL_INCLUDE_DIRS})
+
+target_include_directories(fred-static
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_BINARY_DIR}
@@ -244,6 +270,9 @@ target_link_libraries(fred PRIVATE
 install(TARGETS fred
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(TARGETS fred-static
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES ${CMAKE_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
@@ -375,7 +404,6 @@ set_target_properties(test-libfred PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 target_include_directories(test-libfred
-    PRIVATE . include
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_BINARY_DIR}
