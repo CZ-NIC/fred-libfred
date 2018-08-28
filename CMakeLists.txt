@@ -185,7 +185,7 @@ set_target_properties(fred PROPERTIES
     CXX_STANDARD 14
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
     PUBLIC_HEADER include/libfred/db_settings.hh)
 
 target_compile_options(fred
@@ -203,7 +203,7 @@ set_target_properties(fred-static PROPERTIES
     CXX_STANDARD 14
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
     OUTPUT_NAME "fred")
 
 target_compile_options(fred-static
@@ -217,7 +217,8 @@ set(PACKAGE libfred)
 set(HAVE_BOOST_SERIALIZATION 1)
 set(HAVE_LOGGER 1)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
+set(VERSION ${PROJECT_VERSION})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 configure_file(fred.pc.in fred.pc @ONLY)
 
 include(CheckIncludeFileCXX)
@@ -244,21 +245,32 @@ find_package(Boost 1.53.0
     REQUIRED)
 find_package(PkgConfig REQUIRED)
 
+set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src PARENT_SCOPE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_include_directories(fred
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
         ${PostgreSQL_INCLUDE_DIRS})
 
 target_include_directories(fred-static
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
         ${PostgreSQL_INCLUDE_DIRS})
 
 target_link_libraries(fred PRIVATE
+    Threads::Threads
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
+    ${Boost_DATE_TIME_LIBRARY}
+    ${Boost_RANDOM_LIBRARY}
+    ${Boost_REGEX_LIBRARY}
+    ${Mpdec_LIBRARY}
+    ${PostgreSQL_LIBRARIES})
+
+target_link_libraries(fred-static
     Threads::Threads
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_THREAD_LIBRARY}
@@ -273,9 +285,10 @@ install(TARGETS fred
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(TARGETS fred-static
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(FILES ${CMAKE_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
 add_executable(test-libfred
     test/fake-src/util/tz/europe/prague.cc
@@ -402,12 +415,12 @@ set_target_properties(test-libfred PROPERTIES
     CXX_STANDARD 14
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
 target_include_directories(test-libfred
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
         ${PostgreSQL_INCLUDE_DIRS})
 
 target_link_libraries(test-libfred PRIVATE
