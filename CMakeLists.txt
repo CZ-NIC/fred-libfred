@@ -196,6 +196,7 @@ target_compile_options(fred
     PUBLIC "-fdiagnostics-color=auto")
 
 add_library(fred-static STATIC ${LIBFRED_SOURCES})
+add_library(fred-static::library ALIAS fred-static)
 
 set_target_properties(fred-static PROPERTIES
     VERSION ${PROJECT_VERSION}
