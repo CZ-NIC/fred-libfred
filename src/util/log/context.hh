@@ -1,79 +1,51 @@
 #ifndef CONTEXT_HH_1A3983AA309849AAA28B99D050A00D21
 #define CONTEXT_HH_1A3983AA309849AAA28B99D050A00D21
 
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/tss.hpp>
-
-#include <vector>
-#include <map>
-
 #include <string>
-#include <ostream>
-#include <sstream>
-#include <iterator>
 
 namespace Logging {
 
-
-
-class Context {
+class Context
+{
 public:
-  Context(); 
+    Context();
 
-  Context(const std::string& _name);
+    explicit Context(const std::string& name);
 
-  ~Context();
-  
-  static void push(const std::string& _name);
- 
-  static void pop();
+    ~Context();
 
-  static std::string top();
+    Context(const Context&) = delete;
 
-  static std::string getNDC();
+    Context& operator=(const Context&) = delete;
 
-  static void add(const std::string& _attr, const std::string& _val);
+    /**
+     * stacked interface implementation
+     */
+    static void push(const std::string& name);
 
-  static void rem(const std::string& _attr);
+    static void pop();
 
-  static std::string getMDC();
+    static std::string top();
 
-  static std::string get();
+    static std::string getNDC();
 
-  static void clear();
+    /**
+     * mapped interface implementation
+     */
+    static void add(const std::string& attr, const std::string& val);
 
-private:
-  static const std::string ndc_separator;
+    static void rem(const std::string& attr);
 
-  struct NDCData_ {
-    std::string name;
-    std::string path;
-  };
+    static std::string getMDC();
 
-  typedef std::vector<NDCData_>               Stack;
-  typedef std::map<std::string, std::string>  Map;
-  
-  struct PerThreadData_ {
-    Context::Stack stack_;
-    Context::Map   map_;
-  };
+    /**
+     *  get both contexts - stacked and mapped
+     */
+    static std::string get();
 
-  Context(const Context& _ctx);
-
-  Context& operator=(const Context& _ctx);
-
-  static Context::Stack* _getThreadStack();
-  static Context::Map*   _getThreadMap();
-
-  
-  static boost::thread_specific_ptr<PerThreadData_> data_;
+    static void clear();
 };
 
+}//namespace Logging
 
-
-
-}
-
-#endif /*CONTEXT_H_*/
-
+#endif//CONTEXT_HH_1A3983AA309849AAA28B99D050A00D21
