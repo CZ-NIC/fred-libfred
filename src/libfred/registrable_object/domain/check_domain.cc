@@ -30,7 +30,6 @@
 
 #include "libfred/opcontext.hh"
 #include "libfred/db_settings.hh"
-#include "libfred/object_states.hh"
 
 namespace LibFred
 {

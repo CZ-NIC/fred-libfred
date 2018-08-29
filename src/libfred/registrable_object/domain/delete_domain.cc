@@ -33,7 +33,6 @@
 #include "libfred/registrar/registrar_impl.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/db_settings.hh"
-#include "libfred/object_states.hh"
 
 namespace LibFred
 {

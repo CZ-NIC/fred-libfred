@@ -2,9 +2,6 @@
 #include "libfred/object_state/cancel_object_state_request_id.hh"
 #include "libfred/object/object_state.hh"
 
-// legacy
-#include "libfred/object_states.hh"
-
 #include <set>
 
 namespace LibFred {

@@ -24,7 +24,7 @@
 #include "libfred/registrable_object/contact/merge_contact_selection.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/db_settings.hh"
-#include "libfred/object_states.hh"
+#include "libfred/object_state/object_state_name.hh"
 
 #include "util/util.hh"
 

@@ -30,7 +30,6 @@
 #include "libfred/object/object_impl.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/db_settings.hh"
-#include "libfred/object_states.hh"
 #include "libfred/object_state/object_has_state.hh"
 #include "libfred/object_state/object_state_name.hh"
 
