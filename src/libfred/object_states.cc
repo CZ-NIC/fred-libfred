@@ -160,7 +160,7 @@ bool cancel_object_state(
 
         tx.commit();
 
-        Logging::Manager::instance_ref().get(PACKAGE).debug(rid);
+        Logging::Manager::instance_ref().debug(rid);
         return true;
     }
     return false;
@@ -252,7 +252,7 @@ void createObjectStateRequestName(
         object_state_names += name + " ";
     }
 
-    Logging::Manager::instance_ref().get(PACKAGE).debug(
+    Logging::Manager::instance_ref().debug(
             "createObjectStateRequestName object name: " + object_name + " "
             "object type: " + boost::lexical_cast<std::string>(object_type) + " "
             "object state name: " + object_state_names + " "
@@ -368,7 +368,7 @@ void createObjectStateRequestName(
             {
                 obj_valid_to = boost::posix_time::pos_infin;
             }
-            Logging::Manager::instance_ref().get(PACKAGE).debug(
+            Logging::Manager::instance_ref().debug(
                     "createObjectStateRequestName new_valid_from: " +
                     boost::posix_time::to_iso_extended_string(new_valid_from) + " "
                     "new_valid_to: " + boost::posix_time::to_iso_extended_string(new_valid_to) + " "

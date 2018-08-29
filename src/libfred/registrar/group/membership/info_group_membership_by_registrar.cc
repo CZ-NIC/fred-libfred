@@ -36,7 +36,7 @@ std::vector<GroupMembershipByRegistrar> InfoGroupMembershipByRegistrar::exec(Ope
     }
     catch (...)
     {
-        LOGGER(PACKAGE).info("Failed to get info group membership by registrar due to an unknown exception");
+        LOGGER.info("Failed to get info group membership by registrar due to an unknown exception");
         throw;
     }
 }

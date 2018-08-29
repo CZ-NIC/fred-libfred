@@ -36,7 +36,7 @@ std::vector<GroupMembershipByGroup> InfoGroupMembershipByGroup::exec(OperationCo
     }
     catch (...)
     {
-        LOGGER(PACKAGE).info("Failed to get info group membership by group due to an unknown exception");
+        LOGGER.info("Failed to get info group membership by group due to an unknown exception");
         throw;
     }
 }

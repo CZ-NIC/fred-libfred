@@ -49,7 +49,7 @@ PSQLConnection::PSQLConnection(const OpenType& need_to_open)
             // replace new line symbols
             std::string msg(message);
             std::replace(msg.begin(), msg.end(), '\n', ' ');
-            LOGGER(PACKAGE).debug(msg);
+            LOGGER.debug(msg);
         }
     };
     // set notice processor
@@ -222,7 +222,7 @@ std::string PSQLConnection::escape(const std::string& from)const
     }
     const std::string msg = boost::str(boost::format("error in escape function: %1%") % PQerrorMessage(psql_conn_));
 #ifdef HAVE_LOGGER
-    LOGGER(PACKAGE).error(msg);
+    LOGGER.error(msg);
 #endif
     throw std::runtime_error(msg);
 }

@@ -73,7 +73,7 @@ public:
 #ifdef HAVE_LOGGER
             try
             {
-                LOGGER(PACKAGE).info("connection closed");
+                LOGGER.info("connection closed");
             }
             catch (...) {}
 #endif
@@ -86,7 +86,7 @@ public:
         try
         {
 #ifdef HAVE_LOGGER
-            LOGGER(PACKAGE).debug(boost::format("exec query [%1%]") % _stmt);
+            LOGGER.debug(boost::format("exec query [%1%]") % _stmt);
 #endif
             return result_type(this->get_opened_connection().exec(_stmt));
         }
@@ -108,7 +108,7 @@ public:
         try
         {
 #ifdef HAVE_LOGGER
-            LOGGER(PACKAGE).debug(boost::format("exec query [%1%]") % _stmt);
+            LOGGER.debug(boost::format("exec query [%1%]") % _stmt);
 #endif
             return result_type(this->get_opened_connection().exec_params(_stmt, //one command query
                                                                          params));//parameters data
@@ -130,7 +130,7 @@ public:
         try
         {
 #ifdef HAVE_LOGGER
-            if (LOGGER(PACKAGE).getLevel() >= Logging::Log::LL_DEBUG)
+            if (LOGGER.is_sufficient<Logging::Log::EventImportance::debug>())
             {
                 std::string value;
                 std::string params_dump;
@@ -141,7 +141,7 @@ public:
                     value = param.is_null() ? "[null]" : "'" + param.print_buffer() + "'";
                     params_dump += " $" + boost::lexical_cast<std::string>(params_counter) + ": " + value;
                 }
-                LOGGER(PACKAGE).debug(boost::format("exec query [%1%] params %2%") % _stmt % params_dump);
+                LOGGER.debug(boost::format("exec query [%1%] params %2%") % _stmt % params_dump);
             }
 #endif
             return result_type(this->get_opened_connection().exec_params(_stmt, //one command query
@@ -199,7 +199,7 @@ public:
     {
         this->get_opened_connection().setQueryTimeout(t);
 #ifdef HAVE_LOGGER
-        LOGGER(PACKAGE).debug(boost::format("sql statement timout set to %1%ms") % t);
+        LOGGER.debug(boost::format("sql statement timout set to %1%ms") % t);
 #endif
     }
 private:

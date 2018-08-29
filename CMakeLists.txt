@@ -168,8 +168,6 @@ set(LIBFRED_SOURCES
     src/util/db/psql/psql_result.cc
     src/util/log/context.cc
     src/util/log/log.cc
-    src/util/log/logger.cc
-    src/util/log/log_types.cc
     src/util/types/date.cc
     src/util/types/date_interval.cc
     src/util/types/datetime.cc

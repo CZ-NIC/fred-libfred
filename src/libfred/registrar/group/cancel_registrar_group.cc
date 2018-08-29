@@ -41,12 +41,12 @@ void CancelRegistrarGroup::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER(PACKAGE).error(e.what());
+        LOGGER.error(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER(PACKAGE).info("Failed to cancel registrar group due to an unknown exception");
+        LOGGER.info("Failed to cancel registrar group due to an unknown exception");
         throw;
     }
 }

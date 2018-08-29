@@ -58,7 +58,7 @@ std::unique_ptr<Database::StandaloneConnection> get_database_conn()
 
 OperationContext::OperationContext()
     : conn_(get_database_conn()),
-      log_(LOGGER(PACKAGE))
+      log_(LOGGER)
 {
     conn_->exec("START TRANSACTION ISOLATION LEVEL READ COMMITTED");
 }

@@ -63,7 +63,7 @@ public:
         if (!conn_.inTransaction())
         {
 #ifdef HAVE_LOGGER
-            LOGGER(PACKAGE).debug(boost::format("(%1%) start transaction request -- begin") % this);
+            LOGGER.debug(boost::format("(%1%) start transaction request -- begin") % this);
 #endif
             this->exec(transaction_.start());
             conn_.setTransaction(this);
@@ -71,7 +71,7 @@ public:
         else
         {
 #ifdef HAVE_LOGGER
-            LOGGER(PACKAGE).debug(boost::format("(%1%) start transaction request -- (%2%) already active") % this % conn_.getTransaction());
+            LOGGER.debug(boost::format("(%1%) start transaction request -- (%2%) already active") % this % conn_.getTransaction());
 #endif
             this->set_parent_transaction(conn_.getTransaction());
             conn_.setTransaction(this);
@@ -93,7 +93,7 @@ public:
                 if (ptransaction_ == nullptr)
                 {
 #ifdef HAVE_LOGGER
-                    LOGGER(PACKAGE).debug(boost::format("(%1%) rollback transaction request -- rollback") % this);
+                    LOGGER.debug(boost::format("(%1%) rollback transaction request -- rollback") % this);
 #endif
                     this->exec(transaction_.rollback());
                     conn_.unsetTransaction();
@@ -101,7 +101,7 @@ public:
                 else
                 {
 #ifdef HAVE_LOGGER
-                    LOGGER(PACKAGE).debug(boost::format("(%1%) rollback transaction request -- to savepoint") % this);
+                    LOGGER.debug(boost::format("(%1%) rollback transaction request -- to savepoint") % this);
 #endif
                     conn_.setTransaction(ptransaction_);
                     this->exec(transaction_.rollback() + " TO SAVEPOINT " + savepoints_.front());
@@ -110,13 +110,13 @@ public:
             catch (const Database::Exception &e)
             {
 #ifdef HAVE_LOGGER
-                LOGGER(PACKAGE).debug(boost::format("(%1%) Rollback failed: %2% ") % this % e.what());
+                LOGGER.debug(boost::format("(%1%) Rollback failed: %2% ") % this % e.what());
 #endif
             }
             catch (...)
             {
 #ifdef HAVE_LOGGER
-                LOGGER(PACKAGE).debug(boost::format("(%1%) rollback failed - unknown excepiton") % this);
+                LOGGER.debug(boost::format("(%1%) rollback failed - unknown excepiton") % this);
 #endif
             }
             exited_ = true;
@@ -130,7 +130,7 @@ public:
             if (ptransaction_ != nullptr)
             {
 #ifdef HAVE_LOGGER
-                LOGGER(PACKAGE).debug(boost::format("(%1%) commit transaction request -- release savepoint") % this);
+                LOGGER.debug(boost::format("(%1%) commit transaction request -- release savepoint") % this);
 #endif
                 conn_.exec("RELEASE SAVEPOINT " + savepoints_.front());
                 conn_.setTransaction(ptransaction_);
@@ -138,7 +138,7 @@ public:
             else if (conn_.getTransaction() == this)
             {
 #ifdef HAVE_LOGGER
-                LOGGER(PACKAGE).debug(boost::format("(%1%) commit transaction request -- commit ok") % this);
+                LOGGER.debug(boost::format("(%1%) commit transaction request -- commit ok") % this);
 #endif
                 this->exec(transaction_.commit());
                 conn_.unsetTransaction();
@@ -146,7 +146,7 @@ public:
             else
             {
 #ifdef HAVE_LOGGER
-                LOGGER(PACKAGE).error(boost::format("(%1%) commit transaction request -- child active!") % this);
+                LOGGER.error(boost::format("(%1%) commit transaction request -- child active!") % this);
 #endif
             }
             exited_ = true;
@@ -213,7 +213,7 @@ private:
     {
         ptransaction_ = _trans;
 #ifdef HAVE_LOGGER
-        LOGGER(PACKAGE).debug(boost::format("(%1%) parent transaction assigned (%2%)") % this % ptransaction_);
+        LOGGER.debug(boost::format("(%1%) parent transaction assigned (%2%)") % this % ptransaction_);
 #endif
     }
 };

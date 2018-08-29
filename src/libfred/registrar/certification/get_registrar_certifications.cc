@@ -43,12 +43,12 @@ std::vector<RegistrarCertification> GetRegistrarCertifications::exec(OperationCo
     }
     catch (const std::exception& e)
     {
-        LOGGER(PACKAGE).error(e.what());
+        LOGGER.error(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER(PACKAGE).info("Failed to get registrar certifications due to unknown exception");
+        LOGGER.info("Failed to get registrar certifications due to unknown exception");
         throw;
     }
 }

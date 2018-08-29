@@ -27,7 +27,7 @@ std::vector<RegistrarGroup> GetRegistrarGroups::exec(OperationContext& _ctx)
     }
     catch (...)
     {
-        LOGGER(PACKAGE).info("Failed to get registrar group due to an unknown exception");
+        LOGGER.info("Failed to get registrar group due to an unknown exception");
         throw;
     }
 }

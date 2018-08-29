@@ -35,12 +35,12 @@ unsigned long long CreateRegistrarGroup::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER(PACKAGE).error(e.what());
+        LOGGER.error(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER(PACKAGE).info("Failed to create a registrar group due to an unknown exception");
+        LOGGER.info("Failed to create a registrar group due to an unknown exception");
         throw;
     }
 }

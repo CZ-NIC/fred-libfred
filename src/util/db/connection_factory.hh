@@ -55,7 +55,7 @@ public:
     {
 #ifdef HAVE_LOGGER
         TRACE(boost::format("<CALL> Database::Factory::Simple::Simple('%1%')") %
-              T::to_publicable_string(need_to_open_));
+                  T::to_publicable_string(need_to_open_));
 #endif
     }
 

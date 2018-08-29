@@ -22,7 +22,7 @@ void EndRegistrarGroupMembership::exec(OperationContext& _ctx)
         }
         else if (membership.size() > 1)
         {
-            LOGGER(PACKAGE).info("Failed to end registrar group membership because too many duplicate records were found.");
+            LOGGER.info("Failed to end registrar group membership because too many duplicate records were found.");
             throw;
         }
 
@@ -32,12 +32,12 @@ void EndRegistrarGroupMembership::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER(PACKAGE).error(e.what());
+        LOGGER.error(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER(PACKAGE).info("Failed to end registrar group membership due to an unknown exception");
+        LOGGER.info("Failed to end registrar group membership due to an unknown exception");
         throw;
     }
 }

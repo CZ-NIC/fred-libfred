@@ -3,36 +3,22 @@
 
 #include "config.h"
 
+#ifdef HAVE_LOGGER
+
 #include "util/log/log.hh"
-#include "util/log/log_types.hh"
 #include "util/singleton.hh"
-
-#include <boost/format.hpp>
-
-#include <map>
-#include <string>
-#include <iostream>
 
 namespace Logging {
 
-class Logger
-{
-public:
-	Logger();
-	~Logger();
-	Log& get(const std::string& name);
-	void add(const std::string& name, Log* l);
-private:
-	std::map<std::string, Log*> logs;
-};
-
-typedef Singleton<Logger> Manager;
+typedef Singleton<Log> Manager;
 
 }//namespace Logging
 
-#define LOGGER(name) Logging::Manager::instance_ref().get(name)
-#define TRACE(msg) LOGGER(PACKAGE).trace(msg)
+#define LOGGER Logging::Manager::instance_ref()
+#define TRACE(msg) LOGGER.trace(msg)
 
-#define LOG LOGGER(PACKAGE).message
+#define LOG LOGGER.message
+
+#endif//HAVE_LOGGER
 
 #endif//LOGGER_HH_FF92F982C11C49949EC827AE9795E29A

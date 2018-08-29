@@ -45,21 +45,25 @@ void setup_logging(CfgArgs* cfg_instance_ptr)
 {
     const HandleLoggingArgs* const handler_ptr = cfg_instance_ptr->get_handler_ptr_by_type<HandleLoggingArgs>();
 
-    const Logging::Log::Type log_type = static_cast<Logging::Log::Type>(handler_ptr->log_type);
+    const auto log_device = static_cast<Logging::Log::Device>(handler_ptr->log_type);
 
-    boost::any param;
-    if (log_type == Logging::Log::LT_FILE)
+    switch (log_device)
     {
-        param = handler_ptr->log_file;
-    }
-    if (log_type == Logging::Log::LT_SYSLOG)
-    {
-        param = handler_ptr->log_syslog_facility;
+        case Logging::Log::Device::file:
+            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::file>(
+                    static_cast<std::string>(handler_ptr->log_file));
+            break;
+        case Logging::Log::Device::syslog:
+            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::syslog>(
+                    static_cast<int>(handler_ptr->log_syslog_facility));
+            break;
+        case Logging::Log::Device::console:
+            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::console>();
+            break;
     }
 
-    Logging::Manager::instance_ref().get(PACKAGE).addHandler(log_type, param);
-
-    Logging::Manager::instance_ref().get(PACKAGE).setLevel(static_cast<Logging::Log::Level>(handler_ptr->log_level));
+    Logging::Manager::instance_ref().set_minimal_importance(
+            static_cast<Logging::Log::EventImportance>(handler_ptr->log_level));
 }
 
 }//namespace Test

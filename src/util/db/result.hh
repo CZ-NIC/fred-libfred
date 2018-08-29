@@ -61,7 +61,7 @@ public:
   Result_(const result_type &_result) : result_(_result)
   {
 #ifdef HAVE_LOGGER
-      LOGGER(PACKAGE).debug(boost::format("result created -- rows=%1%") % size());
+      LOGGER.debug(boost::format("result created -- rows=%1%") % size());
 #endif
   }
 
