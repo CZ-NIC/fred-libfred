@@ -31,7 +31,6 @@
 #include "libfred/opcontext.hh"
 #include "libfred/db_settings.hh"
 #include "libfred/object_state/object_has_state.hh"
-#include "libfred/object_state/object_state_name.hh"
 
 namespace LibFred
 {
@@ -76,7 +75,7 @@ namespace LibFred
                 static_cast<Exception*>(NULL),
                 &Exception::set_unknown_nsset_handle);
 
-            if (ObjectHasState(nsset_id, ObjectState::LINKED).exec(_ctx)) {
+            if (ObjectHasState(nsset_id, Object_State::linked).exec(_ctx)) {
                 BOOST_THROW_EXCEPTION(Exception().set_object_linked_to_nsset_handle(handle_));
             }
 
@@ -113,7 +112,7 @@ namespace LibFred
                 static_cast<Exception*>(NULL),
                 &Exception::set_unknown_nsset_id);
 
-            if (ObjectHasState(id_, ObjectState::LINKED).exec(_ctx)) {
+            if (ObjectHasState(id_, Object_State::linked).exec(_ctx)) {
                 BOOST_THROW_EXCEPTION(Exception().set_object_linked_to_nsset_id(id_));
             }
 

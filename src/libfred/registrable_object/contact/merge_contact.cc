@@ -34,8 +34,6 @@
 #include "libfred/object/object_states_info.hh"
 #include "libfred/object_state/create_object_state_request_id.hh"
 #include "libfred/object_state/lock_object_state_request_lock.hh"
-#include "libfred/object_state/object_has_state.hh"
-#include "libfred/object_state/object_state_name.hh"
 #include "libfred/poll/create_update_object_poll_message.hh"
 #include "libfred/poll/create_poll_message.hh"
 #include "libfred/object_state/perform_object_state_request.hh"

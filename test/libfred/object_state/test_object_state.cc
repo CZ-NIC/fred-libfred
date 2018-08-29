@@ -20,7 +20,6 @@
 #include "libfred/object_state/create_object_state_request_id.hh"
 #include "libfred/object_state/get_object_state_descriptions.hh"
 #include "libfred/object_state/get_object_states.hh"
-#include "libfred/object_state/object_state_name.hh"
 #include "libfred/object_state/perform_object_state_request.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
@@ -90,11 +89,11 @@ BOOST_FIXTURE_TEST_CASE(get_object_states, test_contact_fixture_8470af40b8634155
     states = ::LibFred::GetObjectStates(contact_info1.info_contact_data.id).exec(ctx);
     BOOST_CHECK(states.empty());
     ::LibFred::CreateObjectStateRequestId(contact_info1.info_contact_data.id,
-        Util::set_of<std::string>(::LibFred::ObjectState::MOJEID_CONTACT)).exec(ctx);
+        Util::set_of<std::string>(Conversion::Enums::to_db_handle(::LibFred::Object_State::mojeid_contact))).exec(ctx);
     ::LibFred::PerformObjectStateRequest().set_object_id(contact_info1.info_contact_data.id).exec(ctx);
 
     states = ::LibFred::GetObjectStates(contact_info1.info_contact_data.id).exec(ctx);
-    BOOST_CHECK(states.at(0).state_name == ::LibFred::ObjectState::MOJEID_CONTACT);
+    BOOST_CHECK(states.at(0).state_name == Conversion::Enums::to_db_handle(::LibFred::Object_State::mojeid_contact));
 }
 
 /**
@@ -334,6 +333,5 @@ BOOST_FIXTURE_TEST_CASE(get_object_state_descriptions, object_state_description_
     check_object_state_desc_data(::LibFred::GetObjectStateDescriptions("EN").set_external().exec(ctx), state_desc_en_external_vect);
 }
 
-BOOST_AUTO_TEST_SUITE_END();//ObjectStateDescriptionWithComparison
-
-BOOST_AUTO_TEST_SUITE_END();//TestObjectState
+BOOST_AUTO_TEST_SUITE_END()//TestObjectState/ObjectStateDescriptionWithComparison
+BOOST_AUTO_TEST_SUITE_END()//TestObjectState

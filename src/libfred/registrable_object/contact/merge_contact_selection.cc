@@ -22,9 +22,9 @@
  */
 
 #include "libfred/registrable_object/contact/merge_contact_selection.hh"
+#include "libfred/object/object_state.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/db_settings.hh"
-#include "libfred/object_state/object_state_name.hh"
 
 #include "util/util.hh"
 
@@ -116,11 +116,13 @@ public:
         for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
         {
             const Database::Result contact_check = ctx.get_conn().exec_params(
-            "SELECT oreg.name FROM contact c JOIN object_registry oreg ON c.id = oreg.id AND oreg.erdate IS NULL "
-            " JOIN object_state os ON os.object_id = oreg.id AND os.valid_to IS NULL "
-            " JOIN enum_object_states eos ON eos.id = os.state_id "
-            " WHERE eos.name = $1::text AND oreg.name = $2::text"
-            , Database::query_param_list (LibFred::ObjectState::IDENTIFIED_CONTACT)(*i));
+                "SELECT oreg.name FROM contact c JOIN object_registry oreg ON c.id = oreg.id AND oreg.erdate IS NULL "
+                "JOIN object_state os ON os.object_id = oreg.id AND os.valid_to IS NULL "
+                "JOIN enum_object_states eos ON eos.id = os.state_id "
+                "WHERE eos.name = $1::text AND oreg.name = $2::text",
+                Database::query_param_list
+                    (Conversion::Enums::to_db_handle(Object_State::identified_contact))
+                    (*i));
 
             if (contact_check.size() == 1) filtered.push_back(*i);
         }
@@ -145,13 +147,18 @@ public:
         for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
         {
             const Database::Result contact_check = ctx.get_conn().exec_params(
-            "SELECT oreg.name FROM contact c JOIN object_registry oreg ON c.id = oreg.id AND oreg.erdate IS NULL "
-            " JOIN object_state os ON os.object_id = oreg.id AND os.valid_to IS NULL "
-            " JOIN enum_object_states eos ON eos.id = os.state_id "
-            " WHERE eos.name = $1::text AND oreg.name = $2::text"
-            , Database::query_param_list (LibFred::ObjectState::CONDITIONALLY_IDENTIFIED_CONTACT)(*i));
+                "SELECT oreg.name FROM contact c JOIN object_registry oreg ON c.id = oreg.id AND oreg.erdate IS NULL "
+                "JOIN object_state os ON os.object_id = oreg.id AND os.valid_to IS NULL "
+                "JOIN enum_object_states eos ON eos.id = os.state_id "
+                "WHERE eos.name = $1::text AND oreg.name = $2::text",
+                Database::query_param_list
+                    (Conversion::Enums::to_db_handle(Object_State::conditionally_identified_contact))
+                    (*i));
 
-            if (contact_check.size() == 1) filtered.push_back(*i);
+            if (contact_check.size() == 1)
+            {
+                filtered.push_back(*i);
+            }
         }
         return filtered;
     }

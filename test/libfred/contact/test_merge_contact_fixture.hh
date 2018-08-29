@@ -47,8 +47,8 @@
 #include "libfred/registrar/info_registrar.hh"
 #include "libfred/registrar/info_registrar_diff.hh"
 
+#include "libfred/object/object_state.hh"
 #include "libfred/object_state/get_object_states.hh"
-#include "libfred/object_state/object_state_name.hh"
 #include "libfred/object_state/object_has_state.hh"
 #include "libfred/object_state/perform_object_state_request.hh"
 #include "libfred/object_state/create_object_state_request_id.hh"
@@ -60,20 +60,43 @@
 #include <boost/algorithm/string.hpp>
 
 #include <math.h>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <map>
 
-// obsolete
-namespace LibFred {
-namespace ObjectState {
+inline std::ostream& operator<<(std::ostream& out, LibFred::Object_State::Enum state)
+{
+    try
+    {
+        return out << Conversion::Enums::to_db_handle(state);
+    }
+    catch (const std::invalid_argument& e)
+    {
+        return out << "std::invalid_argument(" << e.what() << ")";
+    }
+}
 
-static const std::string CONTACT_IN_MANUAL_VERIFICATION = "contactInManualVerification"; // 26
-static const std::string CONTACT_PASSED_MANUAL_VERIFICATION = "contactPassedManualVerification"; // 25
-static const std::string CONTACT_FAILED_MANUAL_VERIFICATION = "contactFailedManualVerification"; // 27
-
-}//namespace LibFred::ObjectState
-}//namespace LibFred
+inline std::string to_string(const std::set<LibFred::Object_State::Enum>& set_of_states)
+{
+    std::ostringstream out;
+    out << "[";
+    bool first = true;
+    for (const auto state : set_of_states)
+    {
+        if (first)
+        {
+            first = false;
+        }
+        else
+        {
+            out << ", ";
+        }
+        out << state;
+    }
+    out << "]";
+    return out.str();
+}
 
 namespace Test {
 namespace LibFred {
@@ -343,89 +366,86 @@ struct mergeable_contact_grps_with_linked_objects_and_blocking_states : Test::in
      * Default set of configurations of mergeable contact states.
      * First two stateless states are abused in linked objects configuration (when two almost the same contacts are needed), second stateless state is also used in tests as dest. contact.
      */
-    static std::vector<std::set<std::string> > init_set_of_contact_state_combinations()
+    static std::vector<std::set<::LibFred::Object_State::Enum>> init_set_of_contact_state_combinations()
     {
-        std::vector<std::set<std::string> > states_;
-            using namespace ::LibFred::ObjectState;
+        std::vector<std::set<::LibFred::Object_State::Enum>> states;
 
-            //first two stateless states abused in linked objects configuration
-            states_.push_back(std::set<std::string>());//state_case 0
-            states_.push_back(std::set<std::string>());//state_case 1
-            // other states
-            states_.push_back(Util::set_of<std::string>(SERVER_UPDATE_PROHIBITED));//state_case 2
-            states_.push_back(Util::set_of<std::string>(SERVER_TRANSFER_PROHIBITED));//state_case 3
-            states_.push_back(Util::set_of<std::string>(SERVER_DELETE_PROHIBITED));//state_case 4
-            states_.push_back(Util::set_of<std::string>(SERVER_BLOCKED));//state_case 5
-            states_.push_back(Util::set_of<std::string>(MOJEID_CONTACT));//state_case 6
-            states_.push_back(Util::set_of<std::string>(CONTACT_IN_MANUAL_VERIFICATION));//state_case 7
-            states_.push_back(Util::set_of<std::string>(CONTACT_FAILED_MANUAL_VERIFICATION));//state_case 8
-            states_.push_back(Util::set_of<std::string>(CONTACT_PASSED_MANUAL_VERIFICATION));//state_case 9
+        //first two stateless states abused in linked objects configuration
+        states.push_back(std::set<::LibFred::Object_State::Enum>());//state_case 0
+        states.push_back(std::set<::LibFred::Object_State::Enum>());//state_case 1
+        // other states
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::server_update_prohibited));//state_case 2
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::server_transfer_prohibited));//state_case 3
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::server_delete_prohibited));//state_case 4
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::server_blocked));//state_case 5
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::mojeid_contact));//state_case 6
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::contact_in_manual_verification));//state_case 7
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::contact_failed_manual_verification));//state_case 8
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::contact_passed_manual_verification));//state_case 9
 
 
-            /* other state cases
-            serverTransferProhibited serverUpdateProhibited
-            serverDeleteProhibited serverUpdateProhibited
-            serverDeleteProhibited serverTransferProhibited
-            serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
+        /* other state cases
+        serverTransferProhibited serverUpdateProhibited
+        serverDeleteProhibited serverUpdateProhibited
+        serverDeleteProhibited serverTransferProhibited
+        serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
 
-            serverBlocked serverUpdateProhibited
-            serverBlocked serverTransferProhibited
-            serverBlocked serverTransferProhibited serverUpdateProhibited
-            serverBlocked serverDeleteProhibited
-            serverBlocked serverDeleteProhibited serverUpdateProhibited
-            serverBlocked serverDeleteProhibited serverTransferProhibited
-            serverBlocked serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
+        serverBlocked serverUpdateProhibited
+        serverBlocked serverTransferProhibited
+        serverBlocked serverTransferProhibited serverUpdateProhibited
+        serverBlocked serverDeleteProhibited
+        serverBlocked serverDeleteProhibited serverUpdateProhibited
+        serverBlocked serverDeleteProhibited serverTransferProhibited
+        serverBlocked serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
 
-            mojeidContact serverUpdateProhibited
-            mojeidContact serverTransferProhibited
-            mojeidContact serverTransferProhibited serverUpdateProhibited
-            mojeidContact serverDeleteProhibited
-            mojeidContact serverDeleteProhibited serverUpdateProhibited
-            mojeidContact serverDeleteProhibited serverTransferProhibited
-            mojeidContact serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
-            mojeidContact serverBlocked
-            mojeidContact serverBlocked serverUpdateProhibited
-            mojeidContact serverBlocked serverTransferProhibited
-            mojeidContact serverBlocked serverTransferProhibited serverUpdateProhibited
-            mojeidContact serverBlocked serverDeleteProhibited
-            mojeidContact serverBlocked serverDeleteProhibited serverUpdateProhibited
-            mojeidContact serverBlocked serverDeleteProhibited serverTransferProhibited
-            mojeidContact serverBlocked serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
-             */
+        mojeidContact serverUpdateProhibited
+        mojeidContact serverTransferProhibited
+        mojeidContact serverTransferProhibited serverUpdateProhibited
+        mojeidContact serverDeleteProhibited
+        mojeidContact serverDeleteProhibited serverUpdateProhibited
+        mojeidContact serverDeleteProhibited serverTransferProhibited
+        mojeidContact serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
+        mojeidContact serverBlocked
+        mojeidContact serverBlocked serverUpdateProhibited
+        mojeidContact serverBlocked serverTransferProhibited
+        mojeidContact serverBlocked serverTransferProhibited serverUpdateProhibited
+        mojeidContact serverBlocked serverDeleteProhibited
+        mojeidContact serverBlocked serverDeleteProhibited serverUpdateProhibited
+        mojeidContact serverBlocked serverDeleteProhibited serverTransferProhibited
+        mojeidContact serverBlocked serverDeleteProhibited serverTransferProhibited serverUpdateProhibited
+         */
 
-            /*
-            for (int j = 1; j < 32; ++j)//2^5 = 32 state combinations
-            {
-                std::set<std::string> state_case;
-                if (j & (1 << 0)) state_case.insert(SERVER_UPDATE_PROHIBITED);
-                if (j & (1 << 1)) state_case.insert(SERVER_TRANSFER_PROHIBITED);
-                if (j & (1 << 2)) state_case.insert(SERVER_DELETE_PROHIBITED);
-                if (j & (1 << 3)) state_case.insert(SERVER_BLOCKED);
-                if (j & (1 << 4)) state_case.insert(MOJEID_CONTACT);
-                states_.push_back(state_case);
-                BOOST_TEST_MESSAGE(Util::format_container(state_case));
-            }
-             */
-        return states_;
+        /*
+        for (int j = 1; j < 32; ++j)//2^5 = 32 state combinations
+        {
+            std::set<std::string> state_case;
+            if (j & (1 << 0)) state_case.insert(SERVER_UPDATE_PROHIBITED);
+            if (j & (1 << 1)) state_case.insert(SERVER_TRANSFER_PROHIBITED);
+            if (j & (1 << 2)) state_case.insert(SERVER_DELETE_PROHIBITED);
+            if (j & (1 << 3)) state_case.insert(SERVER_BLOCKED);
+            if (j & (1 << 4)) state_case.insert(MOJEID_CONTACT);
+            states_.push_back(state_case);
+            BOOST_TEST_MESSAGE(Util::format_container(state_case));
+        }
+         */
+        return states;
     }
 
     /**
      * Default set of configurations of states of primary linked object within linked object configuration.
      */
-    static std::vector<std::set<std::string> > init_set_of_linked_object_state_combinations()
+    static std::vector<std::set<::LibFred::Object_State::Enum>> init_set_of_linked_object_state_combinations()
     {
-        std::vector<std::set<std::string> > states_;
-            using namespace ::LibFred::ObjectState;
+        std::vector<std::set<::LibFred::Object_State::Enum>> states;
 
-            states_.push_back(std::set<std::string>());
-            states_.push_back(Util::set_of<std::string>(SERVER_UPDATE_PROHIBITED));
-            states_.push_back(Util::set_of<std::string>(SERVER_BLOCKED));
-            states_.push_back(Util::set_of<std::string>(SERVER_BLOCKED)(SERVER_UPDATE_PROHIBITED));
-            return states_;
+        states.push_back(std::set<::LibFred::Object_State::Enum>());
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::server_update_prohibited));
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::server_blocked));
+        states.push_back(Util::set_of<::LibFred::Object_State::Enum>(::LibFred::Object_State::server_blocked)
+                                                                    (::LibFred::Object_State::server_update_prohibited));
+        return states;
     }
-
 private:
-
     /**
      * Create contact not meant to be merged with unique enough data and save its data for later comparison.
      * @param registrar_handle is registrar of the contact
@@ -785,18 +805,17 @@ private:
      * @param state_set is set of required states from enum_object_states.name
      */
     void insert_state_requests(
-        ::LibFred::OperationContext& ctx
-        , unsigned long long id
-        , std::set<std::string>  state_set
-        )
+            ::LibFred::OperationContext& ctx,
+            unsigned long long id,
+            const std::set<::LibFred::Object_State::Enum>& state_set)
     {
         ::LibFred::LockObjectStateRequestLock(id).exec(ctx);
-        for (std::set<std::string>::const_iterator ci = state_set.begin(); ci != state_set.end(); ++ci)
+        for (const auto ci : state_set)
         {
             ctx.get_conn().exec_params(
-            "INSERT INTO object_state_request (object_id, state_id)"
-            " VALUES ($1::integer, (SELECT id FROM enum_object_states"
-            " WHERE name = $2::text))", Database::query_param_list(id)(*ci));
+                    "INSERT INTO object_state_request (object_id, state_id) "
+                    "SELECT $1::integer,id FROM enum_object_states WHERE name=$2::text",
+                    Database::query_param_list(id)(Conversion::Enums::to_db_handle(ci)));
         }
     }
     /**
@@ -1120,7 +1139,6 @@ private:
         };
         return 0u;
     }
-
 public:
     std::string registrar_mc_1_handle;
     std::string registrar_mc_2_handle;
@@ -1136,10 +1154,10 @@ public:
     std::map<std::string, ::LibFred::InfoKeysetData> keyset_info;/**< map of test keyset info data by handle*/
     std::map<std::string, ::LibFred::InfoDomainData> domain_info;/**< map of test domain info data by fqdn*/
     unsigned mergeable_contact_group_count;/**< number of groups of mergeable contacts */
-    std::vector<std::set<std::string> > contact_states; /**< set of combinations of contact states*/
+    std::vector<std::set<::LibFred::Object_State::Enum>> contact_states; /**< set of combinations of contact states*/
     std::set<unsigned> linked_object_cases;/**< set of combinations of linked objects configurations*/
-    std::vector<std::set<std::string> > linked_object_states; /**< set of combinations of primary linked object states*/
-     std::vector<unsigned> linked_object_quantities;/**< set of quantities of linked objects configurations*/
+    std::vector<std::set<::LibFred::Object_State::Enum>> linked_object_states; /**< set of combinations of primary linked object states*/
+    std::vector<unsigned> linked_object_quantities;/**< set of quantities of linked objects configurations*/
 
      /**
       * Get contacts changed or deleted since fixture init.
@@ -1259,9 +1277,7 @@ public:
          }
          return ret;
      }
-
 private:
-
      /**
       * Common init procedure.
       * Create two test registrars, assemble vector of registrar handles from test registrars and pre-created mojeid registrar and save registrar info data into map by handle for later comparison.
@@ -1333,7 +1349,7 @@ private:
             {
                 for (unsigned state_num = 0; state_num < contact_states.size(); ++state_num)
                 {
-                    BOOST_TEST_MESSAGE("States S" + boost::lexical_cast<std::string>(state_num) + " " + Util::format_container(contact_states.at(state_num)));
+                    BOOST_TEST_MESSAGE("States S" + boost::lexical_cast<std::string>(state_num) + " " + ::to_string(contact_states.at(state_num)));
                     for (std::set<unsigned>::const_iterator linked_object_cases_ci = linked_object_cases.begin()
                         ; linked_object_cases_ci != linked_object_cases.end(); ++linked_object_cases_ci)
                     {
@@ -1437,26 +1453,23 @@ public:
      * @param _linked_object_quantities is selection of linked object configurations quantities per contact, like @ref init_linked_object_quantities()
      */
     explicit mergeable_contact_grps_with_linked_objects_and_blocking_states(
-        const std::string& db_name_suffix,
-        unsigned mergeable_contact_group_count,
-        std::set<unsigned> _linked_object_cases,
-        std::vector<std::set<std::string> > contact_state_combinations = Util::vector_of<std::set<std::string> > (std::set<std::string>())(std::set<std::string>()), //stateless states 0, 1
-        std::vector<std::set<std::string> > linked_object_state_combinations = Util::vector_of<std::set<std::string> > (std::set<std::string>()),
-        std::vector<unsigned> _linked_object_quantities = Util::vector_of<unsigned>(0)
-        )
-    : Test::instantiate_db_template(db_name_suffix)
-    , registrar_mc_1_handle("REG1")
-    , registrar_mc_2_handle("REG2")
-    , registrar_mojeid_handle("REG-MOJEID")
-    , registrar_sys_handle("REG-SYS")
-
-    , contact_handle_prefix("CT-MC")
-
-    , mergeable_contact_group_count(mergeable_contact_group_count)
-    , contact_states(contact_state_combinations)
-    , linked_object_cases(_linked_object_cases)
-    , linked_object_states(linked_object_state_combinations)
-    , linked_object_quantities(_linked_object_quantities)
+            const std::string& db_name_suffix,
+            unsigned mergeable_contact_group_count,
+            std::set<unsigned> _linked_object_cases,
+            std::vector<std::set<::LibFred::Object_State::Enum>> contact_state_combinations = Util::vector_of<std::set<::LibFred::Object_State::Enum>>(std::set<::LibFred::Object_State::Enum>())(std::set<::LibFred::Object_State::Enum>()), //stateless states 0, 1
+            std::vector<std::set<::LibFred::Object_State::Enum>> linked_object_state_combinations = Util::vector_of<std::set<::LibFred::Object_State::Enum>>(std::set<::LibFred::Object_State::Enum>()),
+            std::vector<unsigned> _linked_object_quantities = Util::vector_of<unsigned>(0))
+        : Test::instantiate_db_template(db_name_suffix),
+          registrar_mc_1_handle("REG1"),
+          registrar_mc_2_handle("REG2"),
+          registrar_mojeid_handle("REG-MOJEID"),
+          registrar_sys_handle("REG-SYS"),
+          contact_handle_prefix("CT-MC"),
+          mergeable_contact_group_count(mergeable_contact_group_count),
+          contact_states(contact_state_combinations),
+          linked_object_cases(_linked_object_cases),
+          linked_object_states(linked_object_state_combinations),
+          linked_object_quantities(_linked_object_quantities)
     {
         init_fixture();
     }

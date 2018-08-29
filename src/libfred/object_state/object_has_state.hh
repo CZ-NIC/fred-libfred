@@ -25,37 +25,38 @@
 #define OBJECT_HAS_STATE_HH_5A6F78D1414F4B408896D19454DCD98D
 
 #include "libfred/opexception.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/object/object_state.hh"
 
-namespace LibFred
+namespace LibFred {
+
+/**
+* Check if given object has set given state.
+* Locks object using object_state_request_lock table. State is not found if object was deleted.
+* Object database id and name of the state is set via constructor.
+* It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
+* In case of insuperable failures and inconsistencies, the instance of @ref InternalError or other exception is thrown.
+*/
+class ObjectHasState
 {
-
+public:
     /**
-    * Check if given object has set given state.
-    * Locks object using object_state_request_lock table. State is not found if object was deleted.
-    * Object database id and name of the state is set via constructor.
-    * It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
-    * In case of insuperable failures and inconsistencies, the instance of @ref InternalError or other exception is thrown.
+    * Check object for the state constructor with mandatory parameters.
+    * @param object_id sets database id of the object @ref object_id_ attribute
+    * @param state sets the state into @ref state_ attribute
     */
-    class ObjectHasState
-    {
-    public:
-        /**
-        * Check object for the state constructor with mandatory parameters.
-        * @param object_id sets database id of the object @ref object_id_ attribute
-        * @param state_name sets name of the state into @ref state_name_ attribute
-        */
-        ObjectHasState(unsigned long long object_id, const std::string& state_name);
-        /**
-        * Executes check of the object for the state.
-        * @param ctx contains reference to database and logging interface
-        * @return true if object exists and have the state set, false if not
-        */
-        bool exec(OperationContext& ctx);
-    private:
-        const unsigned long long object_id_;/**< database id of the object */
-        const std::string state_name_;/**< name of the state */
-    };
+    ObjectHasState(unsigned long long object_id, Object_State::Enum state);
+    /**
+    * Executes check of the object for the state.
+    * @param ctx contains reference to database and logging interface
+    * @return true if object exists and have the state set, false if not
+    */
+    bool exec(OperationContext& ctx);
+private:
+    const unsigned long long object_id_;/**< database id of the object */
+    const Object_State::Enum state_;/**< the state */
+};
 
-} // namespace LibFred
+}//namespace LibFred
 
-#endif
+#endif//OBJECT_HAS_STATE_HH_5A6F78D1414F4B408896D19454DCD98D

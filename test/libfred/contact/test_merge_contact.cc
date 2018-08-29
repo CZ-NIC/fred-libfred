@@ -53,14 +53,13 @@ BOOST_AUTO_TEST_SUITE(ObjectCombinations)
 struct merge_fixture : MergeContactAutoProc::mergeable_contact_grps_with_linked_objects_and_blocking_states
 {
     merge_fixture()
-    : MergeContactAutoProc::mergeable_contact_grps_with_linked_objects_and_blocking_states(
-        ""//empty db name suffix
-        , 1//mergeable_contact_group_count
-        , Util::set_of<unsigned>(0)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(20)//linked_object_cases
-        , Util::vector_of<std::set<std::string> > (std::set<std::string>())(std::set<std::string>())//contact_state_combinations//stateless states 0, 1
-        , Util::vector_of<std::set<std::string> > (std::set<std::string>())//linked_object_state_combinations
-        , init_linked_object_quantities()//linked_object_quantities
-        )
+        : MergeContactAutoProc::mergeable_contact_grps_with_linked_objects_and_blocking_states(
+                "",//empty db name suffix
+                1,//mergeable_contact_group_count
+                Util::set_of<unsigned>(0)(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(13)(14)(15)(20),//linked_object_cases
+                Util::vector_of<std::set<::LibFred::Object_State::Enum>>(std::set<::LibFred::Object_State::Enum>())(std::set<::LibFred::Object_State::Enum>()),//contact_state_combinations//stateless states 0, 1
+                Util::vector_of<std::set<::LibFred::Object_State::Enum>>(std::set<::LibFred::Object_State::Enum>()),//linked_object_state_combinations
+                init_linked_object_quantities())//linked_object_quantities
     {}
 };
 

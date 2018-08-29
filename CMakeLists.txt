@@ -243,7 +243,12 @@ find_package(Boost 1.53.0
     REQUIRED)
 find_package(PkgConfig REQUIRED)
 
-set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src PARENT_SCOPE)
+get_directory_property(hasParent PARENT_DIRECTORY)
+if(hasParent)
+    set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src PARENT_SCOPE)
+else()
+    set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src)
+endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_include_directories(fred

@@ -23,7 +23,6 @@
 
 #include "libfred/object/object_impl.hh"
 #include "libfred/registrar/registrar_impl.hh"
-#include "libfred/object_state/object_state_name.hh"
 #include "libfred/object/generate_authinfo_password.hh"
 #include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"

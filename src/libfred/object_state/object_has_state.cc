@@ -21,32 +21,32 @@
  *  object state check
  */
 
-#include <string>
-
-#include "libfred/opcontext.hh"
-#include "libfred/object_state/lock_object_state_request_lock.hh"
 #include "libfred/object_state/object_has_state.hh"
+#include "libfred/object_state/lock_object_state_request_lock.hh"
 
-namespace LibFred
+namespace LibFred {
+
+ObjectHasState::ObjectHasState(unsigned long long object_id, Object_State::Enum state)
+    : object_id_(object_id),
+      state_(state)
+{}
+
+bool ObjectHasState::exec(OperationContext &ctx)
 {
-    ObjectHasState::ObjectHasState(unsigned long long object_id, const std::string& state_name)
-        : object_id_(object_id),
-        state_name_(state_name)
-    {}
+    LockObjectStateRequestLock(object_id_).exec(ctx);
 
-    bool ObjectHasState::exec(OperationContext &ctx)
-    {
-        LockObjectStateRequestLock(object_id_).exec(ctx);
-
-        const Database::Result rcheck = ctx.get_conn().exec_params(
-            "SELECT count(*) FROM object_state os"
-            " JOIN enum_object_states eos ON eos.id = os.state_id"
-            " WHERE os.object_id = $1::integer AND eos.name = $2::text"
-            " AND valid_to IS NULL",
+    const bool has_state = 0 < ctx.get_conn().exec_params(
+            "SELECT 0 "
+            "FROM object_state os "
+            "JOIN enum_object_states eos ON eos.id=os.state_id "
+            "WHERE os.object_id=$1::integer AND "
+                  "eos.name=$2::text AND "
+                  "os.valid_to IS NULL "
+            "LIMIT 1",
             Database::query_param_list
                 (object_id_)
-                (state_name_));
-        return static_cast<int>(rcheck[0][0]);
-    }
+                (Conversion::Enums::to_db_handle(state_))).size();
+    return has_state;
+}
 
-} // namespace LibFred
+}//namespace LibFred
