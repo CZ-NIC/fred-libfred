@@ -242,6 +242,7 @@ find_package(Boost 1.53.0
     unit_test_framework
     REQUIRED)
 find_package(PkgConfig REQUIRED)
+pkg_search_module(LIBIDN REQUIRED libidn>=0.5.18)
 
 get_directory_property(hasParent PARENT_DIRECTORY)
 if(hasParent)
@@ -271,6 +272,7 @@ target_link_libraries(fred PRIVATE
     ${Boost_RANDOM_LIBRARY}
     ${Boost_REGEX_LIBRARY}
     ${Mpdec_LIBRARY}
+    ${LIBIDN_LIBRARIES}
     ${PostgreSQL_LIBRARIES})
 
 target_link_libraries(fred-static
@@ -281,6 +283,7 @@ target_link_libraries(fred-static
     ${Boost_RANDOM_LIBRARY}
     ${Boost_REGEX_LIBRARY}
     ${Mpdec_LIBRARY}
+    ${LIBIDN_LIBRARIES}
     ${PostgreSQL_LIBRARIES})
 
 install(TARGETS fred
@@ -429,6 +432,7 @@ target_include_directories(test-libfred
 target_link_libraries(test-libfred PRIVATE
     fred::library
     ${Mpdec_LIBRARY}
+    ${LIBIDN_LIBRARIES}
     ${Boost_DATE_TIME_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_REGEX_LIBRARY}
