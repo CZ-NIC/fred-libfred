@@ -89,7 +89,7 @@ public:
   /* boost serialization */
   friend class boost::serialization::access;
   template<class Archive> void serialize(Archive& _ar,
-      const unsigned int _version) {
+      unsigned int) {
     _ar & BOOST_SERIALIZATION_NVP(value);
   }
 #endif
