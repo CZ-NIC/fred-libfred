@@ -162,7 +162,15 @@ public:
     /**
      * @returns flag whether object has already been set
      */
-    bool isset() const
+    bool isset() const //TODO: fix collision with macro isset from <sys/param.h>
+    {
+        return isset_;
+    }
+
+    /**
+     * @returns flag whether object has already been set
+     */
+    bool is_set() const // due to collision with macro isset from <sys/param.h>
     {
         return isset_;
     }
