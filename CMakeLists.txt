@@ -301,6 +301,7 @@ add_executable(test-libfred
     test/libfred/main.cc
     test/libfred/test_check_handle.cc
     test/libfred/test_opexception.cc
+    test/libfred/contact/test_contact_status.cc
     test/libfred/contact/test_copy_contact.cc
     test/libfred/contact/test_create_contact.cc
     test/libfred/contact/test_delete_contact.cc
