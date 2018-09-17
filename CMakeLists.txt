@@ -58,11 +58,13 @@ set(LIBFRED_SOURCES
     src/libfred/public_request/public_request_object_lock_guard.cc
     src/libfred/public_request/update_public_request.cc
     src/libfred/registrable_object/contact/check_contact.cc
+    src/libfred/registrable_object/contact/contact_status.cc
     src/libfred/registrable_object/contact/copy_contact.cc
     src/libfred/registrable_object/contact/copy_history_impl.cc
     src/libfred/registrable_object/contact/create_contact.cc
     src/libfred/registrable_object/contact/delete_contact.cc
     src/libfred/registrable_object/contact/find_contact_duplicates.cc
+    src/libfred/registrable_object/contact/get_contact_status.cc
     src/libfred/registrable_object/contact/info_contact.cc
     src/libfred/registrable_object/contact/info_contact_data.cc
     src/libfred/registrable_object/contact/info_contact_diff.cc

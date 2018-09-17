@@ -38,9 +38,10 @@ struct StatusFlag
         external,
         internal
     };
-    template <Manipulation m, Visibility v, typename>
+    template <Manipulation m, Visibility v, typename N>
     struct Type
     {
+        using Name = N;
         static constexpr Manipulation how_to_set = m;
         static constexpr Visibility visibility = v;
     };
@@ -52,6 +53,12 @@ struct StatusFlag
     using ManualExternal = Type<Manipulation::manual, Visibility::external, N>;
     template <typename N>
     using ManualInternal = Type<Manipulation::manual, Visibility::internal, N>;
+};
+
+enum class StatusVisiting
+{
+    can_continue,
+    is_done
 };
 
 template <Object_Type::Enum o, typename ...Flags>
@@ -68,26 +75,11 @@ public:
     static constexpr Object_Type::Enum object_type = o;
     static constexpr int number_of_flags = sizeof...(Flags);
 
-    bool all()const noexcept
-    {
-        return flags_.all();
-    }
-    bool any()const noexcept
-    {
-        return flags_.any();
-    }
-    bool none()const noexcept
-    {
-        return flags_.none();
-    }
-    std::size_t count()const noexcept
-    {
-        return flags_.count();
-    }
-    constexpr std::size_t size()noexcept
-    {
-        return FlagsStorage().size();
-    }
+    bool all()const noexcept;
+    bool any()const noexcept;
+    bool none()const noexcept;
+    std::size_t count()const noexcept;
+    constexpr std::size_t size()noexcept;
 
     template <typename ...Fs>
     bool are_set_all_of()const noexcept
@@ -95,6 +87,7 @@ public:
         static const auto mask = mask_of<Fs...>();
         return (flags_ & mask) == mask;
     }
+
     template <typename ...Fs>
     bool are_set_any_of()const noexcept
     {
@@ -130,67 +123,72 @@ public:
     template <typename ...Fs>
     Status& set()noexcept
     {
-        flags_ |= mask_of<Fs...>();
+        static const auto mask = mask_of<Fs...>();
+        flags_ |= mask;
         return *this;
     }
+
     template <typename ...Fs>
     Status& reset()noexcept
     {
-        flags_ &= ~mask_of<Fs...>();
+        static const auto mask = ~mask_of<Fs...>();
+        flags_ &= mask;
         return *this;
     }
     template <typename ...Fs>
     Status& flip()noexcept
     {
-        flags_ ^= mask_of<Fs...>();
+        static const auto mask = mask_of<Fs...>();
+        flags_ ^= mask;
         return *this;
     }
 
-    Status& set_all(bool value)noexcept
+    Status& set_all(bool value)noexcept;
+    Status& set_all()noexcept;
+    Status& reset_all()noexcept;
+    Status& flip_all()noexcept;
+
+    Status operator~()const noexcept;
+
+    template <typename M>
+    void visit(const M& mutator)
     {
-        if (value)
-        {
-            return this->set_all();
-        }
-        return this->reset_all();
-    }
-    Status& set_all()noexcept
-    {
-        flags_.set();
-        return *this;
-    }
-    Status& reset_all()noexcept
-    {
-        flags_.reset();
-        return *this;
-    }
-    Status& flip_all()noexcept
-    {
-        flags_.flip();
-        return *this;
+        Iterate<0, Flags...>::over(mutator, *this);
     }
 
-    Status operator~()const noexcept
+    template <template <typename...> class M, typename ...Ts>
+    M<Flags...> visit(const Ts& ...args)
     {
-        return Status(~flags_);
+        M<Flags...> mutator(args...);
+        Iterate<0, Flags...>::over(mutator, *this);
+        return mutator;
     }
 
-    template <typename F>
-    static constexpr int get_index_of()noexcept
+    template <typename V>
+    void visit(const V& visitor)const
     {
-        return index_of<F>();
+        Iterate<0, Flags...>::over(visitor, *this);
+        return visitor;
     }
-    template <template <typename ...> class T>
-    struct FlagsIn
+
+    template <template <typename...> class V, typename ...Ts>
+    V<Flags...> visit(const Ts& ...args)const
     {
-        using Type = T<Flags...>;
-    };
+        V<Flags...> visitor(args...);
+        Iterate<0, Flags...>::over(visitor, *this);
+        return visitor;
+    }
+
+    template <template <typename...> class V, typename ...Ts>
+    static V<Flags...> static_visit(const Ts& ...args)
+    {
+        V<Flags...> visitor(args...);
+        Iterate<0, Flags...>::over(visitor);
+        return visitor;
+    }
 private:
     using FlagsStorage = std::bitset<sizeof...(Flags)>;
-    constexpr Status(const FlagsStorage& src)
-        : flags_(src)
-    {
-    }
+    constexpr Status(const FlagsStorage& src);
     template <typename I, typename H, typename ...Ts>
     struct Get
     {
@@ -209,6 +207,61 @@ private:
             return 0;
         }
     };
+
+    template <int idx, typename ...Fs>
+    struct Iterate
+    {
+        static_assert(idx == sizeof...(Flags), "invalid usage, idx out of range");
+        template <typename V>
+        static void over(const V&, const Status&) { }
+        template <typename V>
+        static void over(const V&) { }
+    };
+    template <int idx, typename F, typename ...Fs>
+    struct Iterate<idx, F, Fs...>
+    {
+        template <typename V>
+        static void over(V& visitor, const Status<o, Flags...>& status)
+        {
+            if (visitor.template visit<F, idx>(status) == StatusVisiting::can_continue)
+            {
+                Iterate<idx + 1, Fs...>::over(visitor, status);
+            }
+        }
+        template <typename V>
+        static void over(const V& visitor, const Status<o, Flags...>& status)
+        {
+            if (visitor.template visit<F, idx>(status) == StatusVisiting::can_continue)
+            {
+                Iterate<idx + 1, Fs...>::over(visitor, status);
+            }
+        }
+        template <typename M>
+        static void over(M& mutator, Status<o, Flags...>& status)
+        {
+            if (mutator.template visit<F, idx>(status) == StatusVisiting::can_continue)
+            {
+                Iterate<idx + 1, Fs...>::over(mutator, status);
+            }
+        }
+        template <typename M>
+        static void over(const M& mutator, Status<o, Flags...>& status)
+        {
+            if (mutator.template visit<F, idx>(status) == StatusVisiting::can_continue)
+            {
+                Iterate<idx + 1, Fs...>::over(mutator, status);
+            }
+        }
+        template <typename V>
+        static void over(V& visitor)
+        {
+            if (visitor.template visit<F, idx>() == StatusVisiting::can_continue)
+            {
+                Iterate<idx + 1, Fs...>::over(visitor);
+            }
+        }
+    };
+
     template <typename F>
     static constexpr int index_of()noexcept
     {
@@ -216,15 +269,15 @@ private:
         static_assert((0 <= flag_index) && (flag_index < sizeof...(Flags)), "index out of range");
         return flag_index;
     }
-    static constexpr void set_bits(FlagsStorage&)noexcept
-    {
-    }
+
+    static constexpr void set_bits(FlagsStorage&)noexcept { }
     template <typename ...Ts>
     static void set_bits(FlagsStorage& mask, int idx0, Ts ...idxs)noexcept
     {
         mask.set(idx0, true);
         set_bits(mask, idxs...);
     }
+
     template <typename ...Fs>
     static FlagsStorage mask_of()noexcept
     {
@@ -232,6 +285,27 @@ private:
         set_bits(mask, index_of<Fs>()...);
         return mask;
     }
+
+    template <typename ...Ts>
+    struct IsUnique
+    {
+        static_assert(sizeof...(Ts) < 2, "used just for an absolutely sure unique type list");
+        static constexpr bool result = true;
+    };
+    template <typename T0, typename T1, typename ...Ts>
+    struct IsUnique<T0, T1, Ts...>
+    {
+        static constexpr bool result = IsUnique<T0, Ts...>::result &&
+                                       IsUnique<T1, Ts...>::result;
+    };
+    template <typename T, typename ...Ts>
+    struct IsUnique<T, T, Ts...>
+    {
+        static constexpr bool result = false;
+    };
+
+    static_assert(IsUnique<typename Flags::Name...>::result, "flag names uniqueness violation");
+
     FlagsStorage flags_;
     friend bool operator==(const Status& lhs, const Status& rhs)noexcept
     {
