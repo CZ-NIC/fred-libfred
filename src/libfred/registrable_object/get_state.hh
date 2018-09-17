@@ -16,10 +16,10 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATUS_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATUS_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#ifndef GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
 
-#include "libfred/registrable_object/status.hh"
+#include "libfred/registrable_object/flagset.hh"
 #include "libfred/opcontext.hh"
 
 #include <stdexcept>
@@ -39,7 +39,7 @@ struct ObjectNotFound : std::runtime_error
 template <typename, typename T> bool does_correspond(const T&);
 
 template <typename D, typename S>
-class GetStatus
+class GetState
 {
 public:
     static constexpr Object_Type::Enum object_type = S::object_type;
@@ -49,32 +49,32 @@ public:
 private:
     const D& derived()const;
     template <typename ...Fs>
-    class StatusFlagSetter;
+    class FlagsSetter;
 };
 
 template <typename S>
-class GetStatusById : public GetStatus<GetStatusById<S>, S>
+class GetStateById : public GetState<GetStateById<S>, S>
 {
 public:
-    explicit GetStatusById(unsigned long long object_id);
+    explicit GetStateById(unsigned long long object_id);
 private:
     std::string get_object_id_rule(Database::query_param_list& params)const;
     unsigned long long object_id_;
-    friend class GetStatus<GetStatusById, S>;
+    friend class GetState<GetStateById, S>;
 };
 
 template <typename S>
-class GetStatusByHandle : public GetStatus<GetStatusByHandle<S>, S>
+class GetStateByHandle : public GetState<GetStateByHandle<S>, S>
 {
 public:
-    explicit GetStatusByHandle(const std::string& handle);
+    explicit GetStateByHandle(const std::string& handle);
 private:
     std::string get_object_id_rule(Database::query_param_list& params)const;
     std::string handle_;
-    friend class GetStatus<GetStatusByHandle, S>;
+    friend class GetState<GetStateByHandle, S>;
 };
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATUS_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#endif//GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66

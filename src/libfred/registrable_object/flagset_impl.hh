@@ -19,43 +19,43 @@
 #ifndef STATUS_IMPL_HH_7175EB6FC6ECBA7EE3E85161154E3603//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define STATUS_IMPL_HH_7175EB6FC6ECBA7EE3E85161154E3603
 
-#include "libfred/registrable_object/status.hh"
+#include "libfred/registrable_object/flagset.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 
 template <Object_Type::Enum o, typename ...Flags>
-bool Status<o, Flags...>::all()const noexcept
+bool FlagSet::Array<o, Flags...>::all()const noexcept
 {
     return flags_.all();
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-bool Status<o, Flags...>::any()const noexcept
+bool FlagSet::Array<o, Flags...>::any()const noexcept
 {
     return flags_.any();
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-bool Status<o, Flags...>::none()const noexcept
+bool FlagSet::Array<o, Flags...>::none()const noexcept
 {
     return flags_.none();
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-std::size_t Status<o, Flags...>::count()const noexcept
+std::size_t FlagSet::Array<o, Flags...>::count()const noexcept
 {
     return flags_.count();
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-constexpr std::size_t Status<o, Flags...>::size()noexcept
+constexpr std::size_t FlagSet::Array<o, Flags...>::size()noexcept
 {
-    return FlagsStorage().size();
+    return ItemsStorage().size();
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-Status<o, Flags...>& Status<o, Flags...>::set_all(bool value)noexcept
+FlagSet::Array<o, Flags...>& FlagSet::Array<o, Flags...>::set_all(bool value)noexcept
 {
     if (value)
     {
@@ -65,34 +65,34 @@ Status<o, Flags...>& Status<o, Flags...>::set_all(bool value)noexcept
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-Status<o, Flags...>& Status<o, Flags...>::set_all()noexcept
+FlagSet::Array<o, Flags...>& FlagSet::Array<o, Flags...>::set_all()noexcept
 {
     flags_.set();
     return *this;
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-Status<o, Flags...>& Status<o, Flags...>::reset_all()noexcept
+FlagSet::Array<o, Flags...>& FlagSet::Array<o, Flags...>::reset_all()noexcept
 {
     flags_.reset();
     return *this;
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-Status<o, Flags...>& Status<o, Flags...>::flip_all()noexcept
+FlagSet::Array<o, Flags...>& FlagSet::Array<o, Flags...>::flip_all()noexcept
 {
     flags_.flip();
     return *this;
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-Status<o, Flags...> Status<o, Flags...>::operator~()const noexcept
+FlagSet::Array<o, Flags...> FlagSet::Array<o, Flags...>::operator~()const noexcept
 {
-    return Status(~flags_);
+    return FlagSet::Array<o, Flags...>(~flags_);
 }
 
 template <Object_Type::Enum o, typename ...Flags>
-constexpr Status<o, Flags...>::Status(const FlagsStorage& src)
+constexpr FlagSet::Array<o, Flags...>::Array(const ItemsStorage& src)
     : flags_(src)
 {
 }

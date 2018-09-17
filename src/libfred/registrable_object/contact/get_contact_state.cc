@@ -16,8 +16,8 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrable_object/contact/get_contact_status.hh"
-#include "libfred/registrable_object/get_status_impl.hh"
+#include "libfred/registrable_object/contact/get_contact_state.hh"
+#include "libfred/registrable_object/get_state_impl.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
@@ -51,11 +51,11 @@ bool does_correspond<ServerTransferProhibited>(const std::string& flag_name) { r
 template <>
 bool does_correspond<ServerUpdateProhibited>(const std::string& flag_name) { return flag_name == "serverUpdateProhibited"; }
 
-template class GetStatusById<ContactStatus>;
-template class GetStatus<GetStatusById<ContactStatus>, ContactStatus>;
+template class GetStateById<ContactState>;
+template class GetState<GetStateById<ContactState>, ContactState>;
 
-template class GetStatusByHandle<ContactStatus>;
-template class GetStatus<GetStatusByHandle<ContactStatus>, ContactStatus>;
+template class GetStateByHandle<ContactState>;
+template class GetState<GetStateByHandle<ContactState>, ContactState>;
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred

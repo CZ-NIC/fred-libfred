@@ -16,8 +16,8 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrable_object/contact/contact_status.hh"
-#include "libfred/registrable_object/contact/get_contact_status.hh"
+#include "libfred/registrable_object/contact/contact_state.hh"
+#include "libfred/registrable_object/contact/get_contact_state.hh"
 #include "util/printable.hh"
 
 #include <boost/test/unit_test.hpp>

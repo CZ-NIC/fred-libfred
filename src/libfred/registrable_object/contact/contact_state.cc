@@ -16,15 +16,15 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrable_object/contact/contact_status.hh"
-#include "libfred/registrable_object/status_impl.hh"
+#include "libfred/registrable_object/contact/contact_state.hh"
+#include "libfred/registrable_object/flagset_impl.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 
 using namespace Contact;
 
-template class Status<Object_Type::contact,
+template class FlagSet::Array<Object_Type::contact,
         DeleteCandidate,
         Linked,
         ContactFailedManualVerification,
