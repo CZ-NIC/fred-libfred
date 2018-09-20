@@ -19,31 +19,53 @@
 #ifndef CONTACT_STATE_HH_F582B2CFFE08EDCAF2A8C04B8F99E131//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define CONTACT_STATE_HH_F582B2CFFE08EDCAF2A8C04B8F99E131
 
-#include "libfred/registrable_object/flagset.hh"
+#include "libfred/registrable_object/state.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 namespace Contact {
 
-using DeleteCandidate = FlagSet::Item::AutomaticExternal<struct DeleteCandidateFlag>;
-using Linked = FlagSet::Item::AutomaticExternal<struct LinkedFlag>;
+namespace StateFlagName {
 
-using ContactFailedManualVerification = FlagSet::Item::ManualExternal<struct ContactFailedManualVerificationFlag>;
-using ContactInManualVerification = FlagSet::Item::ManualExternal<struct ContactInManualVerificationFlag>;
-using ContactPassedManualVerification = FlagSet::Item::ManualExternal<struct ContactPassedManualVerificationFlag>;
+extern const char delete_candidate[];
+extern const char linked[];
 
-using ConditionallyIdentifiedContact = FlagSet::Item::ManualExternal<struct ConditionallyIdentifiedContactFlag>;
-using IdentifiedContact = FlagSet::Item::ManualExternal<struct IdentifiedContactFlag>;
-using ValidatedContact = FlagSet::Item::ManualExternal<struct ValidatedContactFlag>;
+extern const char contact_failed_manual_verification[];
+extern const char contact_in_manual_verification[];
+extern const char contact_passed_manual_verification[];
 
-using MojeidContact = FlagSet::Item::ManualExternal<struct MojeidContactFlag>;
+extern const char conditionally_identified_contact[];
+extern const char identified_contact[];
+extern const char validated_contact[];
 
-using ServerBlocked = FlagSet::Item::ManualExternal<struct ServerBlockedFlag>;
-using ServerDeleteProhibited = FlagSet::Item::ManualExternal<struct ServerDeleteProhibitedFlag>;
-using ServerTransferProhibited = FlagSet::Item::ManualExternal<struct ServerTransferProhibitedFlag>;
-using ServerUpdateProhibited = FlagSet::Item::ManualExternal<struct ServerUpdateProhibitedFlag>;
+extern const char mojeid_contact[];
 
-using ContactState = FlagSet::Array<Object_Type::contact,
+extern const char server_blocked[];
+extern const char server_delete_prohibited[];
+extern const char server_transfer_prohibited[];
+extern const char server_update_prohibited[];
+
+}//namespace LibFred::RegistrableObject::Contact::StateFlagName
+
+using DeleteCandidate = State::Flag::AutomaticExternal<StateFlagName::delete_candidate>;
+using Linked = State::Flag::AutomaticExternal<StateFlagName::linked>;
+
+using ContactFailedManualVerification = State::Flag::ManualExternal<StateFlagName::contact_failed_manual_verification>;
+using ContactInManualVerification = State::Flag::ManualExternal<StateFlagName::contact_in_manual_verification>;
+using ContactPassedManualVerification = State::Flag::ManualExternal<StateFlagName::contact_passed_manual_verification>;
+
+using ConditionallyIdentifiedContact = State::Flag::ManualExternal<StateFlagName::conditionally_identified_contact>;
+using IdentifiedContact = State::Flag::ManualExternal<StateFlagName::identified_contact>;
+using ValidatedContact = State::Flag::ManualExternal<StateFlagName::validated_contact>;
+
+using MojeidContact = State::Flag::ManualExternal<StateFlagName::mojeid_contact>;
+
+using ServerBlocked = State::Flag::ManualExternal<StateFlagName::server_blocked>;
+using ServerDeleteProhibited = State::Flag::ManualExternal<StateFlagName::server_delete_prohibited>;
+using ServerTransferProhibited = State::Flag::ManualExternal<StateFlagName::server_transfer_prohibited>;
+using ServerUpdateProhibited = State::Flag::ManualExternal<StateFlagName::server_update_prohibited>;
+
+using ContactStateProvide = State::Of<Object_Type::contact,
         DeleteCandidate,
         Linked,
         ContactFailedManualVerification,
@@ -57,6 +79,8 @@ using ContactState = FlagSet::Array<Object_Type::contact,
         ServerDeleteProhibited,
         ServerTransferProhibited,
         ServerUpdateProhibited>;
+
+using ContactState = typename ContactStateProvide::Type;
 
 }//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject

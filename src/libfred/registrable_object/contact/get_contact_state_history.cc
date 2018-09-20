@@ -16,8 +16,8 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrable_object/contact/get_contact_state.hh"
-#include "libfred/registrable_object/get_state_impl.hh"
+#include "libfred/registrable_object/contact/get_contact_state_history.hh"
+#include "libfred/registrable_object/get_state_history_impl.hh"
 #include "libfred/registrable_object/operation_by_id_impl.hh"
 #include "libfred/registrable_object/operation_by_handle_impl.hh"
 #include "libfred/registrable_object/operation_by_uuid_impl.hh"
@@ -27,14 +27,14 @@ namespace RegistrableObject {
 
 using namespace Contact;
 
-template class OperationById<GetState, ContactState>;
-template class GetState<OperationById<GetState, ContactState>, ContactState>;
+template class OperationById<GetStateHistory, ContactState>;
+template class GetStateHistory<OperationById<GetStateHistory, ContactState>, ContactState>;
 
-template class OperationByHandle<GetState, ContactState>;
-template class GetState<OperationByHandle<GetState, ContactState>, ContactState>;
+template class OperationByHandle<GetStateHistory, ContactState>;
+template class GetStateHistory<OperationByHandle<GetStateHistory, ContactState>, ContactState>;
 
-template class OperationByUUID<GetState, ContactState>;
-template class GetState<OperationByUUID<GetState, ContactState>, ContactState>;
+template class OperationByUUID<GetStateHistory, ContactState>;
+template class GetStateHistory<OperationByUUID<GetStateHistory, ContactState>, ContactState>;
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred

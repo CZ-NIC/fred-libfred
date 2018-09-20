@@ -17,14 +17,41 @@
  */
 
 #include "libfred/registrable_object/contact/contact_state.hh"
-#include "libfred/registrable_object/flagset_impl.hh"
+#include "util/flagset_impl.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
+namespace Contact {
+namespace StateFlagName {
 
-using namespace Contact;
+constexpr const char delete_candidate[] = "deleteCandidate";
+constexpr const char linked[] = "linked";
 
-template class FlagSet::Array<Object_Type::contact,
+constexpr const char contact_failed_manual_verification[] = "contactFailedManualVerification";
+constexpr const char contact_in_manual_verification[] = "contactInManualVerification";
+constexpr const char contact_passed_manual_verification[] = "contactPassedManualVerification";
+
+constexpr const char conditionally_identified_contact[] = "conditionallyIdentifiedContact";
+constexpr const char identified_contact[] = "identifiedContact";
+constexpr const char validated_contact[] = "validatedContact";
+
+constexpr const char mojeid_contact[] = "mojeidContact";
+
+constexpr const char server_blocked[] = "serverBlocked";
+constexpr const char server_delete_prohibited[] = "serverDeleteProhibited";
+constexpr const char server_transfer_prohibited[] = "serverTransferProhibited";
+constexpr const char server_update_prohibited[] = "serverUpdateProhibited";
+
+}//namespace LibFred::RegistrableObject::Contact::StateFlagName
+}//namespace LibFred::RegistrableObject::Contact
+}//namespace LibFred::RegistrableObject
+}//namespace LibFred
+
+namespace Util {
+
+using namespace LibFred::RegistrableObject::Contact;
+
+template class FlagSet<ContactStateProvide,
         DeleteCandidate,
         Linked,
         ContactFailedManualVerification,
@@ -39,5 +66,4 @@ template class FlagSet::Array<Object_Type::contact,
         ServerTransferProhibited,
         ServerUpdateProhibited>;
 
-}//namespace LibFred::RegistrableObject
-}//namespace LibFred
+}//namespace Util

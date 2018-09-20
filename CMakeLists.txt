@@ -65,6 +65,7 @@ set(LIBFRED_SOURCES
     src/libfred/registrable_object/contact/delete_contact.cc
     src/libfred/registrable_object/contact/find_contact_duplicates.cc
     src/libfred/registrable_object/contact/get_contact_state.cc
+    src/libfred/registrable_object/contact/get_contact_state_history.cc
     src/libfred/registrable_object/contact/info_contact.cc
     src/libfred/registrable_object/contact/info_contact_data.cc
     src/libfred/registrable_object/contact/info_contact_diff.cc

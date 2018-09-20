@@ -16,29 +16,24 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#ifndef EXCEPTIONS_HH_46C9FEA6A9D89F98CDFD9987C412A936//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define EXCEPTIONS_HH_46C9FEA6A9D89F98CDFD9987C412A936
 
-#include "libfred/registrable_object/exceptions.hh"
-#include "libfred/registrable_object/state.hh"
-#include "libfred/opcontext.hh"
+#include "libfred/object/object_type.hh"
+
+#include <stdexcept>
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <typename D, typename S>
-class GetState
+template <Object_Type::Enum o>
+struct ObjectNotFound : std::runtime_error
 {
-public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = S;
-    using NotFound = ObjectNotFound<object_type>;
-    Result exec(OperationContext& ctx)const;
-private:
-    const D& derived()const;
+    static constexpr Object_Type::Enum object_type = o;
+    ObjectNotFound();
 };
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#endif//EXCEPTIONS_HH_46C9FEA6A9D89F98CDFD9987C412A936

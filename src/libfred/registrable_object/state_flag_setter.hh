@@ -16,29 +16,34 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#ifndef STATE_FLAG_SETTER_HH_EA79593F14AAC1DCF44D7435DF011C8A//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define STATE_FLAG_SETTER_HH_EA79593F14AAC1DCF44D7435DF011C8A
 
-#include "libfred/registrable_object/exceptions.hh"
-#include "libfred/registrable_object/state.hh"
-#include "libfred/opcontext.hh"
+#include "util/flagset.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <typename D, typename S>
-class GetState
+template <typename ...Flags>
+class StateFlagSetter
 {
 public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = S;
-    using NotFound = ObjectNotFound<object_type>;
-    Result exec(OperationContext& ctx)const;
+    explicit StateFlagSetter(const std::string& flag_name) : flag_name_(flag_name) { }
+    template <typename F, int, typename T>
+    Util::FlagSetVisiting visit(T& status)
+    {
+        if (F::name == flag_name_)
+        {
+            status.template set<F>();
+            return Util::FlagSetVisiting::is_done;
+        }
+        return Util::FlagSetVisiting::can_continue;
+    }
 private:
-    const D& derived()const;
+    const std::string flag_name_;
 };
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#endif//STATE_FLAG_SETTER_HH_EA79593F14AAC1DCF44D7435DF011C8A

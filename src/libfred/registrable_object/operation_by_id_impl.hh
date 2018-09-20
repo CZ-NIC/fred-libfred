@@ -16,29 +16,29 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#ifndef OPERATION_BY_ID_IMPL_HH_FBA42FFC1F3FD34A6DEB6CB7F59A3CFF//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define OPERATION_BY_ID_IMPL_HH_FBA42FFC1F3FD34A6DEB6CB7F59A3CFF
 
-#include "libfred/registrable_object/exceptions.hh"
-#include "libfred/registrable_object/state.hh"
-#include "libfred/opcontext.hh"
+#include "libfred/registrable_object/operation_by_id.hh"
+
+#include <string>
+#include <type_traits>
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <typename D, typename S>
-class GetState
+template <template <typename, typename> class O, typename T>
+OperationById<O, T>::OperationById(unsigned long long object_id)
+    : object_id_(object_id)
+{ }
+
+template <template <typename, typename> class O, typename T>
+std::string OperationById<O, T>::get_object_id_rule(Database::query_param_list& params)const
 {
-public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = S;
-    using NotFound = ObjectNotFound<object_type>;
-    Result exec(OperationContext& ctx)const;
-private:
-    const D& derived()const;
-};
+    return "$" + params.add(object_id_) + "::BIGINT";
+}
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#endif//OPERATION_BY_ID_IMPL_HH_FBA42FFC1F3FD34A6DEB6CB7F59A3CFF

@@ -20,38 +20,11 @@
 #define GET_STATE_IMPL_HH_5459476FE727963D8ADC957831E32B9E
 
 #include "libfred/registrable_object/get_state.hh"
-
-#include <string>
-#include <type_traits>
+#include "libfred/registrable_object/exceptions_impl.hh"
+#include "libfred/registrable_object/state_flag_setter.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
-
-template <Object_Type::Enum o>
-ObjectNotFound<o>::ObjectNotFound()
-    : std::runtime_error(Conversion::Enums::to_db_handle(object_type) + " not found")
-{ }
-
-template <typename D, typename S>
-template <typename ...Fs>
-class GetState<D, S>::FlagsSetter
-{
-public:
-    explicit FlagsSetter(const std::string& flag_name) : flag_name_(flag_name) { }
-    template <typename F, int, typename T>
-    FlagSet::Visiting visit(T& status)
-    {
-        static_assert(std::is_same<T, S>::value, "invalid usage");
-        if (does_correspond<F>(flag_name_))
-        {
-            status.template set<F>();
-            return FlagSet::Visiting::is_done;
-        }
-        return FlagSet::Visiting::can_continue;
-    }
-private:
-    const std::string flag_name_;
-};
 
 template <typename D, typename S>
 typename GetState<D, S>::Result GetState<D, S>::exec(OperationContext& ctx)const
@@ -82,7 +55,7 @@ typename GetState<D, S>::Result GetState<D, S>::exec(OperationContext& ctx)const
         for (std::size_t idx = 0; idx < dbres.size(); ++idx)
         {
             const std::string flag_name = static_cast<std::string>(dbres[idx][0]);
-            status.template visit<FlagsSetter>(flag_name);
+            status.template visit<StateFlagSetter>(flag_name);
         }
     }
     return status;
@@ -92,35 +65,6 @@ template <typename D, typename S>
 const D& GetState<D, S>::derived()const
 {
     return *static_cast<const D*>(this);
-}
-
-template <typename S>
-GetStateById<S>::GetStateById(unsigned long long object_id)
-    : object_id_(object_id)
-{ }
-
-template <typename S>
-std::string GetStateById<S>::get_object_id_rule(Database::query_param_list& params)const
-{
-    return "$" + params.add(object_id_) + "::BIGINT";
-}
-
-template <typename S>
-GetStateByHandle<S>::GetStateByHandle(const std::string& handle)
-    : handle_(handle)
-{ }
-
-template <typename S>
-std::string GetStateByHandle<S>::get_object_id_rule(Database::query_param_list& params)const
-{
-    static const std::string sql_handle_case_normalize_function =
-            S::object_type == Object_Type::domain ? "LOWER"
-                                                  : "UPPER";
-    return "SELECT id "
-           "FROM object_registry "
-           "WHERE name=" + sql_handle_case_normalize_function + "($" + params.add(handle_) + "::TEXT) AND "
-                 "type=get_object_type_id($" + params.add(Conversion::Enums::to_db_handle(S::object_type)) + "::TEXT) AND "
-                 "erdate IS NULL";
 }
 
 }//namespace LibFred::RegistrableObject

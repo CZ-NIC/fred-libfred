@@ -16,29 +16,29 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#ifndef OPERATION_BY_UUID_HH_D040ECF44D1F9213A9D20B7375621D94//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define OPERATION_BY_UUID_HH_D040ECF44D1F9213A9D20B7375621D94
 
-#include "libfred/registrable_object/exceptions.hh"
-#include "libfred/registrable_object/state.hh"
-#include "libfred/opcontext.hh"
+#include "util/db/query_param.hh"
+
+#include <string>
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <typename D, typename S>
-class GetState
+template <template <typename, typename> class O, typename T>
+class OperationByUUID : public O<OperationByUUID<O, T>, T>
 {
 public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = S;
-    using NotFound = ObjectNotFound<object_type>;
-    Result exec(OperationContext& ctx)const;
+    explicit OperationByUUID(const std::string& uuid);
+    explicit OperationByUUID(unsigned long long uuid);
 private:
-    const D& derived()const;
+    std::string get_object_id_rule(Database::query_param_list& params)const;
+    std::string uuid_;
+    friend class O<OperationByUUID, T>;
 };
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#endif//OPERATION_BY_UUID_HH_D040ECF44D1F9213A9D20B7375621D94

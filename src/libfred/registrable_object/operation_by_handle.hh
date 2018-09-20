@@ -16,29 +16,28 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#ifndef OPERATION_BY_HANDLE_HH_1E443F3C4D5E87E003B1B3D10D48ADE7//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define OPERATION_BY_HANDLE_HH_1E443F3C4D5E87E003B1B3D10D48ADE7
 
-#include "libfred/registrable_object/exceptions.hh"
-#include "libfred/registrable_object/state.hh"
-#include "libfred/opcontext.hh"
+#include "util/db/query_param.hh"
+
+#include <string>
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <typename D, typename S>
-class GetState
+template <template <typename, typename> class O, typename T>
+class OperationByHandle : public O<OperationByHandle<O, T>, T>
 {
 public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = S;
-    using NotFound = ObjectNotFound<object_type>;
-    Result exec(OperationContext& ctx)const;
+    explicit OperationByHandle(const std::string& handle);
 private:
-    const D& derived()const;
+    std::string get_object_id_rule(Database::query_param_list& params)const;
+    std::string handle_;
+    friend class O<OperationByHandle, T>;
 };
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#endif//OPERATION_BY_HANDLE_HH_1E443F3C4D5E87E003B1B3D10D48ADE7
