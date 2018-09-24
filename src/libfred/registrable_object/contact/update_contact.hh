@@ -153,8 +153,7 @@ private:
  */
 template <class DERIVED>
 class UpdateContact
-    : public Util::Printable<UpdateContact<DERIVED>>,
-      public ExceptionTraits<UpdateContactET>
+    : public ExceptionTraits<UpdateContactET>
 {
 public:
     /**
