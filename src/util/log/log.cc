@@ -262,10 +262,11 @@ Log& Log::add_handler_of(A...args)
     return *this;
 }
 
-template Log& Log::add_handler_of<Log::Device::file, const std::string&>(const std::string&);
+template Log& Log::add_handler_of<Log::Device::file, const char*>(const char*);
 template Log& Log::add_handler_of<Log::Device::file, std::string>(std::string);
 template Log& Log::add_handler_of<Log::Device::console>();
 template Log& Log::add_handler_of<Log::Device::syslog, int>(int);
+template Log& Log::add_handler_of<Log::Device::syslog, unsigned>(unsigned);
 template Log& Log::add_handler_of<Log::Device::syslog>();
 
 Log& Log::set_minimal_importance(EventImportance importance)
@@ -280,6 +281,16 @@ bool Log::is_sufficient()const
     const bool insufficient_importance = Is<event_importance>::less_than(minimal_importance_);
     return !insufficient_importance;
 }
+
+template bool Log::is_sufficient<Log::EventImportance::debug>()const;
+template bool Log::is_sufficient<Log::EventImportance::info>()const;
+template bool Log::is_sufficient<Log::EventImportance::notice>()const;
+template bool Log::is_sufficient<Log::EventImportance::warning>()const;
+template bool Log::is_sufficient<Log::EventImportance::err>()const;
+template bool Log::is_sufficient<Log::EventImportance::crit>()const;
+template bool Log::is_sufficient<Log::EventImportance::alert>()const;
+template bool Log::is_sufficient<Log::EventImportance::emerg>()const;
+template bool Log::is_sufficient<Log::EventImportance::trace>()const;
 
 void Log::trace(const std::string& msg)const
 {
