@@ -19,51 +19,54 @@ class Log::Handler
 public:
     virtual ~Handler() = default;
     virtual Handler& msg(Log::EventImportance event_importance, const std::string& msg) = 0;
+    virtual bool is_sufficient(Log::EventImportance)const = 0;
 };
 
 namespace {
 
 template <Log::EventImportance importance>
-bool log_as(const Log& log, const std::list<std::unique_ptr<Log::Handler>>& handlers, const std::string& msg)
+void log_as(const std::list<std::unique_ptr<Log::Handler>>& handlers, const std::string& msg)
 {
-    if (log.is_sufficient<importance>())
+    for (const auto& handler : handlers)
     {
-        for (const auto& handler : handlers)
+        if (handler->is_sufficient(importance))
         {
             handler->msg(importance, msg);
         }
-        return true;
     }
-    return false;
 }
 
 template <Log::EventImportance importance>
-bool log_as(const Log& log, const std::list<std::unique_ptr<Log::Handler>>& handlers, const boost::format& frmt)
+void log_as(const std::list<std::unique_ptr<Log::Handler>>& handlers, const boost::format& frmt)
 {
-    if (log.is_sufficient<importance>())
+    std::string msg;
+    for (const auto& handler : handlers)
     {
-        if (!handlers.empty())
+        if (handler->is_sufficient(importance))
         {
-            const std::string msg = frmt.str();
-            for (const auto& handler : handlers)
+            if (msg.empty())
             {
-                handler->msg(importance, msg);
+                msg = frmt.str();
             }
+            handler->msg(importance, msg);
         }
-        return true;
     }
-    return false;
 }
 
-template <Log::EventImportance lhs>
-struct Is
+class Is
 {
-    static bool less_than(Log::EventImportance rhs)
+public:
+    explicit Is(Log::EventImportance lhs)
+        : lhs_(lhs)
+    { }
+    bool less_important_than(Log::EventImportance rhs)const
     {
-        const bool lhs_is_numerically_greater_than_rhs = rhs < lhs;
+        const bool lhs_is_numerically_greater_than_rhs = rhs < lhs_;
         const bool lhs_is_less_important_than_rhs = lhs_is_numerically_greater_than_rhs;
         return lhs_is_less_important_than_rhs;
     }
+private:
+    const Log::EventImportance lhs_;
 };
 
 std::string importance2str(Log::EventImportance event_importance)
@@ -102,6 +105,7 @@ class SharedStreamHandler : public Log::Handler
 {
 public:
     ~SharedStreamHandler() = default;
+private:
     Handler& msg(Log::EventImportance event_importance, const std::string& msg)override
     {
         const auto str_now = get_current_time();
@@ -128,7 +132,6 @@ public:
         out << std::endl;
         return *this;
     }
-private:
     virtual std::ostream& get_output_stream() = 0;
     boost::mutex mutex_;
 };
@@ -136,7 +139,8 @@ private:
 class FileHandler : public SharedStreamHandler
 {
 public:
-    explicit FileHandler(const std::string& file_name)
+    explicit FileHandler(const std::string& file_name, Log::EventImportance min_importance = Log::EventImportance::info)
+        : min_importance_(min_importance)
     {
         ofs_.open(file_name, std::ios_base::app);
     }
@@ -146,19 +150,35 @@ public:
         ofs_.close();
     }
 private:
+    bool is_sufficient(Log::EventImportance event_importance)const override
+    {
+        const bool insufficient_importance = Is(event_importance).less_important_than(min_importance_);
+        return !insufficient_importance;
+    }
     std::ostream& get_output_stream()override { return ofs_; }
     std::ofstream ofs_;
+    const Log::EventImportance min_importance_;
 };
 
 class ConsoleHandler : public SharedStreamHandler
 {
 public:
+    ConsoleHandler(Log::EventImportance min_importance = Log::EventImportance::info)
+        : min_importance_(min_importance)
+    {
+    }
     ~ConsoleHandler()
     {
         std::cout.flush();
     }
 private:
+    bool is_sufficient(Log::EventImportance event_importance)const override
+    {
+        const bool insufficient_importance = Is(event_importance).less_important_than(min_importance_);
+        return !insufficient_importance;
+    }
     std::ostream& get_output_stream()override { return std::cout; }
+    const Log::EventImportance min_importance_;
 };
 
 class SysLogHandler : public Log::Handler
@@ -168,6 +188,7 @@ public:
         : syslog_facility_(get_syslog_facility_local(local_facility_index))
     { }
     ~SysLogHandler() = default;
+private:
     Handler& msg(Log::EventImportance event_importance, const std::string& msg)override
     {
         const auto context = Context::get();
@@ -178,6 +199,7 @@ public:
             {
                 switch (event_importance)
                 {
+                    case Log::EventImportance::trace://the same as debug
                     case Log::EventImportance::debug: return LOG_DEBUG;
                     case Log::EventImportance::info: return LOG_INFO;
                     case Log::EventImportance::notice: return LOG_NOTICE;
@@ -186,7 +208,6 @@ public:
                     case Log::EventImportance::crit: return LOG_CRIT;
                     case Log::EventImportance::alert: return LOG_ALERT;
                     case Log::EventImportance::emerg: return LOG_EMERG;
-                    case Log::EventImportance::trace: return LOG_DEBUG;
                 }
                 return LOG_DEBUG;
             }
@@ -194,7 +215,10 @@ public:
         syslog(syslog_facility_ | LogLevel::from(event_importance), "%s", (prefix + msg).c_str());
         return *this;
     }
-private:
+    bool is_sufficient(Log::EventImportance)const override
+    {
+        return true;
+    }
     static int get_syslog_facility_local(int index)
     {
         constexpr int the_number_of_local_facilities = 8;
@@ -214,25 +238,45 @@ private:
     const int syslog_facility_;
 };
 
-template <Log::Device device>
+template <Log::Device>
 std::unique_ptr<Log::Handler> make_log_handler_of();
 
-template <Log::Device device>
+template <Log::Device>
+std::unique_ptr<Log::Handler> make_log_handler_of(Log::EventImportance);
+
+template <Log::Device>
 std::unique_ptr<Log::Handler> make_log_handler_of(const std::string&);
 
-template <Log::Device device>
+template <Log::Device>
+std::unique_ptr<Log::Handler> make_log_handler_of(const std::string&, Log::EventImportance);
+
+template <Log::Device>
 std::unique_ptr<Log::Handler> make_log_handler_of(int);
 
 template <>
 std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::file>(const std::string& file_name)
 {
-    return std::make_unique<FileHandler>(file_name);
+    return std::make_unique<FileHandler>(file_name, Log::EventImportance::info);
+}
+
+template <>
+std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::file>(
+        const std::string& file_name,
+        Log::EventImportance min_importance)
+{
+    return std::make_unique<FileHandler>(file_name, min_importance);
 }
 
 template <>
 std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::console>()
 {
-    return std::make_unique<ConsoleHandler>();
+    return std::make_unique<ConsoleHandler>(Log::EventImportance::info);
+}
+
+template <>
+std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::console>(Log::EventImportance min_importance)
+{
+    return std::make_unique<ConsoleHandler>(min_importance);
 }
 
 template <>
@@ -250,8 +294,7 @@ std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::syslog>()
 
 }//namespace Logging::{anonymous}
 
-Log::Log()
-    : minimal_importance_(EventImportance::info) { }
+Log::Log() { }
 
 Log::~Log() { }
 
@@ -263,25 +306,29 @@ Log& Log::add_handler_of(A...args)
 }
 
 template Log& Log::add_handler_of<Log::Device::file, const char*>(const char*);
+template Log& Log::add_handler_of<Log::Device::file, const char*>(const char*, EventImportance);
 template Log& Log::add_handler_of<Log::Device::file, std::string>(std::string);
+template Log& Log::add_handler_of<Log::Device::file, std::string>(std::string, EventImportance);
 template Log& Log::add_handler_of<Log::Device::console>();
+template Log& Log::add_handler_of<Log::Device::console>(EventImportance);
 template Log& Log::add_handler_of<Log::Device::syslog, int>(int);
 template Log& Log::add_handler_of<Log::Device::syslog, unsigned>(unsigned);
 template Log& Log::add_handler_of<Log::Device::syslog>();
 
-Log& Log::set_minimal_importance(EventImportance importance)
-{
-    minimal_importance_ = importance;
-    return *this;
-}
-
 template <Log::EventImportance event_importance>
 bool Log::is_sufficient()const
 {
-    const bool insufficient_importance = Is<event_importance>::less_than(minimal_importance_);
-    return !insufficient_importance;
+    for (const auto& handler : handlers_)
+    {
+        if (handler->is_sufficient(event_importance))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
+template bool Log::is_sufficient<Log::EventImportance::trace>()const;
 template bool Log::is_sufficient<Log::EventImportance::debug>()const;
 template bool Log::is_sufficient<Log::EventImportance::info>()const;
 template bool Log::is_sufficient<Log::EventImportance::notice>()const;
@@ -290,123 +337,132 @@ template bool Log::is_sufficient<Log::EventImportance::err>()const;
 template bool Log::is_sufficient<Log::EventImportance::crit>()const;
 template bool Log::is_sufficient<Log::EventImportance::alert>()const;
 template bool Log::is_sufficient<Log::EventImportance::emerg>()const;
-template bool Log::is_sufficient<Log::EventImportance::trace>()const;
 
 void Log::trace(const std::string& msg)const
 {
-    log_as<EventImportance::trace>(*this, handlers_, msg);
+    log_as<EventImportance::trace>(handlers_, msg);
 }
 
 void Log::debug(const std::string& msg)const
 {
-    log_as<EventImportance::debug>(*this, handlers_, msg);
+    log_as<EventImportance::debug>(handlers_, msg);
 }
 
 void Log::info(const std::string& msg)const
 {
-    log_as<EventImportance::info>(*this, handlers_, msg);
+    log_as<EventImportance::info>(handlers_, msg);
 }
 
 void Log::notice(const std::string& msg)const
 {
-    log_as<EventImportance::notice>(*this, handlers_, msg);
+    log_as<EventImportance::notice>(handlers_, msg);
 }
 
 void Log::warning(const std::string& msg)const
 {
-    log_as<EventImportance::warning>(*this, handlers_, msg);
+    log_as<EventImportance::warning>(handlers_, msg);
 }
 
 void Log::error(const std::string& msg)const
 {
-    log_as<EventImportance::err>(*this, handlers_, msg);
+    log_as<EventImportance::err>(handlers_, msg);
 }
 
 void Log::critical(const std::string& msg)const
 {
-    log_as<EventImportance::crit>(*this, handlers_, msg);
+    log_as<EventImportance::crit>(handlers_, msg);
 }
 
 void Log::alert(const std::string& msg)const
 {
-    log_as<EventImportance::alert>(*this, handlers_, msg);
+    log_as<EventImportance::alert>(handlers_, msg);
 }
 
 void Log::emerg(const std::string& msg)const
 {
-    log_as<EventImportance::emerg>(*this, handlers_, msg);
+    log_as<EventImportance::emerg>(handlers_, msg);
 }
 
 void Log::trace(const boost::format& frmt)const
 {
-    log_as<EventImportance::trace>(*this, handlers_, frmt);
+    log_as<EventImportance::trace>(handlers_, frmt);
 }
 
 void Log::debug(const boost::format& frmt)const
 {
-    log_as<EventImportance::debug>(*this, handlers_, frmt);
+    log_as<EventImportance::debug>(handlers_, frmt);
 }
 
 void Log::info(const boost::format& frmt)const
 {
-    log_as<EventImportance::info>(*this, handlers_, frmt);
+    log_as<EventImportance::info>(handlers_, frmt);
 }
 
 void Log::notice(const boost::format& frmt)const
 {
-    log_as<EventImportance::notice>(*this, handlers_, frmt);
+    log_as<EventImportance::notice>(handlers_, frmt);
 }
 
 void Log::warning(const boost::format& frmt)const
 {
-    log_as<EventImportance::warning>(*this, handlers_, frmt);
+    log_as<EventImportance::warning>(handlers_, frmt);
 }
 
 void Log::error(const boost::format& frmt)const
 {
-    log_as<EventImportance::err>(*this, handlers_, frmt);
+    log_as<EventImportance::err>(handlers_, frmt);
 }
 
 void Log::critical(const boost::format& frmt)const
 {
-    log_as<EventImportance::crit>(*this, handlers_, frmt);
+    log_as<EventImportance::crit>(handlers_, frmt);
 }
 
 void Log::alert(const boost::format& frmt)const
 {
-    log_as<EventImportance::alert>(*this, handlers_, frmt);
+    log_as<EventImportance::alert>(handlers_, frmt);
 }
 
 void Log::emerg(const boost::format& frmt)const
 {
-    log_as<EventImportance::emerg>(*this, handlers_, frmt);
+    log_as<EventImportance::emerg>(handlers_, frmt);
 }
 
-void Log::message(EventImportance event_importance, const char* format, ...)const
+template <Log::EventImportance event_importance>
+void Log::message(const char* format, ...)const
 {
-    if (minimal_importance_ < event_importance)
-    {
-        return;
-    }
-
     char msg_buffer[2048];
-    {
-        va_list args;
-        va_start(args, format);
-        const int buffer_capacity = sizeof(msg_buffer) - 1;
-        const auto bytes = vsnprintf(msg_buffer, buffer_capacity, format, args);
-        va_end(args);
-        const bool output_was_truncated = buffer_capacity <= bytes;
-        if (output_was_truncated)
-        {
-            msg_buffer[buffer_capacity] = '\0';
-        }
-    }
-
+    msg_buffer[0] = '\0';
     for (const auto& handler : handlers_)
     {
-        handler->msg(event_importance, msg_buffer);
+        if (handler->is_sufficient(event_importance))
+        {
+            if (msg_buffer[0] == '\0')
+            {
+                va_list args;
+                va_start(args, format);
+                const int buffer_capacity = sizeof(msg_buffer) - 1;
+                const auto bytes = vsnprintf(msg_buffer, buffer_capacity, format, args);
+                va_end(args);
+                const bool output_was_truncated = buffer_capacity <= bytes;
+                if (output_was_truncated)
+                {
+                    msg_buffer[buffer_capacity] = '\0';
+                }
+            }
+            handler->msg(event_importance, msg_buffer);
+        }
     }
 }
+
+template void Log::message<Log::EventImportance::trace>(const char*, ...)const;
+template void Log::message<Log::EventImportance::debug>(const char*, ...)const;
+template void Log::message<Log::EventImportance::info>(const char*, ...)const;
+template void Log::message<Log::EventImportance::notice>(const char*, ...)const;
+template void Log::message<Log::EventImportance::warning>(const char*, ...)const;
+template void Log::message<Log::EventImportance::err>(const char*, ...)const;
+template void Log::message<Log::EventImportance::crit>(const char*, ...)const;
+template void Log::message<Log::EventImportance::alert>(const char*, ...)const;
+template void Log::message<Log::EventImportance::emerg>(const char*, ...)const;
 
 }//namespace Logging

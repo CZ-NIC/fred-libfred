@@ -38,7 +38,6 @@ public:
     template <Device device, typename ...A>
     Log& add_handler_of(A...);
 
-    Log& set_minimal_importance(EventImportance importance);
     template <EventImportance importance>
     bool is_sufficient()const;
 
@@ -64,11 +63,11 @@ public:
     /**
      * support for old style formatting log
      */
-    void message(EventImportance event_importance, const char* format, ...)const;
+    template <EventImportance event_importance>
+    void message(const char* format, ...)const;
     class Handler;
 private:
     std::list<std::unique_ptr<Handler>> handlers_;
-    EventImportance minimal_importance_;
 };
 
 }//namespace Logging
