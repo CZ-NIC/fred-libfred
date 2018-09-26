@@ -43,7 +43,7 @@ struct State
         template <Manipulation m, Visibility v, const char* n>
         struct Type
         {
-            static constexpr const char* name = n;
+            static const char* const name;
             static constexpr Manipulation how_to_set = m;
             static constexpr Visibility visibility = v;
         };
@@ -64,6 +64,9 @@ struct State
         using Type = Util::FlagSet<Of, Flags...>;
     };
 };
+
+template <State::Flag::Manipulation m, State::Flag::Visibility v, const char* n>
+const char* const State::Flag::Type<m, v, n>::name = n;
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
