@@ -100,6 +100,7 @@ public:
     static constexpr Object_Type::Enum object_type = S::Tag::object_type;
     using Result = StateHistory<S>;
     using NotFound = ObjectNotFound<object_type>;
+    using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
     Result exec(OperationContext& ctx, const HistoryInterval& range)const;
 private:
     const D& derived()const;

@@ -117,7 +117,7 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
     const bool limit_is_invalid = static_cast<bool>(dbres[0][0]);
     if (limit_is_invalid)
     {
-        throw InvalidHistoryIntervalSpecification<object_type>();
+        throw InvalidHistoryIntervalSpecification();
     }
     const auto upper_limit = static_cast<typename Result::TimePoint>(dbres[0][2]);
     const bool object_has_state_flags = (1 < dbres.size()) || !dbres[0][6].isnull();
