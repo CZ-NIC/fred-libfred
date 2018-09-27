@@ -141,7 +141,7 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
     for (std::size_t idx = 0; idx < dbres.size(); ++idx)
     {
         const bool collect_state_on_begin = static_cast<bool>(dbres[idx][3]);
-        const auto valid_from = static_cast<typename Result::TimePoint>(dbres[0][4]);
+        const auto valid_from = static_cast<typename Result::TimePoint>(dbres[idx][4]);
         const std::string flag_name = static_cast<std::string>(dbres[idx][6]);
         S state;
         state.template visit<StateFlagSetter>(flag_name);
@@ -154,9 +154,9 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
         {
             state_changes[valid_from].state_begin |= state;
         }
-        if (!dbres[0][5].isnull())
+        if (!dbres[idx][5].isnull())
         {
-            const auto valid_to = static_cast<typename Result::TimePoint>(dbres[0][5]);
+            const auto valid_to = static_cast<typename Result::TimePoint>(dbres[idx][5]);
             if (valid_to <= upper_limit)
             {
                 state_changes[valid_to].state_end |= state;
