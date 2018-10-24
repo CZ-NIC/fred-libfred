@@ -111,8 +111,8 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " not found");
-        throw NotFound();
+        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        throw DoesNotExist();
     }
     const bool limit_is_invalid = static_cast<bool>(dbres[0][0]);
     if (limit_is_invalid)
@@ -126,7 +126,7 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
         Result history;
         typename Result::Record record;
         record.valid_from = static_cast<typename Result::TimePoint>(dbres[0][1]);
-        history.record.push_back(record);
+        history.timeline.push_back(record);
         history.valid_to = upper_limit;
         return history;
     }
@@ -168,7 +168,7 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
     if (record_on_begin.state.any())
     {
         record = record_on_begin;
-        history.record.push_back(record);
+        history.timeline.push_back(record);
     }
     else
     {
@@ -176,7 +176,7 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
         if (lower_limit < state_changes.begin()->first)
         {
             record.valid_from = lower_limit;
-            history.record.push_back(record);
+            history.timeline.push_back(record);
         }
     }
     for (const auto& time_action : state_changes)
@@ -184,7 +184,7 @@ typename GetStateHistory<D, S>::Result GetStateHistory<D, S>::exec(
         record.valid_from = time_action.first;
         record.state |= time_action.second.state_begin;
         record.state &= ~time_action.second.state_end;
-        history.record.push_back(record);
+        history.timeline.push_back(record);
     }
     history.valid_to = upper_limit;
     return history;

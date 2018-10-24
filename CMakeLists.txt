@@ -58,12 +58,16 @@ set(LIBFRED_SOURCES
     src/libfred/public_request/public_request_object_lock_guard.cc
     src/libfred/public_request/update_public_request.cc
     src/libfred/registrable_object/contact/check_contact.cc
+    src/libfred/registrable_object/contact/contact_data_history.cc
+    src/libfred/registrable_object/contact/contact_handle_history.cc
     src/libfred/registrable_object/contact/contact_state.cc
     src/libfred/registrable_object/contact/copy_contact.cc
     src/libfred/registrable_object/contact/copy_history_impl.cc
     src/libfred/registrable_object/contact/create_contact.cc
     src/libfred/registrable_object/contact/delete_contact.cc
     src/libfred/registrable_object/contact/find_contact_duplicates.cc
+    src/libfred/registrable_object/contact/get_contact_data_history.cc
+    src/libfred/registrable_object/contact/get_contact_handle_history.cc
     src/libfred/registrable_object/contact/get_contact_state.cc
     src/libfred/registrable_object/contact/get_contact_state_history.cc
     src/libfred/registrable_object/contact/info_contact.cc
@@ -322,6 +326,7 @@ add_executable(test-libfred
     test/libfred/test_check_handle.cc
     test/libfred/test_flagset.cc
     test/libfred/test_opexception.cc
+    test/libfred/contact/test_contact_history.cc
     test/libfred/contact/test_contact_state.cc
     test/libfred/contact/test_copy_contact.cc
     test/libfred/contact/test_create_contact.cc

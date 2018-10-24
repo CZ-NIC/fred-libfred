@@ -32,13 +32,15 @@ OperationByHandle<O, T>::OperationByHandle(const std::string& handle)
 template <template <typename, typename> class O, typename T>
 std::string OperationByHandle<O, T>::get_object_id_rule(Database::query_param_list& params)const
 {
+    struct X:O<X, T> { };
+    static constexpr auto object_type = O<X, T>::object_type;
     static const std::string sql_handle_case_normalize_function =
-            T::Tag::object_type == Object_Type::domain ? "LOWER"
-                                                       : "UPPER";
+            object_type == Object_Type::domain ? "LOWER"
+                                               : "UPPER";
     return "SELECT id "
            "FROM object_registry "
            "WHERE name=" + sql_handle_case_normalize_function + "($" + params.add(handle_) + "::TEXT) AND "
-                 "type=get_object_type_id($" + params.add(Conversion::Enums::to_db_handle(T::Tag::object_type)) + "::TEXT) AND "
+                 "type=get_object_type_id($" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT) AND "
                  "erdate IS NULL";
 }
 

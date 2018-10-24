@@ -16,24 +16,44 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EXCEPTIONS_HH_46C9FEA6A9D89F98CDFD9987C412A936//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define EXCEPTIONS_HH_46C9FEA6A9D89F98CDFD9987C412A936
+#ifndef HANDLE_HISTORY_HH_DEF68B0929AD081E5593338F8E674DD1//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define HANDLE_HISTORY_HH_DEF68B0929AD081E5593338F8E674DD1
 
 #include "libfred/object/object_type.hh"
 
-#include <stdexcept>
+#include <boost/optional.hpp>
+
+#include <chrono>
+#include <string>
+#include <vector>
 
 namespace LibFred {
 namespace RegistrableObject {
 
 template <Object_Type::Enum o>
-struct ObjectDoesNotExist : std::runtime_error
+struct HandleHistory
 {
     static constexpr Object_Type::Enum object_type = o;
-    ObjectDoesNotExist();
+    using TimePoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
+    struct Record
+    {
+        unsigned long long id;
+        struct
+        {
+            TimePoint timestamp;
+            unsigned long long history_id;
+        } begin;
+        struct
+        {
+            boost::optional<TimePoint> timestamp;
+            unsigned long long history_id;
+        } end;
+    };
+    std::string handle;
+    std::vector<Record> timeline;
 };
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//EXCEPTIONS_HH_46C9FEA6A9D89F98CDFD9987C412A936
+#endif//HANDLE_HISTORY_HH_DEF68B0929AD081E5593338F8E674DD1

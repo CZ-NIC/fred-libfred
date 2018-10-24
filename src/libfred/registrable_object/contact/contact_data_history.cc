@@ -16,20 +16,13 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EXCEPTIONS_IMPL_HH_9049BC6E62E7DA9FD41C65F44126F98C//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define EXCEPTIONS_IMPL_HH_9049BC6E62E7DA9FD41C65F44126F98C
-
-#include "libfred/registrable_object/exceptions.hh"
+#include "libfred/registrable_object/contact/contact_data_history.hh"
+#include "libfred/registrable_object/get_data_history_impl.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <Object_Type::Enum o>
-ObjectDoesNotExist<o>::ObjectDoesNotExist()
-    : std::runtime_error(Conversion::Enums::to_db_handle(object_type) + " does not exist")
-{ }
+template class DataHistory<Object_Type::contact>;
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
-
-#endif//EXCEPTIONS_IMPL_HH_9049BC6E62E7DA9FD41C65F44126F98C

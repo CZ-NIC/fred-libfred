@@ -16,23 +16,25 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HISTORY_HH_E29792C4AA985EF946753B654D199342//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HISTORY_HH_E29792C4AA985EF946753B654D199342
+#ifndef GET_DATA_HISTORY_HH_C91639AF5F291ABC4A1B0E383ED6BED1//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define GET_DATA_HISTORY_HH_C91639AF5F291ABC4A1B0E383ED6BED1
 
-#include "libfred/registrable_object/exceptions.hh"
+#include "libfred/registrable_object/data_history.hh"
 #include "libfred/registrable_object/history_interval.hh"
-#include "libfred/registrable_object/state_history.hh"
+#include "libfred/registrable_object/exceptions.hh"
 #include "libfred/opcontext.hh"
+
+#include <string>
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <typename D, typename S>
-class GetStateHistory
+template <typename D, typename H>
+class GetDataHistory
 {
 public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = StateHistory<S>;
+    static constexpr Object_Type::Enum object_type = H::object_type;
+    using Result = H;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
     Result exec(OperationContext& ctx, const HistoryInterval& range)const;
@@ -43,4 +45,4 @@ private:
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HISTORY_HH_E29792C4AA985EF946753B654D199342
+#endif//GET_DATA_HISTORY_HH_C91639AF5F291ABC4A1B0E383ED6BED1

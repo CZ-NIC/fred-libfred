@@ -45,8 +45,8 @@ typename GetState<D, S>::Result GetState<D, S>::exec(OperationContext& ctx)const
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " not found");
-        throw NotFound();
+        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        throw DoesNotExist();
     }
     Result status;
     const bool object_has_state_flags = (1 < dbres.size()) || !dbres[0][0].isnull();

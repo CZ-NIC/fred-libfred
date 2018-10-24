@@ -32,7 +32,7 @@ class GetState
 public:
     static constexpr Object_Type::Enum object_type = S::Tag::object_type;
     using Result = S;
-    using NotFound = ObjectNotFound<object_type>;
+    using DoesNotExist = ObjectDoesNotExist<object_type>;
     Result exec(OperationContext& ctx)const;
 private:
     const D& derived()const;

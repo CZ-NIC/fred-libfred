@@ -39,10 +39,12 @@ OperationByUUID<O, T>::OperationByUUID(unsigned long long uuid)
 template <template <typename, typename> class O, typename T>
 std::string OperationByUUID<O, T>::get_object_id_rule(Database::query_param_list& params)const
 {
+    struct X:O<X, T> { };
+    static constexpr auto object_type = O<X, T>::object_type;
     static const std::string sql_handle_case_normalize_function =
-            T::Tag::object_type == Object_Type::domain ? "LOWER"
-                                                       : "UPPER";
-    const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(T::Tag::object_type)) + "::TEXT";
+            object_type == Object_Type::domain ? "LOWER"
+                                               : "UPPER";
+    const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
     try
     {
         const unsigned long long uuid = boost::lexical_cast<unsigned long long>(uuid_);
