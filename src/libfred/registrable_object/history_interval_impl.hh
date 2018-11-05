@@ -16,29 +16,20 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPERATION_BY_ID_IMPL_HH_FBA42FFC1F3FD34A6DEB6CB7F59A3CFF//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define OPERATION_BY_ID_IMPL_HH_FBA42FFC1F3FD34A6DEB6CB7F59A3CFF
+#ifndef HISTORY_INTERVAL_IMPL_HH_BEDBD95B9AABD5A42B3B634237F73A97//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define HISTORY_INTERVAL_IMPL_HH_BEDBD95B9AABD5A42B3B634237F73A97
 
-#include "libfred/registrable_object/operation_by_id.hh"
-
-#include <string>
-#include <type_traits>
+#include "libfred/registrable_object/history_interval.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <template <typename, typename> class O, typename T>
-OperationById<O, T>::OperationById(unsigned long long object_id)
-    : object_id_(object_id)
+template <Object_Type::Enum o>
+InvalidHistoryIntervalSpecification<o>::InvalidHistoryIntervalSpecification()
+    : std::runtime_error("Invalid specification of history interval")
 { }
-
-template <template <typename, typename> class O, typename T>
-std::string OperationById<O, T>::get_object_id_rule(Database::query_param_list& params)const
-{
-    return "$" + params.add(object_id_) + "::BIGINT";
-}
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//OPERATION_BY_ID_IMPL_HH_FBA42FFC1F3FD34A6DEB6CB7F59A3CFF
+#endif//HISTORY_INTERVAL_IMPL_HH_BEDBD95B9AABD5A42B3B634237F73A97

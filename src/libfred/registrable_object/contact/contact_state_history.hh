@@ -19,7 +19,7 @@
 #ifndef CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C
 
-#include "libfred/registrable_object/get_state_history.hh"
+#include "libfred/registrable_object/state_history.hh"
 #include "libfred/registrable_object/contact/contact_state.hh"
 
 namespace LibFred {

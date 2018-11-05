@@ -93,12 +93,12 @@ BOOST_FIXTURE_TEST_CASE(contact_state, Test::instantiate_db_template)
             << simple_state_view(record.state) << std::endl;
     }
     out << TimePointConverter::to(state1_history.valid_to) << std::endl;
-    GetContactStateByUUID(1).exec(ctx);
-    GetContactStateByUUID("1").exec(ctx);
-    GetContactStateByUUID("KONTAKT").exec(ctx);
-    GetContactStateHistoryByUUID(1).exec(ctx, interval);
-    GetContactStateHistoryByUUID("1").exec(ctx, interval);
-    GetContactStateHistoryByUUID("KONTAKT").exec(ctx, interval);
+    GetContactStateByUuid(1).exec(ctx);
+    GetContactStateByUuid("1").exec(ctx);
+    GetContactStateByUuid("KONTAKT").exec(ctx);
+    GetContactStateHistoryByUuid(1).exec(ctx, interval);
+    GetContactStateHistoryByUuid("1").exec(ctx, interval);
+    GetContactStateHistoryByUuid("KONTAKT").exec(ctx, interval);
 }
 
 BOOST_AUTO_TEST_SUITE_END()//TestContactState

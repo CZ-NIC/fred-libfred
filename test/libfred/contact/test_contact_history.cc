@@ -55,9 +55,9 @@ BOOST_FIXTURE_TEST_CASE(contact_data_history, MyFixture)
     {
         std::cout << TimePointConverter::to(*data1_history.valid_to) << std::endl;
     }
-    GetContactDataHistoryByUUID(1).exec(ctx, interval);
-    GetContactDataHistoryByUUID("1").exec(ctx, interval);
-    GetContactDataHistoryByUUID("KONTAKT").exec(ctx, interval);
+    GetContactDataHistoryByUuid(1).exec(ctx, interval);
+    GetContactDataHistoryByUuid("1").exec(ctx, interval);
+    GetContactDataHistoryByUuid("KONTAKT").exec(ctx, interval);
     GetContactDataHistoryByHandle("KONTAKT").exec(ctx, interval);
 }
 

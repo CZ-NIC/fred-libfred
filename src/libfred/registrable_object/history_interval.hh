@@ -70,11 +70,8 @@ struct HistoryInterval
     using LowerLimit = NamedLimit<struct Lower>;
     using UpperLimit = NamedLimit<struct Upper>;
     HistoryInterval(
-            const LowerLimit& _lower_limit,
-            const UpperLimit& _upper_limit)
-        : lower_limit(_lower_limit.value),
-          upper_limit(_upper_limit.value)
-    { }
+            const LowerLimit& lower_limit,
+            const UpperLimit& upper_limit);
     Limit lower_limit;
     Limit upper_limit;
 };

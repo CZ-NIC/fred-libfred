@@ -16,8 +16,7 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrable_object/contact/contact_data_history.hh"
-#include "libfred/registrable_object/get_data_history_impl.hh"
+#include "libfred/registrable_object/data_history.hh"
 
 namespace LibFred {
 namespace RegistrableObject {

@@ -57,6 +57,7 @@ set(LIBFRED_SOURCES
     src/libfred/public_request/public_request_lock_guard.cc
     src/libfred/public_request/public_request_object_lock_guard.cc
     src/libfred/public_request/update_public_request.cc
+    src/libfred/registrable_object/history_interval.cc
     src/libfred/registrable_object/contact/check_contact.cc
     src/libfred/registrable_object/contact/contact_data_history.cc
     src/libfred/registrable_object/contact/contact_handle_history.cc

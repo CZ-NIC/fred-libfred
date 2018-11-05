@@ -19,20 +19,55 @@
 #ifndef GET_CONTACT_STATE_HISTORY_HH_7827DF8F59926B83B7C006F9DD976553//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define GET_CONTACT_STATE_HISTORY_HH_7827DF8F59926B83B7C006F9DD976553
 
-#include "libfred/registrable_object/get_state_history.hh"
-#include "libfred/registrable_object/operation_by_handle.hh"
-#include "libfred/registrable_object/operation_by_id.hh"
-#include "libfred/registrable_object/operation_by_uuid.hh"
-#include "libfred/registrable_object/contact/contact_state.hh"
 #include "libfred/registrable_object/contact/contact_state_history.hh"
+#include "libfred/registrable_object/history_interval.hh"
+#include "libfred/registrable_object/exceptions.hh"
+#include "libfred/opcontext.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 namespace Contact {
 
-using GetContactStateHistoryById = OperationById<GetStateHistory, ContactState>;
-using GetContactStateHistoryByHandle = OperationByHandle<GetStateHistory, ContactState>;
-using GetContactStateHistoryByUUID = OperationByUUID<GetStateHistory, ContactState>;
+class GetContactStateHistoryById
+{
+public:
+    explicit GetContactStateHistoryById(unsigned long long contact_id);
+    static constexpr auto object_type = Object_Type::contact;
+    using Result = ContactStateHistory;
+    using DoesNotExist = ObjectDoesNotExist<object_type>;
+    using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
+    Result exec(OperationContext& ctx, const HistoryInterval& range)const;
+private:
+    unsigned long long contact_id_;
+};
+
+class GetContactStateHistoryByHandle
+{
+public:
+    explicit GetContactStateHistoryByHandle(const std::string& contact_handle);
+    static constexpr auto object_type = Object_Type::contact;
+    using Result = ContactStateHistory;
+    using DoesNotExist = ObjectDoesNotExist<object_type>;
+    using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
+    Result exec(OperationContext& ctx, const HistoryInterval& range)const;
+private:
+    std::string handle_;
+};
+
+class GetContactStateHistoryByUuid
+{
+public:
+    //TODO: use true uuid when it is available
+    explicit GetContactStateHistoryByUuid(unsigned long long contact_uuid);
+    explicit GetContactStateHistoryByUuid(const std::string& contact_uuid);
+    static constexpr auto object_type = Object_Type::contact;
+    using Result = ContactStateHistory;
+    using DoesNotExist = ObjectDoesNotExist<object_type>;
+    using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
+    Result exec(OperationContext& ctx, const HistoryInterval& range)const;
+private:
+    std::string uuid_;
+};
 
 }//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject

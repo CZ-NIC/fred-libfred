@@ -17,24 +17,160 @@
  */
 
 #include "libfred/registrable_object/contact/get_contact_state.hh"
-#include "libfred/registrable_object/get_state_impl.hh"
-#include "libfred/registrable_object/operation_by_id_impl.hh"
-#include "libfred/registrable_object/operation_by_handle_impl.hh"
-#include "libfred/registrable_object/operation_by_uuid_impl.hh"
+#include "libfred/registrable_object/state_flag_setter.hh"
+#include "libfred/registrable_object/exceptions_impl.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
+namespace Contact {
 
-using namespace Contact;
+GetContactStateById::GetContactStateById(unsigned long long contact_id)
+    : contact_id_(contact_id)
+{ }
 
-template class OperationById<GetState, ContactState>;
-template class GetState<OperationById<GetState, ContactState>, ContactState>;
+GetContactStateById::Result GetContactStateById::exec(OperationContext& ctx)const
+{
+    Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
+    const std::string sql =
+            "WITH o AS ("
+                "SELECT id,type "
+                "FROM object_registry "
+                "WHERE type=get_object_type_id($1::TEXT) AND "
+                      "id=$" + params.add(contact_id_) + "::BIGINT) "
+            "SELECT eos.name "
+            "FROM o "
+            "LEFT JOIN object_state os ON os.object_id=o.id AND "
+                                         "os.valid_to IS NULL "
+            "LEFT JOIN enum_object_states eos ON eos.id=os.state_id AND "
+                                                "o.type=ANY(eos.types)";
+    const auto dbres = ctx.get_conn().exec_params(sql, params);
+    if (dbres.size() == 0)
+    {
+        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        throw DoesNotExist();
+    }
+    Result state;
+    const bool object_has_state_flags = (1 < dbres.size()) || !dbres[0][0].isnull();
+    if (object_has_state_flags)
+    {
+        for (std::size_t idx = 0; idx < dbres.size(); ++idx)
+        {
+            const std::string flag_name = static_cast<std::string>(dbres[idx][0]);
+            state.template visit<StateFlagSetter>(flag_name);
+        }
+    }
+    return state;
+}
 
-template class OperationByHandle<GetState, ContactState>;
-template class GetState<OperationByHandle<GetState, ContactState>, ContactState>;
+GetContactStateByHandle::GetContactStateByHandle(const std::string& contact_handle)
+    : handle_(contact_handle)
+{ }
 
-template class OperationByUUID<GetState, ContactState>;
-template class GetState<OperationByUUID<GetState, ContactState>, ContactState>;
+GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& ctx)const
+{
+    static const std::string sql_handle_case_normalize_function =
+            object_type == Object_Type::domain ? "LOWER"
+                                               : "UPPER";
+    Database::query_param_list params;
+    const std::string sql =
+            "WITH o AS ("
+                "SELECT id,type "
+                "FROM object_registry "
+                "WHERE type=get_object_type_id($" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT) AND "
+                      "name=" + sql_handle_case_normalize_function + "($" + params.add(handle_) + "::TEXT) AND "
+                      "erdate IS NULL) "
+            "SELECT eos.name "
+            "FROM o "
+            "LEFT JOIN object_state os ON os.object_id=o.id AND "
+                                         "os.valid_to IS NULL "
+            "LEFT JOIN enum_object_states eos ON eos.id=os.state_id AND "
+                                                "o.type=ANY(eos.types)";
+    const auto dbres = ctx.get_conn().exec_params(sql, params);
+    if (dbres.size() == 0)
+    {
+        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        throw DoesNotExist();
+    }
+    Result state;
+    const bool object_has_state_flags = (1 < dbres.size()) || !dbres[0][0].isnull();
+    if (object_has_state_flags)
+    {
+        for (std::size_t idx = 0; idx < dbres.size(); ++idx)
+        {
+            const std::string flag_name = static_cast<std::string>(dbres[idx][0]);
+            state.template visit<StateFlagSetter>(flag_name);
+        }
+    }
+    return state;
+}
 
+GetContactStateByUuid::GetContactStateByUuid(const std::string& contact_uuid)
+    : uuid_(contact_uuid)
+{ }
+
+GetContactStateByUuid::GetContactStateByUuid(unsigned long long contact_uuid)
+    : uuid_(std::to_string(contact_uuid))
+{ }
+
+GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)const
+{
+    static const std::string sql_handle_case_normalize_function =
+            object_type == Object_Type::domain ? "LOWER"
+                                               : "UPPER";
+    Database::query_param_list params;
+    std::string sql_with =
+            "WITH o AS ("
+                "SELECT id,type "
+                "FROM object_registry "
+                "WHERE ";
+    const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
+    try
+    {
+        const unsigned long long uuid = std::stoull(uuid_);//UUID is usually not convertible to any integer type
+        const auto uuid_param = "$" + params.add(uuid);
+        sql_with +=
+                "(name=" + sql_handle_case_normalize_function + "(" + uuid_param + "::TEXT) AND "
+                 "type=get_object_type_id(" + object_type_param_text + ") AND "
+                 "erdate IS NULL) OR "
+                "id=" + uuid_param + "::BIGINT "
+                "LIMIT 1";
+    }
+    catch (...)
+    {
+        const auto uuid_param = "$" + params.add(uuid_);
+        sql_with +=
+                "name=" + sql_handle_case_normalize_function + "(" + uuid_param + "::TEXT) AND "
+                "type=get_object_type_id(" + object_type_param_text + ") AND "
+                "erdate IS NULL";
+    }
+    sql_with += ")";
+    const std::string sql =
+            sql_with + " "
+            "SELECT eos.name "
+            "FROM o "
+            "LEFT JOIN object_state os ON os.object_id=o.id AND "
+                                         "os.valid_to IS NULL "
+            "LEFT JOIN enum_object_states eos ON eos.id=os.state_id AND "
+                                                "o.type=ANY(eos.types)";
+    const auto dbres = ctx.get_conn().exec_params(sql, params);
+    if (dbres.size() == 0)
+    {
+        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        throw DoesNotExist();
+    }
+    Result state;
+    const bool object_has_state_flags = (1 < dbres.size()) || !dbres[0][0].isnull();
+    if (object_has_state_flags)
+    {
+        for (std::size_t idx = 0; idx < dbres.size(); ++idx)
+        {
+            const std::string flag_name = static_cast<std::string>(dbres[idx][0]);
+            state.template visit<StateFlagSetter>(flag_name);
+        }
+    }
+    return state;
+}
+
+}//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
