@@ -145,6 +145,11 @@ namespace Database
         ParamQuery& param_bigint(const Database::QueryParam& val);
 
         /**
+         * Adds query parameter of postgresql type "uuid".
+         */
+        ParamQuery& param_uuid(const Database::QueryParam& val);
+
+        /**
          * Adds query parameter of postgresql type "numeric".
          */
         ParamQuery& param_numeric(const Database::QueryParam& val);

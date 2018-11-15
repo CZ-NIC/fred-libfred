@@ -194,6 +194,8 @@ std::string InfoContactData::to_string() const
     (std::make_pair("crhistoryid", boost::lexical_cast<std::string>(crhistoryid)))
     (std::make_pair("historyid", boost::lexical_cast<std::string>(historyid)))
     (std::make_pair("id", boost::lexical_cast<std::string>(id)))
+    (std::make_pair("uuid", Util::StrongType::to_string(uuid)))
+    (std::make_pair("history_uuid", Util::StrongType::to_string(history_uuid)))
     (std::make_pair("delete_time", delete_time.print_quoted()))
     (std::make_pair("handle", handle))
     (std::make_pair("roid", roid))

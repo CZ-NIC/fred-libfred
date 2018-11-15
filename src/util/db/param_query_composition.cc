@@ -21,6 +21,11 @@
   * parametrized query composition.
  */
 
+#include "util/db/param_query_composition.hh"
+#include "util/db/query_param.hh"
+#include "util/util.hh"
+#include "util/map_at.hh"
+#include "util/optional_value.hh"
 
 #include <vector>
 #include <string>
@@ -28,12 +33,6 @@
 #include <stack>
 
 #include <memory>
-
-#include "util/db/param_query_composition.hh"
-#include "util/db/query_param.hh"
-#include "util/util.hh"
-#include "util/map_at.hh"
-#include "util/optional_value.hh"
 
 namespace Database
 {
@@ -154,6 +153,11 @@ namespace Database
     ParamQuery& ParamQuery::param_bigint(const Database::QueryParam& val)
     {
         return param(val, "bigint");
+    }
+
+    ParamQuery& ParamQuery::param_uuid(const Database::QueryParam& val)
+    {
+        return param(val, "uuid");
     }
 
     ParamQuery& ParamQuery::param_numeric(const Database::QueryParam& val)

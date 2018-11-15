@@ -28,6 +28,7 @@
 #include "libfred/opcontext.hh"
 #include "util/optional_value.hh"
 #include "util/printable.hh"
+#include "libfred/registrable_object/contact/contact_uuid.hh"
 #include "libfred/registrable_object/contact/info_contact_output.hh"
 #include "libfred/registrable_object/contact/place_address.hh"
 
@@ -132,6 +133,108 @@ public:
 private:
     const unsigned long long id_;/**< object id of the contact */
     bool lock_;/**< if set to true lock object_registry row for update, if set to false lock for share */
+};
+
+enum class DbLock
+{
+    for_share,
+    for_update
+};
+
+/**
+ * Joins database locking type with operation context.
+ */
+template <DbLock>
+class OperationContextUsing
+{
+public:
+    explicit OperationContextUsing(OperationContext& ctx) : ctx_(ctx) { }
+    operator OperationContext&()const { return ctx_; }
+private:
+    OperationContext& ctx_;
+};
+
+using OperationContextLockingForShare = OperationContextUsing<DbLock::for_share>;
+using OperationContextLockingForUpdate = OperationContextUsing<DbLock::for_update>;
+
+/**
+* Contact info by uuid.
+* Contact uuid to get info about the contact is set via constructor.
+* It's executed by @ref exec method.
+*/
+class InfoContactByUuid : public Util::Printable<InfoContactByUuid>
+{
+public:
+    DECLARE_EXCEPTION_DATA(unknown_contact_uuid, RegistrableObject::Contact::ContactUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_contact_uuid<Exception>
+    { };
+
+    /**
+    * Info contact constructor with mandatory parameter.
+    * @param id sets object id of the contact into @ref id_ attribute
+    */
+    explicit InfoContactByUuid(const RegistrableObject::Contact::ContactUuid& uuid);
+
+    /**
+    * Executes getting info about the contact. Time zone name of the returned data is UTC.
+    * @tparam lock type of database locking
+    * @param ctx contains reference to database and logging interface
+    * @return info data about the contact
+    * @throws Exception in case of wrong input data or other predictable and superable failure.
+    * @throws InternalError otherwise
+    */
+    template <DbLock lock>
+    InfoContactOutput exec(const OperationContextUsing<lock>& ctx);
+
+    /**
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
+    */
+    std::string to_string()const;
+private:
+    const RegistrableObject::Contact::ContactUuid uuid_;
+};
+
+/**
+* Contact info by history uuid.
+* Contact history uuid to get info about the contact is set via constructor.
+* It's executed by @ref exec method
+*/
+class InfoContactByHistoryUuid : public Util::Printable<InfoContactByHistoryUuid>
+{
+public:
+    DECLARE_EXCEPTION_DATA(unknown_contact_history_uuid, RegistrableObject::Contact::ContactHistoryUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_contact_history_uuid<Exception>
+    { };
+
+    /**
+    * Info contact constructor with mandatory parameter.
+    * @param id sets object id of the contact into @ref id_ attribute
+    */
+    explicit InfoContactByHistoryUuid(const RegistrableObject::Contact::ContactHistoryUuid& history_uuid);
+
+    /**
+    * Executes getting info about the contact. Time zone name of the returned data is UTC.
+    * @tparam lock type of database locking
+    * @param ctx contains reference to database and logging interface
+    * @return info data about the contact
+    * @throws Exception in case of wrong input data or other predictable and superable failure.
+    * @throws InternalError otherwise
+    */
+    template <DbLock lock>
+    InfoContactOutput exec(const OperationContextUsing<lock>& ctx);
+
+    /**
+    * Dumps state of the instance into the string
+    * @return string with description of the instance state
+    */
+    std::string to_string()const;
+private:
+    const RegistrableObject::Contact::ContactHistoryUuid history_uuid_;
 };
 
 /**
