@@ -118,10 +118,10 @@ public:
     {}
 
     template <typename T, typename N>
-    QueryParam(const Util::StrongType::Named<T, N>& value)
+    QueryParam(const Util::StrongType<T, N>& value)
         : binary_(false),
           null_(false),
-          buffer_(Util::StrongType::to_string(value))
+          buffer_(Util::strong_to_string(value))
     { }
 
     template <class T>

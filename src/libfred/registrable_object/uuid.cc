@@ -1,16 +1,15 @@
 #include "libfred/registrable_object/uuid.hh"
 #include "libfred/registrable_object/contact/contact_uuid.hh"
 
-namespace Util {
-namespace StrongType {
+#include <boost/lexical_cast.hpp>
 
-template <>
-std::string to_string<boost::uuids::uuid>(const boost::uuids::uuid& src)
+namespace Util {
+
+std::ostream& operator<<(std::ostream& out, const boost::uuids::uuid& src)
 {
-    return boost::lexical_cast<std::string>(src);
+    return out << boost::lexical_cast<std::string>(src);
 }
 
-}//namespace Util::StrongType
 }//namespace Util
 
 namespace Database {
@@ -49,3 +48,14 @@ LibFred::RegistrableObject::Contact::ContactHistoryUuid Value::as()const
 }
 
 }//namespace Database
+
+namespace LibFred {
+namespace RegistrableObject {
+
+const char* InvalidUuidString::what() const noexcept
+{
+    return "unable to convert string to uuid";
+}
+
+}//namespace LibFred::RegistrableObject
+}//namespace LibFred

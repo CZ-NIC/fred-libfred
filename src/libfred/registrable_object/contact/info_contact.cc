@@ -193,7 +193,7 @@ std::string InfoContactByUuid::to_string()const
     return Util::format_operation_state(
             "InfoContactByUuid",
             Util::vector_of<std::pair<std::string, std::string>>
-                    (std::make_pair("uuid", Util::StrongType::to_string(uuid_))));
+                    (std::make_pair("uuid", Util::strong_to_string(uuid_))));
 }
 
 InfoContactByHistoryUuid::InfoContactByHistoryUuid(const RegistrableObject::Contact::ContactHistoryUuid& history_uuid)
@@ -243,7 +243,7 @@ std::string InfoContactByHistoryUuid::to_string()const
     return Util::format_operation_state(
             "InfoContactByHistoryUuid",
             Util::vector_of<std::pair<std::string, std::string>>
-                    (std::make_pair("history_uuid", Util::StrongType::to_string(history_uuid_))));
+                    (std::make_pair("history_uuid", Util::strong_to_string(history_uuid_))));
 }
 
 InfoContactHistoryByRoid::InfoContactHistoryByRoid(const std::string& roid)
