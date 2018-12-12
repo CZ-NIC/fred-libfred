@@ -303,6 +303,7 @@ add_executable(test-libfred
     test/fake-src/util/tz/europe/prague.cc
     test/libfred/main.cc
     test/libfred/test_check_handle.cc
+    test/libfred/test_flagset.cc
     test/libfred/test_opexception.cc
     test/libfred/contact/test_contact_state.cc
     test/libfred/contact/test_copy_contact.cc

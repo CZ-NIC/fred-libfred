@@ -117,6 +117,9 @@ constexpr FlagSet<Tag, Flags...>::FlagSet(const ItemsStorage& src)
 {
 }
 
+template <typename Tag, typename ...Flags>
+constexpr int FlagSet<Tag, Flags...>::number_of_flags;
+
 }//namespace Util
 
 #endif//FLAGSET_IMPL_HH_9762E715E57BB0911C9A1C4301C215BE

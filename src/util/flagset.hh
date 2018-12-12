@@ -69,6 +69,7 @@ public:
         static const auto mask = mask_of<Fs...>();
         return (flags_ & mask) == ItemsStorage();
     }
+
     template <typename ...Fs>
     bool are_unset_any_of()const noexcept
     {
@@ -88,6 +89,7 @@ public:
         return value ? this->set<Fs...>()
                      : this->reset<Fs...>();
     }
+
     template <typename ...Fs>
     FlagSet& set()noexcept
     {
@@ -103,6 +105,7 @@ public:
         flags_ &= mask;
         return *this;
     }
+
     template <typename ...Fs>
     FlagSet& flip()noexcept
     {
@@ -122,39 +125,77 @@ public:
     FlagSet& operator|=(const FlagSet&)noexcept;
     FlagSet& operator^=(const FlagSet&)noexcept;
 
+    /**
+     * @tparam M a class with template method declared as
+     *     template <typename F, int idx> FlagSetVisiting visit(FlagSet& fs);
+     * @param mutator for each flag F with index idx is called mutator.visit<F, idx>(*this)
+     *        iterating can be interrupted by returning FlagSetVisiting::is_done from the method visit
+     */
     template <typename M>
-    void visit(const M& mutator)
+    void visit(M&& mutator)
     {
-        Iterate<0, Flags...>::over(mutator, *this);
+        Iterate<0, Flags...>::over(std::forward<M>(mutator), *this);
     }
 
+    /**
+     * @tparam M a template class with template method declared as
+     *     template <typename F, int idx> FlagSetVisiting visit(FlagSet& fs);
+     * @tparam Ts types of parameters for constructing mutator of M<Flags...> type
+     * @param args parameters for constructing mutator of M<Flags...> type; for each flag F with index idx
+     *        is called mutator.visit<F, idx>(*this)
+     *        iterating can be interrupted by returning FlagSetVisiting::is_done from the method visit
+     * @return mutator used by iterating
+     */
     template <template <typename...> class M, typename ...Ts>
-    M<Flags...> visit(const Ts& ...args)
+    M<Flags...> visit(Ts&& ...args)
     {
-        M<Flags...> mutator(args...);
+        M<Flags...> mutator(std::forward<Ts>(args)...);
         Iterate<0, Flags...>::over(mutator, *this);
         return mutator;
     }
 
+    /**
+     * @tparam V a class with template method declared as
+     *     template <typename F, int idx> FlagSetVisiting visit(const FlagSet& fs);
+     * @param visitor for each flag F with index idx is called visitor.visit<F, idx>(*this)
+     *        iterating can be interrupted by returning FlagSetVisiting::is_done from the method visit
+     */
     template <typename V>
-    void visit(const V& visitor)const
+    void visit(V&& visitor)const
     {
+        Iterate<0, Flags...>::over(std::forward<V>(visitor), *this);
+    }
+
+    /**
+     * @tparam V a template class with template method declared as
+     *     template <typename F, int idx> FlagSetVisiting visit(const FlagSet& fs);
+     * @tparam Ts types of parameters for constructing visitor of V<Flags...> type
+     * @param args parameters for constructing visitor of V<Flags...> type; for each flag F with index idx
+     *        is called visitor.visit<F, idx>(*this)
+     *        iterating can be interrupted by returning FlagSetVisiting::is_done from the method visit
+     * @return visitor used by iterating
+     */
+    template <template <typename...> class V, typename ...Ts>
+    V<Flags...> visit(Ts&& ...args)const
+    {
+        V<Flags...> visitor(std::forward<Ts>(args)...);
         Iterate<0, Flags...>::over(visitor, *this);
         return visitor;
     }
 
+    /**
+     * @tparam V a template class with template method declared as
+     *     template <typename F, int idx> FlagSetVisiting visit();
+     * @tparam Ts types of parameters for constructing visitor of V<Flags...> type
+     * @param args parameters for constructing visitor of V<Flags...> type; for each flag F with index idx
+     *        is called visitor.visit<F, idx>()
+     *        iterating can be interrupted by returning FlagSetVisiting::is_done from the method visit
+     * @return visitor used by iterating
+     */
     template <template <typename...> class V, typename ...Ts>
-    V<Flags...> visit(const Ts& ...args)const
+    static V<Flags...> static_visit(Ts&& ...args)
     {
-        V<Flags...> visitor(args...);
-        Iterate<0, Flags...>::over(visitor, *this);
-        return visitor;
-    }
-
-    template <template <typename...> class V, typename ...Ts>
-    static V<Flags...> static_visit(const Ts& ...args)
-    {
-        V<Flags...> visitor(args...);
+        V<Flags...> visitor(std::forward<Ts>(args)...);
         Iterate<0, Flags...>::over(visitor);
         return visitor;
     }
@@ -185,47 +226,31 @@ private:
     {
         static_assert(idx == sizeof...(Flags), "invalid usage, idx out of range");
         template <typename V>
-        static void over(const V&, const FlagSet&) { }
+        static void over(V&&, const FlagSet&) { }
         template <typename V>
-        static void over(const V&) { }
+        static void over(V&&) { }
     };
     template <int idx, typename F, typename ...Fs>
     struct Iterate<idx, F, Fs...>
     {
         template <typename V>
-        static void over(V& visitor, const FlagSet<Tag, Flags...>& status)
+        static void over(V&& visitor, const FlagSet<Tag, Flags...>& status)
         {
             if (visitor.template visit<F, idx>(status) == FlagSetVisiting::can_continue)
             {
-                Iterate<idx + 1, Fs...>::over(visitor, status);
-            }
-        }
-        template <typename V>
-        static void over(const V& visitor, const FlagSet<Tag, Flags...>& status)
-        {
-            if (visitor.template visit<F, idx>(status) == FlagSetVisiting::can_continue)
-            {
-                Iterate<idx + 1, Fs...>::over(visitor, status);
+                Iterate<idx + 1, Fs...>::over(std::forward<V>(visitor), status);
             }
         }
         template <typename M>
-        static void over(M& mutator, FlagSet<Tag, Flags...>& status)
+        static void over(M&& mutator, FlagSet<Tag, Flags...>& status)
         {
             if (mutator.template visit<F, idx>(status) == FlagSetVisiting::can_continue)
             {
-                Iterate<idx + 1, Fs...>::over(mutator, status);
-            }
-        }
-        template <typename M>
-        static void over(const M& mutator, FlagSet<Tag, Flags...>& status)
-        {
-            if (mutator.template visit<F, idx>(status) == FlagSetVisiting::can_continue)
-            {
-                Iterate<idx + 1, Fs...>::over(mutator, status);
+                Iterate<idx + 1, Fs...>::over(std::forward<M>(mutator), status);
             }
         }
         template <typename V>
-        static void over(V& visitor)
+        static void over(V&& visitor)
         {
             if (visitor.template visit<F, idx>() == FlagSetVisiting::can_continue)
             {
