@@ -128,7 +128,9 @@ public:
     * @return string with description of the instance state
     */
     std::string to_string()const;
-protected://should be private, but tests/setup/fixtures_utils.h !?
+protected://used by tests/setup/fixtures_utils.hh !?
+    const std::string& get_handle()const;
+private:
     const std::string handle_;/**< keyset identifier */
     const std::string registrar_;/**< handle of registrar performing the create */
     Optional<std::string> authinfo_;/**< transfer password */

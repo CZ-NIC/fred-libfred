@@ -20,15 +20,11 @@
 namespace Test {
 
 // database created by fred-manager init_cz
-static std::string get_original_db_name() { return "fred"; }
+std::string get_original_db_name();
 
 struct create_db_template
 {
-    static std::string get_db_template_name()
-    {
-        return get_original_db_name() + "_test_template";
-    }
-
+    static std::string get_db_template_name();
     create_db_template();
     virtual ~create_db_template();
 };

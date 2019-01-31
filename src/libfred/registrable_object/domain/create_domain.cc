@@ -504,4 +504,9 @@ std::string CreateDomain::to_string() const
                 (std::make_pair("logd_request_id", logd_request_id_.print_quoted())));
 }
 
+const std::string& CreateDomain::get_fqdn()const
+{
+    return fqdn_;
+}
+
 }//namespace LibFred

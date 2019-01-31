@@ -21,6 +21,7 @@
 #include "libfred/zone/create_zone.hh"
 #include "libfred/zone/exceptions.hh"
 #include "libfred/zone/zone_soa/create_zone_soa.hh"
+#include "libfred/zone/zone_soa/default_values.hh"
 #include "libfred/zone/zone_soa/info_zone_soa.hh"
 #include "libfred/zone/zone_soa/update_zone_soa.hh"
 #include "libfred/zone/zone_soa/exceptions.hh"
@@ -31,38 +32,39 @@
 
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
+
 #include <string>
 
 namespace Test {
 
 struct UpdateZoneSoaFixture
 {
-    std::string fqdn;
-    ::LibFred::Zone::InfoZoneSoaData zone_soa;
-
-    UpdateZoneSoaFixture(::LibFred::OperationContext& _ctx)
-        : fqdn(RandomDataGenerator().xstring(3))
+    explicit UpdateZoneSoaFixture(::LibFred::OperationContext& _ctx)
+        : fqdn(RandomDataGenerator().xstring(3)),
+          hostmaster("hostmaster@nic.cz"),
+          ns_fqdn("t.ns.nic." + fqdn)
     {
         ::LibFred::Zone::CreateZone(fqdn, 5, 6).exec(_ctx);
 
-        zone_soa.ttl = 5 * 60 * 60;
-        zone_soa.hostmaster = "hostmaster@localhost";
-        zone_soa.refresh = 3 * 60 * 60;
-        zone_soa.update_retr = 60 * 60;
-        zone_soa.expiry = 2 * 7 * 24 * 60 * 60;
-        zone_soa.minimum = 2 * 60 * 60;
-        zone_soa.ns_fqdn = "localhost";
+        zone_soa.ttl = ::LibFred::Zone::default_ttl_in_seconds;
+        zone_soa.hostmaster = hostmaster;
+        zone_soa.refresh = ::LibFred::Zone::default_refresh_in_seconds;
+        zone_soa.update_retr = ::LibFred::Zone::default_update_retr_in_seconds;
+        zone_soa.expiry = ::LibFred::Zone::default_expiry_in_seconds;
+        zone_soa.minimum = ::LibFred::Zone::default_minimum_in_seconds;
+        zone_soa.ns_fqdn = ns_fqdn;
     }
-
-    ~UpdateZoneSoaFixture()
-    {}
+    ~UpdateZoneSoaFixture() {}
+    std::string fqdn;
+    std::string hostmaster;
+    std::string ns_fqdn;
+    ::LibFred::Zone::InfoZoneSoaData zone_soa;
 };
 
 BOOST_FIXTURE_TEST_SUITE(TestUpdateZoneSoa, SupplyFixtureCtx<UpdateZoneSoaFixture>)
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 {
-    zone_soa.ttl = new_ttl_in_seconds;
     BOOST_CHECK_THROW(::LibFred::Zone::UpdateZoneSoa(RandomDataGenerator().xstring(3))
                 .set_ttl(zone_soa.ttl)
                 .exec(ctx),
@@ -71,7 +73,6 @@ BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone_soa)
 {
-    zone_soa.ttl = new_ttl_in_seconds;
     BOOST_CHECK_THROW(::LibFred::Zone::UpdateZoneSoa(fqdn)
                 .set_ttl(zone_soa.ttl)
                 .exec(ctx),
@@ -87,7 +88,7 @@ BOOST_AUTO_TEST_CASE(set_no_update_zone_soa)
 
 BOOST_AUTO_TEST_CASE(set_min_update_zone_soa)
 {
-    zone_soa.zone = ::LibFred::Zone::CreateZoneSoa(fqdn).exec(ctx);
+    zone_soa.zone = ::LibFred::Zone::CreateZoneSoa(fqdn, hostmaster, ns_fqdn).exec(ctx);
     zone_soa.minimum = new_minimum_in_seconds;
     ::LibFred::Zone::UpdateZoneSoa(fqdn)
            .set_minimum(zone_soa.minimum)
@@ -99,7 +100,7 @@ BOOST_AUTO_TEST_CASE(set_max_update_zone_soa)
 {
     ::LibFred::Zone::InfoZoneSoaData zone_soa;
 
-    zone_soa.zone = ::LibFred::Zone::CreateZoneSoa(fqdn).exec(ctx);
+    zone_soa.zone = ::LibFred::Zone::CreateZoneSoa(fqdn, zone_soa.hostmaster, zone_soa.ns_fqdn).exec(ctx);
     zone_soa.ttl = new_ttl_in_seconds;
     zone_soa.hostmaster = new_hostmaster;
     zone_soa.refresh = new_refresh_in_seconds;
@@ -121,7 +122,6 @@ BOOST_AUTO_TEST_CASE(set_max_update_zone_soa)
     BOOST_CHECK(zone_soa == ::LibFred::Zone::InfoZoneSoa(fqdn).exec(ctx));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestUpdateZoneSoa
 
-} // namespace Test
-
+}//namespace Test

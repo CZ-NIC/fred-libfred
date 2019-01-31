@@ -234,4 +234,9 @@ std::string CreateKeyset::to_string()const
                 (std::make_pair("tech_contacts", Util::format_container(tech_contacts_))));
 }
 
+const std::string& CreateKeyset::get_handle()const
+{
+    return handle_;
+}
+
 }//namespace LibFred

@@ -22,7 +22,7 @@
 #include <boost/optional.hpp>
 #include <boost/test/unit_test.hpp>
 
-#include <iostream>
+#include <iosfwd>
 #include <set>
 #include <sstream>
 #include <string>
@@ -597,7 +597,6 @@ BOOST_FIXTURE_TEST_CASE(flagset5, MyFixture)
     BOOST_CHECK_NE(FlagSet().set_all(), fs);
     BOOST_CHECK_NE(fs, FlagSet().reset_all());
     BOOST_CHECK_NE(FlagSet().reset_all(), fs);
-    std::cout << FlagSet().set<FlagA, FlagC, FlagE>() << std::endl;
 }
 
 namespace {

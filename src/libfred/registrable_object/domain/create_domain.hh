@@ -206,6 +206,8 @@ public:
     */
     std::string to_string()const;
 protected:
+    const std::string& get_fqdn()const;
+private:
     const std::string fqdn_;/**< fully qualified domain name */
     const std::string registrar_;/**< handle of registrar performing the create */
     Optional<std::string> authinfo_;/**< transfer password */

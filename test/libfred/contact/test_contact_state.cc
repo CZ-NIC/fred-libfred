@@ -20,18 +20,15 @@
 #include "libfred/registrable_object/contact/get_contact_state.hh"
 #include "libfred/registrable_object/contact/get_contact_state_history.hh"
 #include "util/printable.hh"
+#include "test/setup/fixtures.hh"
 
 #include <boost/test/unit_test.hpp>
 
 #include <array>
-#include <iostream>
+#include <sstream>
 #include <string>
 
 BOOST_AUTO_TEST_SUITE(TestContactState)
-
-struct MyFixture
-{
-};
 
 using TimePointConverter = SqlConvert<std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>>;
 
@@ -58,7 +55,7 @@ std::string simple_state_view(const Util::FlagSet<Tag, Fs...>& state)
     return state.template visit<SimpleStateView::template Visitor>().result;
 }
 
-BOOST_FIXTURE_TEST_CASE(contact_state, MyFixture)
+BOOST_FIXTURE_TEST_CASE(contact_state, Test::instantiate_db_template)
 {
     using namespace LibFred::RegistrableObject::Contact;
     ContactState contact_state;
@@ -89,12 +86,13 @@ BOOST_FIXTURE_TEST_CASE(contact_state, MyFixture)
                     LibFred::RegistrableObject::HistoryInterval::NoLimit()));
 
     const auto state1_history = GetContactStateHistoryById(1).exec(ctx, interval);
+    std::ostringstream out;
     for (const auto& record : state1_history.record)
     {
-        std::cout << TimePointConverter::to(record.valid_from) << " - "
-                  << simple_state_view(record.state) << std::endl;
+        out << TimePointConverter::to(record.valid_from) << " - "
+            << simple_state_view(record.state) << std::endl;
     }
-    std::cout << TimePointConverter::to(state1_history.valid_to) << std::endl;
+    out << TimePointConverter::to(state1_history.valid_to) << std::endl;
     GetContactStateByUUID(1).exec(ctx);
     GetContactStateByUUID("1").exec(ctx);
     GetContactStateByUUID("KONTAKT").exec(ctx);
