@@ -20,8 +20,10 @@
 #include "libfred/zone/create_zone.hh"
 #include "libfred/zone/exceptions.hh"
 #include "libfred/zone/zone_soa/create_zone_soa.hh"
+#include "libfred/zone/zone_soa/default_values.hh"
 #include "libfred/zone/zone_soa/exceptions.hh"
 #include "util/random_data_generator.hh"
+
 #include "test/libfred/zone/zone_soa/util.hh"
 #include "test/libfred/zone/util.hh"
 #include "test/setup/fixtures.hh"
@@ -33,64 +35,95 @@
 
 namespace Test {
 
-namespace {
-
 struct CreateZoneSoaFixture
 {
     CreateZoneSoaFixture(LibFred::OperationContext& _ctx)
-        : fqdn(RandomDataGenerator().xstring(3))
+        : fqdn(RandomDataGenerator().xstring(3)),
+          hostmaster("hostmaster@nic.cz"),
+          ns_fqdn("a.ns.nic." + fqdn)
     {
         ::LibFred::Zone::CreateZone(fqdn, 5, 6).exec(_ctx);
     }
+    ~CreateZoneSoaFixture() {}
     std::string fqdn;
+    std::string hostmaster;
+    std::string ns_fqdn;
 };
-
-bool does_new_zone_soa_exist(LibFred::OperationContext& _ctx, const std::string& _fqdn)
-{
-    return 0 < _ctx.get_conn().exec_params(
-            "SELECT 0 "
-            "FROM zone z "
-            "JOIN zone_soa zs ON zs.zone=z.id "
-            "WHERE z.fqdn=LOWER($1::text) "
-            "LIMIT 1",
-            Database::query_param_list(_fqdn)).size();
-}
-
-}//namespace Test::{anonymous}
 
 BOOST_FIXTURE_TEST_SUITE(TestCreateZoneSoa, SupplyFixtureCtx<CreateZoneSoaFixture>)
 
+unsigned long long get_zone_soa_id(
+        ::LibFred::OperationContext& _ctx,
+        const std::string& _fqdn,
+        const std::string& _hostmaster,
+        const std::string& _ns_fqdn,
+        const unsigned long _ttl = ::LibFred::Zone::default_ttl_in_seconds,
+        const unsigned long _refresh = ::LibFred::Zone::default_refresh_in_seconds,
+        const unsigned long _update_retr = ::LibFred::Zone::default_update_retr_in_seconds,
+        const unsigned long _expiry = ::LibFred::Zone::default_expiry_in_seconds,
+        const unsigned long _minimum = ::LibFred::Zone::default_minimum_in_seconds)
+{
+    const Database::Result db_result = _ctx.get_conn().exec_params(
+            "SELECT zs.zone "
+            "FROM zone z "
+            "JOIN zone_soa zs ON zs.zone=z.id "
+            "WHERE z.fqdn=LOWER($1::text) AND "
+                  "zs.hostmaster=$2::text AND "
+                  "zs.ns_fqdn=$3::text AND "
+                  "zs.ttl=$4::bigint AND "
+                  "zs.refresh=$5::bigint AND "
+                  "zs.update_retr=$6::bigint AND "
+                  "zs.expiry=$7::bigint AND "
+                  "zs.minimum=$8::bigint",
+            Database::query_param_list(_fqdn)
+                                    (_hostmaster)
+                                    (_ns_fqdn)
+                                    (_ttl)
+                                    (_refresh)
+                                    (_update_retr)
+                                    (_expiry)
+                                    (_minimum));
+    if (db_result.size() == 1)
+    {
+        return static_cast<unsigned long long>(db_result[0][0]);
+    }
+    throw std::runtime_error("unexpected number of records in the zone_soa table");
+}
+
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 {
-    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(RandomDataGenerator().xstring(3)).exec(ctx),
-                      ::LibFred::Zone::NonExistentZone);
+    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(RandomDataGenerator().xstring(3), hostmaster, ns_fqdn)
+                .exec(ctx),
+           ::LibFred::Zone::NonExistentZone);
 }
 
 BOOST_AUTO_TEST_CASE(set_existing_zone_soa)
 {
-    ::LibFred::Zone::CreateZoneSoa(fqdn).exec(ctx);
-    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(fqdn).exec(ctx),
-                      ::LibFred::Zone::AlreadyExistingZoneSoa);
+    ::LibFred::Zone::CreateZoneSoa(fqdn, hostmaster, ns_fqdn).exec(ctx);
+    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(fqdn, hostmaster, ns_fqdn)
+                .exec(ctx),
+            ::LibFred::Zone::AlreadyExistingZoneSoa);
 }
 
 BOOST_AUTO_TEST_CASE(set_min_create_zone_soa)
 {
-    ::LibFred::Zone::CreateZoneSoa(fqdn).exec(ctx);
-    BOOST_CHECK(does_new_zone_soa_exist(ctx, fqdn));
+    const unsigned long long id = ::LibFred::Zone::CreateZoneSoa(fqdn, hostmaster, ns_fqdn).exec(ctx);
+    BOOST_CHECK_EQUAL(get_zone_soa_id(ctx, fqdn, hostmaster, ns_fqdn), id);
 }
 
 BOOST_AUTO_TEST_CASE(set_max_create_zone_soa)
 {
-    ::LibFred::Zone::CreateZoneSoa(fqdn)
+    const unsigned long long id = ::LibFred::Zone::CreateZoneSoa(fqdn, hostmaster, ns_fqdn)
            .set_ttl(new_ttl_in_seconds)
-           .set_hostmaster(new_hostmaster)
            .set_refresh(new_refresh_in_seconds)
            .set_update_retr(new_update_retr_in_seconds)
            .set_expiry(new_expiry_in_seconds)
            .set_minimum(new_minimum_in_seconds)
-           .set_ns_fqdn(new_ns_fqdn)
            .exec(ctx);
-    BOOST_CHECK(does_new_zone_soa_exist(ctx, fqdn));
+    BOOST_CHECK_EQUAL(
+            get_zone_soa_id(ctx, fqdn, hostmaster, ns_fqdn, new_ttl_in_seconds, new_refresh_in_seconds,
+                            new_update_retr_in_seconds, new_expiry_in_seconds, new_minimum_in_seconds),
+            id);
 }
 
 BOOST_AUTO_TEST_SUITE_END()//TestCreateZoneSoa

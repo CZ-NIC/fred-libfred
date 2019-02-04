@@ -7,6 +7,20 @@
 namespace LibFred {
 namespace Registrar {
 
+CreateRegistrarCertification::CreateRegistrarCertification(
+        unsigned long long _registrar_id,
+        const boost::gregorian::date& _valid_from,
+        const boost::gregorian::date& _valid_until,
+        int _classification,
+        unsigned long long _eval_file_id)
+    : registrar_id_(_registrar_id),
+      valid_from_(_valid_from),
+      valid_until_(_valid_until),
+      classification_(_classification),
+      eval_file_id_(_eval_file_id)
+{
+}
+
 unsigned long long CreateRegistrarCertification::exec(OperationContext& _ctx)
 {
     try

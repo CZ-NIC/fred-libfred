@@ -33,6 +33,8 @@
 
 namespace Database {
 
+class TerribleHack;
+
 /**
  * \class PSQLConnection
  * \brief PSQL connection driver for Connection_ template
@@ -76,6 +78,7 @@ public:
     bool is_in_valid_transaction()const;
 private:
     PGconn* psql_conn_; ///< wrapped connection structure from libpq library
+    friend class TerribleHack;
 };
 
 }//namespace Database

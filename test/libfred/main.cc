@@ -51,19 +51,18 @@ void setup_logging(CfgArgs* cfg_instance_ptr)
     {
         case Logging::Log::Device::file:
             Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::file>(
-                    static_cast<std::string>(handler_ptr->log_file));
+                    static_cast<std::string>(handler_ptr->log_file),
+                    static_cast<Logging::Log::EventImportance>(handler_ptr->log_level));
             break;
         case Logging::Log::Device::syslog:
             Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::syslog>(
                     static_cast<int>(handler_ptr->log_syslog_facility));
             break;
         case Logging::Log::Device::console:
-            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::console>();
+            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::console>(
+                    static_cast<Logging::Log::EventImportance>(handler_ptr->log_level));
             break;
     }
-
-    Logging::Manager::instance_ref().set_minimal_importance(
-            static_cast<Logging::Log::EventImportance>(handler_ptr->log_level));
 }
 
 }//namespace Test

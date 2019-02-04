@@ -58,11 +58,14 @@ set(LIBFRED_SOURCES
     src/libfred/public_request/public_request_object_lock_guard.cc
     src/libfred/public_request/update_public_request.cc
     src/libfred/registrable_object/contact/check_contact.cc
+    src/libfred/registrable_object/contact/contact_state.cc
     src/libfred/registrable_object/contact/copy_contact.cc
     src/libfred/registrable_object/contact/copy_history_impl.cc
     src/libfred/registrable_object/contact/create_contact.cc
     src/libfred/registrable_object/contact/delete_contact.cc
     src/libfred/registrable_object/contact/find_contact_duplicates.cc
+    src/libfred/registrable_object/contact/get_contact_state.cc
+    src/libfred/registrable_object/contact/get_contact_state_history.cc
     src/libfred/registrable_object/contact/info_contact.cc
     src/libfred/registrable_object/contact/info_contact_data.cc
     src/libfred/registrable_object/contact/info_contact_diff.cc
@@ -122,6 +125,7 @@ set(LIBFRED_SOURCES
     src/libfred/registrable_object/nsset/update_nsset.cc
     src/libfred/registrar/check_registrar.cc
     src/libfred/registrar/create_registrar.cc
+    src/libfred/registrar/exceptions.cc
     src/libfred/registrar/get_registrar_handles.cc
     src/libfred/registrar/get_registrar_zone_credit.cc
     src/libfred/registrar/info_registrar.cc
@@ -131,10 +135,17 @@ set(LIBFRED_SOURCES
     src/libfred/registrar/info_registrar_output.cc
     src/libfred/registrar/registrar_zone_access.cc
     src/libfred/registrar/registrar_zone_credit.cc
+    src/libfred/registrar/update_registrar.cc
     src/libfred/registrar/zone_credit.cc
     src/libfred/registrar/certification/create_registrar_certification.cc
     src/libfred/registrar/certification/get_registrar_certifications.cc
     src/libfred/registrar/certification/update_registrar_certification.cc
+    src/libfred/registrar/epp_auth/add_registrar_epp_auth.cc
+    src/libfred/registrar/epp_auth/clone_registrar_epp_auth.cc
+    src/libfred/registrar/epp_auth/delete_registrar_epp_auth.cc
+    src/libfred/registrar/epp_auth/exceptions.cc
+    src/libfred/registrar/epp_auth/get_registrar_epp_auth.cc
+    src/libfred/registrar/epp_auth/update_registrar_epp_auth.cc
     src/libfred/registrar/group/cancel_registrar_group.cc
     src/libfred/registrar/group/create_registrar_group.cc
     src/libfred/registrar/group/get_registrar_groups.cc
@@ -143,6 +154,10 @@ set(LIBFRED_SOURCES
     src/libfred/registrar/group/membership/end_registrar_group_membership.cc
     src/libfred/registrar/group/membership/info_group_membership_by_group.cc
     src/libfred/registrar/group/membership/info_group_membership_by_registrar.cc
+    src/libfred/registrar/zone_access/add_registrar_zone_access.cc
+    src/libfred/registrar/zone_access/exceptions.cc
+    src/libfred/registrar/zone_access/get_registrar_zone_access.cc
+    src/libfred/registrar/zone_access/update_registrar_zone_access.cc
     src/libfred/zone/create_zone.cc
     src/libfred/zone/exceptions.cc
     src/libfred/zone/info_zone.cc
@@ -159,6 +174,7 @@ set(LIBFRED_SOURCES
     src/libfred/zone/zone_soa/info_zone_soa.cc
     src/libfred/zone/zone_soa/update_zone_soa.cc
     src/util/idn_utils.cc
+    src/util/password_storage.cc
     src/util/printable.cc
     src/util/random.cc
     src/util/util.cc
@@ -168,6 +184,10 @@ set(LIBFRED_SOURCES
     src/util/db/psql/psql_result.cc
     src/util/log/context.cc
     src/util/log/log.cc
+    src/util/password_storage/base64.cc
+    src/util/password_storage/impl/check_equality.cc
+    src/util/password_storage/impl/pbkdf2.cc
+    src/util/password_storage/impl/plaintext.cc
     src/util/types/date.cc
     src/util/types/date_interval.cc
     src/util/types/datetime.cc
@@ -300,7 +320,9 @@ add_executable(test-libfred
     test/fake-src/util/tz/europe/prague.cc
     test/libfred/main.cc
     test/libfred/test_check_handle.cc
+    test/libfred/test_flagset.cc
     test/libfred/test_opexception.cc
+    test/libfred/contact/test_contact_state.cc
     test/libfred/contact/test_copy_contact.cc
     test/libfred/contact/test_create_contact.cc
     test/libfred/contact/test_delete_contact.cc
@@ -414,6 +436,7 @@ add_executable(test-libfred
     test/libfred/zone/zone_soa/test_info_zone_soa.cc
     test/libfred/zone/zone_soa/test_update_zone_soa.cc
     test/libfred/zone/zone_soa/util.cc
+    test/util/test_password_storage.cc
     test/setup/fixtures.cc
     test/setup/fixtures_utils.cc)
 

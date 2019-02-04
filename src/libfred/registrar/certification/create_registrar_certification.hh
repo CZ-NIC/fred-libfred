@@ -36,26 +36,17 @@ class CreateRegistrarCertification
 public:
     CreateRegistrarCertification(
             unsigned long long _registrar_id,
-            boost::gregorian::date _valid_from,
-            boost::gregorian::date _valid_until,
+            const boost::gregorian::date& _valid_from,
+            const boost::gregorian::date& _valid_until,
             int _classification,
-            unsigned long long _eval_file_id)
-    : registrar_id_(_registrar_id),
-      valid_from_(_valid_from),
-      valid_until_(_valid_until),
-      classification_(_classification),
-      eval_file_id_(_eval_file_id)
-    {}
-
+            unsigned long long _eval_file_id);
     unsigned long long exec(OperationContext& _ctx);
-
 private:
     unsigned long long registrar_id_;
     boost::gregorian::date valid_from_;
     boost::gregorian::date valid_until_;
     int classification_;
     unsigned long long eval_file_id_;
-
 };
 
 } // namespace Registrar

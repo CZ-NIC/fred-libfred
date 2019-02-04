@@ -629,4 +629,9 @@ std::string CreateContact::to_string() const
                 (std::make_pair("logd_request_id", logd_request_id_.print_quoted())));
 }
 
+const std::string& CreateContact::get_handle()const
+{
+    return handle_;
+}
+
 }//namespace LibFred

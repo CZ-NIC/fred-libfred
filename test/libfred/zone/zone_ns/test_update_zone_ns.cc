@@ -31,6 +31,7 @@
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/asio/ip/address.hpp>
+
 #include <string>
 #include <vector>
 
@@ -38,25 +39,19 @@ namespace Test {
 
 struct UpdateZoneNsFixture
 {
-    std::string zone;
-    ::LibFred::Zone::InfoZoneNsData info_zone_ns;
-
-    UpdateZoneNsFixture(::LibFred::OperationContext& _ctx)
+    explicit UpdateZoneNsFixture(::LibFred::OperationContext& _ctx)
         : zone(RandomDataGenerator().xstring(3))
     {
         info_zone_ns.zone_id = ::LibFred::Zone::CreateZone(zone, 6, 12).exec(_ctx);
-
-        info_zone_ns.nameserver_fqdn = "localhost";
-
-        std::vector<boost::asio::ip::address> ns_ip_addrs;
-        info_zone_ns.nameserver_ip_addresses = ns_ip_addrs;
-
-        info_zone_ns.id = ::LibFred::Zone::CreateZoneNs(zone)
+        info_zone_ns.nameserver_fqdn = "a.ns.nic.cz";
+        info_zone_ns.nameserver_ip_addresses.clear();
+        info_zone_ns.id = ::LibFred::Zone::CreateZoneNs(zone, info_zone_ns.nameserver_fqdn)
                 .exec(_ctx);
     }
-
     ~UpdateZoneNsFixture()
     {}
+    std::string zone;
+    ::LibFred::Zone::InfoZoneNsData info_zone_ns;
 };
 
 BOOST_FIXTURE_TEST_SUITE(TestUpdateZoneNs, SupplyFixtureCtx<UpdateZoneNsFixture>)
@@ -125,6 +120,6 @@ BOOST_AUTO_TEST_CASE(set_zone_ns_update_all)
    BOOST_CHECK(info_zone_ns == ::LibFred::Zone::InfoZoneNs(id).exec(ctx));
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestUpdateZoneNs
 
-} // namespace Test
+}//namespace Test

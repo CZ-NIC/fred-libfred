@@ -151,8 +151,9 @@ struct get_handle_from_CreateX : public TCreateOper
     : TCreateOper(init)
     { }
 
-    std::string operator()() {
-        return this->handle_;
+    std::string operator()()
+    {
+        return this->get_handle();
     }
 };
 
@@ -164,8 +165,9 @@ struct get_handle_from_CreateX<::LibFred::CreateDomain> : public ::LibFred::Crea
     : ::LibFred::CreateDomain(init)
     { }
 
-    std::string operator()() {
-        return this->fqdn_;
+    std::string operator()()
+    {
+        return this->get_fqdn();
     }
 };
 

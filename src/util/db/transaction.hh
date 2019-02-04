@@ -60,7 +60,7 @@ public:
           ptransaction_(nullptr),
           exited_(false)
     {
-        if (!conn_.inTransaction())
+        if (!conn_.is_in_transaction())
         {
 #ifdef HAVE_LOGGER
             LOGGER.debug(boost::format("(%1%) start transaction request -- begin") % this);
