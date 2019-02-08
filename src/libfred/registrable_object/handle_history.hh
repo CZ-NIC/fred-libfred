@@ -20,6 +20,7 @@
 #define HANDLE_HISTORY_HH_DEF68B0929AD081E5593338F8E674DD1
 
 #include "libfred/object/object_type.hh"
+#include "libfred/registrable_object/uuid.hh"
 
 #include <boost/optional.hpp>
 
@@ -37,16 +38,16 @@ struct HandleHistory
     using TimePoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
     struct Record
     {
-        unsigned long long id;
+        UuidOf<o> uuid;
         struct
         {
             TimePoint timestamp;
-            unsigned long long history_id;
+            HistoryUuidOf<o> history_uuid;
         } begin;
         struct
         {
             boost::optional<TimePoint> timestamp;
-            unsigned long long history_id;
+            HistoryUuidOf<o> history_uuid;
         } end;
     };
     std::string handle;

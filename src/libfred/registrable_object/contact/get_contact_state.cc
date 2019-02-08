@@ -104,12 +104,8 @@ GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& 
     return state;
 }
 
-GetContactStateByUuid::GetContactStateByUuid(const std::string& contact_uuid)
+GetContactStateByUuid::GetContactStateByUuid(const ContactUuid& contact_uuid)
     : uuid_(contact_uuid)
-{ }
-
-GetContactStateByUuid::GetContactStateByUuid(unsigned long long contact_uuid)
-    : uuid_(std::to_string(contact_uuid))
 { }
 
 GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)const
@@ -118,34 +114,13 @@ GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)
             object_type == Object_Type::domain ? "LOWER"
                                                : "UPPER";
     Database::query_param_list params;
-    std::string sql_with =
+    const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
+    const std::string sql =
             "WITH o AS ("
                 "SELECT id,type "
                 "FROM object_registry "
-                "WHERE ";
-    const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
-    try
-    {
-        const unsigned long long uuid = std::stoull(uuid_);//UUID is usually not convertible to any integer type
-        const auto uuid_param = "$" + params.add(uuid);
-        sql_with +=
-                "(name=" + sql_handle_case_normalize_function + "(" + uuid_param + "::TEXT) AND "
-                 "type=get_object_type_id(" + object_type_param_text + ") AND "
-                 "erdate IS NULL) OR "
-                "id=" + uuid_param + "::BIGINT "
-                "LIMIT 1";
-    }
-    catch (...)
-    {
-        const auto uuid_param = "$" + params.add(uuid_);
-        sql_with +=
-                "name=" + sql_handle_case_normalize_function + "(" + uuid_param + "::TEXT) AND "
-                "type=get_object_type_id(" + object_type_param_text + ") AND "
-                "erdate IS NULL";
-    }
-    sql_with += ")";
-    const std::string sql =
-            sql_with + " "
+                "WHERE uuid=$" + params.add(uuid_) + "::UUID AND "
+                      "type=get_object_type_id(" + object_type_param_text + ")) "
             "SELECT eos.name "
             "FROM o "
             "LEFT JOIN object_state os ON os.object_id=o.id AND "

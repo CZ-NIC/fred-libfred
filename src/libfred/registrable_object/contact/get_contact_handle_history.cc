@@ -17,6 +17,7 @@
  */
 
 #include "libfred/registrable_object/contact/get_contact_handle_history.hh"
+#include "libfred/registrable_object/contact/contact_uuid.hh"
 #include "libfred/registrable_object/get_handle_history_impl.hh"
 
 namespace LibFred {

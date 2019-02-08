@@ -39,11 +39,13 @@ typename GetHandleHistory<o>::Result GetHandleHistory<o>::exec(OperationContext&
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
     params(handle_);
     const std::string sql =
-        "SELECT id,crdate,crhistoryid,erdate,historyid "
-        "FROM object_registry "
-        "WHERE type=get_object_type_id($1::TEXT) AND " +
-               sql_handle_case_normalize_function + "(name)=" + sql_handle_case_normalize_function + "($2::TEXT) "
-        "ORDER BY id";
+        "SELECT obr.uuid,obr.crdate,bh.uuid,obr.erdate,eh.uuid "
+        "FROM object_registry obr "
+        "JOIN history bh ON bh.id=obr.crhistoryid "
+        "JOIN history eh ON eh.id=obr.historyid "
+        "WHERE obr.type=get_object_type_id($1::TEXT) AND " +
+               sql_handle_case_normalize_function + "(obr.name)=" + sql_handle_case_normalize_function + "($2::TEXT) "
+        "ORDER BY obr.crdate";
     const auto dbres = ctx.get_conn().exec_params(
             sql,
             Database::query_param_list(Conversion::Enums::to_db_handle(object_type))
@@ -53,14 +55,14 @@ typename GetHandleHistory<o>::Result GetHandleHistory<o>::exec(OperationContext&
     for (unsigned long long idx = 0; idx < dbres.size(); ++idx)
     {
         typename Result::Record record;
-        record.id = static_cast<unsigned long long>(dbres[idx][0]);
+        record.uuid = dbres[idx][0].as<UuidOf<o>>();
         record.begin.timestamp = static_cast<typename Result::TimePoint>(dbres[idx][1]);
-        record.begin.history_id = static_cast<unsigned long long>(dbres[idx][2]);
+        record.begin.history_uuid = dbres[idx][2].as<HistoryUuidOf<o>>();
         if (!dbres[idx][3].isnull())
         {
             record.end.timestamp = static_cast<typename Result::TimePoint>(dbres[idx][3]);
         }
-        record.end.history_id = static_cast<unsigned long long>(dbres[idx][4]);
+        record.end.history_uuid = dbres[idx][4].as<HistoryUuidOf<o>>();
         history.timeline.push_back(record);
     }
     return history;

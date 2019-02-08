@@ -20,6 +20,7 @@
 #define DATA_HISTORY_HH_902356BCEFE465DDC06886C86690739B
 
 #include "libfred/object/object_type.hh"
+#include "libfred/registrable_object/uuid.hh"
 
 #include <boost/optional.hpp>
 
@@ -38,10 +39,10 @@ struct DataHistory
     struct Record
     {
         TimePoint valid_from;
-        unsigned long long history_id;
+        HistoryUuidOf<o> history_uuid;
         boost::optional<unsigned long long> log_request_id;
     };
-    unsigned long long object_id;
+    UuidOf<o> object_uuid;
     std::vector<Record> timeline;
     boost::optional<TimePoint> valid_to;
 };

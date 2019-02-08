@@ -41,9 +41,9 @@ ContactDataHistory get_contact_data_history(
         {
             return "crdate";
         }
-        std::string operator()(const HistoryInterval::HistoryId& history_id)const
+        std::string operator()(const ObjectHistoryUuid& history_uuid)const
         {
-            return "SELECT valid_from FROM history WHERE id=$" + params_.add(history_id.value) + "::BIGINT";
+            return "SELECT valid_from FROM history WHERE uuid=$" + params_.add(history_uuid) + "::UUID";
         }
         std::string operator()(const HistoryInterval::TimePoint<std::chrono::nanoseconds>& at)const
         {
@@ -62,9 +62,9 @@ ContactDataHistory get_contact_data_history(
         {
             return "'infinity'::TIMESTAMP";
         }
-        std::string operator()(const HistoryInterval::HistoryId& history_id)const
+        std::string operator()(const ObjectHistoryUuid& history_uuid)const
         {
-            return "SELECT valid_from FROM history WHERE id=$" + params_.add(history_id.value) + "::BIGINT";
+            return "SELECT valid_from FROM history WHERE uuid=$" + params_.add(history_uuid) + "::UUID";
         }
         std::string operator()(const HistoryInterval::TimePoint<std::chrono::nanoseconds>& at)const
         {
@@ -81,13 +81,13 @@ ContactDataHistory get_contact_data_history(
     const auto upper_limit_rule = boost::apply_visitor(UpperLimitVisitor(params), range.upper_limit);
     const std::string sql =
             "WITH o AS ("
-                "SELECT id,"
+                "SELECT id,uuid,"
                        "(" + lower_limit_rule + ") AS lower_limit,"
                        "(" + upper_limit_rule + ") AS upper_limit "
                 "FROM object_registry "
                 "WHERE type=get_object_type_id($1::TEXT) AND "
                       "id=(" + object_id_rule + ")) "
-            "SELECT o.id,h.id,h.valid_from,h.valid_to,h.request_id "
+            "SELECT o.uuid,h.uuid,h.valid_from,h.valid_to,h.request_id "
             "FROM o "
             "JOIN object_history oh ON oh.id=o.id "
             "JOIN history h ON h.id=oh.historyid AND "
@@ -114,10 +114,10 @@ ContactDataHistory get_contact_data_history(
     {
         if (idx == 0)
         {
-            history.object_id = static_cast<unsigned long long>(dbres[0][0]);
+            history.object_uuid = dbres[0][0].as<ContactUuid>();
         }
         typename ContactDataHistory::Record record;
-        record.history_id = static_cast<unsigned long long>(dbres[idx][1]);
+        record.history_uuid = dbres[idx][1].as<ContactHistoryUuid>();
         record.valid_from = static_cast<typename ContactDataHistory::TimePoint>(dbres[idx][2]);
         if (dbres[idx][3].isnull())
         {
@@ -193,11 +193,7 @@ GetContactDataHistoryByHandle::Result GetContactDataHistoryByHandle::exec(
     return get_contact_data_history(ctx, range, OperationByHandle(handle_));
 }
 
-GetContactDataHistoryByUuid::GetContactDataHistoryByUuid(unsigned long long contact_uuid)
-    : uuid_(std::to_string(contact_uuid))
-{ }
-
-GetContactDataHistoryByUuid::GetContactDataHistoryByUuid(const std::string& contact_uuid)
+GetContactDataHistoryByUuid::GetContactDataHistoryByUuid(const ContactUuid& contact_uuid)
     : uuid_(contact_uuid)
 { }
 
@@ -209,38 +205,18 @@ GetContactDataHistoryByUuid::Result GetContactDataHistoryByUuid::exec(
     class OperationByUuid
     {
     public:
-        explicit OperationByUuid(const std::string& uuid)
+        explicit OperationByUuid(const ContactUuid& uuid)
             : uuid_(uuid) { }
         std::string operator()(Database::query_param_list& params)const
         {
-            static const std::string sql_handle_case_normalize_function =
-                    object_type == Object_Type::domain ? "LOWER"
-                                                       : "UPPER";
             const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
-            try
-            {
-                const unsigned long long uuid = std::stoull(uuid_);
-                const auto uuid_param = "$" + params.add(uuid);
-                return "SELECT id "
-                       "FROM object_registry "
-                       "WHERE (name=" + sql_handle_case_normalize_function + "(" + uuid_param + "::TEXT) AND "
-                              "type=get_object_type_id(" + object_type_param_text + ") AND "
-                              "erdate IS NULL) OR "
-                             "id=" + uuid_param + "::BIGINT "
-                       "LIMIT 1";
-            }
-            catch (...)
-            {
-                const auto uuid_param = "$" + params.add(uuid_);
-                return "SELECT id "
-                       "FROM object_registry "
-                       "WHERE name=" + sql_handle_case_normalize_function + "(" + uuid_param + "::TEXT) AND "
-                             "type=get_object_type_id(" + object_type_param_text + ") AND "
-                             "erdate IS NULL";
-            }
+            return "SELECT id "
+                   "FROM object_registry "
+                   "WHERE uuid=$" + params.add(uuid_) + "::UUID AND "
+                         "type=get_object_type_id(" + object_type_param_text + ")";
         }
     private:
-        const std::string uuid_;
+        const ContactUuid uuid_;
     };
     return get_contact_data_history(ctx, range, OperationByUuid(uuid_));
 }

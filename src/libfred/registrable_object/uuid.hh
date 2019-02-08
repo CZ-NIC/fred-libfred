@@ -10,6 +10,7 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include <exception>
+#include <iosfwd>
 #include <string>
 #include <type_traits>
 
@@ -29,7 +30,7 @@ U make_uuid_from_string(const std::string& src)
 {
     try
     {
-        static_assert(std::is_same<decltype(get_raw_value_from(U())), const boost::uuids::uuid&>::value,
+        static_assert(std::is_same<decltype(get_raw_value_from(U())), boost::uuids::uuid&&>::value,
                       "U must be strong type based on boost uuid");
         return Util::make_strong<U>(boost::uuids::string_generator()(src));
     }
@@ -39,6 +40,20 @@ U make_uuid_from_string(const std::string& src)
     }
 }
 
+using ObjectUuid = StrongTypeUuid<struct GeneralObjectTag>;
+
+ObjectUuid make_object_uuid(const boost::uuids::uuid& src);
+ObjectUuid make_object_uuid(boost::uuids::uuid&& src);
+ObjectUuid make_object_uuid(const std::string& src);
+
+
+using ObjectHistoryUuid = StrongTypeUuid<struct GeneralObjectHistoryTag>;
+
+ObjectHistoryUuid make_object_history_uuid(const boost::uuids::uuid& src);
+ObjectHistoryUuid make_object_history_uuid(boost::uuids::uuid&& src);
+ObjectHistoryUuid make_object_history_uuid(const std::string& src);
+
+
 template <Object_Type::Enum>
 struct UuidTag;
 
@@ -46,22 +61,14 @@ template <Object_Type::Enum o>
 using UuidOf = StrongTypeUuid<UuidTag<o>>;
 
 template <Object_Type::Enum o>
-UuidOf<o> make_uuid_of(const boost::uuids::uuid& src)
-{
-    return Util::make_strong<UuidOf<o>>(src);
-}
+UuidOf<o> make_uuid_of(const boost::uuids::uuid& src);
 
 template <Object_Type::Enum o>
-UuidOf<o> make_uuid_of(boost::uuids::uuid&& src)
-{
-    return Util::make_strong<UuidOf<o>>(std::move(src));
-}
+UuidOf<o> make_uuid_of(boost::uuids::uuid&& src);
 
 template <Object_Type::Enum o>
-UuidOf<o> make_uuid_of(const std::string& src)
-{
-    return make_uuid_from_string<UuidOf<o>>(src);
-}
+UuidOf<o> make_uuid_of(const std::string& src);
+
 
 template <Object_Type::Enum>
 struct HistoryUuidTag;
@@ -70,21 +77,25 @@ template <Object_Type::Enum o>
 using HistoryUuidOf = StrongTypeUuid<HistoryUuidTag<o>>;
 
 template <Object_Type::Enum o>
-HistoryUuidOf<o> make_history_uuid_of(const boost::uuids::uuid& src)
-{
-    return Util::make_strong<HistoryUuidOf<o>>(src);
-}
+HistoryUuidOf<o> make_history_uuid_of(const boost::uuids::uuid& src);
 
 template <Object_Type::Enum o>
-HistoryUuidOf<o> make_history_uuid_of(boost::uuids::uuid&& src)
-{
-    return Util::make_strong<HistoryUuidOf<o>>(std::move(src));
-}
+HistoryUuidOf<o> make_history_uuid_of(boost::uuids::uuid&& src);
 
 template <Object_Type::Enum o>
-HistoryUuidOf<o> make_history_uuid_of(const std::string& src)
+HistoryUuidOf<o> make_history_uuid_of(const std::string& src);
+
+
+template <typename U, typename N>
+U uuid_cast(const StrongTypeUuid<N>& src)
 {
-    return make_uuid_from_string<HistoryUuidOf<o>>(src);
+    return Util::strong_type_cast<U>(src);
+}
+
+template <typename U, typename N>
+U uuid_cast(StrongTypeUuid<N>&& src)
+{
+    return Util::strong_type_cast<U>(std::move(src));
 }
 
 }//namespace LibFred::RegistrableObject

@@ -1,9 +1,10 @@
 #ifndef STRONG_TYPE_HH_3A4059C222372A9EB2F4A653236A5730//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define STRONG_TYPE_HH_3A4059C222372A9EB2F4A653236A5730
 
-#include <iosfwd>
+#include <iostream>
 #include <string>
 #include <sstream>
+#include <type_traits>
 #include <utility>
 
 namespace Util {
@@ -18,6 +19,9 @@ constexpr N make_strong(T&&);
 
 template <typename T, typename N>
 constexpr const T& get_raw_value_from(const StrongType<T, N>&);
+
+template <typename T, typename N>
+T&& get_raw_value_from(StrongType<T, N>&&);
 
 template <typename T, typename N>
 class StrongType
@@ -39,6 +43,7 @@ private:
     friend StrongType make_strong<>(const T&);
     friend StrongType make_strong<>(T&&);
     friend const T& get_raw_value_from<>(const StrongType&);
+    friend T&& get_raw_value_from<>(StrongType&&);
     friend std::ostream& operator<<(std::ostream& out, const StrongType& src)
     {
         return out << src.value_;
@@ -48,12 +53,16 @@ private:
 template <typename N, typename T>
 constexpr N make_strong(const T& src)
 {
+    static_assert(std::is_same<decltype(get_raw_value_from(N())), T&&>::value,
+                  "N must be strong type based on T");
     return N(src);
 }
 
 template <typename N, typename T>
 constexpr N make_strong(T&& src)
 {
+    static_assert(std::is_same<decltype(get_raw_value_from(N())), T&&>::value,
+                  "N must be strong type based on T");
     return N(std::move(src));
 }
 
@@ -69,6 +78,28 @@ template <typename T, typename N>
 constexpr const T& get_raw_value_from(const StrongType<T, N>& src)
 {
     return src.value_;
+}
+
+template <typename T, typename N>
+T&& get_raw_value_from(StrongType<T, N>&& src)
+{
+    return std::move(src.value_);
+}
+
+template <typename S, typename T, typename N>
+S strong_type_cast(const StrongType<T, N>& src)
+{
+    static_assert(std::is_same<decltype(get_raw_value_from(S())), T&&>::value,
+                  "S must be strong type based on T");
+    return Util::make_strong<S>(get_raw_value_from(src));
+}
+
+template <typename S, typename T, typename N>
+S strong_type_cast(StrongType<T, N>&& src)
+{
+    static_assert(std::is_same<decltype(get_raw_value_from(S())), T&&>::value,
+                  "S must be strong type based on T");
+    return Util::make_strong<S>(get_raw_value_from(std::move(src)));
 }
 
 }//namespace Util

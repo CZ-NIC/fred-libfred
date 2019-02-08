@@ -20,6 +20,7 @@
 #define HISTORY_INTERVAL_HH_95F3AE09B37AE67CF50D518EEC5EEE3B
 
 #include "libfred/object/object_type.hh"
+#include "libfred/registrable_object/uuid.hh"
 
 #include <boost/variant.hpp>
 
@@ -41,14 +42,9 @@ struct HistoryInterval
 {
     template <typename R>
     using TimePoint = std::chrono::time_point<std::chrono::system_clock, R>;
-    struct HistoryId
-    {
-        explicit HistoryId(unsigned long long history_id) : value(history_id) { }
-        unsigned long long value;
-    };
     struct NoLimit { };
     using Limit = boost::variant<TimePoint<std::chrono::nanoseconds>,
-                                 HistoryId,
+                                 ObjectHistoryUuid,
                                  NoLimit>;
     template <typename>
     struct NamedLimit
@@ -56,7 +52,7 @@ struct HistoryInterval
         template <typename T>
         explicit NamedLimit(const T& src) : value(src)
         {
-            static_assert(std::is_same<T, HistoryId>::value ||
+            static_assert(std::is_same<T, ObjectHistoryUuid>::value ||
                           std::is_same<T, NoLimit>::value,
                           "unsupported conversion requested");
         }
