@@ -26,9 +26,6 @@
 
 #include "util/util.hh"
 
-#include <boost/noncopyable.hpp>
-#include <boost/lexical_cast.hpp>
-
 #include <sstream>
 #include <string>
 #include <vector>

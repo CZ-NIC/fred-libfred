@@ -16,29 +16,19 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPERATION_BY_UUID_HH_D040ECF44D1F9213A9D20B7375621D94//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define OPERATION_BY_UUID_HH_D040ECF44D1F9213A9D20B7375621D94
+#ifndef CONTACT_DATA_HISTORY_HH_6A46E51AE3FC945F7FE43B59C0AD9A73//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define CONTACT_DATA_HISTORY_HH_6A46E51AE3FC945F7FE43B59C0AD9A73
 
-#include "util/db/query_param.hh"
-
-#include <string>
+#include "libfred/registrable_object/data_history.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
+namespace Contact {
 
-template <template <typename, typename> class O, typename T>
-class OperationByUUID : public O<OperationByUUID<O, T>, T>
-{
-public:
-    explicit OperationByUUID(const std::string& uuid);
-    explicit OperationByUUID(unsigned long long uuid);
-private:
-    std::string get_object_id_rule(Database::query_param_list& params)const;
-    std::string uuid_;
-    friend class O<OperationByUUID, T>;
-};
+using ContactDataHistory = DataHistory<Object_Type::contact>;
 
+}//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//OPERATION_BY_UUID_HH_D040ECF44D1F9213A9D20B7375621D94
+#endif//CONTACT_DATA_HISTORY_HH_6A46E51AE3FC945F7FE43B59C0AD9A73

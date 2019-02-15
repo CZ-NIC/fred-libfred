@@ -16,20 +16,19 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C
+#ifndef CONTACT_HANDLE_HISTORY_HH_9E74544B8FCBFA3BB6F052965C7C7695//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define CONTACT_HANDLE_HISTORY_HH_9E74544B8FCBFA3BB6F052965C7C7695
 
-#include "libfred/registrable_object/state_history.hh"
-#include "libfred/registrable_object/contact/contact_state.hh"
+#include "libfred/registrable_object/handle_history.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 namespace Contact {
 
-using ContactStateHistory = StateHistory<ContactState>;
+using ContactHandleHistory = HandleHistory<Object_Type::contact>;
 
 }//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C
+#endif//CONTACT_HANDLE_HISTORY_HH_9E74544B8FCBFA3BB6F052965C7C7695

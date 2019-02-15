@@ -62,8 +62,8 @@ BOOST_FIXTURE_TEST_CASE(contact_state, Test::instantiate_db_template)
     contact_state.set<ConditionallyIdentifiedContact>();
     contact_state.set<ConditionallyIdentifiedContact, ServerBlocked, Linked>();
     BOOST_CHECK((contact_state.are_set_any_of<Linked,
-                                               DeleteCandidate,
-                                               ValidatedContact>()));
+                                              DeleteCandidate,
+                                              ValidatedContact>()));
     BOOST_CHECK(contact_state.are_set_all_of<>());
     BOOST_CHECK(!contact_state.is_set<DeleteCandidate>());
     BOOST_CHECK(contact_state.is_set<Linked>());
@@ -87,18 +87,18 @@ BOOST_FIXTURE_TEST_CASE(contact_state, Test::instantiate_db_template)
 
     const auto state1_history = GetContactStateHistoryById(1).exec(ctx, interval);
     std::ostringstream out;
-    for (const auto& record : state1_history.record)
+    for (const auto& record : state1_history.timeline)
     {
         out << TimePointConverter::to(record.valid_from) << " - "
             << simple_state_view(record.state) << std::endl;
     }
     out << TimePointConverter::to(state1_history.valid_to) << std::endl;
-    GetContactStateByUUID(1).exec(ctx);
-    GetContactStateByUUID("1").exec(ctx);
-    GetContactStateByUUID("KONTAKT").exec(ctx);
-    GetContactStateHistoryByUUID(1).exec(ctx, interval);
-    GetContactStateHistoryByUUID("1").exec(ctx, interval);
-    GetContactStateHistoryByUUID("KONTAKT").exec(ctx, interval);
+    GetContactStateByUuid(1).exec(ctx);
+    GetContactStateByUuid("1").exec(ctx);
+    GetContactStateByUuid("KONTAKT").exec(ctx);
+    GetContactStateHistoryByUuid(1).exec(ctx, interval);
+    GetContactStateHistoryByUuid("1").exec(ctx, interval);
+    GetContactStateHistoryByUuid("KONTAKT").exec(ctx, interval);
 }
 
 BOOST_AUTO_TEST_SUITE_END()//TestContactState

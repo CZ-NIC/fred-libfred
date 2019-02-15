@@ -27,6 +27,8 @@
 #include "util/db/nullable.hh"
 #include "util/uuid.hh"
 
+#include "libfred/registrable_object/uuid.hh"
+
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
@@ -114,6 +116,13 @@ public:
     , null_(false)
     , buffer_(value)
     {}
+
+    template <typename T, typename N>
+    QueryParam(const Util::StrongType<T, N>& value)
+        : binary_(false),
+          null_(false),
+          buffer_(Util::strong_to_string(value))
+    { }
 
     template <class T>
     QueryParam(const Nullable<T>& t)

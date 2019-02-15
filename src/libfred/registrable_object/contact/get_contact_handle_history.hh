@@ -16,29 +16,19 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#ifndef GET_CONTACT_HANDLE_HISTORY_HH_440D454C5CDE5BB78279B525CEB01926//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define GET_CONTACT_HANDLE_HISTORY_HH_440D454C5CDE5BB78279B525CEB01926
 
-#include "libfred/registrable_object/exceptions.hh"
-#include "libfred/registrable_object/state.hh"
-#include "libfred/opcontext.hh"
+#include "libfred/registrable_object/get_handle_history.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
+namespace Contact {
 
-template <typename D, typename S>
-class GetState
-{
-public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = S;
-    using NotFound = ObjectNotFound<object_type>;
-    Result exec(OperationContext& ctx)const;
-private:
-    const D& derived()const;
-};
+using GetContactHandleHistory = GetHandleHistory<Object_Type::contact>;
 
+}//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HH_8E9BA9BBE7F8A87FBC864909C2347D66
+#endif//GET_CONTACT_HANDLE_HISTORY_HH_440D454C5CDE5BB78279B525CEB01926

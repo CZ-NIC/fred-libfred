@@ -146,6 +146,106 @@ std::string InfoContactById::to_string()const
                     (std::make_pair("lock", lock_ ? "true" : "false")));
 }
 
+InfoContactByUuid::InfoContactByUuid(const RegistrableObject::Contact::ContactUuid& uuid)
+    : uuid_(uuid)
+{ }
+
+template <DbLock lock>
+InfoContactOutput InfoContactByUuid::exec(const OperationContextUsing<lock>& ctx)
+{
+    try
+    {
+        InfoContact ic;
+        ic.set_inline_view_filter(
+                Database::ParamQuery(InfoContact::GetAlias::uuid())("=").param_uuid(uuid_))
+          .set_history_query(false);
+
+        if (lock == DbLock::for_update)
+        {
+            ic.set_lock();
+        }
+
+        const std::vector<InfoContactOutput> contact_res = ic.exec(ctx, "UTC");
+
+        if (contact_res.empty())
+        {
+            BOOST_THROW_EXCEPTION(Exception().set_unknown_contact_uuid(get_raw_value_from(uuid_)));
+        }
+
+        if (1 < contact_res.size())
+        {
+            BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
+        }
+        return contact_res.at(0);
+    }
+    catch (ExceptionStack& e)
+    {
+        e.add_exception_stack_info(this->to_string());
+        throw;
+    }
+}
+
+template InfoContactOutput InfoContactByUuid::exec<DbLock::for_share>(const OperationContextUsing<DbLock::for_share>&);
+template InfoContactOutput InfoContactByUuid::exec<DbLock::for_update>(const OperationContextUsing<DbLock::for_update>&);
+
+std::string InfoContactByUuid::to_string()const
+{
+    return Util::format_operation_state(
+            "InfoContactByUuid",
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("uuid", Util::strong_to_string(uuid_))));
+}
+
+InfoContactByHistoryUuid::InfoContactByHistoryUuid(const RegistrableObject::Contact::ContactHistoryUuid& history_uuid)
+    : history_uuid_(history_uuid)
+{ }
+
+template <DbLock lock>
+InfoContactOutput InfoContactByHistoryUuid::exec(const OperationContextUsing<lock>& ctx)
+{
+    try
+    {
+        InfoContact ic;
+        ic.set_inline_view_filter(
+                Database::ParamQuery(InfoContact::GetAlias::history_uuid())("=").param_uuid(history_uuid_))
+          .set_history_query(true);
+
+        if (lock == DbLock::for_update)
+        {
+            ic.set_lock();
+        }
+
+        const std::vector<InfoContactOutput> contact_res = ic.exec(ctx, "UTC");
+
+        if (contact_res.empty())
+        {
+            BOOST_THROW_EXCEPTION(Exception().set_unknown_contact_history_uuid(get_raw_value_from(history_uuid_)));
+        }
+
+        if (1 < contact_res.size())
+        {
+            BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
+        }
+        return contact_res.at(0);
+    }
+    catch (ExceptionStack& e)
+    {
+        e.add_exception_stack_info(this->to_string());
+        throw;
+    }
+}
+
+template InfoContactOutput InfoContactByHistoryUuid::exec<DbLock::for_share>(const OperationContextUsing<DbLock::for_share>&);
+template InfoContactOutput InfoContactByHistoryUuid::exec<DbLock::for_update>(const OperationContextUsing<DbLock::for_update>&);
+
+std::string InfoContactByHistoryUuid::to_string()const
+{
+    return Util::format_operation_state(
+            "InfoContactByHistoryUuid",
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("history_uuid", Util::strong_to_string(history_uuid_))));
+}
+
 InfoContactHistoryByRoid::InfoContactHistoryByRoid(const std::string& roid)
     : roid_(roid),
       lock_(false)

@@ -16,20 +16,20 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C
+#ifndef HISTORY_INTERVAL_IMPL_HH_BEDBD95B9AABD5A42B3B634237F73A97//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define HISTORY_INTERVAL_IMPL_HH_BEDBD95B9AABD5A42B3B634237F73A97
 
-#include "libfred/registrable_object/state_history.hh"
-#include "libfred/registrable_object/contact/contact_state.hh"
+#include "libfred/registrable_object/history_interval.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
-namespace Contact {
 
-using ContactStateHistory = StateHistory<ContactState>;
+template <Object_Type::Enum o>
+InvalidHistoryIntervalSpecification<o>::InvalidHistoryIntervalSpecification()
+    : std::runtime_error("Invalid specification of history interval")
+{ }
 
-}//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C
+#endif//HISTORY_INTERVAL_IMPL_HH_BEDBD95B9AABD5A42B3B634237F73A97

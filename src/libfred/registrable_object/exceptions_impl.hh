@@ -25,8 +25,8 @@ namespace LibFred {
 namespace RegistrableObject {
 
 template <Object_Type::Enum o>
-ObjectNotFound<o>::ObjectNotFound()
-    : std::runtime_error(Conversion::Enums::to_db_handle(object_type) + " not found")
+ObjectDoesNotExist<o>::ObjectDoesNotExist()
+    : std::runtime_error(Conversion::Enums::to_db_handle(object_type) + " does not exist")
 { }
 
 }//namespace LibFred::RegistrableObject

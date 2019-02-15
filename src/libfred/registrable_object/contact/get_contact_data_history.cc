@@ -16,9 +16,8 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrable_object/contact/get_contact_state_history.hh"
+#include "libfred/registrable_object/contact/get_contact_data_history.hh"
 #include "libfred/registrable_object/history_interval_impl.hh"
-#include "libfred/registrable_object/state_flag_setter.hh"
 #include "libfred/registrable_object/exceptions_impl.hh"
 
 namespace LibFred {
@@ -28,7 +27,7 @@ namespace Contact {
 namespace {
 
 template <typename T>
-ContactStateHistory get_contact_state_history(
+ContactDataHistory get_contact_data_history(
         OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
@@ -82,115 +81,68 @@ ContactStateHistory get_contact_state_history(
     const auto upper_limit_rule = boost::apply_visitor(UpperLimitVisitor(params), range.upper_limit);
     const std::string sql =
             "WITH o AS ("
-                "SELECT id,type,crdate,erdate,"
+                "SELECT id,uuid,"
                        "(" + lower_limit_rule + ") AS lower_limit,"
                        "(" + upper_limit_rule + ") AS upper_limit "
                 "FROM object_registry "
                 "WHERE type=get_object_type_id($1::TEXT) AND "
                       "id=(" + object_id_rule + ")) "
-            "SELECT o.lower_limit IS NULL OR o.upper_limit IS NULL OR o.upper_limit<o.lower_limit AS \"limit is invalid\","
-                   "CASE WHEN o.lower_limit<o.crdate THEN o.crdate ELSE o.lower_limit END AS \"looking start\","
-                   "CASE WHEN o.erdate<o.upper_limit THEN o.erdate ELSE o.upper_limit END AS \"looking end\","
-                   "os.valid_from<=o.lower_limit AS \"presents on begin\","
-                   "os.valid_from,"
-                   "os.valid_to,"
-                   "eos.name "
+            "SELECT o.uuid,h.uuid,h.valid_from,h.valid_to,h.request_id "
             "FROM o "
-            "LEFT JOIN object_state os ON os.object_id=o.id AND "
-                                         "(o.lower_limit<=os.valid_to OR os.valid_to IS NULL) AND "
-                                         "os.valid_from<=o.upper_limit "
-            "LEFT JOIN enum_object_states eos ON eos.id=os.state_id AND "
-                                                "o.type=ANY(eos.types) "
-            "ORDER BY os.valid_from";
+            "JOIN object_history oh ON oh.id=o.id "
+            "JOIN history h ON h.id=oh.historyid AND "
+                              "(o.lower_limit<=h.valid_to OR h.valid_to IS NULL) AND "
+                              "h.valid_from<=o.upper_limit "
+            "ORDER BY h.valid_from";
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
-        throw ObjectDoesNotExist<object_type>();
-    }
-    const bool limit_is_invalid = static_cast<bool>(dbres[0][0]);
-    if (limit_is_invalid)
-    {
+        if (ctx.get_conn().exec_params(
+                "SELECT 0 "
+                "FROM object_registry "
+                "WHERE type=get_object_type_id($1::TEXT) AND "
+                      "id=(" + object_id_rule + ")", params).size() <= 0)
+        {
+            ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+            throw ObjectDoesNotExist<object_type>();
+        }
+        ctx.get_log().debug("invalid " + Conversion::Enums::to_db_handle(object_type) + " history interval");
         throw InvalidHistoryIntervalSpecification<object_type>();
     }
-    const auto upper_limit = static_cast<typename ContactStateHistory::TimePoint>(dbres[0][2]);
-    const bool object_has_state_flags = (1 < dbres.size()) || !dbres[0][6].isnull();
-    if (!object_has_state_flags)
-    {
-        ContactStateHistory history;
-        typename ContactStateHistory::Record record;
-        record.valid_from = static_cast<typename ContactStateHistory::TimePoint>(dbres[0][1]);
-        history.timeline.push_back(record);
-        history.valid_to = upper_limit;
-        return history;
-    }
-    typename ContactStateHistory::Record record_on_begin;
-    struct StateAction
-    {
-        ContactState state_begin;
-        ContactState state_end;
-    };
-    using StateChanges = std::map<typename ContactStateHistory::TimePoint, StateAction>;
-    StateChanges state_changes;
+    ContactDataHistory history;
     for (std::size_t idx = 0; idx < dbres.size(); ++idx)
     {
-        const bool collect_state_on_begin = static_cast<bool>(dbres[idx][3]);
-        const auto valid_from = static_cast<typename ContactStateHistory::TimePoint>(dbres[idx][4]);
-        const std::string flag_name = static_cast<std::string>(dbres[idx][6]);
-        ContactState state;
-        state.template visit<StateFlagSetter>(flag_name);
-        if (collect_state_on_begin)
+        if (idx == 0)
         {
-            record_on_begin.state |= state;
-            record_on_begin.valid_from = valid_from;
+            history.object_uuid = dbres[0][0].as<ContactUuid>();
+        }
+        typename ContactDataHistory::Record record;
+        record.history_uuid = dbres[idx][1].as<ContactHistoryUuid>();
+        record.valid_from = static_cast<typename ContactDataHistory::TimePoint>(dbres[idx][2]);
+        if (dbres[idx][3].isnull())
+        {
+            history.valid_to = boost::none;
         }
         else
         {
-            state_changes[valid_from].state_begin |= state;
+            history.valid_to = static_cast<typename ContactDataHistory::TimePoint>(dbres[idx][3]);
         }
-        if (!dbres[idx][5].isnull())
+        if (!dbres[idx][4].isnull())
         {
-            const auto valid_to = static_cast<typename ContactStateHistory::TimePoint>(dbres[idx][5]);
-            if (valid_to <= upper_limit)
-            {
-                state_changes[valid_to].state_end |= state;
-            }
+            record.log_request_id = static_cast<unsigned long long>(dbres[idx][4]);
         }
-    }
-    ContactStateHistory history;
-    typename ContactStateHistory::Record record;
-    if (record_on_begin.state.any())
-    {
-        record = record_on_begin;
         history.timeline.push_back(record);
     }
-    else
-    {
-        const auto lower_limit = static_cast<typename ContactStateHistory::TimePoint>(dbres[0][1]);
-        if (lower_limit < state_changes.begin()->first)
-        {
-            record.valid_from = lower_limit;
-            history.timeline.push_back(record);
-        }
-    }
-    for (const auto& time_action : state_changes)
-    {
-        record.valid_from = time_action.first;
-        record.state |= time_action.second.state_begin;
-        record.state &= ~time_action.second.state_end;
-        history.timeline.push_back(record);
-    }
-    history.valid_to = upper_limit;
     return history;
 }
 
 }//namespace LibFred::RegistrableObject::Contact::{anonymous}
 
-GetContactStateHistoryById::GetContactStateHistoryById(unsigned long long contact_id)
+GetContactDataHistoryById::GetContactDataHistoryById(unsigned long long contact_id)
     : contact_id_(contact_id)
 { }
 
-GetContactStateHistoryById::Result GetContactStateHistoryById::exec(
+GetContactDataHistoryById::Result GetContactDataHistoryById::exec(
         OperationContext& ctx,
         const HistoryInterval& range)const
 {
@@ -207,14 +159,14 @@ GetContactStateHistoryById::Result GetContactStateHistoryById::exec(
     private:
         const unsigned long long object_id_;
     };
-    return get_contact_state_history(ctx, range, OperationById(contact_id_));
+    return get_contact_data_history(ctx, range, OperationById(contact_id_));
 }
 
-GetContactStateHistoryByHandle::GetContactStateHistoryByHandle(const std::string& contact_handle)
+GetContactDataHistoryByHandle::GetContactDataHistoryByHandle(const std::string& contact_handle)
     : handle_(contact_handle)
 { }
 
-GetContactStateHistoryByHandle::Result GetContactStateHistoryByHandle::exec(
+GetContactDataHistoryByHandle::Result GetContactDataHistoryByHandle::exec(
         OperationContext& ctx,
         const HistoryInterval& range)const
 {
@@ -238,14 +190,14 @@ GetContactStateHistoryByHandle::Result GetContactStateHistoryByHandle::exec(
     private:
         const std::string handle_;
     };
-    return get_contact_state_history(ctx, range, OperationByHandle(handle_));
+    return get_contact_data_history(ctx, range, OperationByHandle(handle_));
 }
 
-GetContactStateHistoryByUuid::GetContactStateHistoryByUuid(const ContactUuid& contact_uuid)
+GetContactDataHistoryByUuid::GetContactDataHistoryByUuid(const ContactUuid& contact_uuid)
     : uuid_(contact_uuid)
 { }
 
-GetContactStateHistoryByUuid::Result GetContactStateHistoryByUuid::exec(
+GetContactDataHistoryByUuid::Result GetContactDataHistoryByUuid::exec(
         OperationContext& ctx,
         const HistoryInterval& range)const
 {
@@ -266,7 +218,7 @@ GetContactStateHistoryByUuid::Result GetContactStateHistoryByUuid::exec(
     private:
         const ContactUuid uuid_;
     };
-    return get_contact_state_history(ctx, range, OperationByUuid(uuid_));
+    return get_contact_data_history(ctx, range, OperationByUuid(uuid_));
 }
 
 }//namespace LibFred::RegistrableObject::Contact

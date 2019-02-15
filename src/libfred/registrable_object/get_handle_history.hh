@@ -16,20 +16,30 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C
+#ifndef GET_HANDLE_HISTORY_HH_3047371BA0FB77E8A956C08C3A333431//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define GET_HANDLE_HISTORY_HH_3047371BA0FB77E8A956C08C3A333431
 
-#include "libfred/registrable_object/state_history.hh"
-#include "libfred/registrable_object/contact/contact_state.hh"
+#include "libfred/registrable_object/handle_history.hh"
+#include "libfred/opcontext.hh"
+
+#include <string>
 
 namespace LibFred {
 namespace RegistrableObject {
-namespace Contact {
 
-using ContactStateHistory = StateHistory<ContactState>;
+template <Object_Type::Enum o>
+class GetHandleHistory
+{
+public:
+    GetHandleHistory(const std::string& handle);
+    static constexpr Object_Type::Enum object_type = o;
+    using Result = HandleHistory<object_type>;
+    Result exec(OperationContext& ctx)const;
+private:
+    std::string handle_;
+};
 
-}//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//CONTACT_STATE_HISTORY_HH_4A3B56DF43A8017423C215283116A15C
+#endif//GET_HANDLE_HISTORY_HH_3047371BA0FB77E8A956C08C3A333431

@@ -27,6 +27,7 @@
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
 #include "libfred/registrable_object/contact/place_address.hh"
+#include "libfred/registrable_object/contact/contact_uuid.hh"
 
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/assign/list_of.hpp>
@@ -363,6 +364,8 @@ struct InfoContactData : public Util::Printable<InfoContactData>
     bool discloseident;/**< whether to reveal unambiguous identification number */
     bool disclosenotifyemail;/**< whether to reveal notify email */
     unsigned long long id;/**< id of the contact object*/
+    RegistrableObject::Contact::ContactUuid uuid;/**< uuid of the contact object*/
+    RegistrableObject::Contact::ContactHistoryUuid history_uuid;/**< history uuid of the contact object*/
     ContactAddressList addresses;/**< additional contact addresses */
     Nullable<bool> warning_letter;/**< contact preference for sending domain expiration letters */
 };

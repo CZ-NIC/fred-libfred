@@ -16,26 +16,17 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef OPERATION_BY_ID_HH_3F8489F4069FC16E4EEFF1AAE605425F//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define OPERATION_BY_ID_HH_3F8489F4069FC16E4EEFF1AAE605425F
-
-#include "util/db/query_param.hh"
+#include "libfred/registrable_object/history_interval.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
 
-template <template <typename, typename> class O, typename T = void>
-class OperationById : public O<OperationById<O, T>, T>
-{
-public:
-    explicit OperationById(unsigned long long object_id);
-private:
-    std::string get_object_id_rule(Database::query_param_list& params)const;
-    unsigned long long object_id_;
-    friend class O<OperationById, T>;
-};
+HistoryInterval::HistoryInterval(
+        const LowerLimit& _lower_limit,
+        const UpperLimit& _upper_limit)
+    : lower_limit(_lower_limit.value),
+      upper_limit(_upper_limit.value)
+{ }
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
-
-#endif//OPERATION_BY_ID_HH_3F8489F4069FC16E4EEFF1AAE605425F

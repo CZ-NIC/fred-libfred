@@ -16,17 +16,17 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_STATE_HISTORY_HH_E29792C4AA985EF946753B654D199342//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
-#define GET_STATE_HISTORY_HH_E29792C4AA985EF946753B654D199342
+#ifndef HISTORY_INTERVAL_HH_95F3AE09B37AE67CF50D518EEC5EEE3B//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define HISTORY_INTERVAL_HH_95F3AE09B37AE67CF50D518EEC5EEE3B
 
-#include "libfred/registrable_object/get_state.hh"
+#include "libfred/object/object_type.hh"
+#include "libfred/registrable_object/uuid.hh"
 
 #include <boost/variant.hpp>
 
 #include <chrono>
-#include <string>
+#include <stdexcept>
 #include <type_traits>
-#include <vector>
 
 namespace LibFred {
 namespace RegistrableObject {
@@ -42,14 +42,9 @@ struct HistoryInterval
 {
     template <typename R>
     using TimePoint = std::chrono::time_point<std::chrono::system_clock, R>;
-    struct HistoryId
-    {
-        explicit HistoryId(unsigned long long history_id) : value(history_id) { }
-        unsigned long long value;
-    };
     struct NoLimit { };
     using Limit = boost::variant<TimePoint<std::chrono::nanoseconds>,
-                                 HistoryId,
+                                 ObjectHistoryUuid,
                                  NoLimit>;
     template <typename>
     struct NamedLimit
@@ -57,7 +52,7 @@ struct HistoryInterval
         template <typename T>
         explicit NamedLimit(const T& src) : value(src)
         {
-            static_assert(std::is_same<T, HistoryId>::value ||
+            static_assert(std::is_same<T, ObjectHistoryUuid>::value ||
                           std::is_same<T, NoLimit>::value,
                           "unsupported conversion requested");
         }
@@ -71,42 +66,13 @@ struct HistoryInterval
     using LowerLimit = NamedLimit<struct Lower>;
     using UpperLimit = NamedLimit<struct Upper>;
     HistoryInterval(
-            const LowerLimit& _lower_limit,
-            const UpperLimit& _upper_limit)
-        : lower_limit(_lower_limit.value),
-          upper_limit(_upper_limit.value)
-    { }
+            const LowerLimit& lower_limit,
+            const UpperLimit& upper_limit);
     Limit lower_limit;
     Limit upper_limit;
-};
-
-template <typename S>
-struct StateHistory
-{
-    using TimePoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
-    struct Record
-    {
-        TimePoint valid_from;
-        S state;
-    };
-    std::vector<Record> record;
-    TimePoint valid_to;
-};
-
-template <typename D, typename S>
-class GetStateHistory
-{
-public:
-    static constexpr Object_Type::Enum object_type = S::Tag::object_type;
-    using Result = StateHistory<S>;
-    using NotFound = ObjectNotFound<object_type>;
-    using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
-    Result exec(OperationContext& ctx, const HistoryInterval& range)const;
-private:
-    const D& derived()const;
 };
 
 }//namespace LibFred::RegistrableObject
 }//namespace LibFred
 
-#endif//GET_STATE_HISTORY_HH_E29792C4AA985EF946753B654D199342
+#endif//HISTORY_INTERVAL_HH_95F3AE09B37AE67CF50D518EEC5EEE3B

@@ -301,6 +301,12 @@ public:
         }
         return (quoted_output_ ? (escaped_output_ ? "E'" : "'") + _esc_func(value_) + "'" : value_);
     }
+
+    template <typename T>
+    T as()const
+    {
+        return static_cast<T>(*this);
+    }
 protected:
     bool        is_null_;        /**< flag if value is NULL */
     std::string value_;          /**< value in std::string representation */

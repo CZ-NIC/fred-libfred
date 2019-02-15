@@ -217,7 +217,7 @@ CreateKeyset::Result CreateKeyset::exec(OperationContext& _ctx,
     }
     catch (ExceptionStack& ex)
     {
-        ex.add_exception_stack_info(to_string());
+        ex.add_exception_stack_info(this->to_string());
         throw;
     }
 }
