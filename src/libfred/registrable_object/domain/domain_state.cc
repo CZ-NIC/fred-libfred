@@ -70,12 +70,14 @@ template class FlagSet<DomainStateProvide,
         DeleteWarning,
         ValidationWarning1,
         ValidationWarning2,
+        NotValidated,
         ServerOutzoneManual,
         ServerInzoneManual,
         ServerRegistrantChangeProhibited,
         ServerRenewProhibited,
         ServerBlocked,
         ServerDeleteProhibited,
-        ServerTransferProhibited>;
+        ServerTransferProhibited,
+        ServerUpdateProhibited>;
 
 } // namespace Util
