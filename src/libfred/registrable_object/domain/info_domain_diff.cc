@@ -32,6 +32,7 @@
 #include "util/util.hh"
 #include "util/is_equal_optional_nullable.hh"
 #include "libfred/registrable_object/domain/info_domain_diff.hh"
+#include "libfred/registrable_object/registrable_object_reference.hh"
 
 namespace LibFred
 {
@@ -216,15 +217,15 @@ namespace LibFred
             diff.expiration_date = std::make_pair(first.expiration_date, second.expiration_date);
         }
 
-        std::set<ObjectIdHandlePair> lhs_admin_contacts;
-        for (std::vector<ObjectIdHandlePair>::size_type i = 0
+        std::set<RegistrableObject::Contact::ContactReference> lhs_admin_contacts;
+        for (std::vector<RegistrableObject::Contact::ContactReference>::size_type i = 0
             ; i != first.admin_contacts.size(); ++i)
         {
             lhs_admin_contacts.insert(first.admin_contacts[i]);
         }
 
-        std::set<ObjectIdHandlePair> rhs_admin_contacts;
-        for (std::vector<ObjectIdHandlePair>::size_type i = 0
+        std::set<RegistrableObject::Contact::ContactReference> rhs_admin_contacts;
+        for (std::vector<RegistrableObject::Contact::ContactReference>::size_type i = 0
             ; i != second.admin_contacts.size(); ++i)
         {
             rhs_admin_contacts.insert(second.admin_contacts[i]);

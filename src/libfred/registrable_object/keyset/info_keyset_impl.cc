@@ -29,6 +29,7 @@
 #include <boost/date_time/posix_time/time_period.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
+#include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/keyset/info_keyset_impl.hh"
 #include "libfred/opcontext.hh"
 #include "util/db/param_query_composition.hh"
@@ -252,9 +253,10 @@ namespace LibFred
             info_keyset_output.info_keyset_data.tech_contacts.reserve(tech_contact_res.size());
             for (Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
             {
-                info_keyset_output.info_keyset_data.tech_contacts.push_back(LibFred::ObjectIdHandlePair(
+                info_keyset_output.info_keyset_data.tech_contacts.push_back(RegistrableObject::Contact::ContactReference(
                     static_cast<unsigned long long>(tech_contact_res[j]["tech_contact_id"]),
-                    static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"])
+                    static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"]),
+                    RegistrableObject::make_uuid_of<Object_Type::contact>(static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"]))
                 ));
             }
 

@@ -71,7 +71,7 @@ namespace LibFred
             return true;
         }
 
-        BOOST_FOREACH(const ObjectIdHandlePair& admin_contact, domain_data.admin_contacts) {
+        for (const auto& admin_contact : domain_data.admin_contacts) {
             if (InfoContactByHandle(admin_contact.handle).exec(_ctx).info_contact_data.authinfopw
                 == _authinfopw_for_authorization
             ) {

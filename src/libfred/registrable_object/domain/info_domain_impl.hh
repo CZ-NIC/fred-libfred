@@ -67,6 +67,7 @@ namespace LibFred
         struct GetAlias
         {
             static const char* id(){return "info_domain_id";}
+            static const char* uuid(){return "info_domain_uuid";}
             static const char* roid(){return "info_domain_roid";}
             static const char* fqdn(){return "info_domain_fqdn";}
             static const char* delete_time(){return "info_domain_delete_time";}
@@ -76,16 +77,22 @@ namespace LibFred
             static const char* history_valid_to(){return "info_domain_history_valid_to";}
             static const char* registrant_id(){return "info_domain_registrant_id";}
             static const char* registrant_handle(){return "info_domain_registrant_handle";}
+            static const char* registrant_uuid(){return "info_domain_registrant_uuid";}
             static const char* nsset_id(){return "info_domain_nsset_id";}
             static const char* nsset_handle(){return "info_domain_nsset_handle";}
+            static const char* nsset_uuid(){return "info_domain_nsset_uuid";}
             static const char* keyset_id(){return "info_domain_keyset_id";}
             static const char* keyset_handle(){return "info_domain_keyset_handle";}
+            static const char* keyset_uuid(){return "info_domain_keyset_uuid";}
             static const char* sponsoring_registrar_id(){return "info_domain_sponsoring_registrar_id";}
             static const char* sponsoring_registrar_handle(){return "info_domain_sponsoring_registrar_handle";}
+            static const char* sponsoring_registrar_uuid(){return "info_domain_sponsoring_registrar_uuid";}
             static const char* creating_registrar_id(){return "info_domain_creating_registrar_id";}
             static const char* creating_registrar_handle(){return "info_domain_creating_registrar_handle";}
+            static const char* creating_registrar_uuid(){return "info_domain_creating_registrar_uuid";}
             static const char* last_updated_by_registrar_id(){return "info_domain_last_updated_by_registrar_id";}
             static const char* last_updated_by_registrar_handle(){return "info_domain_last_updated_by_registrar_handle";}
+            static const char* last_updated_by_registrar_uuid(){return "info_domain_last_updated_by_registrar_uuid";}
             static const char* creation_time(){return "info_domain_creation_time";}
             static const char* transfer_time(){return "info_domain_transfer_time";}
             static const char* update_time(){return "info_domain_update_time";}

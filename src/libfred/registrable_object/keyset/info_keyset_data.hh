@@ -27,7 +27,7 @@
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
 
-#include "libfred/object/object_id_handle_pair.hh"
+#include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/keyset/keyset_dns_key.hh"
 
 #include <string>
@@ -81,7 +81,7 @@ struct InfoKeysetData : Util::Printable<InfoKeysetData>
     Nullable<boost::posix_time::ptime> transfer_time; /**<last transfer time in local time zone viz @ref local_timestamp_pg_time_zone_name*/
     std::string authinfopw;/**< password for transfer */
     std::vector<DnsKey> dns_keys;/**< DNS keys */
-    std::vector<ObjectIdHandlePair> tech_contacts;/**< list of technical contact handles */
+    std::vector<RegistrableObject::Contact::ContactReference> tech_contacts;/**< list of technical contact handles */
 };
 
 }//namespace LibFred

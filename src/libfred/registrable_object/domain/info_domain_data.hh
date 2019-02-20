@@ -24,8 +24,11 @@
 #ifndef INFO_DOMAIN_DATA_HH_01A2CF8365C944A6B77108D7667AD395
 #define INFO_DOMAIN_DATA_HH_01A2CF8365C944A6B77108D7667AD395
 
-#include "libfred/registrable_object/domain/enum_validation_extension.hh"
 #include "libfred/object/object_id_handle_pair.hh"
+#include "libfred/registrable_object/domain/enum_validation_extension.hh"
+#include "libfred/registrable_object/contact/contact_reference.hh"
+#include "libfred/registrable_object/keyset/keyset_reference.hh"
+#include "libfred/registrable_object/nsset/nsset_reference.hh"
 
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
@@ -47,11 +50,13 @@ struct InfoDomainData : Util::Printable<InfoDomainData>
     * Constructor of domain data structure.
     */
     InfoDomainData();
+
     /**
     * Equality of domain data structure operator.
     * @param rhs is right hand side of domain data comparison
     * @return true if equal, false if not
     */
+
     bool operator==(const InfoDomainData& rhs) const;
     /**
     * Inequality of the contact data structure operator.
@@ -64,13 +69,13 @@ struct InfoDomainData : Util::Printable<InfoDomainData>
     * Dumps state of the instance into the string
     * @return string with description of the instance state
     */
-    std::string to_string()const;
+    std::string to_string() const;
 
     std::string roid;/**< registry object identifier of domain */
     std::string fqdn;/**< fully qualified domain name */
-    ObjectIdHandlePair registrant;/**< registrant contact id and handle, owner of the domain*/
-    Nullable<ObjectIdHandlePair> nsset;/**< nsset handle or NULL if missing */
-    Nullable<ObjectIdHandlePair> keyset;/**< keyset id and handle or NULL if missing */
+    RegistrableObject::Contact::ContactReference registrant;/**< registrant contact reference, owner of the domain*/
+    Nullable<RegistrableObject::Nsset::NssetReference> nsset;/**< nsset reference or NULL if missing */
+    Nullable<RegistrableObject::Keyset::KeysetReference> keyset;/**< keyset reference or NULL if missing */
     std::string sponsoring_registrar_handle;/**< handle of registrar administering domain */
     std::string create_registrar_handle;/**< handle of registrar which created domain */
     Nullable<std::string> update_registrar_handle;/**< handle of registrar which last time changed domain*/
@@ -79,7 +84,7 @@ struct InfoDomainData : Util::Printable<InfoDomainData>
     Nullable<boost::posix_time::ptime> transfer_time; /**< time of last transfer in set local zone*/
     boost::gregorian::date expiration_date; /**< domain expiration local date */
     std::string authinfopw;/**< password for domain transfer */
-    std::vector<ObjectIdHandlePair> admin_contacts;/**< list of administrating contact handles */
+    std::vector<RegistrableObject::Contact::ContactReference> admin_contacts;/**< list of administrating contacts (contact references) */
     Nullable<ENUMValidationExtension> enum_domain_validation;/**< ENUM domain validation extension info */
     Nullable<boost::posix_time::ptime> delete_time;/**< domain delete time in set local zone*/
     unsigned long long historyid;/**< last historyid of domain history*/

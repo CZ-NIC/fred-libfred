@@ -65,7 +65,7 @@ namespace LibFred
             return true;
         }
 
-        BOOST_FOREACH(const ObjectIdHandlePair& tech_contact, keyset_data.tech_contacts) {
+        for (const auto& tech_contact : keyset_data.tech_contacts) {
             if (InfoContactByHandle(tech_contact.handle).exec(_ctx).info_contact_data.authinfopw
                 == _authinfopw_for_authorization
             ) {

@@ -25,6 +25,7 @@
 #define INFO_NSSET_DIFF_HH_90CCBE2D77FA4C68BEBE583D68FD17E5
 
 #include "libfred/registrable_object/nsset/info_nsset_data.hh"
+#include "libfred/registrable_object/contact/contact_reference.hh"
 
 #include "util/optional_value.hh"
 #include "util/db/nullable.hh"
@@ -85,7 +86,7 @@ struct InfoNssetDiff : Util::Printable<InfoNssetDiff>
 
     DiffMemeber<Nullable<short> >::Type tech_check_level; /**< nsset level of technical checks */
     DiffMemeber<std::vector<DnsHost> >::Type dns_hosts;/**< DNS hosts */
-    DiffMemeber<std::vector<ObjectIdHandlePair> >::Type tech_contacts;/**< list of technical contacts */
+    DiffMemeber<std::vector<RegistrableObject::Contact::ContactReference>>::Type tech_contacts;/**< list of technical contacts */
 
     DiffMemeber<unsigned long long>::Type id;/**< id of the nsset object*/
 };

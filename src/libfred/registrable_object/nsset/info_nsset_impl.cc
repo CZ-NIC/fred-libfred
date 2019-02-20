@@ -282,9 +282,10 @@ namespace LibFred
             info_nsset_output.info_nsset_data.tech_contacts.reserve(tech_contact_res.size());
             for (Database::Result::size_type j = 0; j < tech_contact_res.size(); ++j)
             {
-                info_nsset_output.info_nsset_data.tech_contacts.push_back(LibFred::ObjectIdHandlePair(
+                info_nsset_output.info_nsset_data.tech_contacts.push_back(RegistrableObject::Contact::ContactReference(
                     static_cast<unsigned long long>(tech_contact_res[j]["tech_contact_id"]),
-                    static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"])
+                    static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"]),
+                    RegistrableObject::make_uuid_of<Object_Type::contact>(static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"]))
                 ));
             }
 

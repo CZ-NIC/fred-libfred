@@ -24,6 +24,15 @@
 #include "libfred/registrable_object/domain/info_domain_impl.hh"
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrable_object/contact/contact_reference.hh"
+#include "libfred/registrable_object/keyset/keyset_reference.hh"
+#include "libfred/registrable_object/nsset/nsset_reference.hh"
+#include "libfred/registrable_object/registrable_object_reference.hh"
+#include "libfred/registrable_object/uuid.hh"
+#include "libfred/registrable_object/contact/contact_uuid.hh"
+#include "libfred/registrable_object/keyset/keyset_uuid.hh"
+#include "libfred/registrable_object/nsset/nsset_uuid.hh"
+
 #include "util/util.hh"
 #include "util/printable.hh"
 #include "util/db/param_query_composition.hh"
@@ -258,23 +267,33 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                 : Nullable<boost::posix_time::ptime>(boost::posix_time::time_from_string(
                         static_cast<std::string>(query_result[idx][GetAlias::history_valid_to()])));
 
-        info_domain_output.info_domain_data.registrant = LibFred::ObjectIdHandlePair(
-                static_cast<unsigned long long>(query_result[idx][GetAlias::registrant_id()]),
-                static_cast<std::string>(query_result[idx][GetAlias::registrant_handle()]));
+        info_domain_output.info_domain_data.registrant =
+                RegistrableObject::Contact::ContactReference(
+                        static_cast<unsigned long long>(query_result[idx][GetAlias::registrant_id()]),
+                        static_cast<std::string>(query_result[idx][GetAlias::registrant_handle()]),
+                        RegistrableObject::make_uuid_of<Object_Type::contact>(static_cast<std::string>(query_result[idx][GetAlias::registrant_uuid()])));
 
-        info_domain_output.info_domain_data.nsset = (query_result[idx][GetAlias::nsset_id()].isnull() ||
-                                                     query_result[idx][GetAlias::nsset_handle()].isnull())
-                ? Nullable<LibFred::ObjectIdHandlePair>()
-                : Nullable<LibFred::ObjectIdHandlePair>(LibFred::ObjectIdHandlePair(
+        info_domain_output.info_domain_data.nsset =
+                (query_result[idx][GetAlias::nsset_id()].isnull() ||
+                 query_result[idx][GetAlias::nsset_handle()].isnull() ||
+                 query_result[idx][GetAlias::nsset_uuid()].isnull())
+                ? Nullable<RegistrableObject::Nsset::NssetReference>()
+                : Nullable<RegistrableObject::Nsset::NssetReference>(RegistrableObject::Nsset::NssetReference(
                         static_cast<unsigned long long>(query_result[idx][GetAlias::nsset_id()]),
-                        static_cast<std::string>(query_result[idx][GetAlias::nsset_handle()])));
+                        static_cast<std::string>(query_result[idx][GetAlias::nsset_handle()]),
+                        RegistrableObject::make_uuid_of<Object_Type::nsset>(static_cast<std::string>(query_result[idx][GetAlias::nsset_uuid()]))
+                  ));
 
-        info_domain_output.info_domain_data.keyset = (query_result[idx][GetAlias::keyset_id()].isnull() ||
-                                                      query_result[idx][GetAlias::keyset_handle()].isnull())
-                ? Nullable<LibFred::ObjectIdHandlePair>()
-                : Nullable<LibFred::ObjectIdHandlePair>(LibFred::ObjectIdHandlePair(
+        info_domain_output.info_domain_data.keyset =
+                (query_result[idx][GetAlias::keyset_id()].isnull() ||
+                 query_result[idx][GetAlias::keyset_handle()].isnull() ||
+                 query_result[idx][GetAlias::keyset_uuid()].isnull())
+                ? Nullable<RegistrableObject::Keyset::KeysetReference>()
+                : Nullable<RegistrableObject::Keyset::KeysetReference>(RegistrableObject::Keyset::KeysetReference(
                         static_cast<unsigned long long>(query_result[idx][GetAlias::keyset_id()]),
-                        static_cast<std::string>(query_result[idx][GetAlias::keyset_handle()])));
+                        static_cast<std::string>(query_result[idx][GetAlias::keyset_handle()]),
+                        RegistrableObject::make_uuid_of<Object_Type::keyset>(static_cast<std::string>(query_result[idx][GetAlias::keyset_uuid()]))
+                  ));
 
         info_domain_output.info_domain_data.sponsoring_registrar_handle = static_cast<std::string>(
                 query_result[idx][GetAlias::sponsoring_registrar_handle()]);
@@ -333,9 +352,11 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
         info_domain_output.info_domain_data.admin_contacts.reserve(admin_contact_res.size());
         for (Database::Result::size_type c_idx = 0; c_idx < admin_contact_res.size(); ++c_idx)
         {
-            info_domain_output.info_domain_data.admin_contacts.push_back(LibFred::ObjectIdHandlePair(
+            info_domain_output.info_domain_data.admin_contacts.push_back(RegistrableObject::Contact::ContactReference(
                     static_cast<unsigned long long>(admin_contact_res[c_idx]["admin_contact_id"]),
-                    static_cast<std::string>(admin_contact_res[c_idx]["admin_contact_handle"])));
+                    static_cast<std::string>(admin_contact_res[c_idx]["admin_contact_handle"]),
+                    RegistrableObject::make_uuid_of<Object_Type::contact>(static_cast<std::string>(admin_contact_res[c_idx]["admin_contact_handle"]))
+            ));
         }
 
         result.push_back(info_domain_output);

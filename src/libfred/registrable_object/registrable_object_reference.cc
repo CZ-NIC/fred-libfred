@@ -32,7 +32,7 @@ template <Object_Type::Enum object_type>
 RegistrableObjectReference<object_type>::RegistrableObjectReference(
         const unsigned long long _id,
         const std::string& _handle,
-        RegistrableObject::UuidOf<object_type>& _uuid)
+        const RegistrableObject::UuidOf<object_type>& _uuid)
     : id(_id),
       handle(_handle),
       uuid(_uuid)

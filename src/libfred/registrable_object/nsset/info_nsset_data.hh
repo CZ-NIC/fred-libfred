@@ -24,7 +24,7 @@
 #ifndef INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324
 #define INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324
 
-#include "libfred/object/object_id_handle_pair.hh"
+#include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/nsset/nsset_dns_host.hh"
 
 #include "util/optional_value.hh"
@@ -84,7 +84,7 @@ struct InfoNssetData : Util::Printable<InfoNssetData>
     std::string authinfopw;/**< password for transfer */
     Nullable<short> tech_check_level; /**< nsset level of technical checks */
     std::vector<DnsHost> dns_hosts; /**< DNS hosts */
-    std::vector<ObjectIdHandlePair> tech_contacts;/**< list of technical contacts */
+    std::vector<RegistrableObject::Contact::ContactReference> tech_contacts;/**< list of technical contacts */
 };
 
 }//namespace LibFred

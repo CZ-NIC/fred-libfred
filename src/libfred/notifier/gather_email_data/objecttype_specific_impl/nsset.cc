@@ -153,7 +153,8 @@ std::map<std::string, std::string> gather_nsset_data_change(
 
 static std::set<unsigned long long> get_ids_of_nssets_accepting_notifications(const LibFred::InfoNssetData& _data) {
     std::set<unsigned long long> result;
-    BOOST_FOREACH(const LibFred::ObjectIdHandlePair& tech_c, _data.tech_contacts) {
+    for (const auto& tech_c : _data.tech_contacts)
+    {
         result.insert(tech_c.id);
     }
 

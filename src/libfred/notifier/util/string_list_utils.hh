@@ -23,26 +23,29 @@
 #ifndef STRING_LIST_UTILS_HH_985C634B52D6452A998B887466E4AEA6
 #define STRING_LIST_UTILS_HH_985C634B52D6452A998B887466E4AEA6
 
+#include "libfred/object/object_id_handle_pair.hh"
+#include "libfred/registrable_object/registrable_object_reference.hh"
+
+#include <boost/asio/ip/address.hpp>
+#include <boost/foreach.hpp>
+
+#include <algorithm>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
-#include <algorithm>
-#include <boost/asio/ip/address.hpp>
-#include "libfred/object/object_id_handle_pair.hh"
-
-#include <boost/foreach.hpp>
 
 namespace Notification {
 
     /**
-     * @returns vector of handles from given id, handle pairs
-     * - could be potentialy non-unique despite using std::set on input because LibFred::ObjectIdHandlePair compares both handle AND id
+     * @returns vector of handles from given object reference
+     * - could be potentialy non-unique despite using std::set on input because RegistrableObjectReference compares handle AND id AND uuid
      */
-    inline std::vector<std::string> get_handles(const std::vector<LibFred::ObjectIdHandlePair>& _in) {
+    template <LibFred::Object_Type::Enum object_type>
+    inline std::vector<std::string> get_handles(const std::vector<LibFred::RegistrableObject::RegistrableObjectReference<object_type>>& _in) {
         std::vector<std::string> result;
 
-        BOOST_FOREACH(const LibFred::ObjectIdHandlePair& ob, _in) {
-            result.push_back(ob.handle);
+        for (const auto& o : _in) {
+            result.push_back(o.handle);
         }
 
         return result;

@@ -24,6 +24,7 @@
 #ifndef INFO_KEYSET_DIFF_HH_5166F7638312403697651744C3726161
 #define INFO_KEYSET_DIFF_HH_5166F7638312403697651744C3726161
 
+#include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/keyset/info_keyset_data.hh"
 
 #include "util/optional_value.hh"
@@ -84,7 +85,7 @@ struct InfoKeysetDiff : Util::Printable<InfoKeysetDiff>
     DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
 
     DiffMemeber<std::vector<DnsKey> >::Type dns_keys;/**< DNS keys */
-    DiffMemeber<std::vector<ObjectIdHandlePair> >::Type tech_contacts;/**< list of technical contacts*/
+    DiffMemeber<std::vector<RegistrableObject::Contact::ContactReference>>::Type tech_contacts;/**< list of technical contacts*/
 
     DiffMemeber<unsigned long long>::Type id;/**< id of the keyset object*/
 };

@@ -142,7 +142,8 @@ std::map<std::string, std::string> gather_domain_data_change(
 static std::set<unsigned long long> get_ids_of_contacts_accepting_notifications(const LibFred::InfoDomainData& _data) {
     std::set<unsigned long long> result;
     result.insert(_data.registrant.id);
-    BOOST_FOREACH(const LibFred::ObjectIdHandlePair& admin_c, _data.admin_contacts) {
+    for (const auto& admin_c : _data.admin_contacts)
+    {
         result.insert(admin_c.id);
     }
 
@@ -206,10 +207,8 @@ std::set<unsigned long long> gather_contact_ids_to_notify_domain_event(
                         time_of_change <= nsset_history_state.history_valid_to.get_value_or(boost::posix_time::pos_infin)
                     ) {
                         corresponding_nsset_history_state_found = true;
-                        BOOST_FOREACH(
-                            const LibFred::ObjectIdHandlePair& tech_c,
-                            nsset_history_state.info_nsset_data.tech_contacts
-                        ) {
+                        for (const auto& tech_c : nsset_history_state.info_nsset_data.tech_contacts)
+                        {
                             contact_ids.insert(tech_c.id);
                         }
                         /* continuing search through other history versions - chances are there might be two history states bordering the domain event */
@@ -248,10 +247,8 @@ std::set<unsigned long long> gather_contact_ids_to_notify_domain_event(
                         time_of_change <= keyset_history_state.history_valid_to.get_value_or(boost::posix_time::pos_infin)
                     ) {
                         corresponding_keyset_history_state_found = true;
-                        BOOST_FOREACH(
-                            const LibFred::ObjectIdHandlePair& tech_c,
-                            keyset_history_state.info_keyset_data.tech_contacts
-                        ) {
+                        for (const auto& tech_c : keyset_history_state.info_keyset_data.tech_contacts)
+                        {
                             contact_ids.insert(tech_c.id);
                         }
                         /* continuing search through other history versions - chances are there might be two history states bordering the domain event */

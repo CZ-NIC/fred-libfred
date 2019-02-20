@@ -30,6 +30,8 @@
 
 #include "util/util.hh"
 #include "util/is_equal_optional_nullable.hh"
+
+#include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/keyset/info_keyset_diff.hh"
 
 namespace LibFred
@@ -200,18 +202,16 @@ namespace LibFred
         }
 
 
-        std::set<ObjectIdHandlePair> lhs_tech_contacts;
-        for (std::vector<ObjectIdHandlePair>::size_type i = 0
-            ; i != first.tech_contacts.size(); ++i)
+        std::set<RegistrableObject::Contact::ContactReference> lhs_tech_contacts;
+        for (const auto& tech_contact : first.tech_contacts)
         {
-            lhs_tech_contacts.insert(first.tech_contacts[i]);
+            lhs_tech_contacts.insert(tech_contact);
         }
 
-        std::set<ObjectIdHandlePair> rhs_tech_contacts;
-        for (std::vector<ObjectIdHandlePair>::size_type i = 0
-            ; i != second.tech_contacts.size(); ++i)
+        std::set<RegistrableObject::Contact::ContactReference> rhs_tech_contacts;
+        for (const auto& tech_contact : second.tech_contacts)
         {
-            rhs_tech_contacts.insert(second.tech_contacts[i]);
+            rhs_tech_contacts.insert(tech_contact);
         }
 
         if (lhs_tech_contacts != rhs_tech_contacts)
