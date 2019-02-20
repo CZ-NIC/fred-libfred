@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018  CZ.NIC, z.s.p.o.
+ * Copyright (C) 2019  CZ.NIC, z.s.p.o.
  *
  * This file is part of FRED.
  *
@@ -16,19 +16,20 @@
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrable_object/contact/get_contact_state.hh"
+#include "libfred/registrable_object/domain/get_domain_state.hh"
 #include "libfred/registrable_object/state_flag_setter.hh"
 #include "libfred/registrable_object/exceptions_impl.hh"
 
 namespace LibFred {
 namespace RegistrableObject {
-namespace Contact {
+namespace Domain {
 
-GetContactStateById::GetContactStateById(unsigned long long contact_id)
-    : contact_id_(contact_id)
-{ }
+GetDomainStateById::GetDomainStateById(unsigned long long domain_id)
+    : domain_id_(domain_id)
+{
+}
 
-GetContactStateById::Result GetContactStateById::exec(OperationContext& ctx)const
+GetDomainStateById::Result GetDomainStateById::exec(OperationContext& ctx) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
     const std::string sql =
@@ -36,7 +37,7 @@ GetContactStateById::Result GetContactStateById::exec(OperationContext& ctx)cons
                 "SELECT id,type "
                 "FROM object_registry "
                 "WHERE type=get_object_type_id($1::TEXT) AND "
-                      "id=$" + params.add(contact_id_) + "::BIGINT) "
+                      "id=$" + params.add(domain_id_) + "::BIGINT) "
             "SELECT eos.name "
             "FROM o "
             "LEFT JOIN object_state os ON os.object_id=o.id AND "
@@ -62,11 +63,12 @@ GetContactStateById::Result GetContactStateById::exec(OperationContext& ctx)cons
     return state;
 }
 
-GetContactStateByHandle::GetContactStateByHandle(const std::string& contact_handle)
-    : handle_(contact_handle)
-{ }
+GetDomainStateByFqdn::GetDomainStateByFqdn(const std::string& fqdn)
+    : fqdn_(fqdn)
+{
+}
 
-GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& ctx)const
+GetDomainStateByFqdn::Result GetDomainStateByFqdn::exec(OperationContext& ctx) const
 {
     static const std::string sql_handle_case_normalize_function =
             object_type == Object_Type::domain ? "LOWER"
@@ -77,7 +79,7 @@ GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& 
                 "SELECT id,type "
                 "FROM object_registry "
                 "WHERE type=get_object_type_id($" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT) AND "
-                      "name=" + sql_handle_case_normalize_function + "($" + params.add(handle_) + "::TEXT) AND "
+                      "name=" + sql_handle_case_normalize_function + "($" + params.add(fqdn_) + "::TEXT) AND "
                       "erdate IS NULL) "
             "SELECT eos.name "
             "FROM o "
@@ -104,11 +106,12 @@ GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& 
     return state;
 }
 
-GetContactStateByUuid::GetContactStateByUuid(const ContactUuid& contact_uuid)
-    : uuid_(contact_uuid)
-{ }
+GetDomainStateByUuid::GetDomainStateByUuid(const DomainUuid& domain_uuid)
+    : uuid_(domain_uuid)
+{
+}
 
-GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)const
+GetDomainStateByUuid::Result GetDomainStateByUuid::exec(OperationContext& ctx) const
 {
     Database::query_param_list params;
     const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
@@ -143,6 +146,6 @@ GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)
     return state;
 }
 
-}//namespace LibFred::RegistrableObject::Contact
-}//namespace LibFred::RegistrableObject
-}//namespace LibFred
+} // namespace LibFred::RegistrableObject::Domain
+} // namespace LibFred::RegistrableObject
+} // namespace LibFred
