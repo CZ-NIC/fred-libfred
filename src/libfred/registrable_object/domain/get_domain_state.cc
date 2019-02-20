@@ -113,9 +113,6 @@ GetDomainStateByUuid::GetDomainStateByUuid(const DomainUuid& domain_uuid)
 
 GetDomainStateByUuid::Result GetDomainStateByUuid::exec(OperationContext& ctx) const
 {
-    static const std::string sql_handle_case_normalize_function =
-            object_type == Object_Type::domain ? "LOWER"
-                                               : "UPPER";
     Database::query_param_list params;
     const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
     const std::string sql =
