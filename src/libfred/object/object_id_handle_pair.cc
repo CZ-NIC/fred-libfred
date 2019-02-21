@@ -21,54 +21,50 @@
  *  object id and handle pair
  */
 
-#include <string>
 #include "util/printable.hh"
 
 #include "libfred/object/object_id_handle_pair.hh"
-#include <boost/algorithm/string.hpp>
 
-namespace LibFred
-{
+#include <boost/algorithm/string/case_conv.hpp>
 
-    ObjectIdHandlePair::ObjectIdHandlePair(const unsigned long long _id, const std::string& _handle)
+#include <utility>
+
+namespace LibFred {
+
+ObjectIdHandlePair::ObjectIdHandlePair(const unsigned long long _id, const std::string& _handle)
     : id(_id), handle(_handle)
-    {}
+{
+}
 
-    ObjectIdHandlePair::ObjectIdHandlePair()
+ObjectIdHandlePair::ObjectIdHandlePair()
     : id()
-    {}
+{
+}
 
-    bool ObjectIdHandlePair::operator==(const ObjectIdHandlePair& rhs) const
-    {
-        return ((id == rhs.id) && (boost::algorithm::to_upper_copy(handle).compare(boost::algorithm::to_upper_copy(rhs.handle)) == 0));
-    }
+bool ObjectIdHandlePair::operator==(const ObjectIdHandlePair& _rhs) const
+{
+    return ((id == _rhs.id) &&
+            (boost::algorithm::to_upper_copy(handle).compare(boost::algorithm::to_upper_copy(_rhs.handle)) == 0));
+}
 
-    bool ObjectIdHandlePair::operator!=(const ObjectIdHandlePair& rhs) const
-    {
-        return !(*this == rhs);
-    }
+bool ObjectIdHandlePair::operator!=(const ObjectIdHandlePair& _rhs) const
+{
+    return !(*this == _rhs);
+}
 
-    bool ObjectIdHandlePair::operator<(const ObjectIdHandlePair& rhs) const
-    {
-        std::string lhs_string;
-        lhs_string+=boost::lexical_cast<std::string>(id);
-        lhs_string+=boost::algorithm::to_upper_copy(handle);
+bool ObjectIdHandlePair::operator<(const ObjectIdHandlePair& _rhs) const
+{
+    return std::make_pair(id, boost::algorithm::to_upper_copy(handle)) <
+           std::make_pair(_rhs.id, boost::algorithm::to_upper_copy(_rhs.handle));
+}
 
-        std::string rhs_string;
-        rhs_string+=boost::lexical_cast<std::string>(rhs.id);
-        rhs_string+=boost::algorithm::to_upper_copy(rhs.handle);
-
-        return (lhs_string.compare(rhs_string) < 0);
-    }
-
-    std::string ObjectIdHandlePair::to_string() const
-    {
-        return Util::format_data_structure("ObjectIdHandlePair",
-        Util::vector_of<std::pair<std::string, std::string> >
-        (std::make_pair("id", boost::lexical_cast<std::string>(id)))
-        (std::make_pair("handle", handle))
-        );
-    };
+std::string ObjectIdHandlePair::to_string() const
+{
+    return Util::format_data_structure("ObjectIdHandlePair",
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("id", boost::lexical_cast<std::string>(id)))
+                    (std::make_pair("handle", handle))
+            );
+};
 
 } // namespace LibFred
-
