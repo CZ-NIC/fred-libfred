@@ -19,7 +19,6 @@
 #ifndef OBJECT_REFERENCE_HH_6F08393EBC044C629F6CF8262D8E36CC
 #define OBJECT_REFERENCE_HH_6F08393EBC044C629F6CF8262D8E36CC
 
-#include "libfred/object/object.hh"
 #include "libfred/object/object_type.hh"
 #include "libfred/registrable_object/uuid.hh"
 
@@ -37,7 +36,7 @@ namespace RegistrableObject {
  * the same handle might be reused for different object.
  */
 template <Object_Type::Enum object_type>
-struct RegistrableObjectReference : public Util::Printable<RegistrableObjectReference<object_type>>
+struct RegistrableObjectReference : Util::Printable<RegistrableObjectReference<object_type>>
 {
     unsigned long long id; /**< database id of the object */
     std::string handle; /**< handle of the object */

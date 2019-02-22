@@ -44,7 +44,7 @@ ObjectIdHandlePair::ObjectIdHandlePair()
 bool ObjectIdHandlePair::operator==(const ObjectIdHandlePair& _rhs) const
 {
     return ((id == _rhs.id) &&
-            (boost::algorithm::to_upper_copy(handle).compare(boost::algorithm::to_upper_copy(_rhs.handle)) == 0));
+            (boost::algorithm::to_upper_copy(handle) == boost::algorithm::to_upper_copy(_rhs.handle)));
 }
 
 bool ObjectIdHandlePair::operator!=(const ObjectIdHandlePair& _rhs) const

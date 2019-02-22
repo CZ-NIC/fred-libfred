@@ -25,7 +25,6 @@
 #include "libfred/registrable_object/keyset/info_keyset.hh"
 #include "libfred/registrable_object/keyset/info_keyset_diff.hh"
 
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>
 
 namespace Notification {

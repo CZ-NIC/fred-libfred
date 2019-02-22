@@ -201,18 +201,15 @@ namespace LibFred
             diff.dns_keys = std::make_pair(first.dns_keys, second.dns_keys);
         }
 
+        const std::set<RegistrableObject::Contact::ContactReference>
+                lhs_tech_contacts(
+                        first.tech_contacts.begin(),
+                        first.tech_contacts.end());
 
-        std::set<RegistrableObject::Contact::ContactReference> lhs_tech_contacts;
-        for (const auto& tech_contact : first.tech_contacts)
-        {
-            lhs_tech_contacts.insert(tech_contact);
-        }
-
-        std::set<RegistrableObject::Contact::ContactReference> rhs_tech_contacts;
-        for (const auto& tech_contact : second.tech_contacts)
-        {
-            rhs_tech_contacts.insert(tech_contact);
-        }
+        const std::set<RegistrableObject::Contact::ContactReference>
+                rhs_tech_contacts(
+                        second.tech_contacts.begin(),
+                        second.tech_contacts.end());
 
         if (lhs_tech_contacts != rhs_tech_contacts)
         {

@@ -26,8 +26,6 @@
 
 #include "libfred/exception.hh"
 
-#include <boost/foreach.hpp>
-
 namespace LibFred
 {
 

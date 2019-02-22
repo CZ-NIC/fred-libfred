@@ -21,21 +21,22 @@
  *  keyset info implementation
  */
 
-#include <string>
-#include <vector>
+#include "libfred/registrable_object/keyset/info_keyset_impl.hh"
+
+#include "libfred/registrable_object/contact/contact_reference.hh"
+#include "libfred/registrable_object/contact/contact_uuid.hh"
+#include "libfred/opcontext.hh"
+
+#include "util/db/param_query_composition.hh"
+#include "util/util.hh"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/time_period.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "libfred/registrable_object/contact/contact_reference.hh"
-#include "libfred/registrable_object/keyset/info_keyset_impl.hh"
-#include "libfred/opcontext.hh"
-#include "util/db/param_query_composition.hh"
-#include "util/util.hh"
-
-
+#include <string>
+#include <vector>
 
 namespace LibFred
 {
@@ -256,8 +257,7 @@ namespace LibFred
                 info_keyset_output.info_keyset_data.tech_contacts.push_back(RegistrableObject::Contact::ContactReference(
                     static_cast<unsigned long long>(tech_contact_res[j]["tech_contact_id"]),
                     static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"]),
-                    RegistrableObject::make_uuid_of<Object_Type::contact>(static_cast<std::string>(tech_contact_res[j]["tech_contact_handle"]))
-                ));
+                    tech_contact_res[j]["tech_contact_uuid"].as<RegistrableObject::Contact::ContactUuid>()));
             }
 
             //DNS keys

@@ -26,7 +26,6 @@
 #include "libfred/registrable_object/nsset/info_nsset_diff.hh"
 
 #include <algorithm>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>
 
 namespace Notification {

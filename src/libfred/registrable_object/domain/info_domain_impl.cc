@@ -271,7 +271,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                 RegistrableObject::Contact::ContactReference(
                         static_cast<unsigned long long>(query_result[idx][GetAlias::registrant_id()]),
                         static_cast<std::string>(query_result[idx][GetAlias::registrant_handle()]),
-                        RegistrableObject::make_uuid_of<Object_Type::contact>(static_cast<std::string>(query_result[idx][GetAlias::registrant_uuid()])));
+                        query_result[idx][GetAlias::registrant_uuid()].as<RegistrableObject::Contact::ContactUuid>());
 
         info_domain_output.info_domain_data.nsset =
                 (query_result[idx][GetAlias::nsset_id()].isnull() ||
@@ -281,8 +281,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                 : Nullable<RegistrableObject::Nsset::NssetReference>(RegistrableObject::Nsset::NssetReference(
                         static_cast<unsigned long long>(query_result[idx][GetAlias::nsset_id()]),
                         static_cast<std::string>(query_result[idx][GetAlias::nsset_handle()]),
-                        RegistrableObject::make_uuid_of<Object_Type::nsset>(static_cast<std::string>(query_result[idx][GetAlias::nsset_uuid()]))
-                  ));
+                        query_result[idx][GetAlias::nsset_uuid()].as<RegistrableObject::Nsset::NssetUuid>()));
 
         info_domain_output.info_domain_data.keyset =
                 (query_result[idx][GetAlias::keyset_id()].isnull() ||
@@ -292,8 +291,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                 : Nullable<RegistrableObject::Keyset::KeysetReference>(RegistrableObject::Keyset::KeysetReference(
                         static_cast<unsigned long long>(query_result[idx][GetAlias::keyset_id()]),
                         static_cast<std::string>(query_result[idx][GetAlias::keyset_handle()]),
-                        RegistrableObject::make_uuid_of<Object_Type::keyset>(static_cast<std::string>(query_result[idx][GetAlias::keyset_uuid()]))
-                  ));
+                        query_result[idx][GetAlias::keyset_uuid()].as<RegistrableObject::Keyset::KeysetUuid>()));
 
         info_domain_output.info_domain_data.sponsoring_registrar_handle = static_cast<std::string>(
                 query_result[idx][GetAlias::sponsoring_registrar_handle()]);
@@ -355,8 +353,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
             info_domain_output.info_domain_data.admin_contacts.push_back(RegistrableObject::Contact::ContactReference(
                     static_cast<unsigned long long>(admin_contact_res[c_idx]["admin_contact_id"]),
                     static_cast<std::string>(admin_contact_res[c_idx]["admin_contact_handle"]),
-                    RegistrableObject::make_uuid_of<Object_Type::contact>(static_cast<std::string>(admin_contact_res[c_idx]["admin_contact_handle"]))
-            ));
+                    admin_contact_res[c_idx]["admin_contact_uuid"].as<RegistrableObject::Contact::ContactUuid>()));
         }
 
         result.push_back(info_domain_output);

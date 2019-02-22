@@ -19,6 +19,8 @@
 #include "libfred/registrable_object/registrable_object_reference.hh"
 
 #include "util/printable.hh"
+#include "util/strong_type.hh"
+#include "util/util.hh"
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -30,7 +32,7 @@ namespace RegistrableObject {
 
 template <Object_Type::Enum object_type>
 RegistrableObjectReference<object_type>::RegistrableObjectReference(
-        const unsigned long long _id,
+        unsigned long long _id,
         const std::string& _handle,
         const RegistrableObject::UuidOf<object_type>& _uuid)
     : id(_id),
@@ -49,8 +51,8 @@ template <Object_Type::Enum object_type>
 bool RegistrableObjectReference<object_type>::operator==(const RegistrableObjectReference& _rhs) const
 {
     return id == _rhs.id &&
-           boost::algorithm::to_upper_copy(handle).compare(boost::algorithm::to_upper_copy(_rhs.handle)) == 0 &&
-           uuid == _rhs.uuid;
+           boost::algorithm::to_upper_copy(handle) == boost::algorithm::to_upper_copy(_rhs.handle) &&
+           get_raw_value_from(uuid) == get_raw_value_from(_rhs.uuid);
 }
 
 template <Object_Type::Enum object_type>
@@ -62,8 +64,8 @@ bool RegistrableObjectReference<object_type>::operator!=(const RegistrableObject
 template <Object_Type::Enum object_type>
 bool RegistrableObjectReference<object_type>::operator<(const RegistrableObjectReference& _rhs) const
 {
-    return std::tie(id, boost::algorithm::to_upper_copy(handle), uuid) <
-           std::tie(_rhs.id, boost::algorithm::to_upper_copy(_rhs.handle), _rhs.uuid);
+    return std::make_tuple(id, boost::algorithm::to_upper_copy(handle), get_raw_value_from(uuid)) <
+           std::make_tuple(_rhs.id, boost::algorithm::to_upper_copy(_rhs.handle), get_raw_value_from(_rhs.uuid));
 }
 
 template <Object_Type::Enum object_type>
@@ -78,5 +80,10 @@ std::string RegistrableObjectReference<object_type>::to_string() const
                             (std::make_pair("uuid", uuid)));
 };
 
-} // namespace LibFred::Object
+template struct RegistrableObjectReference<Object_Type::contact>;
+template struct RegistrableObjectReference<Object_Type::domain>;
+template struct RegistrableObjectReference<Object_Type::keyset>;
+template struct RegistrableObjectReference<Object_Type::nsset>;
+
+} // namespace LibFred::RegistrableObject
 } // namespace LibFred
