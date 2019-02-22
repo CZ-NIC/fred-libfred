@@ -77,7 +77,7 @@ std::string RegistrableObjectReference<object_type>::to_string() const
                     Util::vector_of<std::pair<std::string, std::string>>
                             (std::make_pair("id", boost::lexical_cast<std::string>(id)))
                             (std::make_pair("handle", handle))
-                            (std::make_pair("uuid", uuid)));
+                            (std::make_pair("uuid", boost::lexical_cast<std::string>(uuid))));
 };
 
 template struct RegistrableObjectReference<Object_Type::contact>;
