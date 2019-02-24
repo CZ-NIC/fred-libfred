@@ -39,6 +39,13 @@ constexpr const char * psql_type(const bool)
     return "::bool";
 }
 
+bool is_country_code_valid(LibFred::OperationContext& _ctx, const std::string& _country) {
+    const Database::Result db_result = _ctx.get_conn().exec_params(
+                "SELECT 1 FROM enum_country WHERE id = $1::text FOR SHARE ",
+                Database::query_param_list(_country));
+    return db_result.size() > 0;
+}
+
 } // namespace LibFred::Registrar::{anonymous}
 
 UpdateRegistrar::UpdateRegistrar(const std::string& _handle)
@@ -291,6 +298,10 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
     {
         if (!country_.get().empty())
         {
+            if (!is_country_code_valid(_ctx, country_.get()))
+            {
+                throw UnknownCountryCode();
+            }
             params.push_back(country_.get());
             object_sql << set_separator.get() << "country = $" << params.size() << psql_type(country_.get());
         }

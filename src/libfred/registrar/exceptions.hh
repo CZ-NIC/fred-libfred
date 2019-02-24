@@ -34,6 +34,11 @@ struct NoUpdateData : std::exception
     const char* what() const noexcept override;
 };
 
+struct UnknownCountryCode : std::exception
+{
+    const char* what() const noexcept override;
+};
+
 struct UpdateRegistrarException : std::exception
 {
     const char* what() const noexcept override;
