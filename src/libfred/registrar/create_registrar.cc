@@ -207,136 +207,186 @@ unsigned long long CreateRegistrar::exec(OperationContext& ctx)
 
         if (name_.isset())
         {
-            params.push_back(name_.get_value());
-            col_sql << col_separator.get() << "name";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!name_.get_value().empty())
+            {
+                params.push_back(name_.get_value());
+                col_sql << col_separator.get() << "name";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (organization_.isset())
         {
-            params.push_back(organization_.get_value());
-            col_sql << col_separator.get() << "organization";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!organization_.get_value().empty())
+            {
+                params.push_back(organization_.get_value());
+                col_sql << col_separator.get() << "organization";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (street1_.isset())
         {
-            params.push_back(street1_.get_value());
-            col_sql << col_separator.get() << "street1";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!street1_.get_value().empty())
+            {
+                params.push_back(street1_.get_value());
+                col_sql << col_separator.get() << "street1";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (street2_.isset())
         {
-            params.push_back(street2_.get_value());
-            col_sql << col_separator.get() << "street2";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!street2_.get_value().empty())
+            {
+                params.push_back(street2_.get_value());
+                col_sql << col_separator.get() << "street2";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (street3_.isset())
         {
-            params.push_back(street3_.get_value());
-            col_sql << col_separator.get() << "street3";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!street3_.get_value().empty())
+            {
+                params.push_back(street3_.get_value());
+                col_sql << col_separator.get() << "street3";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (city_.isset())
         {
-            params.push_back(city_.get_value());
-            col_sql << col_separator.get() << "city";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!city_.get_value().empty())
+            {
+                params.push_back(city_.get_value());
+                col_sql << col_separator.get() << "city";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (stateorprovince_.isset())
         {
-            params.push_back(stateorprovince_.get_value());
-            col_sql << col_separator.get() << "stateorprovince";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!stateorprovince_.get_value().empty())
+            {
+                params.push_back(stateorprovince_.get_value());
+                col_sql << col_separator.get() << "stateorprovince";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (postalcode_.isset())
         {
-            params.push_back(postalcode_.get_value());
-            col_sql << col_separator.get() << "postalcode";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!postalcode_.get_value().empty())
+            {
+                params.push_back(postalcode_.get_value());
+                col_sql << col_separator.get() << "postalcode";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (country_.isset())
         {
-            params.push_back(LibFred::Contact::get_country_code(country_, ctx,
-                    static_cast<Exception*>(0), &Exception::set_unknown_country));//throw if country unknown
-            col_sql << col_separator.get() << "country";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!country_.get_value().empty())
+            {
+                params.push_back(LibFred::Contact::get_country_code(country_, ctx, static_cast<Exception*>(0), &Exception::set_unknown_country)); //throw if country unknown
+                col_sql << col_separator.get() << "country";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (telephone_.isset())
         {
-            params.push_back(telephone_.get_value());
-            col_sql << col_separator.get() << "telephone";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!telephone_.get_value().empty())
+            {
+                params.push_back(telephone_.get_value());
+                col_sql << col_separator.get() << "telephone";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (fax_.isset())
         {
-            params.push_back(fax_.get_value());
-            col_sql << col_separator.get() << "fax";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!fax_.get_value().empty())
+            {
+                params.push_back(fax_.get_value());
+                col_sql << col_separator.get() << "fax";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (email_.isset())
         {
-            params.push_back(email_.get_value());
-            col_sql << col_separator.get() << "email";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!email_.get_value().empty())
+            {
+                params.push_back(email_.get_value());
+                col_sql << col_separator.get() << "email";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (url_.isset())
         {
-            params.push_back(url_.get_value());
-            col_sql << col_separator.get() << "url";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!url_.get_value().empty())
+            {
+                params.push_back(url_.get_value());
+                col_sql << col_separator.get() << "url";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (system_.isset())
         {
             params.push_back(system_.get_value());
             col_sql << col_separator.get() << "system";
-            val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
+            val_sql << val_separator.get() << "$" << params.size() << "::boolean";
         }
 
         if (ico_.isset())
         {
-            params.push_back(ico_.get_value());
-            col_sql << col_separator.get() << "ico";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!ico_.get_value().empty())
+            {
+                params.push_back(ico_.get_value());
+                col_sql << col_separator.get() << "ico";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (dic_.isset())
         {
-            params.push_back(dic_.get_value());
-            col_sql << col_separator.get() << "dic";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!dic_.get_value().empty())
+            {
+                params.push_back(dic_.get_value());
+                col_sql << col_separator.get() << "dic";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (variable_symbol_.isset())
         {
-            params.push_back(variable_symbol_.get_value());
-            col_sql << col_separator.get() << "varsymb";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!variable_symbol_.get_value().empty())
+            {
+                params.push_back(variable_symbol_.get_value());
+                col_sql << col_separator.get() << "varsymb";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (payment_memo_regex_.isset())
         {
-            params.push_back(payment_memo_regex_.get_value());
-            col_sql << col_separator.get() << "regex";
-            val_sql << val_separator.get() << "$" << params.size() <<"::text";
+            if (!payment_memo_regex_.get_value().empty())
+            {
+                params.push_back(payment_memo_regex_.get_value());
+                col_sql << col_separator.get() << "regex";
+                val_sql << val_separator.get() << "$" << params.size() << "::text";
+            }
         }
 
         if (vat_payer_.isset())
         {
             params.push_back(vat_payer_.get_value());
             col_sql << col_separator.get() << "vat";
-            val_sql << val_separator.get() << "$" << params.size() <<"::boolean";
+            val_sql << val_separator.get() << "$" << params.size() << "::boolean";
         }
 
         col_sql <<")";
