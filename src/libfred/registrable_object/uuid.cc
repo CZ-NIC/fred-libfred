@@ -18,6 +18,9 @@
  */
 #include "libfred/registrable_object/uuid.hh"
 #include "libfred/registrable_object/contact/contact_uuid.hh"
+#include "libfred/registrable_object/domain/domain_uuid.hh"
+#include "libfred/registrable_object/keyset/keyset_uuid.hh"
+#include "libfred/registrable_object/nsset/nsset_uuid.hh"
 
 #include <boost/lexical_cast.hpp>
 
@@ -65,6 +68,42 @@ template <>
 LibFred::RegistrableObject::Contact::ContactHistoryUuid Value::as()const
 {
     return make_uuid_from_database_value<LibFred::RegistrableObject::Contact::ContactHistoryUuid>(*this);
+}
+
+template <>
+LibFred::RegistrableObject::Domain::DomainUuid Value::as()const
+{
+    return make_uuid_from_database_value<LibFred::RegistrableObject::Domain::DomainUuid>(*this);
+}
+
+template <>
+LibFred::RegistrableObject::Domain::DomainHistoryUuid Value::as()const
+{
+    return make_uuid_from_database_value<LibFred::RegistrableObject::Domain::DomainHistoryUuid>(*this);
+}
+
+template <>
+LibFred::RegistrableObject::Keyset::KeysetUuid Value::as()const
+{
+    return make_uuid_from_database_value<LibFred::RegistrableObject::Keyset::KeysetUuid>(*this);
+}
+
+template <>
+LibFred::RegistrableObject::Keyset::KeysetHistoryUuid Value::as()const
+{
+    return make_uuid_from_database_value<LibFred::RegistrableObject::Keyset::KeysetHistoryUuid>(*this);
+}
+
+template <>
+LibFred::RegistrableObject::Nsset::NssetUuid Value::as()const
+{
+    return make_uuid_from_database_value<LibFred::RegistrableObject::Nsset::NssetUuid>(*this);
+}
+
+template <>
+LibFred::RegistrableObject::Nsset::NssetHistoryUuid Value::as()const
+{
+    return make_uuid_from_database_value<LibFred::RegistrableObject::Nsset::NssetHistoryUuid>(*this);
 }
 
 }//namespace Database

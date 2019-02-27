@@ -26,7 +26,9 @@
 
 #include "libfred/object/object_id_handle_pair.hh"
 #include "libfred/registrable_object/domain/enum_validation_extension.hh"
+#include "libfred/registrable_object/uuid.hh"
 #include "libfred/registrable_object/contact/contact_reference.hh"
+#include "libfred/registrable_object/domain/domain_uuid.hh"
 #include "libfred/registrable_object/keyset/keyset_reference.hh"
 #include "libfred/registrable_object/nsset/nsset_reference.hh"
 
@@ -56,8 +58,8 @@ struct InfoDomainData : Util::Printable<InfoDomainData>
     * @param rhs is right hand side of domain data comparison
     * @return true if equal, false if not
     */
-
     bool operator==(const InfoDomainData& rhs) const;
+
     /**
     * Inequality of the contact data structure operator.
     * @param rhs is right hand side of the contact data comparison
@@ -90,6 +92,8 @@ struct InfoDomainData : Util::Printable<InfoDomainData>
     unsigned long long historyid;/**< last historyid of domain history*/
     unsigned long long crhistoryid;/**< first historyid of domain history*/
     unsigned long long id;/**< id of the domain object*/
+    RegistrableObject::Domain::DomainUuid uuid;/**< uuid of the object*/
+    RegistrableObject::Domain::DomainHistoryUuid history_uuid;/**< history uuid of the domain object*/
     ObjectIdHandlePair zone;/**< zone id and fqdn of domain*/
 };
 

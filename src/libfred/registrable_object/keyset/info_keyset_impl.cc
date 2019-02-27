@@ -167,7 +167,7 @@ namespace LibFred
         //technical contacts
         Database::ParamQuery query;
 
-        query("SELECT cobr.id AS tech_contact_id, cobr.name AS tech_contact_handle");
+        query("SELECT cobr.id AS tech_contact_id, cobr.name AS tech_contact_handle, cobr.uuid AS tech_contact_uuid");
         if (history_query_)
         {
             query(" FROM keyset_contact_map_history kcm "

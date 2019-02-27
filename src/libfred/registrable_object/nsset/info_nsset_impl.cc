@@ -171,7 +171,7 @@ namespace LibFred
     {
         Database::ParamQuery technical_contacts;
 
-        technical_contacts("SELECT cobr.id AS tech_contact_id, cobr.name AS tech_contact_handle");
+        technical_contacts("SELECT cobr.id AS tech_contact_id, cobr.name AS tech_contact_handle, cobr.uuid AS tech_contact_uuid");
         if (history_query_)
         {
             technical_contacts(" FROM nsset_contact_map_history ncm "
