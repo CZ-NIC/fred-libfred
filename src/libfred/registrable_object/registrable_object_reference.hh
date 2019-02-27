@@ -31,9 +31,6 @@ namespace RegistrableObject {
 
 /**
  * RegistrableObject identification structure.
- * Id and UUID are unique object identifiers but not very illustrative,
- * handle is humanly readable but when object gets deleted,
- * the same handle might be reused for different object.
  */
 template <Object_Type::Enum object_type>
 struct RegistrableObjectReference : Util::Printable<RegistrableObjectReference<object_type>>
@@ -56,22 +53,22 @@ struct RegistrableObjectReference : Util::Printable<RegistrableObjectReference<o
     RegistrableObjectReference();
 
     /**
-     * Comparison operator comparing both attributes.
-     * Handle is compared converted to uppercase
+     * Comparison operator comparing all attributes.
+     * Handle is compared case insensitive
      * @param rhs data compared with this instance
      */
     bool operator==(const RegistrableObjectReference& rhs) const;
 
     /**
-     * Comparison operator comparing both attributes.
-     * Handle is compared converted to uppercase
+     * Comparison operator comparing all attributes.
+     * Handle is compared case insensitive
      * @param rhs data compared with this instance
      */
     bool operator!=(const RegistrableObjectReference& rhs) const;
 
     /**
-     * Comparison operator comparing both attributes in string.
-     * Handle is compared converted to uppercase
+     * Comparison operator comparing all attributes
+     * Handle is compared case insensitive
      * @param rhs data compared with this instance
      */
     bool operator<(const RegistrableObjectReference& rhs) const;

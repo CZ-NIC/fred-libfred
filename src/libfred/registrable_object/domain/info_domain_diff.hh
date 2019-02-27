@@ -86,7 +86,7 @@ struct InfoDomainDiff : Util::Printable<InfoDomainDiff>
     DiffMemeber<Nullable<boost::posix_time::ptime> >::Type transfer_time; /**<last transfer time in set local zone*/
     DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
 
-    DiffMemeber<RegistrableObject::Contact::ContactReference>::Type registrant; /**< registrant contact id and handle, owner of domain*/
+    DiffMemeber<RegistrableObject::Contact::ContactReference>::Type registrant; /**< registrant contact reference, owner of domain*/
     DiffMemeber<Nullable<RegistrableObject::Nsset::NssetReference>>::Type nsset;/**< nsset id and handle or NULL if missing */
     DiffMemeber<Nullable<RegistrableObject::Keyset::KeysetReference>>::Type keyset;/**< keyset id and handle or NULL if missing */
     DiffMemeber<boost::gregorian::date>::Type expiration_date;/**< domain expiration local date */

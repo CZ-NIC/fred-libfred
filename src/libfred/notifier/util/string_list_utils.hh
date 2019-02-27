@@ -37,8 +37,8 @@
 namespace Notification {
 
     /**
-     * @returns vector of handles from given object reference
-     * - could be potentialy non-unique despite using std::set on input because RegistrableObjectReference compares handle AND id AND uuid
+     * @returns vector of handles from given object references
+     * - can be potentialy non-unique despite using std::set on input because RegistrableObjectReference compares handle AND id AND uuid
      */
     template <LibFred::Object_Type::Enum object_type>
     inline std::vector<std::string> get_handles(const std::vector<LibFred::RegistrableObject::RegistrableObjectReference<object_type>>& _in) {

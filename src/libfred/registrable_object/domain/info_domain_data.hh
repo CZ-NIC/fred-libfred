@@ -86,7 +86,7 @@ struct InfoDomainData : Util::Printable<InfoDomainData>
     Nullable<boost::posix_time::ptime> transfer_time; /**< time of last transfer in set local zone*/
     boost::gregorian::date expiration_date; /**< domain expiration local date */
     std::string authinfopw;/**< password for domain transfer */
-    std::vector<RegistrableObject::Contact::ContactReference> admin_contacts;/**< list of administrating contacts (contact references) */
+    std::vector<RegistrableObject::Contact::ContactReference> admin_contacts;/**< list of administrative contacts (contacts references) */
     Nullable<ENUMValidationExtension> enum_domain_validation;/**< ENUM domain validation extension info */
     Nullable<boost::posix_time::ptime> delete_time;/**< domain delete time in set local zone*/
     unsigned long long historyid;/**< last historyid of domain history*/
