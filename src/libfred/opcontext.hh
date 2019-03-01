@@ -90,6 +90,28 @@ private:
     friend class OperationContextTwoPhaseCommitCreator;
 };
 
+enum class DbLock
+{
+    for_share,
+    for_update
+};
+
+/**
+ * Joins database locking type with operation context.
+ */
+template <DbLock>
+class OperationContextUsing
+{
+public:
+    explicit OperationContextUsing(OperationContext& ctx) : ctx_(ctx) { }
+    operator OperationContext&()const { return ctx_; }
+private:
+    OperationContext& ctx_;
+};
+
+using OperationContextLockingForShare = OperationContextUsing<DbLock::for_share>;
+using OperationContextLockingForUpdate = OperationContextUsing<DbLock::for_update>;
+
 /**
  * Creates OperationContext instance and offers commit_transaction() method.
  *

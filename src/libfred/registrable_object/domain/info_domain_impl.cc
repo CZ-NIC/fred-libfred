@@ -91,6 +91,7 @@ Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_time
                     "dobr.uuid AS ")(GetAlias::uuid())(","
                     "dobr.roid AS ")(GetAlias::roid())(","
                     "dobr.name AS ")(GetAlias::fqdn())(","
+                    "dobr.uuid AS ")(GetAlias::uuid())(","
                     "(dobr.erdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::delete_time())(","
                     "h.id AS ")(GetAlias::historyid())(","
                     "h.uuid AS ")(GetAlias::history_uuid())(","

@@ -135,32 +135,10 @@ private:
     bool lock_;/**< if set to true lock object_registry row for update, if set to false lock for share */
 };
 
-enum class DbLock
-{
-    for_share,
-    for_update
-};
-
 /**
- * Joins database locking type with operation context.
- */
-template <DbLock>
-class OperationContextUsing
-{
-public:
-    explicit OperationContextUsing(OperationContext& ctx) : ctx_(ctx) { }
-    operator OperationContext&()const { return ctx_; }
-private:
-    OperationContext& ctx_;
-};
-
-using OperationContextLockingForShare = OperationContextUsing<DbLock::for_share>;
-using OperationContextLockingForUpdate = OperationContextUsing<DbLock::for_update>;
-
-/**
-* Contact info by uuid.
-* Contact uuid to get info about the contact is set via constructor.
-* It's executed by @ref exec method.
+ * Contact info by uuid.
+ * Contact uuid to get info about the contact is set via constructor.
+ * It's executed by @ref exec method.
 */
 class InfoContactByUuid : public Util::Printable<InfoContactByUuid>
 {
