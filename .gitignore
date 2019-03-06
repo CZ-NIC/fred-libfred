@@ -2,5 +2,4 @@
 .project
 .settings/
 CMakeLists.txt.user
-COPYING
 INSTALL
