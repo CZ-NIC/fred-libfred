@@ -19,6 +19,8 @@
 #include "libfred/registrable_object/contact/get_contact_data_history.hh"
 #include "libfred/registrable_object/contact/get_contact_handle_history.hh"
 #include "util/printable.hh"
+#include "libfred/registrable_object/uuid.hh"
+#include "libfred/object/object_type.hh"
 
 #include <boost/test/unit_test.hpp>
 
@@ -55,9 +57,9 @@ BOOST_FIXTURE_TEST_CASE(contact_data_history, MyFixture)
     {
         std::cout << TimePointConverter::to(*data1_history.valid_to) << std::endl;
     }
-    GetContactDataHistoryByUuid(1).exec(ctx, interval);
-    GetContactDataHistoryByUuid("1").exec(ctx, interval);
-    GetContactDataHistoryByUuid("KONTAKT").exec(ctx, interval);
+    GetContactDataHistoryByUuid(LibFred::RegistrableObject::make_uuid_of<
+                                LibFred::Object_Type::contact>("5aa575e9-089f-4d05-a5fc-98171fba93b9"))
+        .exec(ctx, interval);
     GetContactDataHistoryByHandle("KONTAKT").exec(ctx, interval);
 }
 
