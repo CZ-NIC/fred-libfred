@@ -95,11 +95,11 @@ BOOST_FIXTURE_TEST_CASE(contact_state, Test::instantiate_db_template)
             << simple_state_view(record.state) << std::endl;
     }
     out << TimePointConverter::to(state1_history.valid_to) << std::endl;
-    GetContactStateByUuid(LibFred::RegistrableObject::make_uuid_of<
-                          LibFred::Object_Type::contact>("cd8303f4-a086-408c-925a-61c3117e07c8")).exec(ctx);
-    GetContactStateHistoryByUuid(LibFred::RegistrableObject::make_uuid_of<
-                                 LibFred::Object_Type::contact>("215e052a-d3de-4d07-924b-f43b03e1c41f"))
-        .exec(ctx, interval);
+    const auto uuid =
+            LibFred::RegistrableObject::make_uuid_of<LibFred::Object_Type::contact>(
+                    "cd8303f4-a086-408c-925a-61c3117e07c8");
+    GetContactStateByUuid(uuid).exec(ctx);
+    GetContactStateHistoryByUuid(uuid).exec(ctx, interval);
 }
 
 BOOST_AUTO_TEST_SUITE_END()//TestContactState

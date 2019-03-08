@@ -57,10 +57,12 @@ BOOST_FIXTURE_TEST_CASE(contact_data_history, MyFixture)
     {
         std::cout << TimePointConverter::to(*data1_history.valid_to) << std::endl;
     }
-    GetContactDataHistoryByUuid(LibFred::RegistrableObject::make_uuid_of<
-                                LibFred::Object_Type::contact>("5aa575e9-089f-4d05-a5fc-98171fba93b9"))
-        .exec(ctx, interval);
-    GetContactDataHistoryByHandle("KONTAKT").exec(ctx, interval);
+    const auto uuid =
+            LibFred::RegistrableObject::make_uuid_of<LibFred::Object_Type::contact>(
+                    "5aa575e9-089f-4d05-a5fc-98171fba93b9");
+    const auto handle = "KONTAKT";
+    GetContactDataHistoryByUuid(uuid).exec(ctx, interval);
+    GetContactDataHistoryByHandle(handle).exec(ctx, interval);
 }
 
 BOOST_AUTO_TEST_SUITE_END()//TestContactHistory
