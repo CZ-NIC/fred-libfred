@@ -26,7 +26,8 @@
 
 #include "libfred/opcontext.hh"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/optional.hpp>
 
 namespace LibFred {
 namespace Registrar {
@@ -36,21 +37,14 @@ class UpdateRegistrarCertification
 public:
     UpdateRegistrarCertification(
             unsigned long long _certification_id,
-            boost::gregorian::date _valid_until)
-    : certification_id_(_certification_id),
-      valid_until_(_valid_until)
-    {}
+            boost::gregorian::date _valid_until);
 
     UpdateRegistrarCertification(
             unsigned long long _certification_id,
             int _classification,
-            unsigned long long _eval_file_id)
-    : certification_id_(_certification_id),
-      classification_(_classification),
-      eval_file_id_(_eval_file_id)
-    {}
+            unsigned long long _eval_file_id);
 
-    void exec(OperationContext& _ctx);
+    void exec(OperationContext& _ctx) const;
 
 private:
     unsigned long long certification_id_;

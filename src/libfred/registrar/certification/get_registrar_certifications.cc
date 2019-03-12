@@ -21,19 +21,26 @@
 #include "libfred/registrar/certification/get_registrar_certifications.hh"
 #include "libfred/registrar/certification/registrar_certification_type.hh"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace LibFred {
 namespace Registrar {
 
-std::vector<RegistrarCertification> GetRegistrarCertifications::exec(OperationContext& _ctx)
+GetRegistrarCertifications::GetRegistrarCertifications(unsigned long long _registrar_id)
+    : registrar_id_(_registrar_id)
+{
+}
+
+std::vector<RegistrarCertification> GetRegistrarCertifications::exec(OperationContext& _ctx) const
 {
     try
     {
         std::vector<RegistrarCertification> result;
 
         const Database::Result reg_exists = _ctx.get_conn().exec_params(
+                // clang-format off
                 "SELECT id FROM registrar WHERE id = $1::integer",
+                // clang-format on
                 Database::query_param_list(registrar_id_));
         if (reg_exists.size() != 1)
         {
@@ -41,9 +48,11 @@ std::vector<RegistrarCertification> GetRegistrarCertifications::exec(OperationCo
         }
 
         const Database::Result certifications = _ctx.get_conn().exec_params(
+                // clang-format off
                 "SELECT id, valid_from, valid_until, classification, eval_file_id "
                 "FROM registrar_certification WHERE registrar_id=$1::bigint "
                 "ORDER BY valid_from DESC, id DESC",
+                // clang-format on
                 Database::query_param_list(registrar_id_));
         result.reserve(certifications.size());
         for (Database::Result::Iterator it = certifications.begin(); it != certifications.end(); ++it)
@@ -61,7 +70,7 @@ std::vector<RegistrarCertification> GetRegistrarCertifications::exec(OperationCo
     }
     catch (const std::exception& e)
     {
-        LOGGER.error(e.what());
+        LOGGER.info(e.what());
         throw;
     }
     catch (...)
