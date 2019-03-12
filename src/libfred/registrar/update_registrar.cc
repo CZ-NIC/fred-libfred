@@ -39,6 +39,13 @@ constexpr const char * psql_type(const bool)
     return "::bool";
 }
 
+bool is_country_code_valid(LibFred::OperationContext& _ctx, const std::string& _country) {
+    const Database::Result db_result = _ctx.get_conn().exec_params(
+                "SELECT 1 FROM enum_country WHERE id = $1::text FOR SHARE ",
+                Database::query_param_list(_country));
+    return db_result.size() > 0;
+}
+
 } // namespace LibFred::Registrar::{anonymous}
 
 UpdateRegistrar::UpdateRegistrar(const std::string& _handle)
@@ -194,100 +201,104 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
     Util::HeadSeparator set_separator(" SET ", ", ");
 
     object_sql << "UPDATE registrar";
-    if (ico_ != boost::none)
+    if (ico_ != boost::none && !ico_.value().empty())
     {
-        params.push_back(*ico_);
-        object_sql << set_separator.get() <<  "ico = $" << params.size() << psql_type(*ico_);
+        params.push_back(ico_.value());
+        object_sql << set_separator.get() << "ico = $" << params.size() << psql_type(ico_.value());
     }
-    if (dic_ != boost::none)
+    if (dic_ != boost::none && !dic_.value().empty())
     {
-        params.push_back(*dic_);
-        object_sql << set_separator.get() <<  "dic = $" << params.size() << psql_type(*dic_);
+        params.push_back(dic_.value());
+        object_sql << set_separator.get() << "dic = $" << params.size() << psql_type(dic_.value());
     }
-    if (variable_symbol_ != boost::none)
+    if (variable_symbol_ != boost::none && !variable_symbol_.value().empty())
     {
-        params.push_back(*variable_symbol_);
-        object_sql << set_separator.get() <<  "varsymb = $" << params.size() << psql_type(*variable_symbol_);
+        params.push_back(variable_symbol_.value());
+        object_sql << set_separator.get() << "varsymb = $" << params.size() << psql_type(variable_symbol_.value());
     }
     if (vat_payer_ != boost::none)
     {
-        params.push_back(*vat_payer_);
-        object_sql << set_separator.get() <<  "vat = $" << params.size() << psql_type(*vat_payer_);
+        params.push_back(vat_payer_.value());
+        object_sql << set_separator.get() << "vat = $" << params.size() << psql_type(vat_payer_.value());
     }
-    if (name_ != boost::none)
+    if (name_ != boost::none && !name_.value().empty())
     {
-        params.push_back(*name_);
-        object_sql << set_separator.get() <<  "name = $" << params.size() << psql_type(*name_);
+        params.push_back(name_.value());
+        object_sql << set_separator.get() << "name = $" << params.size() << psql_type(name_.value());
     }
-    if (organization_ != boost::none)
+    if (organization_ != boost::none && !organization_.value().empty())
     {
-        params.push_back(*organization_);
-        object_sql << set_separator.get() <<  "organization = $" << params.size() << psql_type(*organization_);
+        params.push_back(organization_.value());
+        object_sql << set_separator.get() << "organization = $" << params.size() << psql_type(organization_.value());
     }
-    if (street1_ != boost::none)
+    if (street1_ != boost::none && !street1_.value().empty())
     {
-        params.push_back(*street1_);
-        object_sql << set_separator.get() <<  "street1 = $" << params.size() << psql_type(*street1_);
+        params.push_back(street1_.value());
+        object_sql << set_separator.get() << "street1 = $" << params.size() << psql_type(street1_.value());
     }
-    if (street2_ != boost::none)
+    if (street2_ != boost::none && !street2_.value().empty())
     {
-        params.push_back(*street2_);
-        object_sql << set_separator.get() <<  "street2 = $" << params.size() << psql_type(*street2_);
+        params.push_back(street2_.value());
+        object_sql << set_separator.get() << "street2 = $" << params.size() << psql_type(street2_.value());
     }
-    if (street3_ != boost::none)
+    if (street3_ != boost::none && !street3_.value().empty())
     {
-        params.push_back(*street3_);
-        object_sql << set_separator.get() <<  "street3 = $" << params.size() << psql_type(*street3_);
+        params.push_back(street3_.value());
+        object_sql << set_separator.get() << "street3 = $" << params.size() << psql_type(street3_.value());
     }
-    if (city_ != boost::none)
+    if (city_ != boost::none && !city_.value().empty())
     {
-        params.push_back(*city_);
-        object_sql << set_separator.get() <<  "city = $" << params.size() << psql_type(*city_);
+        params.push_back(city_.value());
+        object_sql << set_separator.get() << "city = $" << params.size() << psql_type(city_.value());
     }
-    if (postal_code_ != boost::none)
+    if (postal_code_ != boost::none && !postal_code_.value().empty())
     {
-        params.push_back(*postal_code_);
-        object_sql << set_separator.get() <<  "postalcode = $" << params.size() << psql_type(*postal_code_);
+        params.push_back(postal_code_.value());
+        object_sql << set_separator.get() << "postalcode = $" << params.size() << psql_type(postal_code_.value());
     }
-    if (state_or_province_ != boost::none)
+    if (state_or_province_ != boost::none && !state_or_province_.value().empty())
     {
-        params.push_back(*state_or_province_);
-        object_sql << set_separator.get() <<  "stateorprovince = $" << params.size() << psql_type(*state_or_province_);
+        params.push_back(state_or_province_.value());
+        object_sql << set_separator.get() << "stateorprovince = $" << params.size() << psql_type(state_or_province_.value());
     }
-    if (country_ != boost::none)
+    if (country_ != boost::none && !country_.value().empty())
     {
-        params.push_back(*country_);
-        object_sql << set_separator.get() <<  "country = $" << params.size() << psql_type(*country_);
+        if (!is_country_code_valid(_ctx, country_.value()))
+        {
+            throw UnknownCountryCode();
+        }
+        params.push_back(country_.value());
+        object_sql << set_separator.get() << "country = $" << params.size() << psql_type(country_.value());
     }
-    if (telephone_ != boost::none)
+    if (telephone_ != boost::none && !telephone_.value().empty())
     {
-        params.push_back(*telephone_);
-        object_sql << set_separator.get() <<  "telephone = $" << params.size() << psql_type(*telephone_);
+        params.push_back(telephone_.value());
+        object_sql << set_separator.get() << "telephone = $" << params.size() << psql_type(telephone_.value());
     }
-    if (fax_ != boost::none)
+    if (fax_ != boost::none && !fax_.value().empty())
     {
-        params.push_back(*fax_);
-        object_sql << set_separator.get() <<  "fax = $" << params.size() << psql_type(*fax_);
+        params.push_back(fax_.value());
+        object_sql << set_separator.get() << "fax = $" << params.size() << psql_type(fax_.value());
     }
-    if (email_ != boost::none)
+    if (email_ != boost::none && !email_.value().empty())
     {
-        params.push_back(*email_);
-        object_sql << set_separator.get() <<  "email = $" << params.size() << psql_type(*email_);
+        params.push_back(email_.value());
+        object_sql << set_separator.get() << "email = $" << params.size() << psql_type(email_.value());
     }
-    if (url_ != boost::none)
+    if (url_ != boost::none && !url_.value().empty())
     {
-        params.push_back(*url_);
-        object_sql << set_separator.get() <<  "url = $" << params.size() << psql_type(*url_);
+        params.push_back(url_.value());
+        object_sql << set_separator.get() << "url = $" << params.size() << psql_type(url_.value());
     }
     if (system_ != boost::none)
     {
-        params.push_back(*system_);
-        object_sql << set_separator.get() <<  "system = $" << params.size() << psql_type(*system_);
+        params.push_back(system_.value());
+        object_sql << set_separator.get() << "system = $" << params.size() << psql_type(system_.value());
     }
-    if (payment_memo_regex_ != boost::none)
+    if (payment_memo_regex_ != boost::none && !payment_memo_regex_.value().empty())
     {
-        params.push_back(*payment_memo_regex_);
-        object_sql << set_separator.get() <<  "regex = $" << params.size() << psql_type(*payment_memo_regex_);
+        params.push_back(payment_memo_regex_.value());
+        object_sql << set_separator.get() << "regex = $" << params.size() << psql_type(payment_memo_regex_.value());
     }
 
     params.push_back(handle_);

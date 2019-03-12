@@ -31,6 +31,11 @@ const char* NoUpdateData::what() const noexcept
     return "No registrar data for update.";
 }
 
+const char* UnknownCountryCode::what() const noexcept
+{
+        return "Registrar has unknown country code.";
+}
+
 const char* UpdateRegistrarException::what() const noexcept
 {
     return "Failed to update zone due to an unknown exception.";
