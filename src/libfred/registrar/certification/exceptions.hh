@@ -30,7 +30,7 @@ struct InvalidDateFrom : std::exception
 {
     const char* what() const noexcept override
     {
-        return "date from is not a date time";
+        return "date from is not a date";
     }
 };
 
@@ -38,7 +38,7 @@ struct InvalidDateTo : std::exception
 {
     const char* what() const noexcept override
     {
-        return "end date is not a date time";
+        return "end date is not a date";
     }
 };
 

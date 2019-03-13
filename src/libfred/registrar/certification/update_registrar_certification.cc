@@ -72,7 +72,7 @@ void UpdateRegistrarCertification::exec(OperationContext& _ctx) const
                     // clang-format on
                     Database::query_param_list(certification_id_));
             const boost::gregorian::date old_from =
-                    boost::gregorian::from_string(static_cast<std::string>(from_until[0][0]));
+                    boost::gregorian::from_simple_string(static_cast<std::string>(from_until[0][0]));
             if (old_from > *valid_until_)
             {
                 throw WrongIntervalOrder();
