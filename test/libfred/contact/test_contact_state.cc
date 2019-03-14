@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrable_object/contact/contact_state.hh"
 #include "libfred/registrable_object/contact/get_contact_state.hh"
 #include "libfred/registrable_object/contact/get_contact_state_history.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
 #include "util/printable.hh"
 #include "test/setup/fixtures.hh"
 #include "libfred/registrable_object/uuid.hh"
@@ -95,9 +97,7 @@ BOOST_FIXTURE_TEST_CASE(contact_state, Test::instantiate_db_template)
             << simple_state_view(record.state) << std::endl;
     }
     out << TimePointConverter::to(state1_history.valid_to) << std::endl;
-    const auto uuid =
-            LibFred::RegistrableObject::make_uuid_of<LibFred::Object_Type::contact>(
-                    "cd8303f4-a086-408c-925a-61c3117e07c8");
+    const auto uuid = LibFred::InfoContactByHandle("KONTAKT").exec(ctx).info_contact_data.uuid;
     GetContactStateByUuid(uuid).exec(ctx);
     GetContactStateHistoryByUuid(uuid).exec(ctx, interval);
 }
