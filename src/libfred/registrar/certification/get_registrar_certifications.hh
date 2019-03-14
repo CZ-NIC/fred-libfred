@@ -27,7 +27,7 @@
 #include "libfred/opcontext.hh"
 #include "libfred/registrar/certification/registrar_certification_type.hh"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 namespace LibFred {
 namespace Registrar {
@@ -35,11 +35,9 @@ namespace Registrar {
 class GetRegistrarCertifications
 {
 public:
-    explicit GetRegistrarCertifications(unsigned long long _registrar_id)
-        : registrar_id_(_registrar_id)
-        {}
+    explicit GetRegistrarCertifications(unsigned long long _registrar_id);
 
-    std::vector<RegistrarCertification> exec(OperationContext& _ctx);
+    std::vector<RegistrarCertification> exec(OperationContext& _ctx) const;
 
 private:
     unsigned long long registrar_id_;

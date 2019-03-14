@@ -26,6 +26,22 @@
 
 #include <exception>
 
+struct InvalidDateFrom : std::exception
+{
+    const char* what() const noexcept override
+    {
+        return "date from is not a date";
+    }
+};
+
+struct InvalidDateTo : std::exception
+{
+    const char* what() const noexcept override
+    {
+        return "end date is not a date";
+    }
+};
+
 struct WrongIntervalOrder : std::exception
 {
     const char* what() const noexcept override
@@ -47,14 +63,6 @@ struct CertificationInPast : std::exception
     const char* what() const noexcept override
     {
         return "end date is earlier than current date";
-    }
-};
-
-struct CertificationExtension : std::exception
-{
-    const char* what() const noexcept override
-    {
-        return "end date is later than latter value";
     }
 };
 
