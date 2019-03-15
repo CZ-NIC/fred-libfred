@@ -16,15 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "src/util/case_insensitive.hh"
 
 #include "src/libfred/opcontext.hh"
 
-#define BOOST_TEST_NO_MAIN
+#include "test/setup/fixtures.hh"
 
 #include <boost/test/unit_test.hpp>
 
-#include <iostream>
+#include <string>
 
 namespace Util {
 
@@ -46,7 +47,7 @@ BOOST_AUTO_TEST_SUITE(Tests)
 BOOST_AUTO_TEST_SUITE(Util)
 BOOST_AUTO_TEST_SUITE(CaseInsensitive)
 
-BOOST_AUTO_TEST_CASE(test_comparison)
+BOOST_FIXTURE_TEST_CASE(test_comparison, Test::instantiate_db_template)
 {
     const std::string lower_case = "příliš žluťoučký kůň úpěl ďábelské ódy";
     const std::string upper_case = "PŘÍLIŠ ŽLUŤOUČKÝ KŮŇ ÚPĚL ĎÁBELSKÉ ÓDY";
