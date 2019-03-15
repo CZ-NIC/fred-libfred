@@ -18,14 +18,37 @@
  */
 
 #include "src/util/case_insensitive.hh"
-
 #include "src/libfred/opcontext.hh"
+#include "util/db/query_param.hh"
+
+#include <stdexcept>
 
 namespace Util {
 
-CaseInsensitive::ComparisonResult CaseInsensitive::compare(const std::string& lhs, const std::string& rhs)
+template <typename T>
+bool CaseInsensitiveEqualTo<T>::operator()(const std::string& lhs, const std::string& rhs)const
 {
-    return compare(LibFred::OperationContextCreator().get_conn(), lhs, rhs);
+    switch (db_conn_.exec_params("SELECT 0 WHERE UPPER($1::TEXT)=UPPER($2::TEXT)",
+                                 Database::query_param_list(lhs)(rhs)).size())
+    {
+        case 0:
+            return false;
+        case 1:
+            return true;
+    }
+    throw std::runtime_error("unexpected number of results");
 }
+
+bool CaseInsensitiveEqualTo<void>::operator()(const std::string& lhs, const std::string& rhs)const
+{
+    return case_insensitive_equal_to(LibFred::OperationContextCreator().get_conn())(lhs, rhs);
+}
+
+CaseInsensitiveEqualTo<void> case_insensitive_equal_to()
+{
+    return CaseInsensitiveEqualTo<void>();
+}
+
+template class CaseInsensitiveEqualTo<std::remove_reference_t<decltype(LibFred::OperationContextCreator().get_conn())>>;
 
 }//namespace Util

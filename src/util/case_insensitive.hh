@@ -20,36 +20,42 @@
 #ifndef CASE_INSENSITIVE_HH_151611729A3F42461E1C9D28A6F1A398//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define CASE_INSENSITIVE_HH_151611729A3F42461E1C9D28A6F1A398
 
-#include "util/db/query_param.hh"
-
-#include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <utility>
 
 namespace Util {
 
-struct CaseInsensitive
+template <typename T>
+auto case_insensitive_equal_to(T&&);
+
+template <typename T>
+class CaseInsensitiveEqualTo
 {
-    enum class ComparisonResult
-    {
-        equal,
-        not_equal
-    };
-    template <typename T>
-    static ComparisonResult compare(T&& db_conn, const std::string& lhs, const std::string& rhs)
-    {
-        switch (std::forward<T>(db_conn).exec_params("SELECT 0 WHERE UPPER($1::TEXT)=UPPER($2::TEXT)",
-                                                     Database::query_param_list(lhs)(rhs)).size())
-        {
-            case 0:
-                return ComparisonResult::not_equal;
-            case 1:
-                return ComparisonResult::equal;
-        }
-        throw std::runtime_error("unexpected number of results");
-    }
-    static ComparisonResult compare(const std::string& lhs, const std::string& rhs);
+public:
+    bool operator()(const std::string& lhs, const std::string& rhs)const;
+private:
+    explicit CaseInsensitiveEqualTo(std::add_lvalue_reference_t<T> db_conn)
+        : db_conn_(db_conn) { }
+    std::add_lvalue_reference_t<T> db_conn_;
+    template <typename D>
+    friend auto case_insensitive_equal_to(D&&);
 };
+
+template <typename T>
+auto case_insensitive_equal_to(T&& db_conn)
+{
+    return CaseInsensitiveEqualTo<std::remove_reference_t<T>>(std::forward<T>(db_conn));
+}
+
+template <>
+class CaseInsensitiveEqualTo<void>
+{
+public:
+    bool operator()(const std::string& lhs, const std::string& rhs)const;
+};
+
+CaseInsensitiveEqualTo<void> case_insensitive_equal_to();
 
 }//namespace Util
 

@@ -27,22 +27,6 @@
 
 #include <string>
 
-namespace Util {
-
-std::ostream& operator<<(std::ostream& out, CaseInsensitive::ComparisonResult value)
-{
-    switch (value)
-    {
-        case ::Util::CaseInsensitive::ComparisonResult::equal:
-            return out << "equal";
-        case ::Util::CaseInsensitive::ComparisonResult::not_equal:
-            return out << "not equal";
-    }
-    return out << "???";
-}
-
-}//namespace Util
-
 BOOST_AUTO_TEST_SUITE(Tests)
 BOOST_AUTO_TEST_SUITE(Util)
 BOOST_AUTO_TEST_SUITE(CaseInsensitive)
@@ -51,29 +35,18 @@ BOOST_FIXTURE_TEST_CASE(test_comparison, Test::instantiate_db_template)
 {
     const std::string lower_case = "příliš žluťoučký kůň úpěl ďábelské ódy";
     const std::string upper_case = "PŘÍLIŠ ŽLUŤOUČKÝ KŮŇ ÚPĚL ĎÁBELSKÉ ÓDY";
-    BOOST_CHECK_NE(::Util::CaseInsensitive::ComparisonResult::equal, ::Util::CaseInsensitive::ComparisonResult::not_equal);
     BOOST_CHECK_NE(lower_case, upper_case);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(lower_case, lower_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(lower_case, upper_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(upper_case, lower_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(upper_case, upper_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(upper_case + " ", upper_case),
-                      ::Util::CaseInsensitive::ComparisonResult::not_equal);
+    BOOST_CHECK(::Util::case_insensitive_equal_to()(lower_case, lower_case));
+    BOOST_CHECK(::Util::case_insensitive_equal_to()(lower_case, upper_case));
+    BOOST_CHECK(::Util::case_insensitive_equal_to()(upper_case, lower_case));
+    BOOST_CHECK(::Util::case_insensitive_equal_to()(upper_case, upper_case));
+    BOOST_CHECK(!::Util::case_insensitive_equal_to()(upper_case + " ", upper_case));
     LibFred::OperationContextCreator ctx;
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(ctx.get_conn(), lower_case, lower_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(ctx.get_conn(), lower_case, upper_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(ctx.get_conn(), upper_case, lower_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(ctx.get_conn(), upper_case, upper_case),
-                      ::Util::CaseInsensitive::ComparisonResult::equal);
-    BOOST_CHECK_EQUAL(::Util::CaseInsensitive::compare(ctx.get_conn(), upper_case + " ", upper_case),
-                      ::Util::CaseInsensitive::ComparisonResult::not_equal);
+    BOOST_CHECK(::Util::case_insensitive_equal_to(ctx.get_conn())(lower_case, lower_case));
+    BOOST_CHECK(::Util::case_insensitive_equal_to(ctx.get_conn())(lower_case, upper_case));
+    BOOST_CHECK(::Util::case_insensitive_equal_to(ctx.get_conn())(upper_case, lower_case));
+    BOOST_CHECK(::Util::case_insensitive_equal_to(ctx.get_conn())(upper_case, upper_case));
+    BOOST_CHECK(!::Util::case_insensitive_equal_to(ctx.get_conn())(upper_case + " ", upper_case));
 };
 
 BOOST_AUTO_TEST_SUITE_END()//Tests/Util/CaseInsensitive
