@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include <string>
-#include <utility>
-#include <iostream>
+
+/**
+ *  @file
+ *  test create registrar
+ */
 
 #include "libfred/registrar/create_registrar.hh"
 #include "libfred/registrar/info_registrar.hh"
@@ -28,10 +30,8 @@
 
 #include "util/random_data_generator.hh"
 
-/**
- *  @file
- *  test create registrar
- */
+#include <string>
+#include <utility>
 
 #include <boost/test/unit_test.hpp>
 
@@ -41,17 +41,15 @@ const std::string server_name = "test-create-registrar";
 
 struct test_registrar_fixture : virtual public Test::instantiate_db_template
 {
-    std::string xmark;
-    std::string test_registrar_handle;
-    ::LibFred::InfoRegistrarData test_info;
-
     test_registrar_fixture()
-    :xmark(RandomDataGenerator().xnumstring(6))
-    , test_registrar_handle(std::string("TEST-REGISTRAR-HANDLE")+xmark)
+        : xmark(RandomDataGenerator().xnumstring(6)),
+          test_registrar_handle(std::string("TEST-REGISTRAR-HANDLE") + xmark)
     {
+        static unsigned long long var_symbol = 1234560000;
+
         test_info.handle = test_registrar_handle;
-        test_info.name = Nullable<std::string>(std::string("TEST-REGISTRAR NAME")+xmark);
-        test_info.street1 = Nullable<std::string>(std::string("STR1")+xmark);
+        test_info.name = Nullable<std::string>(std::string("TEST-REGISTRAR NAME") + xmark);
+        test_info.street1 = Nullable<std::string>(std::string("STR1") + xmark);
         test_info.street2 = Nullable<std::string>("str2");
         test_info.street3 = Nullable<std::string>("str3");
         test_info.stateorprovince = Nullable<std::string>("");
@@ -61,17 +59,22 @@ struct test_registrar_fixture : virtual public Test::instantiate_db_template
         test_info.dic = Nullable<std::string>("5555551234");
         test_info.email = Nullable<std::string>("test@nic.cz");
         test_info.fax = Nullable<std::string>("132456789");
-        test_info.ico = Nullable<std::string>("1234567890");
+        test_info.ico = Nullable<std::string>(std::to_string(var_symbol++));
         test_info.organization = Nullable<std::string>("org");
         test_info.payment_memo_regex = Nullable<std::string>("");
         test_info.system = Nullable<bool>(false);
         test_info.telephone = Nullable<std::string>("123456789");
         test_info.url = Nullable<std::string>("http://test.nic.cz");
-        test_info.variable_symbol = Nullable<std::string>("1234567890");
+        test_info.variable_symbol = test_info.ico;
         test_info.vat_payer = true;
     }
+
     ~test_registrar_fixture()
     {}
+
+    std::string xmark;
+    std::string test_registrar_handle;
+    ::LibFred::InfoRegistrarData test_info;
 };
 
 BOOST_FIXTURE_TEST_SUITE(TestCreateRegistrar, test_registrar_fixture)
@@ -113,7 +116,13 @@ BOOST_AUTO_TEST_CASE(create_registrar)
         BOOST_TEST_MESSAGE(::LibFred::diff_registrar_data(test_info, registrar_info.info_registrar_data).to_string());
     }
 
-    BOOST_CHECK(test_info == registrar_info.info_registrar_data);
+    BOOST_CHECK(!test_info.stateorprovince.isnull() && test_info.stateorprovince.get_value().empty());
+    BOOST_CHECK(!test_info.payment_memo_regex.isnull() && test_info.payment_memo_regex.get_value().empty());
+    BOOST_CHECK(registrar_info.info_registrar_data.stateorprovince.isnull());
+    BOOST_CHECK(registrar_info.info_registrar_data.payment_memo_regex.isnull());
+    registrar_info.info_registrar_data.stateorprovince = std::string();
+    registrar_info.info_registrar_data.payment_memo_regex = std::string();
+    BOOST_CHECK_EQUAL(test_info, registrar_info.info_registrar_data);
 }
 
 /**
@@ -121,7 +130,6 @@ BOOST_AUTO_TEST_CASE(create_registrar)
  */
 BOOST_AUTO_TEST_CASE(create_registrar_invalid_handle)
 {
-
     {
         ::LibFred::OperationContextCreator ctx;
         ::LibFred::CreateRegistrar(test_registrar_handle).exec(ctx);
@@ -146,7 +154,6 @@ BOOST_AUTO_TEST_CASE(create_registrar_invalid_handle)
         ::LibFred::InfoRegistrarOutput registrar_info = ::LibFred::InfoRegistrarByHandle(test_registrar_handle).exec(ctx);
         BOOST_CHECK(test_info.handle == registrar_info.info_registrar_data.handle);
     }
-
 }
 
 /**
@@ -169,5 +176,4 @@ BOOST_AUTO_TEST_CASE(create_registrar_unknown_country)
     }
 }
 
-
-BOOST_AUTO_TEST_SUITE_END();//TestCreateRegistrar
+BOOST_AUTO_TEST_SUITE_END()//TestCreateRegistrar

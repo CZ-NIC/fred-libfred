@@ -182,6 +182,7 @@ set(LIBFRED_SOURCES
     src/libfred/zone/zone_soa/create_zone_soa.cc
     src/libfred/zone/zone_soa/info_zone_soa.cc
     src/libfred/zone/zone_soa/update_zone_soa.cc
+    src/util/case_insensitive.cc
     src/util/idn_utils.cc
     src/util/password_storage.cc
     src/util/printable.cc
@@ -331,8 +332,8 @@ add_executable(test-libfred
     test/libfred/test_check_handle.cc
     test/libfred/test_flagset.cc
     test/libfred/test_opexception.cc
-    test/libfred/contact/test_contact_history.cc
-    test/libfred/contact/test_contact_state.cc
+#    test/libfred/contact/test_contact_history.cc
+#    test/libfred/contact/test_contact_state.cc
     test/libfred/contact/test_copy_contact.cc
     test/libfred/contact/test_create_contact.cc
     test/libfred/contact/test_delete_contact.cc
@@ -446,6 +447,7 @@ add_executable(test-libfred
     test/libfred/zone/zone_soa/test_info_zone_soa.cc
     test/libfred/zone/zone_soa/test_update_zone_soa.cc
     test/libfred/zone/zone_soa/util.cc
+    test/util/test_case_insensitive.cc
     test/util/test_password_storage.cc
     test/setup/fixtures.cc
     test/setup/fixtures_utils.cc)
