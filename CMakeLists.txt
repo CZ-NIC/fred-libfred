@@ -258,7 +258,8 @@ set(Mpdec_LIBRARY mpdec)
 
 find_package(Threads REQUIRED)
 set(Threads_LIBRARIES Threads::Threads)
-find_package(PostgreSQL REQUIRED)
+set(PostgreSQL_KNOWN_VERSIONS 9.6)
+find_package(PostgreSQL ${PostgreSQL_KNOWN_VERSIONS} REQUIRED)
 find_package(Boost 1.53.0
     COMPONENTS
     system
