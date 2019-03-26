@@ -97,6 +97,7 @@ Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_time
                     "(h.valid_to AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::history_valid_to())(","
                     "cor.id AS ")(GetAlias::registrant_id())(","
                     "cor.name AS ")(GetAlias::registrant_handle())(","
+                    "cor.uuid AS ")(GetAlias::registrant_uuid())(","
                     "dt.nsset AS ")(GetAlias::nsset_id())(","
                     "nobr.name AS ")(GetAlias::nsset_handle())(","
                     "nobr.uuid AS ")(GetAlias::nsset_uuid())(","
