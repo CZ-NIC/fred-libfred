@@ -214,7 +214,7 @@ Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigne
     //admin contacts
     Database::ParamQuery query;
 
-    query("SELECT cobr.id AS admin_contact_id, cobr.name AS admin_contact_handle ");
+    query("SELECT cobr.id AS admin_contact_id, cobr.name AS admin_contact_handle, cobr.uuid AS admin_contact_uuid ");
     if (history_query_)
     {
         query("FROM domain_contact_map_history dcm "
