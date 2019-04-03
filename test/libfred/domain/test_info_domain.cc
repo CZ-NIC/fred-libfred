@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -54,7 +55,6 @@
 
 #include <string>
 
-
 BOOST_AUTO_TEST_SUITE(TestInfoDomain)
 
 struct test_domain_fixture : public Test::instantiate_db_template
@@ -72,14 +72,14 @@ struct test_domain_fixture : public Test::instantiate_db_template
     ::LibFred::InfoDomainOutput test_info_domain_output;
 
     test_domain_fixture()
-    :xmark(RandomDataGenerator().xnumstring(6))
-    , admin_contact_handle(std::string("TEST-ADMIN-CONTACT-HANDLE")+xmark)
-    , admin_contact1_handle(std::string("TEST-ADMIN-CONTACT2-HANDLE")+xmark)
-    , admin_contact2_handle(std::string("TEST-ADMIN-CONTACT3-HANDLE")+xmark)
-    , registrant_contact_handle(std::string("TEST-REGISTRANT-CONTACT-HANDLE")+xmark)
-    , test_nsset_handle(std::string("TEST-NSSET-HANDLE")+xmark)
-    , test_keyset_handle(std::string("TEST-KEYSET-HANDLE")+xmark)
-    , test_fqdn(std::string("fredinfo")+xmark+".cz")
+        : xmark(RandomDataGenerator().xnumstring(6)),
+          admin_contact_handle(std::string("TEST-ADMIN-CONTACT-HANDLE") + xmark),
+          admin_contact1_handle(std::string("TEST-ADMIN-CONTACT2-HANDLE") + xmark),
+          admin_contact2_handle(std::string("TEST-ADMIN-CONTACT3-HANDLE") + xmark),
+          registrant_contact_handle(std::string("TEST-REGISTRANT-CONTACT-HANDLE") + xmark),
+          test_nsset_handle(std::string("TEST-NSSET-HANDLE") + xmark),
+          test_keyset_handle(std::string("TEST-KEYSET-HANDLE") + xmark),
+          test_fqdn(std::string("fredinfo") + xmark + ".cz")
     {
         namespace ip = boost::asio::ip;
         ::LibFred::OperationContextCreator ctx;
@@ -93,28 +93,28 @@ struct test_domain_fixture : public Test::instantiate_db_template
         place.postalcode = "11150";
         place.country = "CZ";
         ::LibFred::CreateContact(admin_contact_handle, registrar_handle)
-            .set_name(std::string("TEST-ADMIN-CONTACT NAME")+xmark)
+            .set_name(std::string("TEST-ADMIN-CONTACT NAME") + xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
         ::LibFred::CreateContact(admin_contact1_handle, registrar_handle)
-            .set_name(std::string("TEST-ADMIN-CONTACT2 NAME")+xmark)
+            .set_name(std::string("TEST-ADMIN-CONTACT2 NAME") + xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
         ::LibFred::CreateContact(admin_contact2_handle, registrar_handle)
-            .set_name(std::string("TEST-ADMIN-CONTACT3 NAME")+xmark)
+            .set_name(std::string("TEST-ADMIN-CONTACT3 NAME") + xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
 
         ::LibFred::CreateContact(registrant_contact_handle, registrar_handle)
-            .set_name(std::string("TEST-REGISTRANT-CONTACT NAME")+xmark)
+            .set_name(std::string("TEST-REGISTRANT-CONTACT NAME") + xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
@@ -131,44 +131,61 @@ struct test_domain_fixture : public Test::instantiate_db_template
         .set_tech_contacts(Util::vector_of<std::string>(admin_contact_handle))
                 .exec(ctx);
 
-        ::LibFred::CreateDomain(test_fqdn//const std::string& fqdn
-                    , registrar_handle//const std::string& registrar
-                    , registrant_contact_handle//const std::string& registrant
-                    , Optional<std::string>("testauthinfo1")//const Optional<std::string>& authinfo
-                    , Nullable<std::string>(test_nsset_handle)//const Optional<Nullable<std::string> >& nsset
-                    , Nullable<std::string>(test_keyset_handle)//const Optional<Nullable<std::string> >& keyset
-                    , Util::vector_of<std::string>(admin_contact1_handle)//const std::vector<std::string>& admin_contacts
-                    , boost::gregorian::from_simple_string("2012-06-30")//const Optional<boost::gregorian::date>& expiration_date
-                    , Optional<boost::gregorian::date>()
-                    , Optional<bool>()
-                    , 0//const Optional<unsigned long long> logd_request_id
-                    ).exec(ctx);
+        ::LibFred::CreateDomain(
+                test_fqdn,//const std::string& fqdn
+                registrar_handle,//const std::string& registrar
+                registrant_contact_handle,//const std::string& registrant
+                Optional<std::string>("testauthinfo1"),//const Optional<std::string>& authinfo
+                Nullable<std::string>(test_nsset_handle),//const Optional<Nullable<std::string> >& nsset
+                Nullable<std::string>(test_keyset_handle),//const Optional<Nullable<std::string> >& keyset
+                Util::vector_of<std::string>(admin_contact1_handle),//const std::vector<std::string>& admin_contacts
+                boost::gregorian::from_simple_string("2012-06-30"),//const Optional<boost::gregorian::date>& expiration_date
+                Optional<boost::gregorian::date>(),
+                Optional<bool>(),
+                0).exec(ctx);//const Optional<unsigned long long> logd_request_id
 
         //id query
-        const Database::Result id_res = ctx.get_conn().exec_params("SELECT"
-        " (SELECT id FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='domain'::text) AND name = LOWER($1::text)) AS test_fqdn_id"
-        ",  (SELECT roid FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='domain'::text) AND name = LOWER($1::text)) AS test_fqdn_roid"
-        ",  (SELECT crhistoryid FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='domain'::text) AND name = LOWER($1::text)) AS test_fqdn_crhistoryid"
-        ",  (SELECT historyid FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='domain'::text) AND name = LOWER($1::text)) AS test_fqdn_historyid"
-        ", (SELECT id FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='contact'::text) AND name = UPPER($2::text)) AS registrant_contact_handle_id"
-        ", (SELECT id FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='nsset'::text) AND name = UPPER($3::text)) AS test_nsset_handle_id"
-        ", (SELECT id FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='keyset'::text) AND name = UPPER($4::text)) AS test_keyset_handle_id"
-        ", (SELECT id FROM registrar WHERE handle = UPPER($5::text)) AS registrar_handle_id"
-        ", (SELECT id FROM object_registry WHERE type = (SELECT id FROM enum_object_type eot WHERE eot.name='contact'::text) AND name = UPPER($6::text)) AS admin_contact1_handle_id"
-        , Database::query_param_list(test_fqdn)(registrant_contact_handle)(test_nsset_handle)(test_keyset_handle)(registrar_handle)(admin_contact1_handle));
+        const Database::Result id_res = ctx.get_conn().exec_params(
+                "SELECT "
+                    "(SELECT id FROM object_registry WHERE type=get_object_type_id('domain') AND name=LOWER($1::text)) AS test_fqdn_id,"
+                    "(SELECT uuid FROM object_registry WHERE type=get_object_type_id('domain') AND name=LOWER($1::text)) AS test_fqdn_uuid,"
+                    "(SELECT roid FROM object_registry WHERE type=get_object_type_id('domain') AND name=LOWER($1::text)) AS test_fqdn_roid,"
+                    "(SELECT crhistoryid FROM object_registry WHERE type=get_object_type_id('domain') AND name=LOWER($1::text)) AS test_fqdn_crhistoryid,"
+                    "(SELECT historyid FROM object_registry WHERE type=get_object_type_id('domain') AND name=LOWER($1::text)) AS test_fqdn_historyid,"
+                    "(SELECT h.uuid FROM object_registry obr JOIN history h ON h.id=obr.historyid WHERE obr.type=get_object_type_id('domain') AND obr.name=LOWER($1::text)) AS test_fqdn_history_uuid,"
+                    "(SELECT id FROM object_registry WHERE type=get_object_type_id('contact') AND UPPER(name)=UPPER($2::text)) AS registrant_contact_handle_id,"
+                    "(SELECT uuid FROM object_registry WHERE type=get_object_type_id('contact') AND UPPER(name)=UPPER($2::text)) AS registrant_contact_handle_uuid,"
+                    "(SELECT id FROM object_registry WHERE type=get_object_type_id('nsset') AND UPPER(name)=UPPER($3::text)) AS test_nsset_handle_id,"
+                    "(SELECT uuid FROM object_registry WHERE type=get_object_type_id('nsset') AND UPPER(name)=UPPER($3::text)) AS test_nsset_handle_uuid,"
+                    "(SELECT id FROM object_registry WHERE type=get_object_type_id('keyset') AND UPPER(name)=UPPER($4::text)) AS test_keyset_handle_id,"
+                    "(SELECT uuid FROM object_registry WHERE type=get_object_type_id('keyset') AND UPPER(name)=UPPER($4::text)) AS test_keyset_handle_uuid,"
+                    "(SELECT id FROM registrar WHERE handle=UPPER($5::text)) AS registrar_handle_id,"
+                    "(SELECT id FROM object_registry WHERE type=get_object_type_id('contact') AND UPPER(name)=UPPER($6::text)) AS admin_contact1_handle_id,"
+                    "(SELECT uuid FROM object_registry WHERE type=get_object_type_id('contact') AND UPPER(name)=UPPER($6::text)) AS admin_contact1_handle_uuid",
+        Database::query_param_list(test_fqdn)(registrant_contact_handle)(test_nsset_handle)(test_keyset_handle)(registrar_handle)(admin_contact1_handle));
 
         //crdate fix
-        ctx.get_conn().exec_params("UPDATE object_registry SET crdate = $1::timestamp WHERE id = $2::bigint",
-            Database::query_param_list("2011-06-30T23:59:59")(static_cast<unsigned long long>(id_res[0]["test_fqdn_id"])));
+        ctx.get_conn().exec_params("UPDATE object_registry SET crdate=$1::timestamp WHERE id=$2::bigint",
+                                   Database::query_param_list("2011-06-30T23:59:59")
+                                                             (static_cast<unsigned long long>(id_res[0]["test_fqdn_id"])));
 
         ctx.commit_transaction();//commit fixture
 
         //expected output data
         test_info_domain_output.info_domain_data.roid = static_cast<std::string>(id_res[0]["test_fqdn_roid"]);
         test_info_domain_output.info_domain_data.fqdn = test_fqdn;
-        test_info_domain_output.info_domain_data.registrant = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["registrant_contact_handle_id"]), registrant_contact_handle);
-        test_info_domain_output.info_domain_data.nsset = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["test_nsset_handle_id"]), test_nsset_handle);
-        test_info_domain_output.info_domain_data.keyset = ::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["test_keyset_handle_id"]), test_keyset_handle);
+        test_info_domain_output.info_domain_data.registrant = ::LibFred::RegistrableObject::Contact::ContactReference(
+                static_cast<unsigned long long>(id_res[0]["registrant_contact_handle_id"]),
+                registrant_contact_handle,
+                id_res[0]["registrant_contact_handle_uuid"].as<::LibFred::RegistrableObject::Contact::ContactUuid>());
+        test_info_domain_output.info_domain_data.nsset = ::LibFred::RegistrableObject::Nsset::NssetReference(
+                static_cast<unsigned long long>(id_res[0]["test_nsset_handle_id"]),
+                test_nsset_handle,
+                id_res[0]["test_nsset_handle_uuid"].as<::LibFred::RegistrableObject::Nsset::NssetUuid>());
+        test_info_domain_output.info_domain_data.keyset = ::LibFred::RegistrableObject::Keyset::KeysetReference(
+                static_cast<unsigned long long>(id_res[0]["test_keyset_handle_id"]),
+                test_keyset_handle,
+                id_res[0]["test_keyset_handle_uuid"].as<::LibFred::RegistrableObject::Keyset::KeysetUuid>());
         test_info_domain_output.info_domain_data.sponsoring_registrar_handle = registrar_handle;
         test_info_domain_output.info_domain_data.create_registrar_handle = registrar_handle;
         test_info_domain_output.info_domain_data.update_registrar_handle = Nullable<std::string>();
@@ -177,15 +194,21 @@ struct test_domain_fixture : public Test::instantiate_db_template
         test_info_domain_output.info_domain_data.transfer_time = Nullable<boost::posix_time::ptime>();
         test_info_domain_output.info_domain_data.expiration_date = boost::gregorian::from_simple_string("2012-06-30");
         test_info_domain_output.info_domain_data.authinfopw = "testauthinfo1";
-        test_info_domain_output.info_domain_data.admin_contacts = Util::vector_of<::LibFred::ObjectIdHandlePair>
-            (::LibFred::ObjectIdHandlePair(static_cast<unsigned long long>(id_res[0]["admin_contact1_handle_id"]), admin_contact1_handle));
+        test_info_domain_output.info_domain_data.admin_contacts =
+                {
+                    ::LibFred::RegistrableObject::Contact::ContactReference(
+                            static_cast<unsigned long long>(id_res[0]["admin_contact1_handle_id"]),
+                            admin_contact1_handle,
+                            id_res[0]["admin_contact1_handle_uuid"].as<::LibFred::RegistrableObject::Contact::ContactUuid>())
+                };
         test_info_domain_output.info_domain_data.enum_domain_validation = Nullable<::LibFred::ENUMValidationExtension>();
         test_info_domain_output.info_domain_data.delete_time = Nullable<boost::posix_time::ptime>();
         test_info_domain_output.info_domain_data.crhistoryid = static_cast<unsigned long long>(id_res[0]["test_fqdn_crhistoryid"]);
         test_info_domain_output.info_domain_data.historyid = static_cast<unsigned long long>(id_res[0]["test_fqdn_historyid"]);
+        test_info_domain_output.info_domain_data.history_uuid = id_res[0]["test_fqdn_history_uuid"].as<::LibFred::RegistrableObject::Domain::DomainHistoryUuid>();
         test_info_domain_output.info_domain_data.id = static_cast<unsigned long long>(id_res[0]["test_fqdn_id"]);
+        test_info_domain_output.info_domain_data.uuid = id_res[0]["test_fqdn_uuid"].as<::LibFred::RegistrableObject::Domain::DomainUuid>();
         test_info_domain_output.info_domain_data.zone = ::LibFred::ObjectIdHandlePair(2, "cz");
-
     }
     ~test_domain_fixture()
     {}
@@ -217,7 +240,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain, test_domain_fixture)
     ::LibFred::InfoDomainOutput info_data_9 = ::LibFred::InfoDomainByKeysetHandle(test_keyset_handle).exec(ctx).at(0);
     BOOST_CHECK(test_info_domain_output == info_data_9);
 
-    BOOST_CHECK(::LibFred::InfoDomainHistoryByRoid(xmark+test_info_domain_output.info_domain_data.roid).exec(ctx).empty());
+    BOOST_CHECK(::LibFred::InfoDomainHistoryByRoid(xmark + test_info_domain_output.info_domain_data.roid).exec(ctx).empty());
     BOOST_CHECK(::LibFred::InfoDomainHistoryById(0).exec(ctx).empty());
 }
 
@@ -252,7 +275,7 @@ BOOST_FIXTURE_TEST_CASE(test_info_domain_output_timestamp, test_domain_fixture)
  */
 BOOST_FIXTURE_TEST_CASE(info_domain_wrong_handle, test_domain_fixture)
 {
-    std::string wrong_fqdn = xmark+test_fqdn;
+    const std::string wrong_fqdn = xmark + test_fqdn;
 
     try
     {
@@ -275,7 +298,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain_wrong_handle, test_domain_fixture)
  */
 BOOST_FIXTURE_TEST_CASE(info_domain_wrong_id, test_domain_fixture)
 {
-    unsigned long long wrong_id = 0;
+    constexpr unsigned long long wrong_id = 0;
 
     try
     {
@@ -298,7 +321,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain_wrong_id, test_domain_fixture)
  */
 BOOST_FIXTURE_TEST_CASE(info_domain_history_wrong_historyid, test_domain_fixture)
 {
-    unsigned long long wrong_historyid = 0;
+    constexpr unsigned long long wrong_historyid = 0;
 
     try
     {
@@ -321,10 +344,10 @@ BOOST_FIXTURE_TEST_CASE(info_domain_history_wrong_historyid, test_domain_fixture
  */
 BOOST_FIXTURE_TEST_CASE(info_domain_unknown_registrant_handle, test_domain_fixture)
 {
-    std::string bad_handle = registrant_contact_handle + xmark;
+    const std::string bad_handle = registrant_contact_handle + xmark;
 
     ::LibFred::OperationContextCreator ctx;
-    std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByRegistrantHandle(bad_handle).exec(ctx);
+    const std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByRegistrantHandle(bad_handle).exec(ctx);
     BOOST_CHECK(info_data.empty());
 }
 
@@ -333,10 +356,10 @@ BOOST_FIXTURE_TEST_CASE(info_domain_unknown_registrant_handle, test_domain_fixtu
  */
 BOOST_FIXTURE_TEST_CASE(info_domain_unknown_admin_handle, test_domain_fixture)
 {
-    std::string bad_handle = admin_contact1_handle + xmark;
+    const std::string bad_handle = admin_contact1_handle + xmark;
 
     ::LibFred::OperationContextCreator ctx;
-    std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByAdminContactHandle(bad_handle).exec(ctx);
+    const std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByAdminContactHandle(bad_handle).exec(ctx);
     BOOST_CHECK(info_data.empty());
 }
 
@@ -345,9 +368,9 @@ BOOST_FIXTURE_TEST_CASE(info_domain_unknown_admin_handle, test_domain_fixture)
  */
 BOOST_FIXTURE_TEST_CASE(info_domain_unknown_nsset_handle, test_domain_fixture)
 {
-    std::string bad_handle = test_nsset_handle + xmark;
+    const std::string bad_handle = test_nsset_handle + xmark;
     ::LibFred::OperationContextCreator ctx;
-    std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByNssetHandle(bad_handle).exec(ctx);
+    const std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByNssetHandle(bad_handle).exec(ctx);
     BOOST_CHECK(info_data.empty());
 }
 
@@ -356,9 +379,9 @@ BOOST_FIXTURE_TEST_CASE(info_domain_unknown_nsset_handle, test_domain_fixture)
  */
 BOOST_FIXTURE_TEST_CASE(info_domain_unknown_keyset_handle, test_domain_fixture)
 {
-    std::string bad_handle = test_keyset_handle + xmark;
+    const std::string bad_handle = test_keyset_handle + xmark;
     ::LibFred::OperationContextCreator ctx;
-    std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByKeysetHandle(bad_handle).exec(ctx);
+    const std::vector<::LibFred::InfoDomainOutput> info_data = ::LibFred::InfoDomainByKeysetHandle(bad_handle).exec(ctx);
     BOOST_CHECK(info_data.empty());
 }
 
@@ -378,18 +401,18 @@ BOOST_FIXTURE_TEST_CASE(info_domain_diff, test_domain_fixture)
     test_diff.crhistoryid = std::make_pair(1ull, 2ull);
     test_diff.historyid = std::make_pair(1ull, 2ull);
     test_diff.id = std::make_pair(1ull, 2ull);
-    test_diff.delete_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.delete_time = std::make_pair(Nullable<boost::posix_time::ptime>(),
+                                           Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.fqdn = std::make_pair(std::string("testfqdn1"), std::string("testfqdn2"));
     test_diff.roid = std::make_pair(std::string("testroid1"), std::string("testroid2"));
     test_diff.sponsoring_registrar_handle = std::make_pair(std::string("testspreg1"), std::string("testspreg2"));
     test_diff.create_registrar_handle = std::make_pair(std::string("testcrreg1"), std::string("testcrreg2"));
     test_diff.update_registrar_handle = std::make_pair(Nullable<std::string>("testcrreg1"), Nullable<std::string>());
     test_diff.creation_time = std::make_pair(boost::posix_time::ptime(), boost::posix_time::second_clock::local_time());
-    test_diff.update_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-            , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>()
-                , Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.update_time = std::make_pair(Nullable<boost::posix_time::ptime>(),
+                                           Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
+    test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>(),
+                                             Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.authinfopw = std::make_pair(std::string("testpass1"), std::string("testpass2"));
 
     BOOST_TEST_MESSAGE(test_diff.to_string());
@@ -401,24 +424,24 @@ BOOST_FIXTURE_TEST_CASE(info_domain_diff, test_domain_fixture)
     BOOST_TEST_MESSAGE(::LibFred::diff_domain_data(domain_info1.info_domain_data, domain_info2.info_domain_data).to_string());
 }
 
-struct test_info_domain_order_fixture : public test_domain_fixture
+struct test_info_domain_order_fixture : test_domain_fixture
 {
     test_info_domain_order_fixture()
     {
         ::LibFred::OperationContextCreator ctx;
-        ::LibFred::UpdateDomain(test_fqdn//fqdn
-            , registrar_handle//registrar
-            , registrant_contact_handle //registrant - owner
-            , std::string("testauthinfo1") //authinfo
-            , Optional<Nullable<std::string> >()//dont change nsset
-            , Optional<Nullable<std::string> >()//dont change keyset
-            , Util::vector_of<std::string> (admin_contact2_handle)(registrant_contact_handle) //add admin contacts
-            , Util::vector_of<std::string> (admin_contact1_handle) //remove admin contacts
-            , Optional<boost::gregorian::date>()//exdate
-            , Optional<boost::gregorian::date>()//valexdate
-            , Optional<bool>()
-            , Optional<unsigned long long>() //request_id not set
-            ).exec(ctx);
+        ::LibFred::UpdateDomain(
+                test_fqdn,//fqdn
+                registrar_handle,//registrar
+                registrant_contact_handle,//registrant - owner
+                std::string("testauthinfo1"),//authinfo
+                Optional<Nullable<std::string>>(),//dont change nsset
+                Optional<Nullable<std::string>>(),//dont change keyset
+                Util::vector_of<std::string>(admin_contact2_handle)(registrant_contact_handle),//add admin contacts
+                Util::vector_of<std::string> (admin_contact1_handle),//remove admin contacts
+                Optional<boost::gregorian::date>(),//exdate
+                Optional<boost::gregorian::date>(),//valexdate
+                Optional<bool>(),
+                Optional<unsigned long long>()).exec(ctx);//request_id not set
 
         ctx.commit_transaction();//commit fixture
     }
@@ -432,21 +455,21 @@ BOOST_FIXTURE_TEST_CASE(info_domain_history_order, test_info_domain_order_fixtur
 {
     ::LibFred::OperationContextCreator ctx;
 
-    ::LibFred::InfoDomainOutput domain_history_info = ::LibFred::InfoDomainByFqdn(test_fqdn).exec(ctx);
+    const ::LibFred::InfoDomainOutput domain_history_info = ::LibFred::InfoDomainByFqdn(test_fqdn).exec(ctx);
 
-    std::vector<::LibFred::InfoDomainOutput> domain_history_info_by_roid = ::LibFred::InfoDomainHistoryByRoid(domain_history_info.info_domain_data.roid).exec(ctx);
-    BOOST_CHECK(domain_history_info_by_roid.size() == 2);
-    BOOST_CHECK(domain_history_info_by_roid.at(0).info_domain_data.historyid > domain_history_info_by_roid.at(1).info_domain_data.historyid);
+    const std::vector<::LibFred::InfoDomainOutput> domain_history_info_by_roid = ::LibFred::InfoDomainHistoryByRoid(domain_history_info.info_domain_data.roid).exec(ctx);
+    BOOST_CHECK_EQUAL(domain_history_info_by_roid.size(), 2);
+    BOOST_CHECK_GT(domain_history_info_by_roid.at(0).info_domain_data.historyid, domain_history_info_by_roid.at(1).info_domain_data.historyid);
 
-    BOOST_CHECK(domain_history_info_by_roid.at(0).info_domain_data.admin_contacts.at(0).handle == admin_contact2_handle);
-    BOOST_CHECK(domain_history_info_by_roid.at(1).info_domain_data.admin_contacts.at(0).handle == admin_contact1_handle);
+    BOOST_CHECK_EQUAL(domain_history_info_by_roid.at(0).info_domain_data.admin_contacts.at(0).handle, admin_contact2_handle);
+    BOOST_CHECK_EQUAL(domain_history_info_by_roid.at(1).info_domain_data.admin_contacts.at(0).handle, admin_contact1_handle);
 
-    std::vector<::LibFred::InfoDomainOutput> domain_history_info_by_id = ::LibFred::InfoDomainHistoryById(domain_history_info.info_domain_data.id).exec(ctx);
-    BOOST_CHECK(domain_history_info_by_id.size() == 2);
-    BOOST_CHECK(domain_history_info_by_id.at(0).info_domain_data.historyid > domain_history_info_by_roid.at(1).info_domain_data.historyid);
+    const std::vector<::LibFred::InfoDomainOutput> domain_history_info_by_id = ::LibFred::InfoDomainHistoryById(domain_history_info.info_domain_data.id).exec(ctx);
+    BOOST_CHECK_EQUAL(domain_history_info_by_id.size(), 2);
+    BOOST_CHECK_GT(domain_history_info_by_id.at(0).info_domain_data.historyid, domain_history_info_by_roid.at(1).info_domain_data.historyid);
 
-    BOOST_CHECK(domain_history_info_by_id.at(0).info_domain_data.admin_contacts.at(0).handle == admin_contact2_handle);
-    BOOST_CHECK(domain_history_info_by_id.at(1).info_domain_data.admin_contacts.at(0).handle == admin_contact1_handle);
+    BOOST_CHECK_EQUAL(domain_history_info_by_id.at(0).info_domain_data.admin_contacts.at(0).handle, admin_contact2_handle);
+    BOOST_CHECK_EQUAL(domain_history_info_by_id.at(1).info_domain_data.admin_contacts.at(0).handle, admin_contact1_handle);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestInfoDomain

@@ -76,7 +76,7 @@ InfoDomain& InfoDomain::set_cte_id_filter(const Database::ParamQuery& cte_id_fil
     return *this;
 }
 
-Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_timestamp_pg_time_zone_name)
+Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_timestamp_pg_time_zone_name)const
 {
     const Database::ReusableParameter p_local_zone(local_timestamp_pg_time_zone_name, "text");
     Database::ParamQuery info_domain_query;
@@ -88,10 +88,12 @@ Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_time
 
     info_domain_query("SELECT * FROM "
             "(SELECT dobr.id AS ")(GetAlias::id())(","
+                    "dobr.uuid AS ")(GetAlias::uuid())(","
                     "dobr.roid AS ")(GetAlias::roid())(","
                     "dobr.name AS ")(GetAlias::fqdn())(","
                     "(dobr.erdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::delete_time())(","
                     "h.id AS ")(GetAlias::historyid())(","
+                    "h.uuid AS ")(GetAlias::history_uuid())(","
                     "h.next AS ")(GetAlias::next_historyid())(","
                     "(h.valid_from AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::history_valid_from())(","
                     "(h.valid_to AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::history_valid_to())(","
@@ -209,7 +211,7 @@ Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_time
     return info_domain_query;
 }
 
-Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigned long long historyid)
+Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigned long long historyid)const
 {
     //admin contacts
     Database::ParamQuery query;
@@ -236,11 +238,11 @@ Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigne
     return query;
 }
 
-std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)const
 {
     std::vector<InfoDomainOutput> result;
 
-    const Database::Result query_result = ctx.get_conn().exec_params(make_domain_query(local_timestamp_pg_time_zone_name));
+    const Database::Result query_result = ctx.get_conn().exec_params(this->make_domain_query(local_timestamp_pg_time_zone_name));
 
     result.reserve(query_result.size());
 
@@ -248,6 +250,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
     {
         InfoDomainOutput info_domain_output;
         info_domain_output.info_domain_data.id = static_cast<unsigned long long>(query_result[idx][GetAlias::id()]);
+        info_domain_output.info_domain_data.uuid = query_result[idx][GetAlias::uuid()].as<RegistrableObject::Domain::DomainUuid>();
         info_domain_output.info_domain_data.roid = static_cast<std::string>(query_result[idx][GetAlias::roid()]);
         info_domain_output.info_domain_data.fqdn = static_cast<std::string>(query_result[idx][GetAlias::fqdn()]);
 
@@ -257,6 +260,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                         static_cast<std::string>(query_result[idx][GetAlias::delete_time()])));
 
         info_domain_output.info_domain_data.historyid = static_cast<unsigned long long>(query_result[idx][GetAlias::historyid()]);
+        info_domain_output.info_domain_data.history_uuid = query_result[idx][GetAlias::history_uuid()].as<RegistrableObject::Domain::DomainHistoryUuid>();
 
         info_domain_output.next_historyid = query_result[idx][GetAlias::next_historyid()].isnull()
                 ? Nullable<unsigned long long>()
@@ -348,7 +352,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                 : boost::posix_time::time_from_string(static_cast<std::string>(query_result[idx][GetAlias::utc_timestamp()]));
 
         //list of administrative contacts
-        const Database::Result admin_contact_res = ctx.get_conn().exec_params(make_admin_query(
+        const Database::Result admin_contact_res = ctx.get_conn().exec_params(this->make_admin_query(
                 info_domain_output.info_domain_data.id, info_domain_output.info_domain_data.historyid));
         info_domain_output.info_domain_data.admin_contacts.reserve(admin_contact_res.size());
         for (Database::Result::size_type c_idx = 0; c_idx < admin_contact_res.size(); ++c_idx)

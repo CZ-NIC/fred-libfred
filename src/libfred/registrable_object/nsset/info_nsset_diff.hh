@@ -69,26 +69,29 @@ struct InfoNssetDiff : Util::Printable<InfoNssetDiff>
     */
     bool is_empty() const;
 
-    template <class T> struct DiffMemeber { typedef Optional<std::pair<T, T> > Type;};
+    template <typename T>
+    using DiffMember = Optional<std::pair<T, T>>;
 
-    DiffMemeber<unsigned long long>::Type crhistoryid;/**< first historyid of nsset history*/
-    DiffMemeber<unsigned long long>::Type historyid;/**< last historyid of nsset history*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type delete_time; /**< nsset delete time in set local zone*/
-    DiffMemeber<std::string>::Type handle;/**< nsset handle */
-    DiffMemeber<std::string>::Type roid;/**< registry object identifier of the nsset */
-    DiffMemeber<std::string>::Type sponsoring_registrar_handle;/**< registrar administering the nsset */
-    DiffMemeber<std::string>::Type create_registrar_handle;/**< registrar that created the nsset */
-    DiffMemeber<Nullable<std::string> >::Type update_registrar_handle;/**< registrar which last time changed the nsset */
-    DiffMemeber<boost::posix_time::ptime>::Type creation_time;/**< creation time of the nsset in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type update_time; /**< last update time of the nsset in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type transfer_time; /**<last transfer time in set local zone*/
-    DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
+    DiffMember<unsigned long long> crhistoryid;/**< first historyid of nsset history*/
+    DiffMember<unsigned long long> historyid;/**< last historyid of nsset history*/
+    DiffMember<Nullable<boost::posix_time::ptime> > delete_time; /**< nsset delete time in set local zone*/
+    DiffMember<std::string> handle;/**< nsset handle */
+    DiffMember<std::string> roid;/**< registry object identifier of the nsset */
+    DiffMember<std::string> sponsoring_registrar_handle;/**< registrar administering the nsset */
+    DiffMember<std::string> create_registrar_handle;/**< registrar that created the nsset */
+    DiffMember<Nullable<std::string> > update_registrar_handle;/**< registrar which last time changed the nsset */
+    DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the nsset in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime> > update_time; /**< last update time of the nsset in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime> > transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< password for transfer */
 
-    DiffMemeber<Nullable<short> >::Type tech_check_level; /**< nsset level of technical checks */
-    DiffMemeber<std::vector<DnsHost> >::Type dns_hosts;/**< DNS hosts */
-    DiffMemeber<std::vector<RegistrableObject::Contact::ContactReference>>::Type tech_contacts;/**< list of technical contacts */
+    DiffMember<Nullable<short> > tech_check_level; /**< nsset level of technical checks */
+    DiffMember<std::vector<DnsHost> > dns_hosts;/**< DNS hosts */
+    DiffMember<std::vector<RegistrableObject::Contact::ContactReference>> tech_contacts;/**< list of technical contacts */
 
-    DiffMemeber<unsigned long long>::Type id;/**< id of the nsset object*/
+    DiffMember<unsigned long long> id;/**< id of the nsset object*/
+    DiffMember<RegistrableObject::Nsset::NssetUuid> uuid;/**< uuid of the nsset object*/
+    DiffMember<RegistrableObject::Nsset::NssetHistoryUuid> history_uuid;/**< history uuid of the nsset object*/
 };
 
 /**

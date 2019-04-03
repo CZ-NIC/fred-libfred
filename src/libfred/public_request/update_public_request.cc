@@ -160,16 +160,19 @@ UpdatePublicRequest::Result UpdatePublicRequest::update(OperationContext &_ctx,
     std::ostringstream sql_set;
     Exception bad_params;
 
-    if (status_.isset()) {
-        try {
-            switch (status_.get_value()) {
-            case PublicRequest::Status::resolved:
-                break;
-            case PublicRequest::Status::invalidated:
-                stop_letter_sending(_ctx, _public_request_id);
-                break;
-            default:
-                throw std::runtime_error("unable to set other public request state than 'resolved' or 'invalidated'");
+    if (status_.isset())
+    {
+        try
+        {
+            switch (status_.get_value())
+            {
+                case PublicRequest::Status::resolved:
+                    break;
+                case PublicRequest::Status::invalidated:
+                    stop_letter_sending(_ctx, _public_request_id);
+                    break;
+                default:
+                    throw std::runtime_error("unable to set other public request state than 'resolved' or 'invalidated'");
             }
             sql_set << "status=(SELECT id FROM enum_public_request_status WHERE name=$"
                     << params.add(Conversion::Enums::to_db_handle(status_.get_value()))
@@ -185,72 +188,84 @@ UpdatePublicRequest::Result UpdatePublicRequest::update(OperationContext &_ctx,
                     << params.add(Conversion::Enums::to_db_handle(on_status_action))
                     << "::enum_on_status_action_type,";
         }
-        catch (const std::runtime_error &e) {
+        catch (const std::runtime_error &e)
+        {
             bad_params.set_bad_public_request_status(status_.get_value());
         }
     }
 
-
-    if (reason_.isset()) {
+    if (reason_.isset())
+    {
         sql_set << "reason=$"
                 << (reason_.get_value().isnull() ? params.add(Database::QPNull)
                                                  : params.add(reason_.get_value().get_value()))
                 << "::TEXT,";
     }
 
-    if (email_to_answer_.isset()) {
+    if (email_to_answer_.isset())
+    {
         sql_set << "email_to_answer=$"
                 << (email_to_answer_.get_value().isnull() ? params.add(Database::QPNull)
                                                           : params.add(email_to_answer_.get_value().get_value()))
                 << "::TEXT,";
     }
 
-    if (answer_email_id_.isset()) {
+    if (answer_email_id_.isset())
+    {
         sql_set << "answer_email_id=$"
                 << (answer_email_id_.get_value().isnull() ? params.add(Database::QPNull)
                                                           : params.add(answer_email_id_.get_value().get_value()))
                 << "::BIGINT,";
-        if (!answer_email_id_.get_value().isnull()) {
+        if (!answer_email_id_.get_value().isnull())
+        {
             const EmailId email_id = answer_email_id_.get_value().get_value();
             const bool answer_email_id_exists = static_cast< bool >(_ctx.get_conn().exec_params(
                 "SELECT EXISTS(SELECT * FROM mail_archive WHERE id=$1::BIGINT)",
                 Database::query_param_list(email_id))[0][0]);
-            if (!answer_email_id_exists) {
+            if (!answer_email_id_exists)
+            {
                 bad_params.set_unknown_email_id(email_id);
             }
         }
     }
 
-    if (registrar_id_.isset()) {
+    if (registrar_id_.isset())
+    {
         sql_set << "registrar_id=$"
                 << (registrar_id_.get_value().isnull() ? params.add(Database::QPNull)
                                                        : params.add(registrar_id_.get_value().get_value()))
                 << "::BIGINT,";
-        if (!registrar_id_.get_value().isnull()) {
+        if (!registrar_id_.get_value().isnull())
+        {
             const RegistrarId registrar_id = registrar_id_.get_value().get_value();
             const bool registrar_id_exists = static_cast< bool >(_ctx.get_conn().exec_params(
                 "SELECT EXISTS(SELECT * FROM registrar WHERE id=$1::BIGINT)",
                 Database::query_param_list(registrar_id))[0][0]);
-            if (!registrar_id_exists) {
+            if (!registrar_id_exists)
+            {
                 bad_params.set_unknown_registrar_id(registrar_id);
             }
         }
     }
 
-    if (on_status_action_.isset()) {
+    if (on_status_action_.isset())
+    {
         sql_set << "on_status_action=$"
                 << params.add(Conversion::Enums::to_db_handle(on_status_action_.get_value()))
                 << "::enum_on_status_action_type,";
     }
 
-    if (_resolve_log_request_id.isset()) {
+    if (_resolve_log_request_id.isset())
+    {
         sql_set << "resolve_request_id=$" << params.add(_resolve_log_request_id.get_value()) << "::BIGINT,";
     }
 
-    if (sql_set.str().empty()) {
+    if (sql_set.str().empty())
+    {
         bad_params.set_nothing_to_do(_public_request_id);
     }
-    if (bad_params.throw_me()) {
+    if (bad_params.throw_me())
+    {
         BOOST_THROW_EXCEPTION(bad_params);
     }
     const std::string to_set = sql_set.str().substr(0, sql_set.str().length() - 1);//last ', ' removed

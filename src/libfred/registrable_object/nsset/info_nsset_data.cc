@@ -21,55 +21,57 @@
  *  common nsset info data
  */
 
-#include <utility>
-#include <string>
+#include "libfred/registrable_object/nsset/info_nsset_data.hh"
+#include "libfred/registrable_object/nsset/info_nsset_diff.hh"
+#include "util/util.hh"
 
 #include <boost/lexical_cast.hpp>
 
-#include "util/util.hh"
-#include "libfred/registrable_object/nsset/info_nsset_data.hh"
-#include "libfred/registrable_object/nsset/info_nsset_diff.hh"
+#include <utility>
+#include <string>
 
-namespace LibFred
+namespace LibFred {
+
+InfoNssetData::InfoNssetData()
+    : crhistoryid(0),
+      historyid(0),
+      id(0)
+{}
+
+bool InfoNssetData::operator==(const InfoNssetData& rhs) const
 {
+    return diff_nsset_data(*this, rhs).is_empty();
+}
 
-    InfoNssetData::InfoNssetData()
-    : crhistoryid(0)
-    , historyid(0)
-    , id(0)
-    {}
+bool InfoNssetData::operator!=(const InfoNssetData& rhs) const
+{
+    return !this->operator==(rhs);
+}
 
-    bool InfoNssetData::operator==(const InfoNssetData& rhs) const
-    {
-        return diff_nsset_data(*this, rhs).is_empty();
-    }
+std::string InfoNssetData::to_string() const
+{
+    return Util::format_data_structure(
+            "InfoNssetData",
+            {
+                std::make_pair("crhistoryid", std::to_string(crhistoryid)),
+                std::make_pair("historyid", std::to_string(historyid)),
+                std::make_pair("history_uuid", strong_to_string(history_uuid)),
+                std::make_pair("delete_time", delete_time.print_quoted()),
+                std::make_pair("handle", handle),
+                std::make_pair("id", std::to_string(id)),
+                std::make_pair("uuid", strong_to_string(uuid)),
+                std::make_pair("roid", roid),
+                std::make_pair("sponsoring_registrar_handle", sponsoring_registrar_handle),
+                std::make_pair("create_registrar_handle", create_registrar_handle),
+                std::make_pair("update_registrar_handle", update_registrar_handle.print_quoted()),
+                std::make_pair("creation_time", boost::lexical_cast<std::string>(creation_time)),
+                std::make_pair("update_time", update_time.print_quoted()),
+                std::make_pair("transfer_time", transfer_time.print_quoted()),
+                std::make_pair("authinfopw", authinfopw),
+                std::make_pair("tech_check_level", tech_check_level.print_quoted()),
+                std::make_pair("dns_hosts", Util::format_container(dns_hosts)),
+                std::make_pair("tech_contacts", Util::format_container(tech_contacts))
+            });
+}
 
-    bool InfoNssetData::operator!=(const InfoNssetData& rhs) const
-    {
-        return !this->operator ==(rhs);
-    }
-
-    std::string InfoNssetData::to_string() const
-    {
-        return Util::format_data_structure("InfoNssetData",
-        Util::vector_of<std::pair<std::string, std::string> >
-        (std::make_pair("crhistoryid", boost::lexical_cast<std::string>(crhistoryid)))
-        (std::make_pair("historyid", boost::lexical_cast<std::string>(historyid)))
-        (std::make_pair("delete_time", delete_time.print_quoted()))
-        (std::make_pair("handle", handle))
-        (std::make_pair("roid", roid))
-        (std::make_pair("sponsoring_registrar_handle", sponsoring_registrar_handle))
-        (std::make_pair("create_registrar_handle", create_registrar_handle))
-        (std::make_pair("update_registrar_handle", update_registrar_handle.print_quoted()))
-        (std::make_pair("creation_time", boost::lexical_cast<std::string>(creation_time)))
-        (std::make_pair("update_time", update_time.print_quoted()))
-        (std::make_pair("transfer_time", transfer_time.print_quoted()))
-        (std::make_pair("authinfopw", authinfopw))
-        (std::make_pair("tech_check_level", tech_check_level.print_quoted()))
-        (std::make_pair("dns_hosts", Util::format_container(dns_hosts)))
-        (std::make_pair("tech_contacts", Util::format_container(tech_contacts)))
-        );
-    }
-
-} // namespace LibFred
-
+}//namespace LibFred

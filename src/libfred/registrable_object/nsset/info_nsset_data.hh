@@ -26,6 +26,7 @@
 
 #include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/nsset/nsset_dns_host.hh"
+#include "libfred/registrable_object/nsset/nsset_uuid.hh"
 
 #include "util/optional_value.hh"
 #include "util/db/nullable.hh"
@@ -71,7 +72,9 @@ struct InfoNssetData : Util::Printable<InfoNssetData>
 
     unsigned long long crhistoryid;/**< first historyid of nsset history */
     unsigned long long historyid;/**< last historyid of nsset history */
+    RegistrableObject::Nsset::NssetHistoryUuid history_uuid;/**< last history_uuid of nsset history */
     unsigned long long id;/**< id of the nsset object*/
+    RegistrableObject::Nsset::NssetUuid uuid;/**< uuid of the nsset object*/
     Nullable<boost::posix_time::ptime> delete_time; /**< nsset delete time in set local zone */
     std::string handle;/**< nsset handle */
     std::string roid;/**< registry object identifier of the nsset */

@@ -30,9 +30,9 @@
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
 
-#include <algorithm>
-#include <sstream>
+#include <set>
 #include <string>
+#include <utility>
 
 namespace LibFred {
 
@@ -40,44 +40,8 @@ namespace LibFred {
  * Diff of contact data.
  * Data of the contact difference with the same members as contact data but in optional pairs. Optional pair member is set in case of difference in compared contact data.
  */
-struct InfoContactDiff : public Util::Printable<InfoContactDiff>
+struct InfoContactDiff : Util::Printable<InfoContactDiff>
 {
-    template <class T> struct DiffMemeber { typedef Optional<std::pair<T, T>> Type;};
-
-    DiffMemeber<unsigned long long>::Type crhistoryid;/**< first historyid of contact history*/
-    DiffMemeber<unsigned long long>::Type historyid;/**< last historyid of contact history*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type delete_time; /**< contact delete time in set local zone*/
-    DiffMemeber<std::string>::Type handle;/**< contact handle */
-    DiffMemeber<std::string>::Type roid;/**< registry object identifier of the contact */
-    DiffMemeber<std::string>::Type sponsoring_registrar_handle;/**< registrar administering the contact */
-    DiffMemeber<std::string>::Type create_registrar_handle;/**< registrar that created the contact */
-    DiffMemeber<Nullable<std::string> >::Type update_registrar_handle;/**< registrar which last time changed the contact */
-    DiffMemeber<boost::posix_time::ptime>::Type creation_time;/**< creation time of the contact in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type update_time; /**< last update time of the contact in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type transfer_time; /**<last transfer time in set local zone*/
-    DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
-    DiffMemeber<Nullable<std::string> >::Type name ;/**< name of contact person */
-    DiffMemeber<Nullable<std::string> >::Type organization;/**< full trade name of organization */
-    DiffMemeber< Nullable< LibFred::Contact::PlaceAddress > >::Type place;/**< place address of contact */
-    DiffMemeber<Nullable<std::string> >::Type telephone;/**<  telephone number */
-    DiffMemeber<Nullable<std::string> >::Type fax;/**< fax number */
-    DiffMemeber<Nullable<std::string> >::Type email;/**< e-mail address */
-    DiffMemeber<Nullable<std::string> >::Type notifyemail;/**< to this e-mail address will be send message in case of any change in domain or nsset affecting contact */
-    DiffMemeber<Nullable<std::string> >::Type vat;/**< taxpayer identification number */
-    DiffMemeber< Nullable< PersonalIdUnion > >::Type personal_id;/**< type and value of identification number e.g. social security number, identity card number, date of birth */
-    DiffMemeber<bool>::Type disclosename;/**< whether to reveal contact name */
-    DiffMemeber<bool>::Type discloseorganization;/**< whether to reveal organization */
-    DiffMemeber<bool>::Type discloseaddress;/**< whether to reveal address */
-    DiffMemeber<bool>::Type disclosetelephone;/**< whether to reveal phone number */
-    DiffMemeber<bool>::Type disclosefax;/**< whether to reveal fax number */
-    DiffMemeber<bool>::Type discloseemail;/**< whether to reveal email address */
-    DiffMemeber<bool>::Type disclosevat;/**< whether to reveal taxpayer identification number */
-    DiffMemeber<bool>::Type discloseident;/**< whether to reveal unambiguous identification number */
-    DiffMemeber<bool>::Type disclosenotifyemail;/**< whether to reveal notify email */
-    DiffMemeber<unsigned long long>::Type id;/**< id of the contact object*/
-    DiffMemeber<LibFred::ContactAddressList>::Type addresses;/**< additional contact addresses */
-    DiffMemeber<Nullable<bool> >::Type warning_letter;/**< contact preference for sending domain expiration letters */
-
     /**
     * Constructor of the contact data diff structure.
     */
@@ -100,6 +64,45 @@ struct InfoContactDiff : public Util::Printable<InfoContactDiff>
     * @return false if instance contains differing data and true if not
     */
     bool is_empty()const;
+
+    template <typename T>
+    using DiffMember = Optional<std::pair<T, T>>;
+
+    DiffMember<unsigned long long> crhistoryid;/**< first historyid of contact history*/
+    DiffMember<unsigned long long> historyid;/**< last historyid of contact history*/
+    DiffMember<Nullable<boost::posix_time::ptime>> delete_time; /**< contact delete time in set local zone*/
+    DiffMember<std::string> handle;/**< contact handle */
+    DiffMember<std::string> roid;/**< registry object identifier of the contact */
+    DiffMember<std::string> sponsoring_registrar_handle;/**< registrar administering the contact */
+    DiffMember<std::string> create_registrar_handle;/**< registrar that created the contact */
+    DiffMember<Nullable<std::string>> update_registrar_handle;/**< registrar which last time changed the contact */
+    DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the contact in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime>> update_time; /**< last update time of the contact in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime>> transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< password for transfer */
+    DiffMember<Nullable<std::string>> name ;/**< name of contact person */
+    DiffMember<Nullable<std::string>> organization;/**< full trade name of organization */
+    DiffMember< Nullable<LibFred::Contact::PlaceAddress>> place;/**< place address of contact */
+    DiffMember<Nullable<std::string>> telephone;/**<  telephone number */
+    DiffMember<Nullable<std::string>> fax;/**< fax number */
+    DiffMember<Nullable<std::string>> email;/**< e-mail address */
+    DiffMember<Nullable<std::string>> notifyemail;/**< to this e-mail address will be send message in case of any change in domain or nsset affecting contact */
+    DiffMember<Nullable<std::string>> vat;/**< taxpayer identification number */
+    DiffMember< Nullable< PersonalIdUnion >> personal_id;/**< type and value of identification number e.g. social security number, identity card number, date of birth */
+    DiffMember<bool> disclosename;/**< whether to reveal contact name */
+    DiffMember<bool> discloseorganization;/**< whether to reveal organization */
+    DiffMember<bool> discloseaddress;/**< whether to reveal address */
+    DiffMember<bool> disclosetelephone;/**< whether to reveal phone number */
+    DiffMember<bool> disclosefax;/**< whether to reveal fax number */
+    DiffMember<bool> discloseemail;/**< whether to reveal email address */
+    DiffMember<bool> disclosevat;/**< whether to reveal taxpayer identification number */
+    DiffMember<bool> discloseident;/**< whether to reveal unambiguous identification number */
+    DiffMember<bool> disclosenotifyemail;/**< whether to reveal notify email */
+    DiffMember<unsigned long long> id;/**< id of the contact object*/
+    DiffMember<RegistrableObject::Contact::ContactUuid> uuid;/**< uuid of the contact object*/
+    DiffMember<RegistrableObject::Contact::ContactHistoryUuid> history_uuid;/**< history uuid of the contact object*/
+    DiffMember<LibFred::ContactAddressList> addresses;/**< additional contact addresses */
+    DiffMember<Nullable<bool>> warning_letter;/**< contact preference for sending domain expiration letters */
 };
 
 /**

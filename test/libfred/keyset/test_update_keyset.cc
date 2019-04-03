@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -41,9 +42,8 @@
 
 const std::string server_name = "test-update-keyset";
 
-struct update_keyset_fixture : public Test::instantiate_db_template
+struct update_keyset_fixture : Test::instantiate_db_template
 {
-
     std::string registrar_handle;
     std::string xmark;
     std::string admin_contact4_handle;
@@ -52,15 +52,15 @@ struct update_keyset_fixture : public Test::instantiate_db_template
     std::string test_keyset_handle;
 
     update_keyset_fixture()
-    : xmark(RandomDataGenerator().xnumstring(6))
-    , admin_contact4_handle(std::string("TEST-ADMIN-CONTACT4-HANDLE")+xmark)
-    , admin_contact5_handle(std::string("TEST-ADMIN-CONTACT5-HANDLE")+xmark)
-    , admin_contact6_handle(std::string("TEST-ADMIN-CONTACT6-HANDLE")+xmark)
-    , test_keyset_handle(std::string("TEST-KEYSET-HANDLE")+xmark)
+        : xmark(RandomDataGenerator().xnumstring(6)),
+          admin_contact4_handle("TEST-ADMIN-CONTACT4-HANDLE" + xmark),
+          admin_contact5_handle("TEST-ADMIN-CONTACT5-HANDLE" + xmark),
+          admin_contact6_handle("TEST-ADMIN-CONTACT6-HANDLE" + xmark),
+          test_keyset_handle("TEST-KEYSET-HANDLE" + xmark)
     {
         ::LibFred::OperationContextCreator ctx;
-        registrar_handle  = static_cast<std::string>(ctx.get_conn().exec(
-            "SELECT handle FROM registrar WHERE system = TRUE ORDER BY id LIMIT 1")[0][0]);
+        registrar_handle = static_cast<std::string>(ctx.get_conn().exec(
+                "SELECT handle FROM registrar WHERE system ORDER BY id LIMIT 1")[0][0]);
         BOOST_CHECK(!registrar_handle.empty());//expecting existing system registrar
 
         ::LibFred::Contact::PlaceAddress place;
@@ -69,7 +69,7 @@ struct update_keyset_fixture : public Test::instantiate_db_template
         place.postalcode = "11150";
         place.country = "CZ";
         ::LibFred::CreateContact(admin_contact4_handle, registrar_handle)
-            .set_name(admin_contact4_handle+xmark)
+            .set_name(admin_contact4_handle + xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
@@ -77,7 +77,7 @@ struct update_keyset_fixture : public Test::instantiate_db_template
         BOOST_TEST_MESSAGE(std::string("admin_contact4_handle: ") + admin_contact4_handle);
 
         ::LibFred::CreateContact(admin_contact5_handle, registrar_handle)
-            .set_name(admin_contact5_handle+xmark)
+            .set_name(admin_contact5_handle + xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
@@ -85,7 +85,7 @@ struct update_keyset_fixture : public Test::instantiate_db_template
         BOOST_TEST_MESSAGE(std::string("admin_contact5_handle: ") + admin_contact5_handle);
 
         ::LibFred::CreateContact(admin_contact6_handle, registrar_handle)
-            .set_name(admin_contact6_handle+xmark)
+            .set_name(admin_contact6_handle + xmark)
             .set_disclosename(true)
             .set_place(place)
             .set_discloseaddress(true)
@@ -93,8 +93,8 @@ struct update_keyset_fixture : public Test::instantiate_db_template
         BOOST_TEST_MESSAGE(std::string("admin_contact6_handle: ") + admin_contact6_handle);
 
         ::LibFred::CreateKeyset(test_keyset_handle, registrar_handle)
-                .set_tech_contacts(Util::vector_of<std::string>(admin_contact6_handle))
-                .set_dns_keys(Util::vector_of<::LibFred::DnsKey> (::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8")))
+                .set_tech_contacts({admin_contact6_handle})
+                .set_dns_keys({::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8")})
                 .exec(ctx);
         BOOST_TEST_MESSAGE(std::string("test_keyset_handle: ") + test_keyset_handle);
         ctx.commit_transaction();
@@ -113,8 +113,8 @@ BOOST_FIXTURE_TEST_SUITE(TestUpdateKeyset, update_keyset_fixture)
 BOOST_AUTO_TEST_CASE(update_keyset)
 {
     ::LibFred::OperationContextCreator ctx;
-    ::LibFred::InfoKeysetOutput info_data_1 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_1 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_1 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_1 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     //update_registrar_handle check
     BOOST_CHECK(info_data_1.info_keyset_data.update_registrar_handle.isnull());
@@ -124,22 +124,24 @@ BOOST_AUTO_TEST_CASE(update_keyset)
 
     //history check
     BOOST_CHECK(history_info_data_1.at(0) == info_data_1);
-    BOOST_CHECK(history_info_data_1.at(0).info_keyset_data.crhistoryid == info_data_1.info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_1.at(0).info_keyset_data.crhistoryid, info_data_1.info_keyset_data.historyid);
 
     //empty update
     ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle).exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_2 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_2 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_2 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_2 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_1_with_changes = info_data_1;
 
     //updated historyid
-    BOOST_CHECK(info_data_1.info_keyset_data.historyid !=info_data_2.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_1.info_keyset_data.historyid, info_data_2.info_keyset_data.historyid);
     info_data_1_with_changes.info_keyset_data.historyid = info_data_2.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_1.info_keyset_data.history_uuid), get_raw_value_from(info_data_2.info_keyset_data.history_uuid));
+    info_data_1_with_changes.info_keyset_data.history_uuid = info_data_2.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_2.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_2.info_keyset_data.update_registrar_handle.get_value());
     info_data_1_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated update_time
@@ -160,48 +162,56 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_2.at(0).info_keyset_data.crhistoryid == info_data_2.info_keyset_data.crhistoryid);
 
 
-    ::LibFred::UpdateKeyset(test_keyset_handle//const std::string& handle
-        , registrar_handle//const std::string& registrar
-        , Optional<std::string>("testauthinfo")//const Optional<std::string>& authinfo
-        , Util::vector_of<std::string>(admin_contact5_handle) //const std::vector<std::string>& add_tech_contact
-        , Util::vector_of<std::string>(admin_contact6_handle)//const std::vector<std::string>& rem_tech_contact
-        , Util::vector_of<::LibFred::DnsKey> (::LibFred::DnsKey(257, 3, 5, "key"))//const std::vector<DnsKey>& add_dns_key
-        , Util::vector_of<::LibFred::DnsKey> (::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8"))//const std::vector<DnsKey>& rem_dns_key
-        , Optional<unsigned long long>(0)//const Optional<unsigned long long> logd_request_id
-        ).exec(ctx);
+    ::LibFred::UpdateKeyset(
+            test_keyset_handle,//const std::string& handle
+            registrar_handle,//const std::string& registrar
+            "testauthinfo",//const Optional<std::string>& authinfo
+            {admin_contact5_handle},//const std::vector<std::string>& add_tech_contact
+            {admin_contact6_handle},//const std::vector<std::string>& rem_tech_contact
+            {::LibFred::DnsKey(257, 3, 5, "key")},//const std::vector<DnsKey>& add_dns_key
+            {::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8")},//const std::vector<DnsKey>& rem_dns_key
+            0)//logd_request_id
+        .exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_3 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_3 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_3 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_3 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_2_with_changes = info_data_2;
 
     //updated historyid
-    BOOST_CHECK(info_data_2.info_keyset_data.historyid !=info_data_3.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_2.info_keyset_data.historyid, info_data_3.info_keyset_data.historyid);
     info_data_2_with_changes.info_keyset_data.historyid = info_data_3.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_2.info_keyset_data.history_uuid), get_raw_value_from(info_data_3.info_keyset_data.history_uuid));
+    info_data_2_with_changes.info_keyset_data.history_uuid = info_data_3.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_3.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_3.info_keyset_data.update_registrar_handle.get_value());
     info_data_2_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated sponsoring_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_3.info_keyset_data.sponsoring_registrar_handle));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_3.info_keyset_data.sponsoring_registrar_handle);
     info_data_2_with_changes.info_keyset_data.sponsoring_registrar_handle = registrar_handle;
 
     //updated update_time
     info_data_2_with_changes.info_keyset_data.update_time = info_data_3.info_keyset_data.update_time;
 
     //updated authinfopw
-    BOOST_CHECK(info_data_2.info_keyset_data.authinfopw != info_data_3.info_keyset_data.authinfopw);
-    BOOST_CHECK(std::string("testauthinfo") == info_data_3.info_keyset_data.authinfopw);
-    info_data_2_with_changes.info_keyset_data.authinfopw = std::string("testauthinfo");
+    BOOST_CHECK_NE(info_data_2.info_keyset_data.authinfopw, info_data_3.info_keyset_data.authinfopw);
+    BOOST_CHECK_EQUAL(info_data_3.info_keyset_data.authinfopw, "testauthinfo");
+    info_data_2_with_changes.info_keyset_data.authinfopw = "testauthinfo";
 
     //dnskeys
-    info_data_2_with_changes.info_keyset_data.dns_keys = Util::vector_of<::LibFred::DnsKey> (::LibFred::DnsKey(257, 3, 5, "key"));
+    info_data_2_with_changes.info_keyset_data.dns_keys = {::LibFred::DnsKey(257, 3, 5, "key")};
 
     //tech contacts
-    ::LibFred::InfoContactOutput admin_contact5_info  = ::LibFred::InfoContactByHandle(admin_contact5_handle).exec(ctx);
-    info_data_2_with_changes.info_keyset_data.tech_contacts = Util::vector_of<::LibFred::ObjectIdHandlePair>(::LibFred::ObjectIdHandlePair(
-        admin_contact5_info.info_contact_data.id, admin_contact5_info.info_contact_data.handle));
+    const ::LibFred::InfoContactOutput admin_contact5_info = ::LibFred::InfoContactByHandle(admin_contact5_handle).exec(ctx);
+    info_data_2_with_changes.info_keyset_data.tech_contacts =
+            {
+                ::LibFred::RegistrableObject::Contact::ContactReference(
+                        admin_contact5_info.info_contact_data.id,
+                        admin_contact5_info.info_contact_data.handle,
+                        admin_contact5_info.info_contact_data.uuid)
+            };
 
     //check changes made by last update
     BOOST_CHECK(info_data_2_with_changes == info_data_3);
@@ -215,30 +225,33 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_3.at(1).info_keyset_data == history_info_data_2.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_3.at(1).next_historyid.get_value() == history_info_data_3.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_3.at(0).info_keyset_data.crhistoryid == info_data_3.info_keyset_data.crhistoryid);
+    BOOST_CHECK_EQUAL(history_info_data_3.at(1).next_historyid.get_value(), history_info_data_3.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_3.at(0).info_keyset_data.crhistoryid, info_data_3.info_keyset_data.crhistoryid);
 
-    ::LibFred::UpdateKeyset(test_keyset_handle//const std::string& handle
-        , registrar_handle//const std::string& registrar
-        , Optional<std::string>()//const Optional<std::string>& authinfo
-        , std::vector<std::string>() //const std::vector<std::string>& add_tech_contact
-        , std::vector<std::string>()//const std::vector<std::string>& rem_tech_contact
-        , Util::vector_of<::LibFred::DnsKey> (::LibFred::DnsKey(257, 3, 5, "key"))//const std::vector<DnsKey>& add_dns_key
-        , Util::vector_of<::LibFred::DnsKey> (::LibFred::DnsKey(257, 3, 5, "key"))//const std::vector<DnsKey>& rem_dns_key
-        , Optional<unsigned long long>()//const Optional<unsigned long long> logd_request_id
-        ).exec(ctx);
+    ::LibFred::UpdateKeyset(
+            test_keyset_handle,//const std::string& handle
+            registrar_handle,//const std::string& registrar
+            Optional<std::string>(),//const Optional<std::string>& authinfo
+            {},//const std::vector<std::string>& add_tech_contact
+            {},//const std::vector<std::string>& rem_tech_contact
+            {::LibFred::DnsKey(257, 3, 5, "key")},//const std::vector<DnsKey>& add_dns_key
+            {::LibFred::DnsKey(257, 3, 5, "key")},//const std::vector<DnsKey>& rem_dns_key
+            Optional<unsigned long long>())//const Optional<unsigned long long> logd_request_id
+        .exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_4 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_4 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_4 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_4 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_3_with_changes = info_data_3;
 
     //updated historyid
-    BOOST_CHECK(info_data_3.info_keyset_data.historyid !=info_data_4.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_3.info_keyset_data.historyid, info_data_4.info_keyset_data.historyid);
     info_data_3_with_changes.info_keyset_data.historyid = info_data_4.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_3.info_keyset_data.history_uuid), get_raw_value_from(info_data_4.info_keyset_data.history_uuid));
+    info_data_3_with_changes.info_keyset_data.history_uuid = info_data_4.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_4.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_4.info_keyset_data.update_registrar_handle.get_value());
     info_data_3_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated update_time
@@ -257,32 +270,34 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_4.at(1).info_keyset_data == history_info_data_3.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_4.at(1).next_historyid.get_value() == history_info_data_4.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_4.at(0).info_keyset_data.crhistoryid == info_data_4.info_keyset_data.crhistoryid);
+    BOOST_CHECK_EQUAL(history_info_data_4.at(1).next_historyid.get_value(), history_info_data_4.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_4.at(0).info_keyset_data.crhistoryid, info_data_4.info_keyset_data.crhistoryid);
 
     //transfer password
     ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle).set_authinfo("kukauthinfo").exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_5 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_5 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_5 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_5 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_4_with_changes = info_data_4;
 
     //updated historyid
-    BOOST_CHECK(info_data_4.info_keyset_data.historyid !=info_data_5.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_4.info_keyset_data.historyid, info_data_5.info_keyset_data.historyid);
     info_data_4_with_changes.info_keyset_data.historyid = info_data_5.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_4.info_keyset_data.history_uuid), get_raw_value_from(info_data_5.info_keyset_data.history_uuid));
+    info_data_4_with_changes.info_keyset_data.history_uuid = info_data_5.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_5.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_5.info_keyset_data.update_registrar_handle.get_value());
     info_data_4_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated update_time
     info_data_4_with_changes.info_keyset_data.update_time = info_data_5.info_keyset_data.update_time;
 
     //updated authinfopw
-    BOOST_CHECK(info_data_4.info_keyset_data.authinfopw != info_data_5.info_keyset_data.authinfopw);
-    BOOST_CHECK(std::string("kukauthinfo") == info_data_5.info_keyset_data.authinfopw);
-    info_data_4_with_changes.info_keyset_data.authinfopw = std::string("kukauthinfo");
+    BOOST_CHECK_NE(info_data_4.info_keyset_data.authinfopw, info_data_5.info_keyset_data.authinfopw);
+    BOOST_CHECK_EQUAL(info_data_5.info_keyset_data.authinfopw, "kukauthinfo");
+    info_data_4_with_changes.info_keyset_data.authinfopw = "kukauthinfo";
 
     //check changes made by last update
     BOOST_CHECK(info_data_4_with_changes == info_data_5);
@@ -298,32 +313,37 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_5.at(1).info_keyset_data == history_info_data_4.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_5.at(1).next_historyid.get_value() == history_info_data_5.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_5.at(0).info_keyset_data.crhistoryid == info_data_5.info_keyset_data.crhistoryid);
+    BOOST_CHECK_EQUAL(history_info_data_5.at(1).next_historyid.get_value(), history_info_data_5.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_5.at(0).info_keyset_data.crhistoryid, info_data_5.info_keyset_data.crhistoryid);
 
     //add tech contact
     ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle).add_tech_contact(admin_contact4_handle).exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_6 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_6 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_6 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_6 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_5_with_changes = info_data_5;
 
     //updated historyid
-    BOOST_CHECK(info_data_5.info_keyset_data.historyid !=info_data_6.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_5.info_keyset_data.historyid, info_data_6.info_keyset_data.historyid);
     info_data_5_with_changes.info_keyset_data.historyid = info_data_6.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_5.info_keyset_data.history_uuid), get_raw_value_from(info_data_6.info_keyset_data.history_uuid));
+    info_data_5_with_changes.info_keyset_data.history_uuid = info_data_6.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_6.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_6.info_keyset_data.update_registrar_handle.get_value());
     info_data_5_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated update_time
     info_data_5_with_changes.info_keyset_data.update_time = info_data_6.info_keyset_data.update_time;
 
     //add tech contact
-    ::LibFred::InfoContactOutput admin_contact4_info  = ::LibFred::InfoContactByHandle(admin_contact4_handle).exec(ctx);
-    info_data_5_with_changes.info_keyset_data.tech_contacts.push_back(::LibFred::ObjectIdHandlePair(
-        admin_contact4_info.info_contact_data.id, admin_contact4_info.info_contact_data.handle));
+    const ::LibFred::InfoContactOutput admin_contact4_info  = ::LibFred::InfoContactByHandle(admin_contact4_handle).exec(ctx);
+    info_data_5_with_changes.info_keyset_data.tech_contacts.push_back(
+            ::LibFred::RegistrableObject::Contact::ContactReference(
+                    admin_contact4_info.info_contact_data.id,
+                    admin_contact4_info.info_contact_data.handle,
+                    admin_contact4_info.info_contact_data.uuid));
 
     //check changes made by last update
     BOOST_CHECK(info_data_5_with_changes == info_data_6);
@@ -340,23 +360,25 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_6.at(1).info_keyset_data == history_info_data_5.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_6.at(1).next_historyid.get_value() == history_info_data_6.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_6.at(0).info_keyset_data.crhistoryid == info_data_6.info_keyset_data.crhistoryid);
+    BOOST_CHECK_EQUAL(history_info_data_6.at(1).next_historyid.get_value(), history_info_data_6.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_6.at(0).info_keyset_data.crhistoryid, info_data_6.info_keyset_data.crhistoryid);
 
     //remove tech contact
     ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle).rem_tech_contact(admin_contact5_handle).exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_7 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_7 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_7 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_7 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_6_with_changes = info_data_6;
 
     //updated historyid
-    BOOST_CHECK(info_data_6.info_keyset_data.historyid !=info_data_7.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_6.info_keyset_data.historyid, info_data_7.info_keyset_data.historyid);
     info_data_6_with_changes.info_keyset_data.historyid = info_data_7.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_6.info_keyset_data.history_uuid), get_raw_value_from(info_data_7.info_keyset_data.history_uuid));
+    info_data_6_with_changes.info_keyset_data.history_uuid = info_data_7.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_7.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_7.info_keyset_data.update_registrar_handle.get_value());
     info_data_6_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated update_time
@@ -364,11 +386,13 @@ BOOST_AUTO_TEST_CASE(update_keyset)
 
     //rem tech contact
     info_data_6_with_changes.info_keyset_data.tech_contacts.erase(
-        std::remove(info_data_6_with_changes.info_keyset_data.tech_contacts.begin(),
-            info_data_6_with_changes.info_keyset_data.tech_contacts.end(),
-            ::LibFred::ObjectIdHandlePair(admin_contact5_info.info_contact_data.id,
-                    admin_contact5_info.info_contact_data.handle)),
-        info_data_6_with_changes.info_keyset_data.tech_contacts.end());
+            std::remove(info_data_6_with_changes.info_keyset_data.tech_contacts.begin(),
+                        info_data_6_with_changes.info_keyset_data.tech_contacts.end(),
+                        ::LibFred::RegistrableObject::Contact::ContactReference(
+                                admin_contact5_info.info_contact_data.id,
+                                admin_contact5_info.info_contact_data.handle,
+                                admin_contact5_info.info_contact_data.uuid)),
+            info_data_6_with_changes.info_keyset_data.tech_contacts.end());
 
     //check changes made by last update
     BOOST_CHECK(info_data_6_with_changes == info_data_7);
@@ -386,20 +410,22 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_7.at(1).info_keyset_data == history_info_data_6.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_7.at(1).next_historyid.get_value() == history_info_data_7.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_7.at(0).info_keyset_data.crhistoryid == info_data_7.info_keyset_data.crhistoryid);
+    BOOST_CHECK_EQUAL(history_info_data_7.at(1).next_historyid.get_value(), history_info_data_7.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_7.at(0).info_keyset_data.crhistoryid, info_data_7.info_keyset_data.crhistoryid);
 
     //add dnskey
     ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle).add_dns_key(::LibFred::DnsKey(257, 3, 5, "key2")).add_dns_key(::LibFred::DnsKey(257, 3, 5, "key3")).exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_8 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_8 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_8 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_8 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_7_with_changes = info_data_7;
 
     //updated historyid
-    BOOST_CHECK(info_data_7.info_keyset_data.historyid !=info_data_8.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_7.info_keyset_data.historyid, info_data_8.info_keyset_data.historyid);
     info_data_7_with_changes.info_keyset_data.historyid = info_data_8.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_7.info_keyset_data.history_uuid), get_raw_value_from(info_data_8.info_keyset_data.history_uuid));
+    info_data_7_with_changes.info_keyset_data.history_uuid = info_data_8.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
     BOOST_CHECK(registrar_handle == std::string(info_data_8.info_keyset_data.update_registrar_handle.get_value()));
@@ -429,23 +455,25 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_8.at(1).info_keyset_data == history_info_data_7.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_8.at(1).next_historyid.get_value() == history_info_data_8.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_8.at(0).info_keyset_data.crhistoryid == info_data_8.info_keyset_data.crhistoryid);
+    BOOST_CHECK_EQUAL(history_info_data_8.at(1).next_historyid.get_value(), history_info_data_8.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_8.at(0).info_keyset_data.crhistoryid, info_data_8.info_keyset_data.crhistoryid);
 
     //remove dnskey
     ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle).rem_dns_key(::LibFred::DnsKey(257, 3, 5, "key")).exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_9 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_9 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_9 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_9 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     ::LibFred::InfoKeysetOutput info_data_8_with_changes = info_data_8;
 
     //updated historyid
-    BOOST_CHECK(info_data_8.info_keyset_data.historyid !=info_data_9.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_8.info_keyset_data.historyid, info_data_9.info_keyset_data.historyid);
     info_data_8_with_changes.info_keyset_data.historyid = info_data_9.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_8.info_keyset_data.history_uuid), get_raw_value_from(info_data_9.info_keyset_data.history_uuid));
+    info_data_8_with_changes.info_keyset_data.history_uuid = info_data_9.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_9.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_9.info_keyset_data.update_registrar_handle.get_value());
     info_data_8_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated update_time
@@ -453,9 +481,11 @@ BOOST_AUTO_TEST_CASE(update_keyset)
 
     //rem dnskey
     info_data_8_with_changes.info_keyset_data.dns_keys.erase(
-        std::remove(info_data_8_with_changes.info_keyset_data.dns_keys.begin()
-        , info_data_8_with_changes.info_keyset_data.dns_keys.end(), ::LibFred::DnsKey(257, 3, 5, "key"))
-        , info_data_8_with_changes.info_keyset_data.dns_keys.end());
+            std::remove(
+                    info_data_8_with_changes.info_keyset_data.dns_keys.begin(),
+                    info_data_8_with_changes.info_keyset_data.dns_keys.end(),
+                    ::LibFred::DnsKey(257, 3, 5, "key")),
+            info_data_8_with_changes.info_keyset_data.dns_keys.end());
 
     //check changes made by last update
     BOOST_CHECK(info_data_8_with_changes == info_data_9);
@@ -475,26 +505,28 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_9.at(1).info_keyset_data == history_info_data_8.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_9.at(1).next_historyid.get_value() == history_info_data_9.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_9.at(0).info_keyset_data.crhistoryid == info_data_9.info_keyset_data.crhistoryid);
+    BOOST_CHECK_EQUAL(history_info_data_9.at(1).next_historyid.get_value(), history_info_data_9.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_9.at(0).info_keyset_data.crhistoryid, info_data_9.info_keyset_data.crhistoryid);
 
     //request_id
     ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle).set_logd_request_id(10).exec(ctx);
 
-    ::LibFred::InfoKeysetOutput info_data_10 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
-    std::vector<::LibFred::InfoKeysetOutput> history_info_data_10 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
+    const ::LibFred::InfoKeysetOutput info_data_10 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
+    const std::vector<::LibFred::InfoKeysetOutput> history_info_data_10 = ::LibFred::InfoKeysetHistoryByRoid(info_data_1.info_keyset_data.roid).exec(ctx);
 
     //request id
-    BOOST_CHECK(history_info_data_10.at(0).logd_request_id.get_value() == 10);
+    BOOST_CHECK_EQUAL(history_info_data_10.at(0).logd_request_id.get_value(), 10);
 
     ::LibFred::InfoKeysetOutput info_data_9_with_changes = info_data_9;
 
     //updated historyid
-    BOOST_CHECK(info_data_9.info_keyset_data.historyid !=info_data_10.info_keyset_data.historyid);
+    BOOST_CHECK_NE(info_data_9.info_keyset_data.historyid, info_data_10.info_keyset_data.historyid);
     info_data_9_with_changes.info_keyset_data.historyid = info_data_10.info_keyset_data.historyid;
+    BOOST_CHECK_NE(get_raw_value_from(info_data_9.info_keyset_data.history_uuid), get_raw_value_from(info_data_10.info_keyset_data.history_uuid));
+    info_data_9_with_changes.info_keyset_data.history_uuid = info_data_10.info_keyset_data.history_uuid;
 
     //updated update_registrar_handle
-    BOOST_CHECK(registrar_handle == std::string(info_data_10.info_keyset_data.update_registrar_handle.get_value()));
+    BOOST_CHECK_EQUAL(registrar_handle, info_data_10.info_keyset_data.update_registrar_handle.get_value());
     info_data_9_with_changes.info_keyset_data.update_registrar_handle = registrar_handle;
 
     //updated update_time
@@ -519,18 +551,16 @@ BOOST_AUTO_TEST_CASE(update_keyset)
     BOOST_CHECK(history_info_data_10.at(1).info_keyset_data == history_info_data_9.at(0).info_keyset_data);
 
     //check historyid
-    BOOST_CHECK(history_info_data_10.at(1).next_historyid.get_value() == history_info_data_10.at(0).info_keyset_data.historyid);
-    BOOST_CHECK(history_info_data_10.at(0).info_keyset_data.crhistoryid == info_data_10.info_keyset_data.crhistoryid);
-
-}//update_keyset
+    BOOST_CHECK_EQUAL(history_info_data_10.at(1).next_historyid.get_value(), history_info_data_10.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data_10.at(0).info_keyset_data.crhistoryid, info_data_10.info_keyset_data.crhistoryid);
+}
 
 /**
  * test UpdateKeyset with wrong handle
  */
-
 BOOST_AUTO_TEST_CASE(update_keyset_wrong_handle)
 {
-    std::string bad_test_keyset_handle = std::string("bad")+test_keyset_handle;
+    const std::string bad_test_keyset_handle = "bad" + test_keyset_handle;
     try
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
@@ -538,10 +568,10 @@ BOOST_AUTO_TEST_CASE(update_keyset_wrong_handle)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_unknown_keyset_handle());
-        BOOST_CHECK(static_cast<std::string>(ex.get_unknown_keyset_handle()).compare(bad_test_keyset_handle) == 0);
+        BOOST_CHECK(e.is_set_unknown_keyset_handle());
+        BOOST_CHECK_EQUAL(e.get_unknown_keyset_handle(), bad_test_keyset_handle);
     }
 }
 
@@ -550,7 +580,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_wrong_handle)
  */
 BOOST_AUTO_TEST_CASE(update_keyset_wrong_registrar)
 {
-    std::string bad_registrar_handle = registrar_handle+xmark;
+    const std::string bad_registrar_handle = registrar_handle + xmark;
     ::LibFred::InfoKeysetOutput info_data_1;
     {
         ::LibFred::OperationContextCreator ctx;
@@ -564,10 +594,10 @@ BOOST_AUTO_TEST_CASE(update_keyset_wrong_registrar)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_unknown_registrar_handle());
-        BOOST_CHECK(ex.get_unknown_registrar_handle().compare(bad_registrar_handle) == 0);
+        BOOST_CHECK(e.is_set_unknown_registrar_handle());
+        BOOST_CHECK_EQUAL(e.get_unknown_registrar_handle(), bad_registrar_handle);
     }
 
     ::LibFred::InfoKeysetOutput info_data_2;
@@ -577,7 +607,6 @@ BOOST_AUTO_TEST_CASE(update_keyset_wrong_registrar)
     }
     BOOST_CHECK(info_data_1 == info_data_2);
     BOOST_CHECK(info_data_2.info_keyset_data.delete_time.isnull());
-
 }
 
 /**
@@ -585,14 +614,14 @@ BOOST_AUTO_TEST_CASE(update_keyset_wrong_registrar)
  */
 BOOST_AUTO_TEST_CASE(update_keyset_add_wrong_tech_contact)
 {
-    std::string bad_tech_contact_handle = admin_contact5_handle+xmark;
+    const std::string bad_tech_contact_handle = admin_contact5_handle + xmark;
     ::LibFred::InfoKeysetOutput info_data_1;
     {
         ::LibFred::OperationContextCreator ctx;
         info_data_1 = ::LibFred::InfoKeysetByHandle(test_keyset_handle).exec(ctx);
     }
 
-    BOOST_TEST_MESSAGE(std::string("handle: ") + info_data_1.info_keyset_data.handle + " roid: " + info_data_1.info_keyset_data.roid);
+    BOOST_TEST_MESSAGE("handle: " + info_data_1.info_keyset_data.handle + " roid: " + info_data_1.info_keyset_data.roid);
     try
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
@@ -602,11 +631,11 @@ BOOST_AUTO_TEST_CASE(update_keyset_add_wrong_tech_contact)
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_vector_of_unknown_technical_contact_handle());
-        BOOST_TEST_MESSAGE(boost::diagnostic_information(ex));
-        BOOST_CHECK(ex.get_vector_of_unknown_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
+        BOOST_CHECK(e.is_set_vector_of_unknown_technical_contact_handle());
+        BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
+        BOOST_CHECK_EQUAL(e.get_vector_of_unknown_technical_contact_handle().at(0), bad_tech_contact_handle);
     }
 
     ::LibFred::InfoKeysetOutput info_data_2;
@@ -633,15 +662,15 @@ BOOST_AUTO_TEST_CASE(update_keyset_add_already_added_tech_contact)
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
         ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle)
-        .add_tech_contact(admin_contact6_handle)//already added in fixture
-        .exec(ctx);
+            .add_tech_contact(admin_contact6_handle)//already added in fixture
+            .exec(ctx);
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_vector_of_already_set_technical_contact_handle());
-        BOOST_CHECK(ex.get_vector_of_already_set_technical_contact_handle().at(0).compare(admin_contact6_handle) == 0);
+        BOOST_CHECK(e.is_set_vector_of_already_set_technical_contact_handle());
+        BOOST_CHECK_EQUAL(e.get_vector_of_already_set_technical_contact_handle().at(0), admin_contact6_handle);
     }
 
     ::LibFred::InfoKeysetOutput info_data_2;
@@ -653,13 +682,12 @@ BOOST_AUTO_TEST_CASE(update_keyset_add_already_added_tech_contact)
     BOOST_CHECK(info_data_2.info_keyset_data.delete_time.isnull());
 }
 
-
 /**
  * test UpdateKeyset remove non-existing tech contact
  */
 BOOST_AUTO_TEST_CASE(update_keyset_rem_wrong_tech_contact)
 {
-    std::string bad_tech_contact_handle = admin_contact6_handle+xmark;
+    const std::string bad_tech_contact_handle = admin_contact6_handle + xmark;
 
     ::LibFred::InfoKeysetOutput info_data_1;
     {
@@ -671,15 +699,15 @@ BOOST_AUTO_TEST_CASE(update_keyset_rem_wrong_tech_contact)
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
         ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle)
-        .rem_tech_contact(bad_tech_contact_handle)
-        .exec(ctx);
+            .rem_tech_contact(bad_tech_contact_handle)
+            .exec(ctx);
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_vector_of_unknown_technical_contact_handle());
-        BOOST_CHECK(ex.get_vector_of_unknown_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
+        BOOST_CHECK(e.is_set_vector_of_unknown_technical_contact_handle());
+        BOOST_CHECK_EQUAL(e.get_vector_of_unknown_technical_contact_handle().at(0), bad_tech_contact_handle);
     }
 
     ::LibFred::InfoKeysetOutput info_data_2;
@@ -696,7 +724,7 @@ BOOST_AUTO_TEST_CASE(update_keyset_rem_wrong_tech_contact)
  */
 BOOST_AUTO_TEST_CASE(update_keyset_rem_unassigned_tech_contact)
 {
-    std::string bad_tech_contact_handle = admin_contact4_handle;
+    const std::string bad_tech_contact_handle = admin_contact4_handle;
     ::LibFred::InfoKeysetOutput info_data_1;
     {
         ::LibFred::OperationContextCreator ctx;
@@ -707,15 +735,15 @@ BOOST_AUTO_TEST_CASE(update_keyset_rem_unassigned_tech_contact)
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
         ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle)
-        .rem_tech_contact(bad_tech_contact_handle)
-        .exec(ctx);
+            .rem_tech_contact(bad_tech_contact_handle)
+            .exec(ctx);
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_vector_of_unassigned_technical_contact_handle());
-        BOOST_CHECK(ex.get_vector_of_unassigned_technical_contact_handle().at(0).compare(bad_tech_contact_handle) == 0);
+        BOOST_CHECK(e.is_set_vector_of_unassigned_technical_contact_handle());
+        BOOST_CHECK_EQUAL(e.get_vector_of_unassigned_technical_contact_handle().at(0), bad_tech_contact_handle);
     }
 
     ::LibFred::InfoKeysetOutput info_data_2;
@@ -726,7 +754,6 @@ BOOST_AUTO_TEST_CASE(update_keyset_rem_unassigned_tech_contact)
     BOOST_CHECK(info_data_1 == info_data_2);
     BOOST_CHECK(info_data_2.info_keyset_data.delete_time.isnull());
 }
-
 
 /**
  * test UpdateKeyset add already added dnskey
@@ -743,15 +770,15 @@ BOOST_AUTO_TEST_CASE(update_keyset_add_already_added_dnskey)
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
         ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle)
-        .add_dns_key(::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8"))
-        .exec(ctx);
+            .add_dns_key(::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8"))
+            .exec(ctx);
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_vector_of_already_set_dns_key());
-        BOOST_CHECK(ex.get_vector_of_already_set_dns_key().at(0) == ::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8"));
+        BOOST_CHECK(e.is_set_vector_of_already_set_dns_key());
+        BOOST_CHECK(e.get_vector_of_already_set_dns_key().at(0) == ::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8"));
     }
 
     ::LibFred::InfoKeysetOutput info_data_2;
@@ -778,15 +805,15 @@ BOOST_AUTO_TEST_CASE(update_keyset_unassigned_dnskey)
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
         ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle)
-        .rem_dns_key(::LibFred::DnsKey(257, 3, 5, "unassignedkey"))
-        .exec(ctx);
+            .rem_dns_key(::LibFred::DnsKey(257, 3, 5, "unassignedkey"))
+            .exec(ctx);
         ctx.commit_transaction();
         BOOST_ERROR("no exception thrown");
     }
-    catch (const ::LibFred::UpdateKeyset::Exception& ex)
+    catch (const ::LibFred::UpdateKeyset::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_vector_of_unassigned_dns_key());
-        BOOST_CHECK(ex.get_vector_of_unassigned_dns_key().at(0) == ::LibFred::DnsKey(257, 3, 5, "unassignedkey"));
+        BOOST_CHECK(e.is_set_vector_of_unassigned_dns_key());
+        BOOST_CHECK(e.get_vector_of_unassigned_dns_key().at(0) == ::LibFred::DnsKey(257, 3, 5, "unassignedkey"));
     }
 
     ::LibFred::InfoKeysetOutput info_data_2;
@@ -797,7 +824,6 @@ BOOST_AUTO_TEST_CASE(update_keyset_unassigned_dnskey)
     BOOST_CHECK(info_data_1 == info_data_2);
     BOOST_CHECK(info_data_2.info_keyset_data.delete_time.isnull());
 }
-
 
 /**
  * test InfoKeysetHistoryByRoid
@@ -817,7 +843,7 @@ BOOST_AUTO_TEST_CASE(info_keyset_history_test)
     {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
         ::LibFred::UpdateKeyset(test_keyset_handle, registrar_handle)
-        .exec(ctx);
+            .exec(ctx);
         ctx.commit_transaction();
     }
 
@@ -832,15 +858,13 @@ BOOST_AUTO_TEST_CASE(info_keyset_history_test)
     BOOST_CHECK(history_info_data.at(0) == info_data_2);
     BOOST_CHECK(history_info_data.at(1) == info_data_1);
 
-    BOOST_CHECK(history_info_data.at(1).next_historyid.get_value() == history_info_data.at(0).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data.at(1).next_historyid.get_value(), history_info_data.at(0).info_keyset_data.historyid);
 
     BOOST_CHECK(history_info_data.at(1).history_valid_from < history_info_data.at(1).history_valid_to.get_value());
     BOOST_CHECK(history_info_data.at(1).history_valid_to.get_value() <= history_info_data.at(0).history_valid_from);
     BOOST_CHECK(history_info_data.at(0).history_valid_to.isnull());
 
-    BOOST_CHECK(history_info_data.at(1).info_keyset_data.crhistoryid == history_info_data.at(1).info_keyset_data.historyid);
+    BOOST_CHECK_EQUAL(history_info_data.at(1).info_keyset_data.crhistoryid, history_info_data.at(1).info_keyset_data.historyid);
 }
 
-
-
-BOOST_AUTO_TEST_SUITE_END();//TestUpdateKeyset
+BOOST_AUTO_TEST_SUITE_END()//TestUpdateKeyset

@@ -21,208 +21,248 @@
  *  keyset info data diff
  */
 
+#include "libfred/registrable_object/contact/contact_reference.hh"
+#include "libfred/registrable_object/keyset/info_keyset_diff.hh"
+
+#include "util/util.hh"
+#include "util/is_equal_optional_nullable.hh"
+
+#include <boost/algorithm/string.hpp>
+
 #include <algorithm>
 #include <string>
 #include <vector>
 #include <set>
 
-#include <boost/algorithm/string.hpp>
+namespace LibFred {
 
-#include "util/util.hh"
-#include "util/is_equal_optional_nullable.hh"
+InfoKeysetDiff::InfoKeysetDiff()
+{}
 
-#include "libfred/registrable_object/contact/contact_reference.hh"
-#include "libfred/registrable_object/keyset/info_keyset_diff.hh"
+namespace {
 
-namespace LibFred
+template <typename T>
+void insert_if_presents(
+        const InfoKeysetDiff::DiffMember<T>& data,
+        const std::string& name,
+        std::set<std::string>& collector)
 {
-    InfoKeysetDiff::InfoKeysetDiff()
-    {}
-
-    std::set<std::string> InfoKeysetDiff::changed_fields() const
+    if (data.is_set())
     {
-        std::set<std::string> fields;
-        if (crhistoryid.isset()) fields.insert("crhistoryid");
-        if (historyid.isset()) fields.insert("historyid");
-        if (delete_time.isset()) fields.insert("delete_time");
-        if (handle.isset()) fields.insert("handle");
-        if (roid.isset()) fields.insert("roid");
-        if (sponsoring_registrar_handle.isset()) fields.insert("sponsoring_registrar_handle");
-        if (create_registrar_handle.isset()) fields.insert("create_registrar_handle");
-        if (update_registrar_handle.isset()) fields.insert("update_registrar_handle");
-        if (creation_time.isset()) fields.insert("creation_time");
-        if (update_time.isset()) fields.insert("update_time");
-        if (transfer_time.isset()) fields.insert("transfer_time");
-        if (authinfopw.isset()) fields.insert("authinfopw");
+        collector.insert(name);
+    }
+}
 
-        if (dns_keys.isset()) fields.insert("dns_keys");
-        if (tech_contacts.isset()) fields.insert("tech_contacts");
-        if (id.isset()) fields.insert("id");
+}//namespace LibFred::{anonymous}
 
-        return fields;
+std::set<std::string> InfoKeysetDiff::changed_fields() const
+{
+    std::set<std::string> fields;
+    insert_if_presents(crhistoryid, "crhistoryid", fields);
+    insert_if_presents(historyid, "historyid", fields);
+    insert_if_presents(delete_time, "delete_time", fields);
+    insert_if_presents(handle, "handle", fields);
+    insert_if_presents(roid, "roid", fields);
+    insert_if_presents(sponsoring_registrar_handle, "sponsoring_registrar_handle", fields);
+    insert_if_presents(create_registrar_handle, "create_registrar_handle", fields);
+    insert_if_presents(update_registrar_handle, "update_registrar_handle", fields);
+    insert_if_presents(creation_time, "creation_time", fields);
+    insert_if_presents(update_time, "update_time", fields);
+    insert_if_presents(transfer_time, "transfer_time", fields);
+    insert_if_presents(authinfopw, "authinfopw", fields);
+
+    insert_if_presents(dns_keys, "dns_keys", fields);
+    insert_if_presents(tech_contacts, "tech_contacts", fields);
+    insert_if_presents(id, "id", fields);
+    insert_if_presents(uuid, "uuid", fields);
+    insert_if_presents(history_uuid, "history_uuid", fields);
+
+    return fields;
+}
+
+namespace {
+
+template <typename T>
+auto make_named_quoted_data(const std::string& name, const InfoKeysetDiff::DiffMember<T>& data)
+{
+    return std::make_pair(name, data.print_quoted());
+}
+
+}//namespace LibFred::{anonymous}
+
+std::string InfoKeysetDiff::to_string() const
+{
+    return Util::format_data_structure(
+            "InfoKeysetDiff",
+            {
+                make_named_quoted_data("crhistoryid", crhistoryid),
+                make_named_quoted_data("historyid", historyid),
+                make_named_quoted_data("delete_time", delete_time),
+                make_named_quoted_data("handle", handle),
+                make_named_quoted_data("roid", roid),
+                make_named_quoted_data("sponsoring_registrar_handle", sponsoring_registrar_handle),
+                make_named_quoted_data("create_registrar_handle", create_registrar_handle),
+                make_named_quoted_data("update_registrar_handle", update_registrar_handle),
+                make_named_quoted_data("creation_time", creation_time),
+                make_named_quoted_data("update_time", update_time),
+                make_named_quoted_data("transfer_time", transfer_time),
+                make_named_quoted_data("authinfopw", authinfopw),
+
+                make_named_quoted_data("dns_keys", dns_keys),
+                make_named_quoted_data("tech_contacts", tech_contacts),
+
+                make_named_quoted_data("id", id),
+                make_named_quoted_data("uuid", uuid),
+                make_named_quoted_data("history_uuid", history_uuid)
+            });
+}
+
+namespace {
+
+bool is_set_any_of()
+{
+    return false;
+}
+
+template <typename F, typename ...O>
+bool is_set_any_of(const Optional<F>& first, const Optional<O>& ...others)
+{
+    return first.is_set() || is_set_any_of(others...);
+}
+
+}//namespace LibFred::{anonymous}
+
+bool InfoKeysetDiff::is_empty() const
+{
+    return !is_set_any_of(
+            crhistoryid,
+            historyid,
+            delete_time,
+            handle,
+            roid,
+            sponsoring_registrar_handle,
+            create_registrar_handle,
+            update_registrar_handle,
+            creation_time,
+            update_time,
+            transfer_time,
+            authinfopw,
+
+            dns_keys,
+            tech_contacts,
+
+            id,
+            uuid,
+            history_uuid);
+}
+
+InfoKeysetDiff diff_keyset_data(const InfoKeysetData& first, const InfoKeysetData& second)
+{
+    LibFred::InfoKeysetDiff diff;
+
+    //differing data
+    if (first.crhistoryid != second.crhistoryid)
+    {
+        diff.crhistoryid = std::make_pair(first.crhistoryid, second.crhistoryid);
     }
 
-    std::string InfoKeysetDiff::to_string() const
+    if (first.historyid != second.historyid)
     {
-        return Util::format_data_structure("InfoKeysetDiff",
-        Util::vector_of<std::pair<std::string, std::string> >
-        (std::make_pair("crhistoryid", crhistoryid.print_quoted()))
-        (std::make_pair("historyid", historyid.print_quoted()))
-        (std::make_pair("delete_time", delete_time.print_quoted()))
-        (std::make_pair("handle", handle.print_quoted()))
-        (std::make_pair("roid", roid.print_quoted()))
-        (std::make_pair("sponsoring_registrar_handle", sponsoring_registrar_handle.print_quoted()))
-        (std::make_pair("create_registrar_handle", create_registrar_handle.print_quoted()))
-        (std::make_pair("update_registrar_handle", update_registrar_handle.print_quoted()))
-        (std::make_pair("creation_time", creation_time.print_quoted()))
-        (std::make_pair("update_time", update_time.print_quoted()))
-        (std::make_pair("transfer_time", transfer_time.print_quoted()))
-        (std::make_pair("authinfopw", authinfopw.print_quoted()))
-
-        (std::make_pair("dns_keys", dns_keys.print_quoted()))
-        (std::make_pair("tech_contacts", tech_contacts.print_quoted()))
-
-        (std::make_pair("id", id.print_quoted()))
-        );//format_data_structure InfoKeysetDiff
+        diff.historyid = std::make_pair(first.historyid, second.historyid);
     }
 
-    bool InfoKeysetDiff::is_empty() const
+    if (!Util::is_equal(first.delete_time, second.delete_time))
     {
-        return
-            !( crhistoryid.isset()
-            || historyid.isset()
-            || delete_time.isset()
-            || handle.isset()
-            || roid.isset()
-            || sponsoring_registrar_handle.isset()
-            || create_registrar_handle.isset()
-            || update_registrar_handle.isset()
-            || creation_time.isset()
-            || update_time.isset()
-            || transfer_time.isset()
-            || authinfopw.isset()
-
-            || dns_keys.isset()
-            || tech_contacts.isset()
-
-            || id.isset()
-            );
+        diff.delete_time = std::make_pair(first.delete_time, second.delete_time);
     }
 
-    InfoKeysetDiff diff_keyset_data(const InfoKeysetData& first, const InfoKeysetData& second)
+    if (boost::algorithm::to_upper_copy(first.handle) != boost::algorithm::to_upper_copy(second.handle))
     {
-        LibFred::InfoKeysetDiff diff;
-
-        //differing data
-        if (first.crhistoryid != second.crhistoryid)
-        {
-            diff.crhistoryid = std::make_pair(first.crhistoryid, second.crhistoryid);
-        }
-
-        if (first.historyid != second.historyid)
-        {
-            diff.historyid = std::make_pair(first.historyid, second.historyid);
-        }
-
-        if (!Util::is_equal(first.delete_time, second.delete_time))
-        {
-            diff.delete_time = std::make_pair(first.delete_time, second.delete_time);
-        }
-
-        if (boost::algorithm::to_upper_copy(first.handle).compare(boost::algorithm::to_upper_copy(second.handle)) != 0)
-        {
-            diff.handle = std::make_pair(first.handle, second.handle);
-        }
-
-        if (first.roid.compare(second.roid) != 0)
-        {
-            diff.roid = std::make_pair(first.roid, second.roid);
-        }
-
-        if (boost::algorithm::to_upper_copy(first.sponsoring_registrar_handle)
-            .compare(boost::algorithm::to_upper_copy(second.sponsoring_registrar_handle)) != 0)
-        {
-            diff.sponsoring_registrar_handle = std::make_pair(first.sponsoring_registrar_handle
-                    , second.sponsoring_registrar_handle);
-        }
-
-        if (boost::algorithm::to_upper_copy(first.create_registrar_handle)
-        .compare(boost::algorithm::to_upper_copy(second.create_registrar_handle)) != 0)
-        {
-            diff.create_registrar_handle = std::make_pair(first.create_registrar_handle
-                    , second.create_registrar_handle);
-        }
-
-        if (!Util::is_equal_upper(first.update_registrar_handle, second.update_registrar_handle))
-        {
-            diff.update_registrar_handle = std::make_pair(first.update_registrar_handle
-                    , second.update_registrar_handle);
-        }
-
-        if (first.creation_time != second.creation_time)
-        {
-            diff.creation_time = std::make_pair(first.creation_time, second.creation_time);
-        }
-
-        if (!Util::is_equal(first.update_time, second.update_time))
-        {
-            diff.update_time = std::make_pair(first.update_time
-                    , second.update_time);
-        }
-
-        if (!Util::is_equal(first.transfer_time, second.transfer_time))
-        {
-            diff.transfer_time = std::make_pair(first.transfer_time
-                    , second.transfer_time);
-        }
-
-        if (first.authinfopw.compare(second.authinfopw) != 0)
-        {
-            diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
-        }
-
-
-        std::set<DnsKey> lhs_dns_keys;
-        for (std::vector<DnsKey>::size_type i = 0
-            ; i != first.dns_keys.size(); ++i)
-        {
-            lhs_dns_keys.insert(first.dns_keys[i]);
-        }
-
-        std::set<DnsKey> rhs_dns_keys;
-        for (std::vector<DnsKey>::size_type i = 0
-            ; i != second.dns_keys.size(); ++i)
-        {
-            rhs_dns_keys.insert(second.dns_keys[i]);
-        }
-
-        if (lhs_dns_keys != rhs_dns_keys)
-        {
-            diff.dns_keys = std::make_pair(first.dns_keys, second.dns_keys);
-        }
-
-        const std::set<RegistrableObject::Contact::ContactReference>
-                lhs_tech_contacts(
-                        first.tech_contacts.begin(),
-                        first.tech_contacts.end());
-
-        const std::set<RegistrableObject::Contact::ContactReference>
-                rhs_tech_contacts(
-                        second.tech_contacts.begin(),
-                        second.tech_contacts.end());
-
-        if (lhs_tech_contacts != rhs_tech_contacts)
-        {
-            diff.tech_contacts = std::make_pair(first.tech_contacts, second.tech_contacts);
-        }
-
-
-        if (first.id != second.id)
-        {
-            diff.id = std::make_pair(first.id, second.id);
-        }
-
-        return diff;
+        diff.handle = std::make_pair(first.handle, second.handle);
     }
 
-} // namespace LibFred
+    if (first.roid != second.roid)
+    {
+        diff.roid = std::make_pair(first.roid, second.roid);
+    }
+
+    if (boost::algorithm::to_upper_copy(first.sponsoring_registrar_handle) !=
+        boost::algorithm::to_upper_copy(second.sponsoring_registrar_handle))
+    {
+        diff.sponsoring_registrar_handle = std::make_pair(first.sponsoring_registrar_handle,
+                                                          second.sponsoring_registrar_handle);
+    }
+
+    if (boost::algorithm::to_upper_copy(first.create_registrar_handle) !=
+        boost::algorithm::to_upper_copy(second.create_registrar_handle))
+    {
+        diff.create_registrar_handle = std::make_pair(first.create_registrar_handle,
+                                                      second.create_registrar_handle);
+    }
+
+    if (!Util::is_equal_upper(first.update_registrar_handle, second.update_registrar_handle))
+    {
+        diff.update_registrar_handle = std::make_pair(first.update_registrar_handle,
+                                                      second.update_registrar_handle);
+    }
+
+    if (first.creation_time != second.creation_time)
+    {
+        diff.creation_time = std::make_pair(first.creation_time, second.creation_time);
+    }
+
+    if (!Util::is_equal(first.update_time, second.update_time))
+    {
+        diff.update_time = std::make_pair(first.update_time, second.update_time);
+    }
+
+    if (!Util::is_equal(first.transfer_time, second.transfer_time))
+    {
+        diff.transfer_time = std::make_pair(first.transfer_time, second.transfer_time);
+    }
+
+    if (first.authinfopw != second.authinfopw)
+    {
+        diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
+    }
+
+    const std::set<DnsKey> lhs_dns_keys(first.dns_keys.begin(), first.dns_keys.end());
+    const std::set<DnsKey> rhs_dns_keys(second.dns_keys.begin(), second.dns_keys.end());
+
+    if (lhs_dns_keys != rhs_dns_keys)
+    {
+        diff.dns_keys = std::make_pair(first.dns_keys, second.dns_keys);
+    }
+
+    const std::set<RegistrableObject::Contact::ContactReference> lhs_tech_contacts(
+            first.tech_contacts.begin(),
+            first.tech_contacts.end());
+
+    const std::set<RegistrableObject::Contact::ContactReference> rhs_tech_contacts(
+            second.tech_contacts.begin(),
+            second.tech_contacts.end());
+
+    if (lhs_tech_contacts != rhs_tech_contacts)
+    {
+        diff.tech_contacts = std::make_pair(first.tech_contacts, second.tech_contacts);
+    }
+
+    if (first.id != second.id)
+    {
+        diff.id = std::make_pair(first.id, second.id);
+    }
+
+    if (get_raw_value_from(first.uuid) != get_raw_value_from(second.uuid))
+    {
+        diff.uuid = std::make_pair(first.uuid, second.uuid);
+    }
+
+    if (get_raw_value_from(first.history_uuid) != get_raw_value_from(second.history_uuid))
+    {
+        diff.history_uuid = std::make_pair(first.history_uuid, second.history_uuid);
+    }
+
+    return diff;
+}
+
+}//namespace LibFred

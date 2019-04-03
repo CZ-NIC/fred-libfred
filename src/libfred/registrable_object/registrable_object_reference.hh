@@ -35,9 +35,15 @@ namespace RegistrableObject {
 template <Object_Type::Enum object_type>
 struct RegistrableObjectReference : Util::Printable<RegistrableObjectReference<object_type>>
 {
-    unsigned long long id; /**< database id of the object */
-    std::string handle; /**< handle of the object */
-    RegistrableObject::UuidOf<object_type> uuid; /**< UUID of the object */
+    /**
+    * Default constructor of data structure.
+    */
+    RegistrableObjectReference();
+
+    RegistrableObjectReference(const RegistrableObjectReference&) = default;
+    RegistrableObjectReference(RegistrableObjectReference&&) = default;
+    RegistrableObjectReference& operator=(const RegistrableObjectReference&) = default;
+    RegistrableObjectReference& operator=(RegistrableObjectReference&&) = default;
 
     /**
     * Constructor of data structure.
@@ -46,11 +52,6 @@ struct RegistrableObjectReference : Util::Printable<RegistrableObjectReference<o
     * @param uuid sets object uuid into @ref uuid attribute
     */
     RegistrableObjectReference(unsigned long long id, const std::string& handle, const RegistrableObject::UuidOf<object_type>& uuid);
-
-    /**
-    * Default constructor of data structure.
-    */
-    RegistrableObjectReference();
 
     /**
      * Comparison operator comparing all attributes.
@@ -78,6 +79,10 @@ struct RegistrableObjectReference : Util::Printable<RegistrableObjectReference<o
     * @return string with description of the instance state
     */
     std::string to_string() const;
+
+    unsigned long long id; /**< database id of the object */
+    std::string handle; /**< handle of the object */
+    RegistrableObject::UuidOf<object_type> uuid; /**< UUID of the object */
 };
 
 } // namespace LibFred::RegistrableObject

@@ -26,19 +26,12 @@
 
 #include "libfred/registrable_object/domain/info_domain_data.hh"
 
-#include "libfred/registrable_object/contact/contact_reference.hh"
-#include "libfred/registrable_object/keyset/keyset_reference.hh"
-#include "libfred/registrable_object/nsset/nsset_reference.hh"
-
 #include "util/optional_value.hh"
 #include "util/db/nullable.hh"
 #include "util/printable.hh"
 
-#include <boost/date_time/posix_time/ptime.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp>
-
 #include <string>
-#include <vector>
+#include <set>
 #include <utility>
 
 namespace LibFred {
@@ -71,30 +64,34 @@ struct InfoDomainDiff : Util::Printable<InfoDomainDiff>
      * @return false if instance contains differing data and true if not
      */
     bool is_empty() const;
-    template <class T> struct DiffMemeber { typedef Optional<std::pair<T, T>> Type; };
 
-    DiffMemeber<unsigned long long>::Type crhistoryid;/**< first historyid of domain history*/
-    DiffMemeber<unsigned long long>::Type historyid;/**< last historyid of domain history*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type delete_time; /**< domain delete time in set local zone*/
-    DiffMemeber<std::string>::Type fqdn;/**< fully qualified domain name */
-    DiffMemeber<std::string>::Type roid;/**< registry object identifier of the domain */
-    DiffMemeber<std::string>::Type sponsoring_registrar_handle;/**< registrar administering the domain */
-    DiffMemeber<std::string>::Type create_registrar_handle;/**< registrar that created the domain */
-    DiffMemeber<Nullable<std::string> >::Type update_registrar_handle;/**< registrar which last time changed the domain */
-    DiffMemeber<boost::posix_time::ptime>::Type creation_time;/**< creation time of the domain in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type update_time; /**< last update time of the domain in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type transfer_time; /**<last transfer time in set local zone*/
-    DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
+    template <typename T>
+    using DiffMember = Optional<std::pair<T, T>>;
 
-    DiffMemeber<RegistrableObject::Contact::ContactReference>::Type registrant; /**< registrant contact reference, owner of domain*/
-    DiffMemeber<Nullable<RegistrableObject::Nsset::NssetReference>>::Type nsset;/**< nsset id and handle or NULL if missing */
-    DiffMemeber<Nullable<RegistrableObject::Keyset::KeysetReference>>::Type keyset;/**< keyset id and handle or NULL if missing */
-    DiffMemeber<boost::gregorian::date>::Type expiration_date;/**< domain expiration local date */
-    DiffMemeber<std::vector<RegistrableObject::Contact::ContactReference>>::Type admin_contacts;/**< list of administrating contact handles */
-    DiffMemeber<Nullable<ENUMValidationExtension> >::Type enum_domain_validation;/**< ENUM domain validation extension info */
-    DiffMemeber<LibFred::ObjectIdHandlePair>::Type zone;/**< zone id and fqdn */
+    DiffMember<unsigned long long> crhistoryid;/**< first historyid of domain history*/
+    DiffMember<unsigned long long> historyid;/**< last historyid of domain history*/
+    DiffMember<Nullable<boost::posix_time::ptime>> delete_time; /**< domain delete time in set local zone*/
+    DiffMember<std::string> fqdn;/**< fully qualified domain name */
+    DiffMember<std::string> roid;/**< registry object identifier of the domain */
+    DiffMember<std::string> sponsoring_registrar_handle;/**< registrar administering the domain */
+    DiffMember<std::string> create_registrar_handle;/**< registrar that created the domain */
+    DiffMember<Nullable<std::string>> update_registrar_handle;/**< registrar which last time changed the domain */
+    DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the domain in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime>> update_time; /**< last update time of the domain in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime>> transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< password for transfer */
 
-    DiffMemeber<unsigned long long>::Type id;/**< id of the domain object*/
+    DiffMember<RegistrableObject::Contact::ContactReference> registrant; /**< registrant contact reference, owner of domain*/
+    DiffMember<Nullable<RegistrableObject::Nsset::NssetReference>> nsset;/**< nsset id and handle or NULL if missing */
+    DiffMember<Nullable<RegistrableObject::Keyset::KeysetReference>> keyset;/**< keyset id and handle or NULL if missing */
+    DiffMember<boost::gregorian::date> expiration_date;/**< domain expiration local date */
+    DiffMember<std::vector<RegistrableObject::Contact::ContactReference>> admin_contacts;/**< list of administrating contact handles */
+    DiffMember<Nullable<ENUMValidationExtension>> enum_domain_validation;/**< ENUM domain validation extension info */
+    DiffMember<LibFred::ObjectIdHandlePair> zone;/**< zone id and fqdn */
+
+    DiffMember<unsigned long long> id;/**< id of the domain object*/
+    DiffMember<RegistrableObject::Domain::DomainUuid> uuid;/**< uuid of the object*/
+    DiffMember<RegistrableObject::Domain::DomainHistoryUuid> history_uuid;/**< history uuid of the domain object*/
 };
 
 /**

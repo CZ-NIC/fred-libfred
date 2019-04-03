@@ -29,10 +29,11 @@
 
 #include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/keyset/keyset_dns_key.hh"
-
-#include <string>
+#include "libfred/registrable_object/keyset/keyset_uuid.hh"
 
 #include <boost/date_time/posix_time/ptime.hpp>
+
+#include <string>
 
 namespace LibFred {
 
@@ -70,6 +71,8 @@ struct InfoKeysetData : Util::Printable<InfoKeysetData>
     unsigned long long crhistoryid;/**< first historyid of keyset history */
     unsigned long long historyid;/**< last historyid of keyset history */
     unsigned long long id;/**< id of the keyset object*/
+    RegistrableObject::Keyset::KeysetUuid uuid;/**< uuid of the keyset object*/
+    RegistrableObject::Keyset::KeysetHistoryUuid history_uuid;/**< last history_uuid of keyset history */
     Nullable<boost::posix_time::ptime> delete_time; /**< keyset delete time in local time zone viz @ref local_timestamp_pg_time_zone_name */
     std::string handle;/**< keyset handle */
     std::string roid;/**< registry object identifier of the keyset */
