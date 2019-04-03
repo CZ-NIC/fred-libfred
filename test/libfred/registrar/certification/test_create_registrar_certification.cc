@@ -91,23 +91,30 @@ BOOST_AUTO_TEST_CASE(create_registrar_certification_without_expiration)
 BOOST_AUTO_TEST_CASE(terminate_last_registrar_certification)
 {
     LibFred::OperationContextCreator ctx;
-    const boost::gregorian::date new_valid_from(valid_from + boost::gregorian::date_duration(1));
+    const boost::gregorian::date valid_until(valid_from + boost::gregorian::date_duration(30));
+    const boost::gregorian::date second_valid_from(valid_from + boost::gregorian::date_duration(10));
+    const boost::gregorian::date third_valid_from(valid_from + boost::gregorian::date_duration(20));
     unsigned score = 3;
 
-    LibFred::Registrar::CreateRegistrarCertification(test_registrar.id, valid_from, score, file_id).exec(ctx);
+    LibFred::Registrar::CreateRegistrarCertification(test_registrar.id, valid_from, score, file_id)
+            .set_valid_until(valid_until)
+            .exec(ctx);
 
+    LibFred::Registrar::CreateRegistrarCertification(test_registrar.id, second_valid_from, score, file_id)
+            .exec(ctx);
     score++;
-    const unsigned long long id = LibFred::Registrar::CreateRegistrarCertification(test_registrar.id,
-                new_valid_from, score, file_id).exec(ctx);
+    const unsigned long long id = LibFred::Registrar::CreateRegistrarCertification(
+                test_registrar.id, third_valid_from, score, file_id)
+            .exec(ctx);
 
     Database::Result result = ctx.get_conn().exec_params(
             "SELECT id, valid_from, classification FROM registrar_certification "
             "WHERE registrar_id = $1::bigint "
-            "AND valid_until IS NULL ",
-            Database::query_param_list(test_registrar.id));
+            "AND (valid_until IS NULL OR valid_until >= $2::date ",
+            Database::query_param_list(test_registrar.id)(third_valid_from));
     BOOST_CHECK(result.size() == 1);
     BOOST_CHECK(id == static_cast<unsigned long long>(result[0][0]));
-    BOOST_CHECK(to_iso_extended_string(new_valid_from) == static_cast<std::string>(result[0][1]));
+    BOOST_CHECK(to_iso_extended_string(third_valid_from) == static_cast<std::string>(result[0][1]));
     BOOST_CHECK(score == static_cast<unsigned>(result[0][2]));
 }
 
