@@ -462,13 +462,16 @@ BOOST_AUTO_TEST_CASE(update_public_request_ok)
     const std::string email = "noreply@nic.cz";
     const ::LibFred::UpdatePublicRequest::EmailId email_id =
         static_cast<::LibFred::UpdatePublicRequest::EmailId>(ctx.get_conn().exec(
-        "SELECT MAX(id) FROM mail_archive")[0][0]);
+        "SELECT COALESCE(MAX(id),0) FROM mail_archive")[0][0]);
+    const bool email_exists = email_id != 0;
     const ::LibFred::UpdatePublicRequest::RequestId resolve_request_id = 20;
     ::LibFred::UpdatePublicRequest::Result result = ::LibFred::UpdatePublicRequest()
         .set_status(enum_status)
         .set_reason(reason)
-        .set_email_to_answer(email)
-        .set_answer_email_id(email_id)
+        .set_email_to_answer(email_exists ? Nullable<std::string>(email)
+                                          : Nullable<std::string>())
+        .set_answer_email_id(email_exists ? Nullable<::LibFred::UpdatePublicRequest::EmailId>(email_id)
+                                          : Nullable<::LibFred::UpdatePublicRequest::EmailId>())
         .set_registrar_id(registrar_id)
         .exec(locked_request, public_request_type, resolve_request_id);
     BOOST_CHECK_EQUAL(result.affected_requests.size(), 1);
@@ -476,29 +479,51 @@ BOOST_AUTO_TEST_CASE(update_public_request_ok)
                 (result.affected_requests[0] == create_result.public_request_id));
     BOOST_CHECK_EQUAL(result.public_request_type, public_request_type.get_public_request_type());
     BOOST_CHECK_EQUAL(result.object_id, contact_id);
-    const Database::Result res = ctx.get_conn().exec_params(
-        "SELECT "
-            "id,"
-            "(SELECT name=$2::TEXT FROM enum_public_request_type WHERE id=pr.request_type),"
-            "create_time<NOW(),"
-            "(SELECT name=$3::TEXT FROM enum_public_request_status WHERE id=pr.status),"
-            "resolve_time=NOW(),"
-            "reason=$4::TEXT,"
-            "email_to_answer=$5::TEXT,"
-            "answer_email_id=$6::BIGINT,"
-            "registrar_id=$7::BIGINT,"
-            "resolve_request_id=$8::BIGINT "
-        "FROM public_request pr "
-        "WHERE id=$1::BIGINT",
-        Database::query_param_list
-            (static_cast<const ::LibFred::LockedPublicRequest&>(locked_request).get_id())
-            (public_request_type.get_public_request_type())
-            (str_status)
-            (reason)
-            (email)
-            (email_id)
-            (registrar_id)
-            (resolve_request_id));
+    const Database::Result res = email_exists
+            ? ctx.get_conn().exec_params(
+                "SELECT "
+                    "id,"
+                    "(SELECT name=$2::TEXT FROM enum_public_request_type WHERE id=pr.request_type),"
+                    "create_time<NOW(),"
+                    "(SELECT name=$3::TEXT FROM enum_public_request_status WHERE id=pr.status),"
+                    "resolve_time=NOW(),"
+                    "reason=$4::TEXT,"
+                    "email_to_answer=$5::TEXT,"
+                    "answer_email_id=$6::BIGINT,"
+                    "registrar_id=$7::BIGINT,"
+                    "resolve_request_id=$8::BIGINT "
+                "FROM public_request pr "
+                "WHERE id=$1::BIGINT",
+                Database::query_param_list
+                    (static_cast<const ::LibFred::LockedPublicRequest&>(locked_request).get_id())
+                    (public_request_type.get_public_request_type())
+                    (str_status)
+                    (reason)
+                    (email)
+                    (email_id)
+                    (registrar_id)
+                    (resolve_request_id))
+            : ctx.get_conn().exec_params(
+                "SELECT "
+                    "id,"
+                    "(SELECT name=$2::TEXT FROM enum_public_request_type WHERE id=pr.request_type),"
+                    "create_time<NOW(),"
+                    "(SELECT name=$3::TEXT FROM enum_public_request_status WHERE id=pr.status),"
+                    "resolve_time=NOW(),"
+                    "reason=$4::TEXT,"
+                    "email_to_answer IS NULL,"
+                    "answer_email_id IS NULL,"
+                    "registrar_id=$5::BIGINT,"
+                    "resolve_request_id=$6::BIGINT "
+                "FROM public_request pr "
+                "WHERE id=$1::BIGINT",
+                Database::query_param_list
+                    (static_cast<const ::LibFred::LockedPublicRequest&>(locked_request).get_id())
+                    (public_request_type.get_public_request_type())
+                    (str_status)
+                    (reason)
+                    (registrar_id)
+                    (resolve_request_id));
     BOOST_CHECK_EQUAL(res.size(), 1);
     BOOST_CHECK_EQUAL(static_cast<::LibFred::PublicRequestId>(res[0][0]), create_result.public_request_id);
     BOOST_CHECK(!res[0][1].isnull() && static_cast<bool>(res[0][1]));
