@@ -30,83 +30,91 @@
 #include "libfred/registrable_object/keyset/info_keyset.hh"
 #include "libfred/registrable_object/domain/info_domain_diff.hh"
 
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>
 
 namespace Notification {
 
-static std::map<std::string, std::string> gather_domain_update_data_change(
-    const LibFred::InfoDomainData& _before,
-    const LibFred::InfoDomainData& _after
-) {
+namespace {
 
+std::map<std::string, std::string> gather_domain_update_data_change(
+    const LibFred::InfoDomainData& _before,
+    const LibFred::InfoDomainData& _after)
+{
     std::map<std::string, std::string> result;
 
     const LibFred::InfoDomainDiff diff = diff_domain_data(_before, _after);
 
-    if (diff.authinfopw.isset()) {
+    if (diff.authinfopw.isset())
+    {
         add_old_new_changes_pair_if_different(
-            result, "object.authinfo",
+            result,
+            "object.authinfo",
             diff.authinfopw.get_value().first,
-            diff.authinfopw.get_value().second
-        );
+            diff.authinfopw.get_value().second);
     }
 
-    if (diff.registrant.isset()) {
+    if (diff.registrant.isset())
+    {
         add_old_new_changes_pair_if_different(
-            result, "domain.registrant",
+            result,
+            "domain.registrant",
             diff.registrant.get_value().first.handle,
-            diff.registrant.get_value().second.handle
-        );
+            diff.registrant.get_value().second.handle);
     }
 
-    if (diff.nsset.isset() ) {
+    if (diff.nsset.isset())
+    {
         add_old_new_changes_pair_if_different(
-            result, "domain.nsset",
+            result,
+            "domain.nsset",
             diff.nsset.get_value().first.isnull()  ? "" : diff.nsset.get_value().first.get_value().handle,
-            diff.nsset.get_value().second.isnull() ? "" : diff.nsset.get_value().second.get_value().handle
-        );
+            diff.nsset.get_value().second.isnull() ? "" : diff.nsset.get_value().second.get_value().handle);
     }
 
-    if (diff.keyset.isset()) {
+    if (diff.keyset.isset())
+    {
         add_old_new_changes_pair_if_different(
-            result, "domain.keyset",
+            result,
+            "domain.keyset",
             diff.keyset.get_value().first.isnull()  ? "" : diff.keyset.get_value().first.get_value().handle,
-            diff.keyset.get_value().second.isnull() ? "" : diff.keyset.get_value().second.get_value().handle
-        );
+            diff.keyset.get_value().second.isnull() ? "" : diff.keyset.get_value().second.get_value().handle);
     }
 
-    if (diff.admin_contacts.isset()) {
+    if (diff.admin_contacts.isset())
+    {
         add_old_new_changes_pair_if_different(
-            result, "domain.admin_c",
-            boost::algorithm::join( sort( get_handles( diff.admin_contacts.get_value().first  ) ), " " ),
-            boost::algorithm::join( sort( get_handles( diff.admin_contacts.get_value().second ) ), " " )
-        );
+            result,
+            "domain.admin_c",
+            boost::algorithm::join(sort(get_handles(diff.admin_contacts.get_value().first)), " "),
+            boost::algorithm::join(sort(get_handles(diff.admin_contacts.get_value().second)), " "));
     }
 
-    if (diff.enum_domain_validation.isset() ) {
-
+    if (diff.enum_domain_validation.isset())
+    {
         add_old_new_changes_pair_if_different(
-            result, "domain.val_ex_date",
+            result,
+            "domain.val_ex_date",
             to_cz_format(
                 diff.enum_domain_validation.get_value().first.get_value_or(
-                    LibFred::ENUMValidationExtension( boost::gregorian::date(boost::gregorian::not_a_date_time), false )
-                ).validation_expiration
-            ),
+                    LibFred::ENUMValidationExtension(
+                            boost::gregorian::date(boost::gregorian::not_a_date_time),
+                            false)).validation_expiration),
             to_cz_format(
                 diff.enum_domain_validation.get_value().second.get_value_or(
-                    LibFred::ENUMValidationExtension( boost::gregorian::date(boost::gregorian::not_a_date_time), false )
-                ).validation_expiration
-            )
-        );
+                    LibFred::ENUMValidationExtension(
+                            boost::gregorian::date(boost::gregorian::not_a_date_time),
+                            false)).validation_expiration));
     }
 
-    if (diff.enum_domain_validation.isset() ) {
+    if (diff.enum_domain_validation.isset())
+    {
         add_old_new_changes_pair_if_different(
-            result, "domain.publish",
-            diff.enum_domain_validation.get_value().first.isnull()  ? "" : to_string( diff.enum_domain_validation.get_value().first.get_value().publish ),
-            diff.enum_domain_validation.get_value().second.isnull() ? "" : to_string( diff.enum_domain_validation.get_value().second.get_value().publish )
-        );
+            result,
+            "domain.publish",
+            diff.enum_domain_validation.get_value().first.isnull()
+                ? "" : to_string(diff.enum_domain_validation.get_value().first.get_value().publish),
+            diff.enum_domain_validation.get_value().second.isnull()
+                ? "" : to_string(diff.enum_domain_validation.get_value().second.get_value().publish));
     }
 
     result["changes"] = result.empty() ? "0" : "1";
@@ -114,149 +122,143 @@ static std::map<std::string, std::string> gather_domain_update_data_change(
     return result;
 }
 
+}//namespace Notification::{anonymous}
+
 std::map<std::string, std::string> gather_domain_data_change(
     LibFred::OperationContext& _ctx,
     const notified_event& _event,
-    unsigned long long _history_id_post_change
-) {
-
-    if (_event != updated ) {
-
+    unsigned long long _history_id_post_change)
+{
+    if (_event != updated)
+    {
         return std::map<std::string, std::string>();
-
-    } else {
-
-        return gather_domain_update_data_change(
-            LibFred::InfoDomainHistoryByHistoryid(
-                LibFred::get_previous_object_historyid(_ctx, _history_id_post_change)
-                    .get_value_or_throw<ExceptionInvalidUpdateEvent>()
-            ).exec(_ctx).info_domain_data,
-            LibFred::InfoDomainHistoryByHistoryid(_history_id_post_change).exec(_ctx).info_domain_data
-        );
     }
-
+    return gather_domain_update_data_change(
+        LibFred::InfoDomainHistoryByHistoryid(
+            LibFred::get_previous_object_historyid(
+                _ctx,
+                _history_id_post_change).get_value_or_throw<ExceptionInvalidUpdateEvent>())
+        .exec(_ctx).info_domain_data,
+        LibFred::InfoDomainHistoryByHistoryid(_history_id_post_change).exec(_ctx).info_domain_data);
 }
 
+namespace {
 
-
-static std::set<unsigned long long> get_ids_of_contacts_accepting_notifications(const LibFred::InfoDomainData& _data) {
+std::set<unsigned long long> get_ids_of_contacts_accepting_notifications(const LibFred::InfoDomainData& _data)
+{
     std::set<unsigned long long> result;
     result.insert(_data.registrant.id);
-    for (const auto& admin_c : _data.admin_contacts)
+    for (const auto& contact : _data.admin_contacts)
     {
-        result.insert(admin_c.id);
+        result.insert(contact.id);
     }
-
     return result;
 }
+
+}//namespace Notification::{anonymous}
 
 std::set<unsigned long long> gather_contact_ids_to_notify_domain_event(
     LibFred::OperationContext& _ctx,
     notified_event _event,
-    unsigned long long _history_id_after_change
-) {
-
-    std::set<unsigned long long> contact_ids;
-
-    // always notify new values of notifiable contacts
-    {
-        const std::set<unsigned long long> contacts_accepting_notifications_after_change = get_ids_of_contacts_accepting_notifications(
-            LibFred::InfoDomainHistoryByHistoryid(_history_id_after_change).exec(_ctx).info_domain_data
-        );
-        contact_ids.insert(contacts_accepting_notifications_after_change.begin(), contacts_accepting_notifications_after_change.end());
-    }
+    unsigned long long _history_id_after_change)
+{
+    std::set<unsigned long long> contact_ids = get_ids_of_contacts_accepting_notifications(
+            LibFred::InfoDomainHistoryByHistoryid(_history_id_after_change).exec(_ctx).info_domain_data);
 
     // if there were possibly other old values notify those as well
-    if (_event == updated ) {
+    if (_event == updated)
+    {
         const unsigned long long history_id_before_change =
             LibFred::get_previous_object_historyid(_ctx, _history_id_after_change)
                 .get_value_or_throw<ExceptionInvalidUpdateEvent>();
-        const std::set<unsigned long long> contacts_accepting_notifications_before_change = get_ids_of_contacts_accepting_notifications(
-            LibFred::InfoDomainHistoryByHistoryid( history_id_before_change).exec(_ctx).info_domain_data
-        );
-        contact_ids.insert( contacts_accepting_notifications_before_change.begin(), contacts_accepting_notifications_before_change.end() );
+        const std::set<unsigned long long> contacts_accepting_notifications_before_change =
+                get_ids_of_contacts_accepting_notifications(
+                        LibFred::InfoDomainHistoryByHistoryid(history_id_before_change).exec(_ctx).info_domain_data);
+        contact_ids.insert(contacts_accepting_notifications_before_change.begin(),
+                           contacts_accepting_notifications_before_change.end());
 
         const LibFred::InfoDomainDiff diff = diff_domain_data(
-            LibFred::InfoDomainHistoryByHistoryid( history_id_before_change ).exec(_ctx).info_domain_data,
-            LibFred::InfoDomainHistoryByHistoryid( _history_id_after_change ).exec(_ctx).info_domain_data
-        );
+            LibFred::InfoDomainHistoryByHistoryid(history_id_before_change).exec(_ctx).info_domain_data,
+            LibFred::InfoDomainHistoryByHistoryid(_history_id_after_change).exec(_ctx).info_domain_data);
 
-        if (diff.nsset.isset()) {
-
+        if (diff.nsset.isset())
+        {
             std::set<unsigned long long> nssets;
-            if (!diff.nsset.get_value().first.isnull() ) {
-                nssets.insert( diff.nsset.get_value().first.get_value().id );
+            if (!diff.nsset.get_value().first.isnull())
+            {
+                nssets.insert(diff.nsset.get_value().first.get_value().id);
             }
-            if (!diff.nsset.get_value().second.isnull() ) {
-                nssets.insert( diff.nsset.get_value().second.get_value().id );
+            if (!diff.nsset.get_value().second.isnull())
+            {
+                nssets.insert(diff.nsset.get_value().second.get_value().id);
             }
 
-            const boost::posix_time::ptime time_of_change = Notification::get_utc_time_of_event(_ctx, _event, _history_id_after_change);
+            const boost::posix_time::ptime time_of_change =
+                    Notification::get_utc_time_of_event(_ctx, _event, _history_id_after_change);
 
-            BOOST_FOREACH(unsigned long long nsset_id, nssets ) {
-
+            for (const auto nsset_id : nssets)
+            {
                 bool corresponding_nsset_history_state_found = false;
 
-                BOOST_FOREACH(
-                    const LibFred::InfoNssetOutput& nsset_history_state,
-                    LibFred::InfoNssetHistoryById(nsset_id).exec(_ctx, "UTC")
-                ) {
-                    if (
-                        nsset_history_state.history_valid_from <= time_of_change
-                        &&
-                        time_of_change <= nsset_history_state.history_valid_to.get_value_or(boost::posix_time::pos_infin)
-                    ) {
+                for (const auto& nsset_history_state : LibFred::InfoNssetHistoryById(nsset_id).exec(_ctx, "UTC"))
+                {
+                    if ((nsset_history_state.history_valid_from <= time_of_change) &&
+                        (time_of_change <= nsset_history_state.history_valid_to.get_value_or(boost::posix_time::pos_infin)))
+                    {
                         corresponding_nsset_history_state_found = true;
-                        for (const auto& tech_c : nsset_history_state.info_nsset_data.tech_contacts)
+                        for (const auto& contact : nsset_history_state.info_nsset_data.tech_contacts)
                         {
-                            contact_ids.insert(tech_c.id);
+                            contact_ids.insert(contact.id);
                         }
                         /* continuing search through other history versions - chances are there might be two history states bordering the domain event */
                     }
                 }
 
-                if (!corresponding_nsset_history_state_found ) {
-                    throw std::runtime_error("inconsistent data - Nsset that was associated before or after event to domain should exist at that time");
+                if (!corresponding_nsset_history_state_found)
+                {
+                    throw std::runtime_error("inconsistent data - Nsset that was associated before or "
+                                             "after event to domain should exist at that time");
                 }
             }
         }
 
-        if (diff.keyset.isset()) {
-
+        if (diff.keyset.isset())
+        {
             std::set<unsigned long long> keysets;
-            if (!diff.keyset.get_value().first.isnull() ) {
-                keysets.insert( diff.keyset.get_value().first.get_value().id );
+            if (!diff.keyset.get_value().first.isnull())
+            {
+                keysets.insert(diff.keyset.get_value().first.get_value().id);
             }
-            if (!diff.keyset.get_value().second.isnull() ) {
-                keysets.insert( diff.keyset.get_value().second.get_value().id );
+            if (!diff.keyset.get_value().second.isnull())
+            {
+                keysets.insert(diff.keyset.get_value().second.get_value().id);
             }
 
-            const boost::posix_time::ptime time_of_change = Notification::get_utc_time_of_event(_ctx, _event, _history_id_after_change);
+            const boost::posix_time::ptime time_of_change =
+                    Notification::get_utc_time_of_event(_ctx, _event, _history_id_after_change);
 
-            BOOST_FOREACH(unsigned long long keyset_id, keysets ) {
-
+            for (const auto keyset_id : keysets)
+            {
                 bool corresponding_keyset_history_state_found = false;
 
-                BOOST_FOREACH(
-                    const LibFred::InfoKeysetOutput& keyset_history_state,
-                    LibFred::InfoKeysetHistoryById(keyset_id).exec(_ctx, "UTC")
-                ) {
-                    if (
-                        keyset_history_state.history_valid_from <= time_of_change
-                        &&
-                        time_of_change <= keyset_history_state.history_valid_to.get_value_or(boost::posix_time::pos_infin)
-                    ) {
+                for (const auto& keyset_history_state : LibFred::InfoKeysetHistoryById(keyset_id).exec(_ctx, "UTC"))
+                {
+                    if ((keyset_history_state.history_valid_from <= time_of_change) &&
+                        (time_of_change <= keyset_history_state.history_valid_to.get_value_or(boost::posix_time::pos_infin)))
+                    {
                         corresponding_keyset_history_state_found = true;
-                        for (const auto& tech_c : keyset_history_state.info_keyset_data.tech_contacts)
+                        for (const auto& contact : keyset_history_state.info_keyset_data.tech_contacts)
                         {
-                            contact_ids.insert(tech_c.id);
+                            contact_ids.insert(contact.id);
                         }
                         /* continuing search through other history versions - chances are there might be two history states bordering the domain event */
                     }
                 }
 
-                if (!corresponding_keyset_history_state_found ) {
-                    throw std::runtime_error("inconsistent data - Keyset that was associated before or after event to domain should exist at that time");
+                if (!corresponding_keyset_history_state_found)
+                {
+                    throw std::runtime_error("inconsistent data - Keyset that was associated before or "
+                                             "after event to domain should exist at that time");
                 }
             }
         }
@@ -265,4 +267,4 @@ std::set<unsigned long long> gather_contact_ids_to_notify_domain_event(
     return contact_ids;
 }
 
-}
+}//namespace Notification
