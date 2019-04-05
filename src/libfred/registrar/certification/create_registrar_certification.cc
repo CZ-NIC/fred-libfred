@@ -86,7 +86,7 @@ unsigned long long CreateRegistrarCertification::exec(OperationContext& _ctx) co
                 "SET valid_until = ($1::date - interval '1 day') "
                 "WHERE registrar_id = $2::bigint "
                 "AND valid_from < $1::date "
-                "AND valid_until IS NULL ",
+                "AND (valid_until IS NULL OR valid_until >= $1::date) ",
                 // clang-format on
                 Database::query_param_list(valid_from_)(registrar_id_));
 
