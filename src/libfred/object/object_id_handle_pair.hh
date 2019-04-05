@@ -80,6 +80,6 @@ struct ObjectIdHandlePair : public Util::Printable<ObjectIdHandlePair>
     std::string to_string()const;
 };
 
-}//namespace LibFred
+} // namespace LibFred
 
-#endif//OBJECT_ID_HANDLE_PAIR_HH_B98F5620CB614CC4AD93C8CF08D46449
+#endif

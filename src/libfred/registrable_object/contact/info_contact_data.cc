@@ -91,23 +91,28 @@ bool ContactAddress::operator==(const ContactAddress &_b)const
 }
 
 InfoContactData::InfoContactData()
-: crhistoryid(0)
-, historyid(0)
-, disclosename(false)
-, discloseorganization(false)
-, discloseaddress(true)
-, disclosetelephone(false)
-, disclosefax(false)
-, discloseemail(false)
-, disclosevat(false)
-, discloseident(false)
-, disclosenotifyemail(false)
-, id(0)
+    : crhistoryid(0),
+      historyid(0),
+      disclosename(false),
+      discloseorganization(false),
+      discloseaddress(true),
+      disclosetelephone(false),
+      disclosefax(false),
+      discloseemail(false),
+      disclosevat(false),
+      discloseident(false),
+      disclosenotifyemail(false),
+      id(0),
+      uuid(),
+      history_uuid(),
+      addresses(),
+      warning_letter()
 {}
 
 InfoContactData::Address InfoContactData::get_permanent_address()const
 {
-    if (place.isnull()) {
+    if (place.isnull())
+    {
         throw AddressDoesntExist("no address present");
     }
     Address address(
@@ -115,13 +120,13 @@ InfoContactData::Address InfoContactData::get_permanent_address()const
         Optional<std::string>(),
         ContactAddress(
             Optional<std::string>(),
-            place.get_value()
-        )
-    );
-    if (!name.isnull()) {
+            place.get_value()));
+    if (!name.isnull())
+    {
         address.name = name.get_value();
     }
-    if (!organization.isnull()) {
+    if (!organization.isnull())
+    {
         address.organization = organization.get_value();
     }
     return address;
@@ -173,61 +178,68 @@ bool InfoContactData::operator!=(const InfoContactData& rhs) const
     return !this->operator ==(rhs);
 }
 
-template < class KEY, class VALUE > std::string format_map(const std::map< KEY, VALUE > &in)
+namespace {
+
+template <typename K, typename V>
+std::string format_map(const std::map<K, V> &in)
 {
     std::ostringstream out;
 
-    for (typename std::map< KEY, VALUE >::const_iterator ptr = in.begin(); ptr != in.end(); ++ptr)
+    for (const auto& itr : in)
     {
-        if (!out.str().empty()) {
+        if (!out.str().empty())
+        {
             out << " ";
         }
-        out << "\"" << ptr->first << "\":\"" << ptr->second << "\"";// "key":"value"
+        out << "\"" << itr.first << "\":\"" << itr.second << "\"";// "key":"value"
     }
     return out.str();
 }
 
+}//namespace LibFred::{anonymous}
+
 std::string InfoContactData::to_string() const
 {
-    return Util::format_data_structure("InfoContactData",
-    Util::vector_of<std::pair<std::string, std::string> >
-    (std::make_pair("crhistoryid", boost::lexical_cast<std::string>(crhistoryid)))
-    (std::make_pair("historyid", boost::lexical_cast<std::string>(historyid)))
-    (std::make_pair("id", boost::lexical_cast<std::string>(id)))
-    (std::make_pair("uuid", Util::strong_to_string(uuid)))
-    (std::make_pair("history_uuid", Util::strong_to_string(history_uuid)))
-    (std::make_pair("delete_time", delete_time.print_quoted()))
-    (std::make_pair("handle", handle))
-    (std::make_pair("roid", roid))
-    (std::make_pair("sponsoring_registrar_handle", sponsoring_registrar_handle))
-    (std::make_pair("create_registrar_handle", create_registrar_handle))
-    (std::make_pair("update_registrar_handle", update_registrar_handle.print_quoted()))
-    (std::make_pair("creation_time", boost::lexical_cast<std::string>(creation_time)))
-    (std::make_pair("update_time", update_time.print_quoted()))
-    (std::make_pair("transfer_time", transfer_time.print_quoted()))
-    (std::make_pair("authinfopw", authinfopw))
-    (std::make_pair("name", name.print_quoted()))
-    (std::make_pair("organization", organization.print_quoted()))
-    (std::make_pair("place", place.print_quoted()))
-    (std::make_pair("telephone", telephone.print_quoted()))
-    (std::make_pair("fax", fax.print_quoted()))
-    (std::make_pair("email", email.print_quoted()))
-    (std::make_pair("notifyemail_", notifyemail.print_quoted()))
-    (std::make_pair("vat", vat.print_quoted()))
-    (std::make_pair("ssntype", ssntype.print_quoted()))
-    (std::make_pair("ssn", ssn.print_quoted()))
-    (std::make_pair("addresses", format_map(addresses)))
-    (std::make_pair("disclosename", disclosename ? "true" : "false"))
-    (std::make_pair("discloseorganization", discloseorganization ? "true" : "false"))
-    (std::make_pair("discloseaddress", discloseaddress ? "true" : "false"))
-    (std::make_pair("disclosetelephone", disclosetelephone ? "true" : "false"))
-    (std::make_pair("disclosefax", disclosefax ? "true" : "false"))
-    (std::make_pair("discloseemail", discloseemail ? "true" : "false"))
-    (std::make_pair("disclosevat", disclosevat ? "true" : "false"))
-    (std::make_pair("discloseident", discloseident ? "true" : "false"))
-    (std::make_pair("disclosenotifyemail", disclosenotifyemail ? "true" : "false"))
-    (std::make_pair("warning_letter", warning_letter.print_quoted()))
-    );
+    return Util::format_data_structure(
+            "InfoContactData",
+            {
+                std::make_pair("crhistoryid", std::to_string(crhistoryid)),
+                std::make_pair("historyid", std::to_string(historyid)),
+                std::make_pair("id", std::to_string(id)),
+                std::make_pair("uuid", strong_to_string(uuid)),
+                std::make_pair("history_uuid", strong_to_string(history_uuid)),
+                std::make_pair("delete_time", delete_time.print_quoted()),
+                std::make_pair("handle", handle),
+                std::make_pair("roid", roid),
+                std::make_pair("sponsoring_registrar_handle", sponsoring_registrar_handle),
+                std::make_pair("create_registrar_handle", create_registrar_handle),
+                std::make_pair("update_registrar_handle", update_registrar_handle.print_quoted()),
+                std::make_pair("creation_time", boost::lexical_cast<std::string>(creation_time)),
+                std::make_pair("update_time", update_time.print_quoted()),
+                std::make_pair("transfer_time", transfer_time.print_quoted()),
+                std::make_pair("authinfopw", authinfopw),
+                std::make_pair("name", name.print_quoted()),
+                std::make_pair("organization", organization.print_quoted()),
+                std::make_pair("place", place.print_quoted()),
+                std::make_pair("telephone", telephone.print_quoted()),
+                std::make_pair("fax", fax.print_quoted()),
+                std::make_pair("email", email.print_quoted()),
+                std::make_pair("notifyemail_", notifyemail.print_quoted()),
+                std::make_pair("vat", vat.print_quoted()),
+                std::make_pair("ssntype", ssntype.print_quoted()),
+                std::make_pair("ssn", ssn.print_quoted()),
+                std::make_pair("addresses", format_map(addresses)),
+                std::make_pair("disclosename", disclosename ? "true" : "false"),
+                std::make_pair("discloseorganization", discloseorganization ? "true" : "false"),
+                std::make_pair("discloseaddress", discloseaddress ? "true" : "false"),
+                std::make_pair("disclosetelephone", disclosetelephone ? "true" : "false"),
+                std::make_pair("disclosefax", disclosefax ? "true" : "false"),
+                std::make_pair("discloseemail", discloseemail ? "true" : "false"),
+                std::make_pair("disclosevat", disclosevat ? "true" : "false"),
+                std::make_pair("discloseident", discloseident ? "true" : "false"),
+                std::make_pair("disclosenotifyemail", disclosenotifyemail ? "true" : "false"),
+                std::make_pair("warning_letter", warning_letter.print_quoted())
+            });
 }
 
 std::ostream& operator<<(std::ostream &os, const ContactAddressList &v)

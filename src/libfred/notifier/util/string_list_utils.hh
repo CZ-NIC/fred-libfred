@@ -23,42 +23,36 @@
 #ifndef STRING_LIST_UTILS_HH_985C634B52D6452A998B887466E4AEA6
 #define STRING_LIST_UTILS_HH_985C634B52D6452A998B887466E4AEA6
 
+#include "libfred/registrable_object/registrable_object_reference.hh"
+
+#include <boost/asio/ip/address.hpp>
+
+#include <algorithm>
 #include <string>
 #include <vector>
-#include <set>
-#include <algorithm>
-#include <boost/asio/ip/address.hpp>
-#include "libfred/object/object_id_handle_pair.hh"
-
-#include <boost/foreach.hpp>
 
 namespace Notification {
 
-    /**
-     * @returns vector of handles from given id, handle pairs
-     * - could be potentialy non-unique despite using std::set on input because LibFred::ObjectIdHandlePair compares both handle AND id
-     */
-    inline std::vector<std::string> get_handles(const std::vector<LibFred::ObjectIdHandlePair>& _in) {
+    template <LibFred::Object_Type::Enum object_type>
+    inline std::vector<std::string> get_handles(const std::vector<LibFred::RegistrableObject::RegistrableObjectReference<object_type>>& _in) {
         std::vector<std::string> result;
-
-        BOOST_FOREACH(const LibFred::ObjectIdHandlePair& ob, _in) {
-            result.push_back(ob.handle);
-        }
-
+        result.reserve(_in.size());
+        std::transform(
+                _in.cbegin(),
+                _in.cend(),
+                std::back_inserter(result),
+                [](const auto& o) { return o.handle; });
         return result;
     }
 
-    /**
-     * @returns vector of handles from given id, handle pairs
-     * - could be potentialy non-unique despite using std::set on input because LibFred::ObjectIdHandlePair compares both handle AND id
-     */
     inline std::vector<std::string> get_string_addresses(const std::vector<boost::asio::ip::address>& _in) {
         std::vector<std::string> result;
-
-        BOOST_FOREACH(const boost::asio::ip::address& ob, _in) {
-            result.push_back(ob.to_string());
-        }
-
+        result.reserve(_in.size());
+        std::transform(
+                _in.cbegin(),
+                _in.cend(),
+                std::back_inserter(result),
+                [](const auto& o) { return o.to_string(); });
         return result;
     }
 

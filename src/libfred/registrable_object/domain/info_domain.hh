@@ -18,14 +18,15 @@
  */
 /**
  *  @file
- *  domain history info
+ *  domain info
  */
 
 #ifndef INFO_DOMAIN_HH_E4C6FC6930714E419B82E94BD9F47DC6
 #define INFO_DOMAIN_HH_E4C6FC6930714E419B82E94BD9F47DC6
 
-#include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"
+#include "libfred/opexception.hh"
+#include "libfred/registrable_object/domain/domain_uuid.hh"
 #include "libfred/registrable_object/domain/info_domain_output.hh"
 
 #include "util/optional_value.hh"
@@ -135,35 +136,35 @@ private:
 };
 
 /**
- * Domain history info.
- * Output data are arranged in descending order by historyid.
- * Domain registry object identifier to get history info about the domain is set via constructor.
- * It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
- */
-class InfoDomainHistoryByRoid : public Util::Printable<InfoDomainHistoryByRoid>
+ * Domain info by uuid.
+ * Domain uuid to get info about the domain is set via constructor.
+ * It's executed by @ref exec method.
+*/
+class InfoDomainByUuid : public Util::Printable<InfoDomainByUuid>
 {
 public:
-    /**
-     * Info domain history constructor with mandatory parameter.
-     * @param roid sets registry object identifier of the domain into @ref roid_ attribute
-     */
-    InfoDomainHistoryByRoid(const std::string& roid);
+    DECLARE_EXCEPTION_DATA(unknown_domain_uuid, RegistrableObject::Domain::DomainUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_domain_uuid<Exception>
+    { };
 
     /**
-     * Sets lock for update.
-     * Default, if not set, is lock for share.
-     * Sets true to lock flag in @ref lock_ attribute
-     * @return operation instance reference to allow method chaining
+     * Info domain constructor with mandatory parameter.
+     * @param id sets object id of the domain into @ref id_ attribute
      */
-    InfoDomainHistoryByRoid& set_lock();
+    explicit InfoDomainByUuid(const RegistrableObject::Domain::DomainUuid& uuid);
 
     /**
-     * Executes getting history info about the domain.
+     * Executes getting info about the domain. Time zone name of the returned data is UTC.
+     * @tparam lock type of database locking
      * @param ctx contains reference to database and logging interface
-     * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
-     * @return history info data about the domain in descending order by historyid
+     * @return info data about the domain
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
+     * @throws InternalError otherwise
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    template <DbLock lock>
+    InfoDomainOutput exec(const OperationContextUsing<lock>& ctx);
 
     /**
      * Dumps state of the instance into the string
@@ -171,9 +172,90 @@ public:
      */
     std::string to_string()const;
 private:
-    const std::string roid_;/**< registry object identifier of the domain */
-    bool lock_;/**< if set to true lock object_registry row for update, if set to false lock for share */
+    const RegistrableObject::Domain::DomainUuid uuid_;
 };
+
+/**
+ * Domain info by history uuid.
+ * Domain history uuid to get info about the domain is set via constructor.
+ * It's executed by @ref exec method
+*/
+class InfoDomainByHistoryUuid : public Util::Printable<InfoDomainByHistoryUuid>
+{
+public:
+    DECLARE_EXCEPTION_DATA(unknown_domain_history_uuid, RegistrableObject::Domain::DomainHistoryUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_domain_history_uuid<Exception>
+    { };
+
+    /**
+     * Info domain constructor with mandatory parameter.
+     * @param id sets object id of the domain into @ref id_ attribute
+     */
+    explicit InfoDomainByHistoryUuid(const RegistrableObject::Domain::DomainHistoryUuid& history_uuid);
+
+    /**
+     * Executes getting info about the domain. Time zone name of the returned data is UTC.
+     * @tparam lock type of database locking
+     * @param ctx contains reference to database and logging interface
+     * @return info data about the domain
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
+     * @throws InternalError otherwise
+     */
+    template <DbLock lock>
+    InfoDomainOutput exec(const OperationContextUsing<lock>& ctx);
+
+    /**
+     * Dumps state of the instance into the string
+     * @return string with description of the instance state
+     */
+    std::string to_string()const;
+private:
+    const RegistrableObject::Domain::DomainHistoryUuid history_uuid_;
+};
+
+    /**
+     * Domain history info.
+     * Output data are arranged in descending order by historyid.
+     * Domain registry object identifier to get history info about the domain is set via constructor.
+     * It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
+     */
+    class InfoDomainHistoryByRoid : public Util::Printable<InfoDomainHistoryByRoid>
+    {
+    public:
+        /**
+         * Info domain history constructor with mandatory parameter.
+         * @param roid sets registry object identifier of the domain into @ref roid_ attribute
+         */
+        InfoDomainHistoryByRoid(const std::string& roid);
+
+        /**
+         * Sets lock for update.
+         * Default, if not set, is lock for share.
+         * Sets true to lock flag in @ref lock_ attribute
+         * @return operation instance reference to allow method chaining
+         */
+        InfoDomainHistoryByRoid& set_lock();
+
+        /**
+         * Executes getting history info about the domain.
+         * @param ctx contains reference to database and logging interface
+         * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
+         * @return history info data about the domain in descending order by historyid
+         * @throws Exception in case of wrong input data or other predictable and superable failure.
+         */
+        std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+
+        /**
+         * Dumps state of the instance into the string
+         * @return string with description of the instance state
+         */
+        std::string to_string()const;
+    private:
+        const std::string roid_;/**< registry object identifier of the domain */
+        bool lock_;/**< if set to true lock object_registry row for update, if set to false lock for share */
+    };
 
 /**
  * Domain info by id including history.
@@ -203,6 +285,7 @@ public:
      * @param ctx contains reference to database and logging interface
      * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
      * @return history info data about the domain in descending order by historyid
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
      */
     std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
@@ -276,7 +359,7 @@ public:
      * Info domain constructor with mandatory parameter.
      * @param registrant_handle sets registrant handle into @ref registrant_handle_ attribute
      */
-    InfoDomainByRegistrantHandle(const std::string& registrant_handle);
+    explicit InfoDomainByRegistrantHandle(const std::string& registrant_handle);
 
     /**
      * Sets lock for update.
@@ -326,7 +409,7 @@ public:
      * Info domain constructor with mandatory parameter.
      * @param admin_contact_handle sets domain administrator contact handle into @ref admin_contact_handle_ attribute
      */
-    InfoDomainByAdminContactHandle(const std::string& admin_contact_handle);
+    explicit InfoDomainByAdminContactHandle(const std::string& admin_contact_handle);
 
     /**
      * Sets lock for update.
@@ -376,7 +459,7 @@ public:
      * Info domain constructor with mandatory parameter.
      * @param nsset_handle sets domain nsset handle into @ref nsset_handle_ attribute
      */
-    InfoDomainByNssetHandle(const std::string& nsset_handle);
+    explicit InfoDomainByNssetHandle(const std::string& nsset_handle);
 
     /**
      * Sets lock for update.

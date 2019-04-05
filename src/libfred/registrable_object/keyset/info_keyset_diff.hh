@@ -24,6 +24,7 @@
 #ifndef INFO_KEYSET_DIFF_HH_5166F7638312403697651744C3726161
 #define INFO_KEYSET_DIFF_HH_5166F7638312403697651744C3726161
 
+#include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/keyset/info_keyset_data.hh"
 
 #include "util/optional_value.hh"
@@ -68,25 +69,28 @@ struct InfoKeysetDiff : Util::Printable<InfoKeysetDiff>
     */
     bool is_empty() const;
 
-    template <class T> struct DiffMemeber { typedef Optional<std::pair<T, T>> Type;};
+    template <typename T>
+    using DiffMember = Optional<std::pair<T, T>>;
 
-    DiffMemeber<unsigned long long>::Type crhistoryid;/**< first historyid of keyset history*/
-    DiffMemeber<unsigned long long>::Type historyid;/**< last historyid of keyset history*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type delete_time; /**< keyset delete time in set local zone*/
-    DiffMemeber<std::string>::Type handle;/**< keyset handle */
-    DiffMemeber<std::string>::Type roid;/**< registry object identifier of the keyset */
-    DiffMemeber<std::string>::Type sponsoring_registrar_handle;/**< registrar administering the keyset */
-    DiffMemeber<std::string>::Type create_registrar_handle;/**< registrar that created the keyset */
-    DiffMemeber<Nullable<std::string> >::Type update_registrar_handle;/**< registrar which last time changed the keyset */
-    DiffMemeber<boost::posix_time::ptime>::Type creation_time;/**< creation time of the keyset in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type update_time; /**< last update time of the keyset in set local zone*/
-    DiffMemeber<Nullable<boost::posix_time::ptime> >::Type transfer_time; /**<last transfer time in set local zone*/
-    DiffMemeber<std::string>::Type authinfopw;/**< password for transfer */
+    DiffMember<unsigned long long> crhistoryid;/**< first historyid of keyset history*/
+    DiffMember<unsigned long long> historyid;/**< last historyid of keyset history*/
+    DiffMember<Nullable<boost::posix_time::ptime> > delete_time; /**< keyset delete time in set local zone*/
+    DiffMember<std::string> handle;/**< keyset handle */
+    DiffMember<std::string> roid;/**< registry object identifier of the keyset */
+    DiffMember<std::string> sponsoring_registrar_handle;/**< registrar administering the keyset */
+    DiffMember<std::string> create_registrar_handle;/**< registrar that created the keyset */
+    DiffMember<Nullable<std::string> > update_registrar_handle;/**< registrar which last time changed the keyset */
+    DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the keyset in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime> > update_time; /**< last update time of the keyset in set local zone*/
+    DiffMember<Nullable<boost::posix_time::ptime> > transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< password for transfer */
 
-    DiffMemeber<std::vector<DnsKey> >::Type dns_keys;/**< DNS keys */
-    DiffMemeber<std::vector<ObjectIdHandlePair> >::Type tech_contacts;/**< list of technical contacts*/
+    DiffMember<std::vector<DnsKey> > dns_keys;/**< DNS keys */
+    DiffMember<std::vector<RegistrableObject::Contact::ContactReference>> tech_contacts;/**< list of technical contacts*/
 
-    DiffMemeber<unsigned long long>::Type id;/**< id of the keyset object*/
+    DiffMember<unsigned long long> id;/**< id of the keyset object*/
+    DiffMember<RegistrableObject::Keyset::KeysetUuid> uuid;/**< uuid of the keyset object*/
+    DiffMember<RegistrableObject::Keyset::KeysetHistoryUuid> history_uuid;/**< history uuid of the keyset object*/
 };
 
 /**

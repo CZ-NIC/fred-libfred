@@ -24,8 +24,9 @@
 #ifndef INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324
 #define INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324
 
-#include "libfred/object/object_id_handle_pair.hh"
+#include "libfred/registrable_object/contact/contact_reference.hh"
 #include "libfred/registrable_object/nsset/nsset_dns_host.hh"
+#include "libfred/registrable_object/nsset/nsset_uuid.hh"
 
 #include "util/optional_value.hh"
 #include "util/db/nullable.hh"
@@ -71,7 +72,9 @@ struct InfoNssetData : Util::Printable<InfoNssetData>
 
     unsigned long long crhistoryid;/**< first historyid of nsset history */
     unsigned long long historyid;/**< last historyid of nsset history */
+    RegistrableObject::Nsset::NssetHistoryUuid history_uuid;/**< last history_uuid of nsset history */
     unsigned long long id;/**< id of the nsset object*/
+    RegistrableObject::Nsset::NssetUuid uuid;/**< uuid of the nsset object*/
     Nullable<boost::posix_time::ptime> delete_time; /**< nsset delete time in set local zone */
     std::string handle;/**< nsset handle */
     std::string roid;/**< registry object identifier of the nsset */
@@ -84,7 +87,7 @@ struct InfoNssetData : Util::Printable<InfoNssetData>
     std::string authinfopw;/**< password for transfer */
     Nullable<short> tech_check_level; /**< nsset level of technical checks */
     std::vector<DnsHost> dns_hosts; /**< DNS hosts */
-    std::vector<ObjectIdHandlePair> tech_contacts;/**< list of technical contacts */
+    std::vector<RegistrableObject::Contact::ContactReference> tech_contacts;/**< list of technical contacts */
 };
 
 }//namespace LibFred

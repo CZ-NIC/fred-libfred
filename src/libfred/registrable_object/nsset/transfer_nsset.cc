@@ -26,8 +26,6 @@
 
 #include "libfred/exception.hh"
 
-#include <boost/foreach.hpp>
-
 namespace LibFred
 {
 
@@ -54,7 +52,8 @@ namespace LibFred
         try {
             nsset_data = LibFred::InfoNssetById(_nsset_id).set_lock().exec(_ctx).info_nsset_data;
 
-        } catch(const LibFred::InfoNssetById::Exception& e) {
+        }
+        catch (const LibFred::InfoNssetById::Exception& e) {
             if (e.is_set_unknown_object_id() ) {
                 throw UnknownNssetId();
             }
@@ -65,7 +64,7 @@ namespace LibFred
             return true;
         }
 
-        BOOST_FOREACH(const ObjectIdHandlePair& tech_contact, nsset_data.tech_contacts) {
+        for (const auto& tech_contact : nsset_data.tech_contacts) {
             if (InfoContactByHandle(tech_contact.handle).exec(_ctx).info_contact_data.authinfopw
                 == _authinfopw_for_authorization
             ) {
@@ -84,7 +83,8 @@ namespace LibFred
             try {
                 new_history_id = LibFred::transfer_object(_ctx, nsset_id_, new_registrar_handle_, generate_authinfo_pw(), logd_request_id_ );
 
-            } catch(const UnknownObjectId& e) {
+            }
+            catch (const UnknownObjectId& e) {
                 throw UnknownNssetId();
             }
 

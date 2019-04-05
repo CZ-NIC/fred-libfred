@@ -24,6 +24,15 @@
 #include "libfred/registrable_object/domain/info_domain_impl.hh"
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrable_object/contact/contact_reference.hh"
+#include "libfred/registrable_object/keyset/keyset_reference.hh"
+#include "libfred/registrable_object/nsset/nsset_reference.hh"
+#include "libfred/registrable_object/registrable_object_reference.hh"
+#include "libfred/registrable_object/uuid.hh"
+#include "libfred/registrable_object/contact/contact_uuid.hh"
+#include "libfred/registrable_object/keyset/keyset_uuid.hh"
+#include "libfred/registrable_object/nsset/nsset_uuid.hh"
+
 #include "util/util.hh"
 #include "util/printable.hh"
 #include "util/db/param_query_composition.hh"
@@ -67,7 +76,7 @@ InfoDomain& InfoDomain::set_cte_id_filter(const Database::ParamQuery& cte_id_fil
     return *this;
 }
 
-Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_timestamp_pg_time_zone_name)
+Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_timestamp_pg_time_zone_name)const
 {
     const Database::ReusableParameter p_local_zone(local_timestamp_pg_time_zone_name, "text");
     Database::ParamQuery info_domain_query;
@@ -79,19 +88,24 @@ Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_time
 
     info_domain_query("SELECT * FROM "
             "(SELECT dobr.id AS ")(GetAlias::id())(","
+                    "dobr.uuid AS ")(GetAlias::uuid())(","
                     "dobr.roid AS ")(GetAlias::roid())(","
                     "dobr.name AS ")(GetAlias::fqdn())(","
                     "(dobr.erdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::delete_time())(","
                     "h.id AS ")(GetAlias::historyid())(","
+                    "h.uuid AS ")(GetAlias::history_uuid())(","
                     "h.next AS ")(GetAlias::next_historyid())(","
                     "(h.valid_from AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::history_valid_from())(","
                     "(h.valid_to AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::history_valid_to())(","
                     "cor.id AS ")(GetAlias::registrant_id())(","
                     "cor.name AS ")(GetAlias::registrant_handle())(","
+                    "cor.uuid AS ")(GetAlias::registrant_uuid())(","
                     "dt.nsset AS ")(GetAlias::nsset_id())(","
                     "nobr.name AS ")(GetAlias::nsset_handle())(","
+                    "nobr.uuid AS ")(GetAlias::nsset_uuid())(","
                     "dt.keyset AS ")(GetAlias::keyset_id())(","
                     "kobr.name AS ")(GetAlias::keyset_handle())(","
+                    "kobr.uuid AS ")(GetAlias::keyset_uuid())(","
                     "obj.clid AS ")(GetAlias::sponsoring_registrar_id())(","
                     "clr.handle AS ")(GetAlias::sponsoring_registrar_handle())(","
                     "dobr.crid AS ")(GetAlias::creating_registrar_id())(","
@@ -197,12 +211,12 @@ Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_time
     return info_domain_query;
 }
 
-Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigned long long historyid)
+Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigned long long historyid)const
 {
     //admin contacts
     Database::ParamQuery query;
 
-    query("SELECT cobr.id AS admin_contact_id, cobr.name AS admin_contact_handle ");
+    query("SELECT cobr.id AS admin_contact_id, cobr.name AS admin_contact_handle, cobr.uuid AS admin_contact_uuid ");
     if (history_query_)
     {
         query("FROM domain_contact_map_history dcm "
@@ -224,11 +238,11 @@ Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigne
     return query;
 }
 
-std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)const
 {
     std::vector<InfoDomainOutput> result;
 
-    const Database::Result query_result = ctx.get_conn().exec_params(make_domain_query(local_timestamp_pg_time_zone_name));
+    const Database::Result query_result = ctx.get_conn().exec_params(this->make_domain_query(local_timestamp_pg_time_zone_name));
 
     result.reserve(query_result.size());
 
@@ -236,6 +250,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
     {
         InfoDomainOutput info_domain_output;
         info_domain_output.info_domain_data.id = static_cast<unsigned long long>(query_result[idx][GetAlias::id()]);
+        info_domain_output.info_domain_data.uuid = query_result[idx][GetAlias::uuid()].as<RegistrableObject::Domain::DomainUuid>();
         info_domain_output.info_domain_data.roid = static_cast<std::string>(query_result[idx][GetAlias::roid()]);
         info_domain_output.info_domain_data.fqdn = static_cast<std::string>(query_result[idx][GetAlias::fqdn()]);
 
@@ -245,6 +260,7 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                         static_cast<std::string>(query_result[idx][GetAlias::delete_time()])));
 
         info_domain_output.info_domain_data.historyid = static_cast<unsigned long long>(query_result[idx][GetAlias::historyid()]);
+        info_domain_output.info_domain_data.history_uuid = query_result[idx][GetAlias::history_uuid()].as<RegistrableObject::Domain::DomainHistoryUuid>();
 
         info_domain_output.next_historyid = query_result[idx][GetAlias::next_historyid()].isnull()
                 ? Nullable<unsigned long long>()
@@ -258,23 +274,31 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                 : Nullable<boost::posix_time::ptime>(boost::posix_time::time_from_string(
                         static_cast<std::string>(query_result[idx][GetAlias::history_valid_to()])));
 
-        info_domain_output.info_domain_data.registrant = LibFred::ObjectIdHandlePair(
-                static_cast<unsigned long long>(query_result[idx][GetAlias::registrant_id()]),
-                static_cast<std::string>(query_result[idx][GetAlias::registrant_handle()]));
+        info_domain_output.info_domain_data.registrant =
+                RegistrableObject::Contact::ContactReference(
+                        static_cast<unsigned long long>(query_result[idx][GetAlias::registrant_id()]),
+                        static_cast<std::string>(query_result[idx][GetAlias::registrant_handle()]),
+                        query_result[idx][GetAlias::registrant_uuid()].as<RegistrableObject::Contact::ContactUuid>());
 
-        info_domain_output.info_domain_data.nsset = (query_result[idx][GetAlias::nsset_id()].isnull() ||
-                                                     query_result[idx][GetAlias::nsset_handle()].isnull())
-                ? Nullable<LibFred::ObjectIdHandlePair>()
-                : Nullable<LibFred::ObjectIdHandlePair>(LibFred::ObjectIdHandlePair(
+        info_domain_output.info_domain_data.nsset =
+                (query_result[idx][GetAlias::nsset_id()].isnull() ||
+                 query_result[idx][GetAlias::nsset_handle()].isnull() ||
+                 query_result[idx][GetAlias::nsset_uuid()].isnull())
+                ? Nullable<RegistrableObject::Nsset::NssetReference>()
+                : Nullable<RegistrableObject::Nsset::NssetReference>(RegistrableObject::Nsset::NssetReference(
                         static_cast<unsigned long long>(query_result[idx][GetAlias::nsset_id()]),
-                        static_cast<std::string>(query_result[idx][GetAlias::nsset_handle()])));
+                        static_cast<std::string>(query_result[idx][GetAlias::nsset_handle()]),
+                        query_result[idx][GetAlias::nsset_uuid()].as<RegistrableObject::Nsset::NssetUuid>()));
 
-        info_domain_output.info_domain_data.keyset = (query_result[idx][GetAlias::keyset_id()].isnull() ||
-                                                      query_result[idx][GetAlias::keyset_handle()].isnull())
-                ? Nullable<LibFred::ObjectIdHandlePair>()
-                : Nullable<LibFred::ObjectIdHandlePair>(LibFred::ObjectIdHandlePair(
+        info_domain_output.info_domain_data.keyset =
+                (query_result[idx][GetAlias::keyset_id()].isnull() ||
+                 query_result[idx][GetAlias::keyset_handle()].isnull() ||
+                 query_result[idx][GetAlias::keyset_uuid()].isnull())
+                ? Nullable<RegistrableObject::Keyset::KeysetReference>()
+                : Nullable<RegistrableObject::Keyset::KeysetReference>(RegistrableObject::Keyset::KeysetReference(
                         static_cast<unsigned long long>(query_result[idx][GetAlias::keyset_id()]),
-                        static_cast<std::string>(query_result[idx][GetAlias::keyset_handle()])));
+                        static_cast<std::string>(query_result[idx][GetAlias::keyset_handle()]),
+                        query_result[idx][GetAlias::keyset_uuid()].as<RegistrableObject::Keyset::KeysetUuid>()));
 
         info_domain_output.info_domain_data.sponsoring_registrar_handle = static_cast<std::string>(
                 query_result[idx][GetAlias::sponsoring_registrar_handle()]);
@@ -328,14 +352,15 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
                 : boost::posix_time::time_from_string(static_cast<std::string>(query_result[idx][GetAlias::utc_timestamp()]));
 
         //list of administrative contacts
-        const Database::Result admin_contact_res = ctx.get_conn().exec_params(make_admin_query(
+        const Database::Result admin_contact_res = ctx.get_conn().exec_params(this->make_admin_query(
                 info_domain_output.info_domain_data.id, info_domain_output.info_domain_data.historyid));
         info_domain_output.info_domain_data.admin_contacts.reserve(admin_contact_res.size());
         for (Database::Result::size_type c_idx = 0; c_idx < admin_contact_res.size(); ++c_idx)
         {
-            info_domain_output.info_domain_data.admin_contacts.push_back(LibFred::ObjectIdHandlePair(
+            info_domain_output.info_domain_data.admin_contacts.push_back(RegistrableObject::Contact::ContactReference(
                     static_cast<unsigned long long>(admin_contact_res[c_idx]["admin_contact_id"]),
-                    static_cast<std::string>(admin_contact_res[c_idx]["admin_contact_handle"])));
+                    static_cast<std::string>(admin_contact_res[c_idx]["admin_contact_handle"]),
+                    admin_contact_res[c_idx]["admin_contact_uuid"].as<RegistrableObject::Contact::ContactUuid>()));
         }
 
         result.push_back(info_domain_output);
