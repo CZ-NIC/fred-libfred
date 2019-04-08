@@ -33,7 +33,7 @@ public:
     Log();
     ~Log();
 
-    enum class EventImportance
+    enum class Severity
     {
         emerg,
         alert,
@@ -56,7 +56,7 @@ public:
     template <Device device, typename ...A>
     Log& add_handler_of(A...);
 
-    template <EventImportance importance>
+    template <Severity severity>
     bool is_sufficient()const;
 
     void trace(const std::string& msg)const;
@@ -81,7 +81,7 @@ public:
     /**
      * support for old style formatting log
      */
-    template <EventImportance event_importance>
+    template <Severity severity_of_logged_event>
     void message(const char* format, ...)const;
     class Handler;
 private:
