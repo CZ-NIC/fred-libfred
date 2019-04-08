@@ -74,7 +74,8 @@ void setup_logging(CfgArgs* cfg_instance_ptr)
             break;
         case Logging::Log::Device::syslog:
             Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::syslog>(
-                    static_cast<int>(handler_ptr->log_syslog_facility));
+                    static_cast<int>(handler_ptr->log_syslog_facility),
+                    static_cast<Logging::Log::EventImportance>(handler_ptr->log_level));
             break;
         case Logging::Log::Device::console:
             Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::console>(

@@ -202,8 +202,9 @@ private:
 class SysLogHandler : public Log::Handler
 {
 public:
-    explicit SysLogHandler(int local_facility_index)
-        : syslog_facility_(get_syslog_facility_local(local_facility_index))
+    explicit SysLogHandler(int local_facility_index, Log::EventImportance min_importance = Log::EventImportance::info)
+        : syslog_facility_(get_syslog_facility_local(local_facility_index)),
+          min_importance_(min_importance)
     { }
     ~SysLogHandler() = default;
 private:
@@ -233,9 +234,10 @@ private:
         syslog(syslog_facility_ | LogLevel::from(event_importance), "%s", (prefix + msg).c_str());
         return *this;
     }
-    bool is_sufficient(Log::EventImportance)const override
+    bool is_sufficient(Log::EventImportance event_importance)const override
     {
-        return true;
+        const bool insufficient_importance = Is(event_importance).less_important_than(min_importance_);
+        return !insufficient_importance;
     }
     static int get_syslog_facility_local(int index)
     {
@@ -254,6 +256,7 @@ private:
         return LOG_LOCAL0;
     }
     const int syslog_facility_;
+    const Log::EventImportance min_importance_;
 };
 
 template <Log::Device>
@@ -270,6 +273,12 @@ std::unique_ptr<Log::Handler> make_log_handler_of(const std::string&, Log::Event
 
 template <Log::Device>
 std::unique_ptr<Log::Handler> make_log_handler_of(int);
+
+template <Log::Device>
+std::unique_ptr<Log::Handler> make_log_handler_of(Log::EventImportance);
+
+template <Log::Device>
+std::unique_ptr<Log::Handler> make_log_handler_of(int, Log::EventImportance);
 
 template <>
 std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::file>(const std::string& file_name)
@@ -298,15 +307,31 @@ std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::console>(Log::Eve
 }
 
 template <>
+std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::syslog>(
+        int local_facility_index,
+        Log::EventImportance min_importance)
+{
+    return std::make_unique<SysLogHandler>(local_facility_index, min_importance);
+}
+
+template <>
 std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::syslog>(int local_facility_index)
 {
-    return std::make_unique<SysLogHandler>(local_facility_index);
+    constexpr Log::EventImportance default_min_importance = Log::EventImportance::info;
+    return make_log_handler_of<Log::Device::syslog>(local_facility_index, default_min_importance);
+}
+
+constexpr int default_local_facility_index = 2;
+
+template <>
+std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::syslog>(Log::EventImportance min_importance)
+{
+    return make_log_handler_of<Log::Device::syslog>(default_local_facility_index, min_importance);
 }
 
 template <>
 std::unique_ptr<Log::Handler> make_log_handler_of<Log::Device::syslog>()
 {
-    constexpr int default_local_facility_index = 2;
     return make_log_handler_of<Log::Device::syslog>(default_local_facility_index);
 }
 
@@ -331,6 +356,9 @@ template Log& Log::add_handler_of<Log::Device::console>();
 template Log& Log::add_handler_of<Log::Device::console>(EventImportance);
 template Log& Log::add_handler_of<Log::Device::syslog, int>(int);
 template Log& Log::add_handler_of<Log::Device::syslog, unsigned>(unsigned);
+template Log& Log::add_handler_of<Log::Device::syslog>(EventImportance);
+template Log& Log::add_handler_of<Log::Device::syslog, int>(int, EventImportance);
+template Log& Log::add_handler_of<Log::Device::syslog, unsigned>(unsigned, EventImportance);
 template Log& Log::add_handler_of<Log::Device::syslog>();
 
 template <Log::EventImportance event_importance>
