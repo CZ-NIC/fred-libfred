@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(terminate_last_registrar_certification)
     Database::Result result = ctx.get_conn().exec_params(
             "SELECT id, valid_from, classification FROM registrar_certification "
             "WHERE registrar_id = $1::bigint "
-            "AND (valid_until IS NULL OR valid_until >= $2::date ",
+            "AND (valid_until IS NULL OR valid_until >= $2::date)",
             Database::query_param_list(test_registrar.id)(third_valid_from));
     BOOST_CHECK(result.size() == 1);
     BOOST_CHECK(id == static_cast<unsigned long long>(result[0][0]));
