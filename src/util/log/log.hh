@@ -46,15 +46,8 @@ public:
         trace
     };
 
-    enum class Device
-    {
-        console,
-        file,
-        syslog
-    };
-
-    template <Device device, typename ...A>
-    Log& add_handler_of(A...);
+    class DeviceHandler;
+    Log& add_device_handler(std::unique_ptr<DeviceHandler>&& device_handler);
 
     template <Severity severity>
     bool is_sufficient()const;
@@ -83,9 +76,8 @@ public:
      */
     template <Severity severity_of_logged_event>
     void message(const char* format, ...)const;
-    class Handler;
 private:
-    std::list<std::unique_ptr<Handler>> handlers_;
+    std::list<std::unique_ptr<DeviceHandler>> handlers_;
 };
 
 }//namespace Logging
