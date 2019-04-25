@@ -126,11 +126,18 @@ set(LIBFRED_SOURCES
     src/libfred/registrable_object/nsset/copy_history_impl.cc
     src/libfred/registrable_object/nsset/create_nsset.cc
     src/libfred/registrable_object/nsset/delete_nsset.cc
+    src/libfred/registrable_object/nsset/get_nsset_data_history.cc
+    src/libfred/registrable_object/nsset/get_nsset_handle_history.cc
+    src/libfred/registrable_object/nsset/get_nsset_state.cc
+    src/libfred/registrable_object/nsset/get_nsset_state_history.cc
     src/libfred/registrable_object/nsset/info_nsset.cc
     src/libfred/registrable_object/nsset/info_nsset_data.cc
     src/libfred/registrable_object/nsset/info_nsset_diff.cc
     src/libfred/registrable_object/nsset/info_nsset_impl.cc
     src/libfred/registrable_object/nsset/info_nsset_output.cc
+    src/libfred/registrable_object/nsset/nsset_data_history.cc
+    src/libfred/registrable_object/nsset/nsset_handle_history.cc
+    src/libfred/registrable_object/nsset/nsset_state.cc
     src/libfred/registrable_object/nsset/transfer_nsset.cc
     src/libfred/registrable_object/nsset/update_nsset.cc
     src/libfred/registrar/check_registrar.cc
