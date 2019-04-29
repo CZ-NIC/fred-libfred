@@ -39,6 +39,11 @@ constexpr const char * psql_type(const bool)
     return "::bool";
 }
 
+constexpr const char * psql_type(const unsigned long long)
+{
+    return "::bigint";
+}
+
 bool is_country_code_valid(LibFred::OperationContext& _ctx, const std::string& _country) {
     const Database::Result db_result = _ctx.get_conn().exec_params(
                 "SELECT 1 FROM enum_country WHERE id = $1::text FOR SHARE ",
@@ -48,9 +53,15 @@ bool is_country_code_valid(LibFred::OperationContext& _ctx, const std::string& _
 
 } // namespace LibFred::Registrar::{anonymous}
 
-UpdateRegistrar::UpdateRegistrar(const std::string& _handle)
-        : handle_(_handle)
+UpdateRegistrar::UpdateRegistrar(const unsigned long long _id)
+        : id_(_id)
 {
+}
+
+UpdateRegistrar& UpdateRegistrar::set_handle(const boost::optional<std::string>& _handle)
+{
+    handle_ = _handle;
+    return *this;
 }
 
 UpdateRegistrar& UpdateRegistrar::set_ico(const boost::optional<std::string>& _ico)
@@ -201,6 +212,11 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
     Util::HeadSeparator set_separator(" SET ", ", ");
 
     object_sql << "UPDATE registrar";
+    if (handle_ != boost::none && !handle_->empty())
+    {
+        params.push_back(*handle_);
+        object_sql << set_separator.get() << "handle = $" << params.size() << psql_type(*handle_);
+    }
     if (ico_ != boost::none && !ico_->empty())
     {
         params.push_back(*ico_);
@@ -301,8 +317,8 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
         object_sql << set_separator.get() << "regex = $" << params.size() << psql_type(*payment_memo_regex_);
     }
 
-    params.push_back(handle_);
-    object_sql << " WHERE registrar.handle = UPPER($" << params.size() << psql_type(handle_) << ") RETURNING id";
+    params.push_back(id_);
+    object_sql << " WHERE registrar.id = $" << params.size() << psql_type(id_) << " RETURNING id";
 
     try
     {
@@ -327,6 +343,10 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
     catch (const std::exception& e)
     {
         std::string what_string(e.what());
+        if (what_string.find("registrar_handle_key") != std::string::npos)
+        {
+            throw RegistrarHandleAlreadyExists();
+        }
         if (what_string.find("registrar_varsymb_key") != std::string::npos)
         {
             throw VariableSymbolAlreadyExists();

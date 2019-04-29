@@ -30,7 +30,9 @@ namespace Registrar {
 class UpdateRegistrar {
 
 public:
-    explicit UpdateRegistrar(const std::string& _handle);
+    explicit UpdateRegistrar(unsigned long long _id);
+
+    UpdateRegistrar& set_handle(const boost::optional<std::string>& _handle);
 
     UpdateRegistrar& set_ico(const boost::optional<std::string>& _ico);
 
@@ -73,7 +75,8 @@ public:
     unsigned long long exec(OperationContext& _ctx) const;
 
 private:
-    std::string handle_;
+    unsigned long long id_;
+    boost::optional<std::string> handle_;
     boost::optional<std::string> ico_;
     boost::optional<std::string> dic_;
     boost::optional<std::string> variable_symbol_;
