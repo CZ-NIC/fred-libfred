@@ -324,8 +324,13 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
     {
         throw;
     }
-    catch (const std::exception&)
+    catch (const std::exception& e)
     {
+        std::string what_string(e.what());
+        if (what_string.find("registrar_varsymb_key") != std::string::npos)
+        {
+            throw VariableSymbolAlreadyExists();
+        }
         throw UpdateRegistrarException();
     }
 }

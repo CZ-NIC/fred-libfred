@@ -34,6 +34,11 @@ struct NoUpdateData : std::exception
     const char* what() const noexcept override;
 };
 
+struct VariableSymbolAlreadyExists : std::exception
+{
+    const char* what() const noexcept override;
+};
+
 struct UnknownCountryCode : std::exception
 {
     const char* what() const noexcept override;

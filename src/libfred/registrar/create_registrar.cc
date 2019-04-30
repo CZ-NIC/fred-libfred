@@ -361,6 +361,10 @@ unsigned long long CreateRegistrar::exec(OperationContext& ctx)
             {
                 BOOST_THROW_EXCEPTION(Exception().set_invalid_registrar_handle(handle_));
             }
+            if (what_string.find("registrar_varsymb_key") != std::string::npos)
+            {
+                BOOST_THROW_EXCEPTION(Exception().set_invalid_registrar_varsymb(variable_symbol_.get_value()));
+            }
             throw;
         }
     }

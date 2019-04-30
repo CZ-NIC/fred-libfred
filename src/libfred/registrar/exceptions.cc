@@ -31,9 +31,14 @@ const char* NoUpdateData::what() const noexcept
     return "No registrar data for update.";
 }
 
+const char* VariableSymbolAlreadyExists::what() const noexcept
+{
+    return "Variable symbol already exists.";
+}
+
 const char* UnknownCountryCode::what() const noexcept
 {
-        return "Registrar has unknown country code.";
+    return "Registrar has unknown country code.";
 }
 
 const char* UpdateRegistrarException::what() const noexcept
