@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef GET_DOMAIN_STATE_HISTORY_HH_F0A0A96967D9440F9ADDB8621ECCB302
-#define GET_DOMAIN_STATE_HISTORY_HH_F0A0A96967D9440F9ADDB8621ECCB302
 
-#include "libfred/registrable_object/domain/domain_state_history.hh"
+#ifndef GET_DOMAIN_DATA_HISTORY_HH_5F86D13CDDB444D99B1D18AD8B6D2679
+#define GET_DOMAIN_DATA_HISTORY_HH_5F86D13CDDB444D99B1D18AD8B6D2679
+
+#include "libfred/registrable_object/domain/domain_data_history.hh"
 #include "libfred/registrable_object/domain/domain_uuid.hh"
 #include "libfred/registrable_object/history_interval.hh"
 #include "libfred/registrable_object/exceptions.hh"
@@ -29,12 +30,12 @@ namespace LibFred {
 namespace RegistrableObject {
 namespace Domain {
 
-class GetDomainStateHistoryById
+class GetDomainDataHistoryById
 {
 public:
-    explicit GetDomainStateHistoryById(unsigned long long domain_id);
+    explicit GetDomainDataHistoryById(unsigned long long domain_id);
     static constexpr auto object_type = Object_Type::domain;
-    using Result = DomainStateHistory;
+    using Result = DomainDataHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
     Result exec(OperationContext& ctx, const HistoryInterval& range) const;
@@ -42,25 +43,25 @@ private:
     unsigned long long domain_id_;
 };
 
-class GetDomainStateHistoryByFqdn
+class GetDomainDataHistoryByFqdn
 {
 public:
-    explicit GetDomainStateHistoryByFqdn(const std::string& fqdn);
+    explicit GetDomainDataHistoryByFqdn(const std::string& fqdn);
     static constexpr auto object_type = Object_Type::domain;
-    using Result = DomainStateHistory;
+    using Result = DomainDataHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
     Result exec(OperationContext& ctx, const HistoryInterval& range) const;
 private:
-    std::string fqdn_;
+    std::string handle_;
 };
 
-class GetDomainStateHistoryByUuid
+class GetDomainDataHistoryByUuid
 {
 public:
-    explicit GetDomainStateHistoryByUuid(const DomainUuid& domain_uuid);
+    explicit GetDomainDataHistoryByUuid(const DomainUuid& domain_uuid);
     static constexpr auto object_type = Object_Type::domain;
-    using Result = DomainStateHistory;
+    using Result = DomainDataHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
     Result exec(OperationContext& ctx, const HistoryInterval& range) const;
