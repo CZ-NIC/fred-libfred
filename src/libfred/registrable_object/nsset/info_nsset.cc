@@ -146,6 +146,107 @@ namespace LibFred
         );
     }
 
+InfoNssetByUuid::InfoNssetByUuid(const RegistrableObject::Nsset::NssetUuid& uuid)
+    : uuid_(uuid)
+{
+}
+
+template <DbLock lock>
+InfoNssetOutput InfoNssetByUuid::exec(const OperationContextUsing<lock>& ctx)
+{
+    try
+    {
+        InfoNsset ic;
+        ic.set_inline_view_filter(
+                Database::ParamQuery(InfoNsset::GetAlias::uuid())("=").param_uuid(uuid_))
+          .set_history_query(false);
+
+        if (lock == DbLock::for_update)
+        {
+            ic.set_lock();
+        }
+
+        const std::vector<InfoNssetOutput> nsset_res = ic.exec(ctx, "UTC");
+
+        if (nsset_res.empty())
+        {
+            BOOST_THROW_EXCEPTION(Exception().set_unknown_nsset_uuid(get_raw_value_from(uuid_)));
+        }
+
+        if (1 < nsset_res.size())
+        {
+            BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
+        }
+        return nsset_res.at(0);
+    }
+    catch (ExceptionStack& e)
+    {
+        e.add_exception_stack_info(this->to_string());
+        throw;
+    }
+}
+
+template InfoNssetOutput InfoNssetByUuid::exec<DbLock::for_share>(const OperationContextUsing<DbLock::for_share>&);
+template InfoNssetOutput InfoNssetByUuid::exec<DbLock::for_update>(const OperationContextUsing<DbLock::for_update>&);
+
+std::string InfoNssetByUuid::to_string() const
+{
+    return Util::format_operation_state(
+            "InfoNssetByUuid",
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("uuid", Util::strong_to_string(uuid_))));
+}
+
+InfoNssetByHistoryUuid::InfoNssetByHistoryUuid(const RegistrableObject::Nsset::NssetHistoryUuid& history_uuid)
+    : history_uuid_(history_uuid)
+{
+}
+
+template <DbLock lock>
+InfoNssetOutput InfoNssetByHistoryUuid::exec(const OperationContextUsing<lock>& ctx)
+{
+    try
+    {
+        InfoNsset ic;
+        ic.set_inline_view_filter(
+                Database::ParamQuery(InfoNsset::GetAlias::history_uuid())("=").param_uuid(history_uuid_))
+          .set_history_query(true);
+
+        if (lock == DbLock::for_update)
+        {
+            ic.set_lock();
+        }
+
+        const std::vector<InfoNssetOutput> nsset_res = ic.exec(ctx, "UTC");
+
+        if (nsset_res.empty())
+        {
+            BOOST_THROW_EXCEPTION(Exception().set_unknown_nsset_history_uuid(get_raw_value_from(history_uuid_)));
+        }
+
+        if (1 < nsset_res.size())
+        {
+            BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
+        }
+        return nsset_res.at(0);
+    }
+    catch (ExceptionStack& e)
+    {
+        e.add_exception_stack_info(this->to_string());
+        throw;
+    }
+}
+
+template InfoNssetOutput InfoNssetByHistoryUuid::exec<DbLock::for_share>(const OperationContextUsing<DbLock::for_share>&);
+template InfoNssetOutput InfoNssetByHistoryUuid::exec<DbLock::for_update>(const OperationContextUsing<DbLock::for_update>&);
+
+std::string InfoNssetByHistoryUuid::to_string() const
+{
+    return Util::format_operation_state(
+            "InfoNssetByHistoryUuid",
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("history_uuid", Util::strong_to_string(history_uuid_))));
+}
 
     InfoNssetByDNSFqdn::InfoNssetByDNSFqdn(const std::string& dns_fqdn)
         : dns_fqdn_(dns_fqdn)

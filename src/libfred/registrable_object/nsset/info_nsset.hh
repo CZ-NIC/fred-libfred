@@ -136,6 +136,86 @@ private:
 };
 
 /**
+ * Nsset info by uuid.
+ * Nsset uuid to get info about the nsset is set via constructor.
+ * It's executed by @ref exec method.
+*/
+class InfoNssetByUuid : public Util::Printable<InfoNssetByUuid>
+{
+public:
+    DECLARE_EXCEPTION_DATA(unknown_nsset_uuid, RegistrableObject::Nsset::NssetUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_nsset_uuid<Exception>
+    { };
+
+    /**
+     * Info nsset constructor with mandatory parameter.
+     * @param id sets object id of the nsset into @ref id_ attribute
+     */
+    explicit InfoNssetByUuid(const RegistrableObject::Nsset::NssetUuid& uuid);
+
+    /**
+     * Executes getting info about the nsset. Time zone name of the returned data is UTC.
+     * @tparam lock type of database locking
+     * @param ctx contains reference to database and logging interface
+     * @return info data about the nsset
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
+     * @throws InternalError otherwise
+     */
+    template <DbLock lock>
+    InfoNssetOutput exec(const OperationContextUsing<lock>& ctx);
+
+    /**
+     * Dumps state of the instance into the string
+     * @return string with description of the instance state
+     */
+    std::string to_string()const;
+private:
+    const RegistrableObject::Nsset::NssetUuid uuid_;
+};
+
+/**
+ * Nsset info by history uuid.
+ * Nsset history uuid to get info about the nsset is set via constructor.
+ * It's executed by @ref exec method
+*/
+class InfoNssetByHistoryUuid : public Util::Printable<InfoNssetByHistoryUuid>
+{
+public:
+    DECLARE_EXCEPTION_DATA(unknown_nsset_history_uuid, RegistrableObject::Nsset::NssetHistoryUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_nsset_history_uuid<Exception>
+    { };
+
+    /**
+     * Info nsset constructor with mandatory parameter.
+     * @param id sets object id of the nsset into @ref id_ attribute
+     */
+    explicit InfoNssetByHistoryUuid(const RegistrableObject::Nsset::NssetHistoryUuid& history_uuid);
+
+    /**
+     * Executes getting info about the nsset. Time zone name of the returned data is UTC.
+     * @tparam lock type of database locking
+     * @param ctx contains reference to database and logging interface
+     * @return info data about the nsset
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
+     * @throws InternalError otherwise
+     */
+    template <DbLock lock>
+    InfoNssetOutput exec(const OperationContextUsing<lock>& ctx);
+
+    /**
+     * Dumps state of the instance into the string
+     * @return string with description of the instance state
+     */
+    std::string to_string()const;
+private:
+    const RegistrableObject::Nsset::NssetHistoryUuid history_uuid_;
+};
+
+/**
 * Nsset info by DNS server fqdn.
 * Name server fqdn is set via constructor.
 * It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
