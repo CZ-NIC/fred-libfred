@@ -215,47 +215,47 @@ private:
     const RegistrableObject::Domain::DomainHistoryUuid history_uuid_;
 };
 
+/**
+ * Domain history info.
+ * Output data are arranged in descending order by historyid.
+ * Domain registry object identifier to get history info about the domain is set via constructor.
+ * It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
+ */
+class InfoDomainHistoryByRoid : public Util::Printable<InfoDomainHistoryByRoid>
+{
+public:
     /**
-     * Domain history info.
-     * Output data are arranged in descending order by historyid.
-     * Domain registry object identifier to get history info about the domain is set via constructor.
-     * It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
+     * Info domain history constructor with mandatory parameter.
+     * @param roid sets registry object identifier of the domain into @ref roid_ attribute
      */
-    class InfoDomainHistoryByRoid : public Util::Printable<InfoDomainHistoryByRoid>
-    {
-    public:
-        /**
-         * Info domain history constructor with mandatory parameter.
-         * @param roid sets registry object identifier of the domain into @ref roid_ attribute
-         */
-        InfoDomainHistoryByRoid(const std::string& roid);
+    InfoDomainHistoryByRoid(const std::string& roid);
 
-        /**
-         * Sets lock for update.
-         * Default, if not set, is lock for share.
-         * Sets true to lock flag in @ref lock_ attribute
-         * @return operation instance reference to allow method chaining
-         */
-        InfoDomainHistoryByRoid& set_lock();
+    /**
+     * Sets lock for update.
+     * Default, if not set, is lock for share.
+     * Sets true to lock flag in @ref lock_ attribute
+     * @return operation instance reference to allow method chaining
+     */
+    InfoDomainHistoryByRoid& set_lock();
 
-        /**
-         * Executes getting history info about the domain.
-         * @param ctx contains reference to database and logging interface
-         * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
-         * @return history info data about the domain in descending order by historyid
-         * @throws Exception in case of wrong input data or other predictable and superable failure.
-         */
-        std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    /**
+     * Executes getting history info about the domain.
+     * @param ctx contains reference to database and logging interface
+     * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
+     * @return history info data about the domain in descending order by historyid
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
+     */
+    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
-        /**
-         * Dumps state of the instance into the string
-         * @return string with description of the instance state
-         */
-        std::string to_string()const;
-    private:
-        const std::string roid_;/**< registry object identifier of the domain */
-        bool lock_;/**< if set to true lock object_registry row for update, if set to false lock for share */
-    };
+    /**
+     * Dumps state of the instance into the string
+     * @return string with description of the instance state
+     */
+    std::string to_string()const;
+private:
+    const std::string roid_;/**< registry object identifier of the domain */
+    bool lock_;/**< if set to true lock object_registry row for update, if set to false lock for share */
+};
 
 /**
  * Domain info by id including history.

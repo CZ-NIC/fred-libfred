@@ -17,6 +17,7 @@
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "libfred/registrable_object/domain/get_domain_state_history.hh"
+
 #include "libfred/registrable_object/history_interval_impl.hh"
 #include "libfred/registrable_object/state_flag_setter.hh"
 #include "libfred/registrable_object/exceptions_impl.hh"
@@ -211,8 +212,8 @@ GetDomainStateHistoryById::Result GetDomainStateHistoryById::exec(
     return get_domain_state_history(ctx, range, OperationById(domain_id_));
 }
 
-GetDomainStateHistoryByFqdn::GetDomainStateHistoryByFqdn(const std::string& fqdn)
-    : fqdn_(fqdn)
+GetDomainStateHistoryByFqdn::GetDomainStateHistoryByFqdn(const std::string& _fqdn)
+    : fqdn_(_fqdn)
 {
 }
 
@@ -224,8 +225,8 @@ GetDomainStateHistoryByFqdn::Result GetDomainStateHistoryByFqdn::exec(
     class OperationByFqdn
     {
     public:
-        explicit OperationByFqdn(const std::string& fqdn)
-            : fqdn_(fqdn) { }
+        explicit OperationByFqdn(const std::string& _fqdn)
+            : fqdn_(_fqdn) { }
         std::string operator()(Database::query_param_list& params) const
         {
             static const std::string sql_handle_case_normalize_function =

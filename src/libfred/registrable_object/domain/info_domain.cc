@@ -157,7 +157,8 @@ std::string InfoDomainById::to_string() const
 
 InfoDomainByUuid::InfoDomainByUuid(const RegistrableObject::Domain::DomainUuid& uuid)
     : uuid_(uuid)
-{ }
+{
+}
 
 template <DbLock lock>
 InfoDomainOutput InfoDomainByUuid::exec(const OperationContextUsing<lock>& ctx)
@@ -207,7 +208,8 @@ std::string InfoDomainByUuid::to_string()const
 
 InfoDomainByHistoryUuid::InfoDomainByHistoryUuid(const RegistrableObject::Domain::DomainHistoryUuid& history_uuid)
     : history_uuid_(history_uuid)
-{ }
+{
+}
 
 template <DbLock lock>
 InfoDomainOutput InfoDomainByHistoryUuid::exec(const OperationContextUsing<lock>& ctx)

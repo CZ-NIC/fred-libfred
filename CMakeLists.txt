@@ -98,10 +98,14 @@ set(LIBFRED_SOURCES
     src/libfred/registrable_object/domain/create_domain_name_blacklist_id.cc
     src/libfred/registrable_object/domain/delete_domain.cc
     src/libfred/registrable_object/domain/domain.cc
+    src/libfred/registrable_object/domain/domain_data_history.cc
     src/libfred/registrable_object/domain/domain_name.cc
     src/libfred/registrable_object/domain/domain_state.cc
+    src/libfred/registrable_object/domain/fqdn_history.cc
+    src/libfred/registrable_object/domain/get_domain_data_history.cc
     src/libfred/registrable_object/domain/get_domain_state.cc
     src/libfred/registrable_object/domain/get_domain_state_history.cc
+    src/libfred/registrable_object/domain/get_fqdn_history.cc
     src/libfred/registrable_object/domain/info_domain.cc
     src/libfred/registrable_object/domain/info_domain_data.cc
     src/libfred/registrable_object/domain/info_domain_diff.cc
