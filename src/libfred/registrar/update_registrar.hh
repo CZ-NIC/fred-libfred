@@ -27,53 +27,56 @@
 namespace LibFred {
 namespace Registrar {
 
-class UpdateRegistrar {
+class UpdateRegistrarById {
 
 public:
-    explicit UpdateRegistrar(const std::string& _handle);
+    explicit UpdateRegistrarById(unsigned long long _id);
 
-    UpdateRegistrar& set_ico(const boost::optional<std::string>& _ico);
+    UpdateRegistrarById& set_handle(const boost::optional<std::string>& _handle);
 
-    UpdateRegistrar& set_dic(const boost::optional<std::string>& _dic);
+    UpdateRegistrarById& set_ico(const boost::optional<std::string>& _ico);
 
-    UpdateRegistrar& set_variable_symbol(const boost::optional<std::string>& _variable_symbol);
+    UpdateRegistrarById& set_dic(const boost::optional<std::string>& _dic);
 
-    UpdateRegistrar& set_vat_payer(const boost::optional<bool>& _vat_payer);
+    UpdateRegistrarById& set_variable_symbol(const boost::optional<std::string>& _variable_symbol);
 
-    UpdateRegistrar& set_name(const boost::optional<std::string>& _name);
+    UpdateRegistrarById& set_vat_payer(const boost::optional<bool>& _vat_payer);
 
-    UpdateRegistrar& set_organization(const boost::optional<std::string>& _organization);
+    UpdateRegistrarById& set_name(const boost::optional<std::string>& _name);
 
-    UpdateRegistrar& set_street1(const boost::optional<std::string>& _street1);
+    UpdateRegistrarById& set_organization(const boost::optional<std::string>& _organization);
 
-    UpdateRegistrar& set_street2(const boost::optional<std::string>& _street2);
+    UpdateRegistrarById& set_street1(const boost::optional<std::string>& _street1);
 
-    UpdateRegistrar& set_street3(const boost::optional<std::string>& _street3);
+    UpdateRegistrarById& set_street2(const boost::optional<std::string>& _street2);
 
-    UpdateRegistrar& set_city(const boost::optional<std::string>& _city);
+    UpdateRegistrarById& set_street3(const boost::optional<std::string>& _street3);
 
-    UpdateRegistrar& set_state_or_province(const boost::optional<std::string>& _state_or_province);
+    UpdateRegistrarById& set_city(const boost::optional<std::string>& _city);
 
-    UpdateRegistrar& set_postal_code(const boost::optional<std::string>& _postal_code);
+    UpdateRegistrarById& set_state_or_province(const boost::optional<std::string>& _state_or_province);
 
-    UpdateRegistrar& set_country(const boost::optional<std::string>& _country);
+    UpdateRegistrarById& set_postal_code(const boost::optional<std::string>& _postal_code);
 
-    UpdateRegistrar& set_telephone(const boost::optional<std::string>& _telephone);
+    UpdateRegistrarById& set_country(const boost::optional<std::string>& _country);
 
-    UpdateRegistrar& set_fax(const boost::optional<std::string>& _fax);
+    UpdateRegistrarById& set_telephone(const boost::optional<std::string>& _telephone);
 
-    UpdateRegistrar& set_email(const boost::optional<std::string>& _email);
+    UpdateRegistrarById& set_fax(const boost::optional<std::string>& _fax);
 
-    UpdateRegistrar& set_url(const boost::optional<std::string>& _url);
+    UpdateRegistrarById& set_email(const boost::optional<std::string>& _email);
 
-    UpdateRegistrar& set_system(const boost::optional<bool>& _system);
+    UpdateRegistrarById& set_url(const boost::optional<std::string>& _url);
 
-    UpdateRegistrar& set_payment_memo_regex(const boost::optional<std::string>& _payment_memo_regex);
+    UpdateRegistrarById& set_system(const boost::optional<bool>& _system);
 
-    unsigned long long exec(OperationContext& _ctx) const;
+    UpdateRegistrarById& set_payment_memo_regex(const boost::optional<std::string>& _payment_memo_regex);
+
+    void exec(OperationContext& _ctx) const;
 
 private:
-    std::string handle_;
+    unsigned long long id_;
+    boost::optional<std::string> handle_;
     boost::optional<std::string> ico_;
     boost::optional<std::string> dic_;
     boost::optional<std::string> variable_symbol_;

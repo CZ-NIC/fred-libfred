@@ -39,6 +39,11 @@ constexpr const char * psql_type(const bool)
     return "::bool";
 }
 
+constexpr const char * psql_type(const unsigned long long)
+{
+    return "::bigint";
+}
+
 bool is_country_code_valid(LibFred::OperationContext& _ctx, const std::string& _country) {
     const Database::Result db_result = _ctx.get_conn().exec_params(
                 "SELECT 1 FROM enum_country WHERE id = $1::text FOR SHARE ",
@@ -48,130 +53,137 @@ bool is_country_code_valid(LibFred::OperationContext& _ctx, const std::string& _
 
 } // namespace LibFred::Registrar::{anonymous}
 
-UpdateRegistrar::UpdateRegistrar(const std::string& _handle)
-        : handle_(_handle)
+UpdateRegistrarById::UpdateRegistrarById(const unsigned long long _id)
+        : id_(_id)
 {
 }
 
-UpdateRegistrar& UpdateRegistrar::set_ico(const boost::optional<std::string>& _ico)
+UpdateRegistrarById& UpdateRegistrarById::set_handle(const boost::optional<std::string>& _handle)
+{
+    handle_ = _handle;
+    return *this;
+}
+
+UpdateRegistrarById& UpdateRegistrarById::set_ico(const boost::optional<std::string>& _ico)
 {
     ico_ = _ico;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_dic(const boost::optional<std::string>& _dic)
+UpdateRegistrarById& UpdateRegistrarById::set_dic(const boost::optional<std::string>& _dic)
 {
     dic_ = _dic;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_variable_symbol(const boost::optional<std::string>& _variable_symbol)
+UpdateRegistrarById& UpdateRegistrarById::set_variable_symbol(const boost::optional<std::string>& _variable_symbol)
 {
     variable_symbol_ = _variable_symbol;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_vat_payer(const boost::optional<bool>& _vat_payer)
+UpdateRegistrarById& UpdateRegistrarById::set_vat_payer(const boost::optional<bool>& _vat_payer)
 {
     vat_payer_ = _vat_payer;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_name(const boost::optional<std::string>& _name)
+UpdateRegistrarById& UpdateRegistrarById::set_name(const boost::optional<std::string>& _name)
 {
     name_ = _name;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_organization(const boost::optional<std::string>& _organization)
+UpdateRegistrarById& UpdateRegistrarById::set_organization(const boost::optional<std::string>& _organization)
 {
     organization_ = _organization;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_street1(const boost::optional<std::string>& _street1)
+UpdateRegistrarById& UpdateRegistrarById::set_street1(const boost::optional<std::string>& _street1)
 {
     street1_ = _street1;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_street2(const boost::optional<std::string>& _street2)
+UpdateRegistrarById& UpdateRegistrarById::set_street2(const boost::optional<std::string>& _street2)
 {
     street2_ = _street2;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_street3(const boost::optional<std::string>& _street3)
+UpdateRegistrarById& UpdateRegistrarById::set_street3(const boost::optional<std::string>& _street3)
 {
     street3_ = _street3;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_city(const boost::optional<std::string>& _city)
+UpdateRegistrarById& UpdateRegistrarById::set_city(const boost::optional<std::string>& _city)
 {
     city_ = _city;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_state_or_province(
+UpdateRegistrarById& UpdateRegistrarById::set_state_or_province(
         const boost::optional<std::string>& _state_or_province)
 {
     state_or_province_ = _state_or_province;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_postal_code(const boost::optional<std::string>& _postal_code)
+UpdateRegistrarById& UpdateRegistrarById::set_postal_code(const boost::optional<std::string>& _postal_code)
 {
     postal_code_ = _postal_code;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_country(const boost::optional<std::string>& _country)
+UpdateRegistrarById& UpdateRegistrarById::set_country(const boost::optional<std::string>& _country)
 {
     country_ = _country;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_telephone(const boost::optional<std::string>& _telephone)
+UpdateRegistrarById& UpdateRegistrarById::set_telephone(const boost::optional<std::string>& _telephone)
 {
     telephone_ = _telephone;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_fax(const boost::optional<std::string>& _fax)
+UpdateRegistrarById& UpdateRegistrarById::set_fax(const boost::optional<std::string>& _fax)
 {
     fax_ = _fax;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_email(const boost::optional<std::string>& _email)
+UpdateRegistrarById& UpdateRegistrarById::set_email(const boost::optional<std::string>& _email)
 {
     email_ = _email;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_url(const boost::optional<std::string>& _url)
+UpdateRegistrarById& UpdateRegistrarById::set_url(const boost::optional<std::string>& _url)
 {
     url_ = _url;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_system(const boost::optional<bool>& _system)
+UpdateRegistrarById& UpdateRegistrarById::set_system(const boost::optional<bool>& _system)
 {
     system_ = _system;
     return *this;
 }
 
-UpdateRegistrar& UpdateRegistrar::set_payment_memo_regex(
+UpdateRegistrarById& UpdateRegistrarById::set_payment_memo_regex(
         const boost::optional<std::string>& _payment_memo_regex)
 {
     payment_memo_regex_ = _payment_memo_regex;
     return *this;
 }
 
-unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
+void UpdateRegistrarById::exec(OperationContext& _ctx) const
 {
-    const bool values_for_update_are_set = (ico_ != boost::none ||
+    const bool values_for_update_are_set = (handle_ != boost::none ||
+            ico_ != boost::none ||
             dic_ != boost::none ||
             variable_symbol_ != boost::none ||
             vat_payer_ != boost::none ||
@@ -201,6 +213,11 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
     Util::HeadSeparator set_separator(" SET ", ", ");
 
     object_sql << "UPDATE registrar";
+    if (handle_ != boost::none && !handle_->empty())
+    {
+        params.push_back(*handle_);
+        object_sql << set_separator.get() << "handle = UPPER($" << params.size() << psql_type(*handle_) << ")";
+    }
     if (ico_ != boost::none && !ico_->empty())
     {
         params.push_back(*ico_);
@@ -301,24 +318,22 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
         object_sql << set_separator.get() << "regex = $" << params.size() << psql_type(*payment_memo_regex_);
     }
 
-    params.push_back(handle_);
-    object_sql << " WHERE registrar.handle = UPPER($" << params.size() << psql_type(handle_) << ") RETURNING id";
+    params.push_back(id_);
+    object_sql << " WHERE registrar.id = $" << params.size() << psql_type(id_) << " RETURNING id";
 
     try
     {
         const Database::Result update_result = _ctx.get_conn().exec_params(
                 object_sql.str(),
                 params);
-        if (update_result.size() == 1)
+        if (update_result.size() > 1)
         {
-            const auto id = static_cast<unsigned long long>(update_result[0][0]);
-            return id;
+            throw std::runtime_error("Duplicity in database");
         }
         if (update_result.size() < 1)
         {
             throw NonExistentRegistrar();
         }
-        throw std::runtime_error("Duplicity in database");
     }
     catch (const NonExistentRegistrar&)
     {
@@ -326,7 +341,11 @@ unsigned long long UpdateRegistrar::exec(OperationContext& _ctx) const
     }
     catch (const std::exception& e)
     {
-        std::string what_string(e.what());
+        const std::string what_string(e.what());
+        if (what_string.find("registrar_handle_key") != std::string::npos)
+        {
+            throw RegistrarHandleAlreadyExists();
+        }
         if (what_string.find("registrar_varsymb_key") != std::string::npos)
         {
             throw VariableSymbolAlreadyExists();

@@ -31,6 +31,11 @@ const char* NoUpdateData::what() const noexcept
     return "No registrar data for update.";
 }
 
+const char* RegistrarHandleAlreadyExists::what() const noexcept
+{
+    return "Registrar handle already exists.";
+}
+
 const char* VariableSymbolAlreadyExists::what() const noexcept
 {
     return "Variable symbol already exists.";
