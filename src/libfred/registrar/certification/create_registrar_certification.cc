@@ -51,7 +51,7 @@ unsigned long long CreateRegistrarCertification::exec(OperationContext& _ctx) co
         {
             throw InvalidDateFrom();
         }
-        if (valid_from_ > valid_until_)
+        if (valid_from_ >= valid_until_)
         {
             throw WrongIntervalOrder();
         }
