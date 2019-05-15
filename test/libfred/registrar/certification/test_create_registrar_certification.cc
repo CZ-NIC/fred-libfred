@@ -51,7 +51,7 @@ BOOST_FIXTURE_TEST_SUITE(TestCreateRegistrarCertification, test_create_certifica
 BOOST_AUTO_TEST_CASE(create_registrar_certification)
 {
     LibFred::OperationContextCreator ctx;
-    const boost::gregorian::date valid_until(valid_from);
+    const boost::gregorian::date valid_until(valid_from + boost::gregorian::date_duration(1));
     constexpr unsigned score = 5;
     const unsigned long long id = LibFred::Registrar::CreateRegistrarCertification(test_registrar.id,
                 valid_from, score, file_id)
@@ -144,8 +144,8 @@ BOOST_AUTO_TEST_CASE(invalid_date_from)
 BOOST_AUTO_TEST_CASE(certification_in_past)
 {
     LibFred::OperationContextCreator ctx;
-    valid_from -= boost::gregorian::date_duration(1);
-    const boost::gregorian::date valid_until(valid_from);
+    valid_from -= boost::gregorian::date_duration(10);
+    const boost::gregorian::date valid_until(valid_from + boost::gregorian::date_duration(1));
     constexpr unsigned score = 1;
     BOOST_CHECK_THROW(
         LibFred::Registrar::CreateRegistrarCertification(test_registrar.id, valid_from, score, file_id)
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(certification_in_past)
 BOOST_AUTO_TEST_CASE(overlapping_range)
 {
     LibFred::OperationContextCreator ctx;
-    boost::gregorian::date valid_until(valid_from);
+    boost::gregorian::date valid_until(valid_from + boost::gregorian::date_duration(1));
     constexpr unsigned score = 2;
     LibFred::Registrar::CreateRegistrarCertification(test_registrar.id, valid_from, score, file_id)
             .set_valid_until(valid_until)

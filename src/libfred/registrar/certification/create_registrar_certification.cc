@@ -51,10 +51,6 @@ unsigned long long CreateRegistrarCertification::exec(OperationContext& _ctx) co
         {
             throw InvalidDateFrom();
         }
-        if (valid_from_ >= valid_until_)
-        {
-            throw WrongIntervalOrder();
-        }
 
         constexpr int min_classification_value = 0;
         constexpr int max_classification_value = 5;
@@ -67,6 +63,10 @@ unsigned long long CreateRegistrarCertification::exec(OperationContext& _ctx) co
 
         if (!valid_until_.is_special())
         {
+            if (valid_from_ >= valid_until_)
+            {
+                throw WrongIntervalOrder();
+            }
             const Database::Result cert_in_past = _ctx.get_conn().exec_params(
                     // clang-format off
                     "SELECT now()::date > $1::date",
