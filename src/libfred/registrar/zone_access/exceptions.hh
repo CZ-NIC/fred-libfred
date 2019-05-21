@@ -60,6 +60,16 @@ struct GetRegistrarZoneAccessException : std::exception
     const char* what() const noexcept override;
 };
 
+struct OverlappingZoneAccessRange : std::exception
+{
+    const char* what() const noexcept override;
+};
+
+struct InvalidDateFrom : std::exception
+{
+    const char* what() const noexcept override;
+};
+
 } // namespace LibFred::Registrar::ZoneAccess
 } // namespace LibFred::Registrar
 } // namespace LibFred
