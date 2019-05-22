@@ -134,6 +134,86 @@ private:
 };
 
 /**
+ * Keyset info by uuid.
+ * Keyset uuid to get info about the keyset is set via constructor.
+ * It's executed by @ref exec method.
+*/
+class InfoKeysetByUuid : public Util::Printable<InfoKeysetByUuid>
+{
+public:
+    DECLARE_EXCEPTION_DATA(unknown_keyset_uuid, RegistrableObject::Keyset::KeysetUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_keyset_uuid<Exception>
+    { };
+
+    /**
+     * Info keyset constructor with mandatory parameter.
+     * @param id sets object id of the keyset into @ref id_ attribute
+     */
+    explicit InfoKeysetByUuid(const RegistrableObject::Keyset::KeysetUuid& uuid);
+
+    /**
+     * Executes getting info about the keyset. Time zone name of the returned data is UTC.
+     * @tparam lock type of database locking
+     * @param ctx contains reference to database and logging interface
+     * @return info data about the keyset
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
+     * @throws InternalError otherwise
+     */
+    template <DbLock lock>
+    InfoKeysetOutput exec(const OperationContextUsing<lock>& ctx);
+
+    /**
+     * Dumps state of the instance into the string
+     * @return string with description of the instance state
+     */
+    std::string to_string()const;
+private:
+    const RegistrableObject::Keyset::KeysetUuid uuid_;
+};
+
+/**
+ * Keyset info by history uuid.
+ * Keyset history uuid to get info about the keyset is set via constructor.
+ * It's executed by @ref exec method
+*/
+class InfoKeysetByHistoryUuid : public Util::Printable<InfoKeysetByHistoryUuid>
+{
+public:
+    DECLARE_EXCEPTION_DATA(unknown_keyset_history_uuid, RegistrableObject::Keyset::KeysetHistoryUuid::UnderlyingType);
+    struct Exception
+        : virtual LibFred::OperationException,
+          ExceptionData_unknown_keyset_history_uuid<Exception>
+    { };
+
+    /**
+     * Info keyset constructor with mandatory parameter.
+     * @param id sets object id of the keyset into @ref id_ attribute
+     */
+    explicit InfoKeysetByHistoryUuid(const RegistrableObject::Keyset::KeysetHistoryUuid& history_uuid);
+
+    /**
+     * Executes getting info about the keyset. Time zone name of the returned data is UTC.
+     * @tparam lock type of database locking
+     * @param ctx contains reference to database and logging interface
+     * @return info data about the keyset
+     * @throws Exception in case of wrong input data or other predictable and superable failure.
+     * @throws InternalError otherwise
+     */
+    template <DbLock lock>
+    InfoKeysetOutput exec(const OperationContextUsing<lock>& ctx);
+
+    /**
+     * Dumps state of the instance into the string
+     * @return string with description of the instance state
+     */
+    std::string to_string()const;
+private:
+    const RegistrableObject::Keyset::KeysetHistoryUuid history_uuid_;
+};
+
+/**
 * Keyset history info.
 * Output data are arranged in descending order by historyid.
 * Keyset registry object identifier to get history info about the keyset is set via constructor.
