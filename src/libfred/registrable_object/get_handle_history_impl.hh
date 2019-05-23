@@ -30,26 +30,40 @@ GetHandleHistory<o>::GetHandleHistory(const std::string& handle)
     : handle_(handle)
 { }
 
+namespace {
+
 template <Object_Type::Enum o>
-typename GetHandleHistory<o>::Result GetHandleHistory<o>::exec(OperationContext& ctx)const
-{
-    static const std::string sql_handle_case_normalize_function =
-            object_type == Object_Type::domain ? "LOWER"
-                                               : "UPPER";
-    Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
-    params(handle_);
-    const std::string sql =
+constexpr char sql_get_handle_history[] =
         "SELECT obr.uuid,obr.crdate,bh.uuid,obr.erdate,eh.uuid "
         "FROM object_registry obr "
         "JOIN history bh ON bh.id=obr.crhistoryid "
         "JOIN history eh ON eh.id=obr.historyid "
-        "WHERE obr.type=get_object_type_id($1::TEXT) AND " +
-               sql_handle_case_normalize_function + "(obr.name)=" + sql_handle_case_normalize_function + "($2::TEXT) "
+        "WHERE obr.type=get_object_type_id($1::TEXT) AND "
+              "UPPER(obr.name)=UPPER($2::TEXT) "
         "ORDER BY obr.crdate";
-    const auto dbres = ctx.get_conn().exec_params(
-            sql,
-            Database::query_param_list(Conversion::Enums::to_db_handle(object_type))
-                                      (handle_));
+
+template <>
+constexpr char sql_get_handle_history<Object_Type::domain>[] =
+        "SELECT obr.uuid,obr.crdate,bh.uuid,obr.erdate,eh.uuid "
+        "FROM object_registry obr "
+        "JOIN history bh ON bh.id=obr.crhistoryid "
+        "JOIN history eh ON eh.id=obr.historyid "
+        "WHERE obr.type=get_object_type_id($1::TEXT) AND "
+              "obr.name=LOWER($2::TEXT) "
+        "ORDER BY obr.crdate";
+
+}//namespace LibFred::RegistrableObject::{anonymous}
+
+template <Object_Type::Enum o>
+typename GetHandleHistory<o>::Result GetHandleHistory<o>::exec(OperationContext& ctx)const
+{
+    static const std::string sql = sql_get_handle_history<object_type>;
+    const Database::QueryParams params =
+            {
+                Conversion::Enums::to_db_handle(object_type),
+                handle_
+            };
+    const auto dbres = ctx.get_conn().exec_params(sql, params);
     Result history;
     history.handle = handle_;
     for (unsigned long long idx = 0; idx < dbres.size(); ++idx)
