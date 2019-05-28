@@ -64,7 +64,7 @@ const char* OverlappingZoneAccessRange::what() const noexcept
 
 const char* InvalidDateFrom::what() const noexcept
 {
-    return "Date from is not a date.";
+    return "from_date is not a date.";
 }
 
 } // namespace LibFred::Registrar::ZoneAccess
