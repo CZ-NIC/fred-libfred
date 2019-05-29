@@ -21,21 +21,21 @@
  *  keyset info
  */
 
-#include <string>
-#include <vector>
+#include "libfred/registrable_object/keyset/info_keyset.hh"
+
+#include "libfred/opcontext.hh"
+#include "libfred/opexception.hh"
+#include "libfred/registrable_object/contact/check_contact.hh"
+#include "libfred/registrable_object/keyset/info_keyset_impl.hh"
+#include "util/util.hh"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/time_period.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
-#include "libfred/registrable_object/keyset/info_keyset.hh"
-#include "libfred/registrable_object/keyset/info_keyset_impl.hh"
-
-#include "libfred/opcontext.hh"
-#include "libfred/opexception.hh"
-#include "libfred/registrable_object/contact/check_contact.hh"
-#include "util/util.hh"
+#include <string>
+#include <vector>
 
 namespace LibFred
 {
@@ -149,6 +149,104 @@ namespace LibFred
         (std::make_pair("lock", lock_ ? "true":"false"))
         );
     }
+
+template <DbLock lock>
+InfoKeysetOutput InfoKeysetByUuid::exec(const OperationContextUsing<lock>& ctx)
+{
+    try
+    {
+        InfoKeyset ic;
+        ic.set_inline_view_filter(
+                Database::ParamQuery(InfoKeyset::GetAlias::uuid())("=").param_uuid(uuid_))
+          .set_history_query(false);
+
+        if (lock == DbLock::for_update)
+        {
+            ic.set_lock();
+        }
+
+        const std::vector<InfoKeysetOutput> keyset_res = ic.exec(ctx, "UTC");
+
+        if (keyset_res.empty())
+        {
+            BOOST_THROW_EXCEPTION(Exception().set_unknown_keyset_uuid(get_raw_value_from(uuid_)));
+        }
+
+        if (1 < keyset_res.size())
+        {
+            BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
+        }
+        return keyset_res.at(0);
+    }
+    catch (ExceptionStack& e)
+    {
+        e.add_exception_stack_info(this->to_string());
+        throw;
+    }
+}
+
+template InfoKeysetOutput InfoKeysetByUuid::exec<DbLock::for_share>(const OperationContextUsing<DbLock::for_share>&);
+template InfoKeysetOutput InfoKeysetByUuid::exec<DbLock::for_update>(const OperationContextUsing<DbLock::for_update>&);
+
+std::string InfoKeysetByUuid::to_string() const
+{
+    return Util::format_operation_state(
+            "InfoKeysetByUuid",
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("uuid", Util::strong_to_string(uuid_))));
+}
+
+InfoKeysetByHistoryUuid::InfoKeysetByHistoryUuid(const RegistrableObject::Keyset::KeysetHistoryUuid& history_uuid)
+    : history_uuid_(history_uuid)
+{
+}
+
+template <DbLock lock>
+InfoKeysetOutput InfoKeysetByHistoryUuid::exec(const OperationContextUsing<lock>& ctx)
+{
+    try
+    {
+        InfoKeyset ic;
+        ic.set_inline_view_filter(
+                Database::ParamQuery(InfoKeyset::GetAlias::history_uuid())("=").param_uuid(history_uuid_))
+          .set_history_query(true);
+
+        if (lock == DbLock::for_update)
+        {
+            ic.set_lock();
+        }
+
+        const std::vector<InfoKeysetOutput> keyset_res = ic.exec(ctx, "UTC");
+
+        if (keyset_res.empty())
+        {
+            BOOST_THROW_EXCEPTION(Exception().set_unknown_keyset_history_uuid(get_raw_value_from(history_uuid_)));
+        }
+
+        if (1 < keyset_res.size())
+        {
+            BOOST_THROW_EXCEPTION(InternalError("query result size > 1"));
+        }
+        return keyset_res.at(0);
+    }
+    catch (ExceptionStack& e)
+    {
+        e.add_exception_stack_info(this->to_string());
+        throw;
+    }
+}
+
+template InfoKeysetOutput InfoKeysetByHistoryUuid::exec<DbLock::for_share>(const OperationContextUsing<DbLock::for_share>&);
+template InfoKeysetOutput InfoKeysetByHistoryUuid::exec<DbLock::for_update>(const OperationContextUsing<DbLock::for_update>&);
+
+std::string InfoKeysetByHistoryUuid::to_string() const
+{
+    return Util::format_operation_state(
+            "InfoKeysetByHistoryUuid",
+            Util::vector_of<std::pair<std::string, std::string>>
+                    (std::make_pair("history_uuid", Util::strong_to_string(history_uuid_))));
+}
+
 
     InfoKeysetHistoryByRoid::InfoKeysetHistoryByRoid(const std::string& roid)
     : roid_(roid)

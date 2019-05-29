@@ -114,6 +114,10 @@ set(LIBFRED_SOURCES
     src/libfred/registrable_object/domain/renew_domain.cc
     src/libfred/registrable_object/domain/transfer_domain.cc
     src/libfred/registrable_object/domain/update_domain.cc
+    src/libfred/registrable_object/keyset/get_keyset_data_history.cc
+    src/libfred/registrable_object/keyset/get_keyset_handle_history.cc
+    src/libfred/registrable_object/keyset/get_keyset_state.cc
+    src/libfred/registrable_object/keyset/get_keyset_state_history.cc
     src/libfred/registrable_object/keyset/check_dns_key.cc
     src/libfred/registrable_object/keyset/check_keyset.cc
     src/libfred/registrable_object/keyset/copy_history_impl.cc
@@ -124,6 +128,9 @@ set(LIBFRED_SOURCES
     src/libfred/registrable_object/keyset/info_keyset_diff.cc
     src/libfred/registrable_object/keyset/info_keyset_impl.cc
     src/libfred/registrable_object/keyset/info_keyset_output.cc
+    src/libfred/registrable_object/keyset/keyset_data_history.cc
+    src/libfred/registrable_object/keyset/keyset_handle_history.cc
+    src/libfred/registrable_object/keyset/keyset_state.cc
     src/libfred/registrable_object/keyset/transfer_keyset.cc
     src/libfred/registrable_object/keyset/update_keyset.cc
     src/libfred/registrable_object/nsset/check_nsset.cc
