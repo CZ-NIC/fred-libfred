@@ -21,7 +21,7 @@
 
 #include "util/flagset_impl.hh"
 
-namespace Libfred {
+namespace LibFred {
 namespace RegistrableObject {
 namespace Keyset {
 
