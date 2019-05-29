@@ -26,6 +26,11 @@
 namespace Util {
 
 template <typename T>
+CaseInsensitiveEqualTo<T>::CaseInsensitiveEqualTo(CaseInsensitiveEqualTo&& src)
+    : db_conn_(std::move(src).db_conn_)
+{ }
+
+template <typename T>
 bool CaseInsensitiveEqualTo<T>::operator()(const std::string& lhs, const std::string& rhs)const
 {
     switch (db_conn_.exec_params("SELECT 0 WHERE UPPER($1::TEXT)=UPPER($2::TEXT)",
