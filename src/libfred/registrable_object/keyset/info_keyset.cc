@@ -150,6 +150,11 @@ namespace LibFred
         );
     }
 
+InfoKeysetByUuid::InfoKeysetByUuid(const RegistrableObject::Keyset::KeysetUuid& uuid)
+    : uuid_(uuid)
+{
+}
+
 template <DbLock lock>
 InfoKeysetOutput InfoKeysetByUuid::exec(const OperationContextUsing<lock>& ctx)
 {

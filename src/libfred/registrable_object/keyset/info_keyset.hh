@@ -30,8 +30,6 @@
 
 #include "util/printable.hh"
 
-#include <boost/date_time/posix_time/ptime.hpp>
-
 #include <string>
 #include <vector>
 
