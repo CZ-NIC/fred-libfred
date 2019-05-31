@@ -48,6 +48,11 @@ AddRegistrarZoneAccess& AddRegistrarZoneAccess::set_to_date(
 
 unsigned long long AddRegistrarZoneAccess::exec(OperationContext& _ctx) const
 {
+    if (from_date_.is_special())
+    {
+        throw InvalidDateFrom();
+    }
+
     try
     {
         Database::QueryParam to_date = Database::QPNull;
@@ -58,6 +63,27 @@ unsigned long long AddRegistrarZoneAccess::exec(OperationContext& _ctx) const
             {
                 to_date = Database::QueryParam(to_date_.get());
             }
+        }
+
+        _ctx.get_conn().exec("LOCK TABLE registrarinvoice IN ACCESS EXCLUSIVE MODE");
+        const Database::Result overlapping_zone_access = _ctx.get_conn().exec_params(
+                // clang-format off
+                "SELECT z.fqdn FROM registrarinvoice ri "
+                "JOIN registrar r ON r.id = ri.registrarid "
+                "JOIN zone z ON z.id = ri.zone "
+                "WHERE r.handle = UPPER($1::text) "
+                "AND z.fqdn = LOWER($2::text) "
+                "AND ((ri.todate IS NULL OR ri.todate >= $3::date) "
+                "AND ($4::date IS NULL OR ri.fromdate <= $4::date)) ",
+                // clang-format on
+                Database::query_param_list(registrar_handle_)
+                                        (zone_fqdn_)
+                                        (from_date_)
+                                        (to_date));
+
+        if (overlapping_zone_access.size() > 0)
+        {
+            throw OverlappingZoneAccessRange();
         }
 
         const Database::Result insert_result = _ctx.get_conn().exec_params(
@@ -82,6 +108,10 @@ unsigned long long AddRegistrarZoneAccess::exec(OperationContext& _ctx) const
             throw NonexistentRegistrar();
         }
         throw std::runtime_error("Duplicity in database");
+    }
+    catch (const OverlappingZoneAccessRange&)
+    {
+        throw;
     }
     catch (const NonexistentRegistrar&)
     {

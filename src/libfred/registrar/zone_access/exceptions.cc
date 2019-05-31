@@ -57,6 +57,16 @@ const char* GetRegistrarZoneAccessException::what() const noexcept
     return "Failed to get registrar zone access due to an unknown exception.";
 }
 
+const char* OverlappingZoneAccessRange::what() const noexcept
+{
+    return "Range of registrar zone access overlaps with the other one.";
+}
+
+const char* InvalidDateFrom::what() const noexcept
+{
+    return "from_date is not a date.";
+}
+
 } // namespace LibFred::Registrar::ZoneAccess
 } // namespace LibFred::Registrar
 } // namespace LibFred
