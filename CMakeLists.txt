@@ -168,6 +168,8 @@ set(LIBFRED_SOURCES
     src/libfred/registrar/certification/create_registrar_certification.cc
     src/libfred/registrar/certification/get_registrar_certifications.cc
     src/libfred/registrar/certification/update_registrar_certification.cc
+    src/libfred/registrar/credit/create_registrar_credit_transaction.cc
+    src/libfred/registrar/credit/exceptions.cc
     src/libfred/registrar/epp_auth/add_registrar_epp_auth.cc
     src/libfred/registrar/epp_auth/clone_registrar_epp_auth.cc
     src/libfred/registrar/epp_auth/delete_registrar_epp_auth.cc
@@ -447,6 +449,7 @@ add_executable(test-libfred
     test/libfred/registrar/certification/test_create_registrar_certification.cc
     test/libfred/registrar/certification/test_get_registrar_certifications.cc
     test/libfred/registrar/certification/test_update_registrar_certification.cc
+    test/libfred/registrar/credit/test_create_registrar_credit_transaction.cc
     test/libfred/registrar/group/test_cancel.cc
     test/libfred/registrar/group/test_create.cc
     test/libfred/registrar/group/test_get.cc
