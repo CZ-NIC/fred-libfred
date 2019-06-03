@@ -19,6 +19,9 @@
 #include "libfred/db_settings.hh"
 #include "libfred/registrar/zone_access/exceptions.hh"
 #include "libfred/registrar/zone_access/get_registrar_zone_access.hh"
+#include "src/util/db/query_param.hh"
+
+#include <sstream>
 
 namespace LibFred {
 namespace Registrar {
@@ -29,20 +32,48 @@ GetZoneAccess::GetZoneAccess(const std::string& _registrar_handle)
 {
 }
 
+GetZoneAccess& GetZoneAccess::set_zone_fqdn(const std::string& _zone_fqdn)
+{
+    zone_fqdn_ = _zone_fqdn;
+    return *this;
+}
+
+GetZoneAccess& GetZoneAccess::set_date(const boost::gregorian::date& _date)
+{
+    date_ = _date;
+    return *this;
+}
+
 RegistrarZoneAccesses GetZoneAccess::exec(OperationContext& _ctx) const
 {
+    std::ostringstream object_sql;
+    object_sql << "SELECT ri.id, z.fqdn AS zone, ri.fromdate, ri.todate "
+               << "FROM registrar AS r "
+               << "JOIN registrarinvoice AS ri ON r.id=ri.registrarid "
+               << "JOIN zone AS z ON z.id=ri.zone ";
+
+    Database::QueryParams params;
+    params.push_back(registrar_handle_);
+    object_sql << "WHERE r.handle=UPPER($" << params.size() << "::text) ";
+
+    if (!zone_fqdn_.empty())
+    {
+        params.push_back(zone_fqdn_);
+        object_sql << "AND z.fqdn = LOWER($" << params.size() << "::text) ";
+    }
+
+    if (!date_.is_special())
+    {
+        params.push_back(date_);
+        object_sql << "AND ri.fromdate <= $" << params.size() << "::date ";
+        object_sql << "AND (ri.todate IS NULL OR ri.todate >= $" << params.size() << "::date) ";
+    }
+
     try
     {
-        RegistrarZoneAccesses zone_accesses;
-        zone_accesses.registrar_handle = registrar_handle_;
+        const Database::Result db_result = _ctx.get_conn().exec_params(object_sql.str(), params);
 
-        const Database::Result db_result = _ctx.get_conn().exec_params(
-                "SELECT ri.id, z.fqdn AS zone, ri.fromdate, ri.todate "
-                "FROM registrar AS r "
-                "JOIN registrarinvoice AS ri ON r.id=ri.registrarid "
-                "JOIN zone AS z ON z.id=ri.zone "
-                "WHERE r.handle=UPPER($1::text) ",
-                Database::query_param_list(registrar_handle_));
+        RegistrarZoneAccesses zone_accesses;
         if (db_result.size() > 0)
         {
             for (std::size_t i = 0; i < db_result.size(); ++i)
@@ -62,10 +93,11 @@ RegistrarZoneAccesses GetZoneAccess::exec(OperationContext& _ctx) const
                 }
                 zone_accesses.zone_accesses.push_back(std::move(access));
             }
+            zone_accesses.registrar_handle = registrar_handle_;
         }
         return zone_accesses;
     }
-    catch (const std::exception& e)
+    catch (const std::exception&)
     {
         throw GetRegistrarZoneAccessException();
     }

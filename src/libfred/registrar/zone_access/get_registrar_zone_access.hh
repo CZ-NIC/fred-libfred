@@ -22,6 +22,8 @@
 #include "libfred/opcontext.hh"
 #include "libfred/registrar/zone_access/registrar_zone_access_type.hh"
 
+#include <boost/date_time/gregorian/gregorian.hpp>
+
 #include <string>
 
 namespace LibFred {
@@ -32,10 +34,16 @@ class GetZoneAccess {
 public:
     explicit GetZoneAccess(const std::string& _registrar_handle);
 
+    GetZoneAccess& set_zone_fqdn(const std::string& _zone_fqdn);
+
+    GetZoneAccess& set_date(const boost::gregorian::date& _date);
+
     RegistrarZoneAccesses exec(OperationContext& _ctx) const;
 
 private:
     std::string registrar_handle_;
+    std::string zone_fqdn_;
+    boost::gregorian::date date_;
 };
 
 } // namespace LibFred::Registrar::ZoneAccess
