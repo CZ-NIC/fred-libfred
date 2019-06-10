@@ -33,6 +33,10 @@ template <typename T>
 class CaseInsensitiveEqualTo
 {
 public:
+    CaseInsensitiveEqualTo(CaseInsensitiveEqualTo&&);
+    CaseInsensitiveEqualTo(const CaseInsensitiveEqualTo&) = delete;
+    CaseInsensitiveEqualTo& operator=(CaseInsensitiveEqualTo&&) = delete;
+    CaseInsensitiveEqualTo& operator=(const CaseInsensitiveEqualTo&) = delete;
     bool operator()(const std::string& lhs, const std::string& rhs)const;
 private:
     explicit CaseInsensitiveEqualTo(std::add_lvalue_reference_t<T> db_conn)
