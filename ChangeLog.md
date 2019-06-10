@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 1.0.2 (2019-06-10)
+ * Add move constructor into case insensitive comparator
+
 ## 1.0.1 (2019-05-10)
  * Add README with basic info about repo and versioning guide
 
