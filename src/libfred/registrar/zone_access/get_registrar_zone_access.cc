@@ -19,7 +19,7 @@
 #include "libfred/db_settings.hh"
 #include "libfred/registrar/zone_access/exceptions.hh"
 #include "libfred/registrar/zone_access/get_registrar_zone_access.hh"
-#include "src/util/db/query_param.hh"
+#include "util/db/query_param.hh"
 
 #include <sstream>
 
@@ -48,9 +48,9 @@ RegistrarZoneAccesses GetZoneAccess::exec(OperationContext& _ctx) const
 {
     std::ostringstream object_sql;
     object_sql << "SELECT ri.id, z.fqdn AS zone, ri.fromdate, ri.todate "
-               << "FROM registrar AS r "
-               << "JOIN registrarinvoice AS ri ON r.id=ri.registrarid "
-               << "JOIN zone AS z ON z.id=ri.zone ";
+               << "FROM registrar r "
+               << "JOIN registrarinvoice ri ON r.id=ri.registrarid "
+               << "JOIN zone z ON z.id=ri.zone ";
 
     Database::QueryParams params;
     params.push_back(registrar_handle_);

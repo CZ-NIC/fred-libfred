@@ -29,12 +29,13 @@ namespace LibFred {
 namespace Registrar {
 namespace Credit {
 
-CreateRegistrarCreditTransaction::CreateRegistrarCreditTransaction(const std::string& _registrar,
+CreateRegistrarCreditTransaction::CreateRegistrarCreditTransaction(
+        const std::string& _registrar,
         const std::string& _zone,
         Decimal _credit_change)
-        : registrar_(_registrar),
-          zone_(_zone),
-          credit_change_(_credit_change)
+    : registrar_(_registrar),
+      zone_(_zone),
+      credit_change_(_credit_change)
 {
 }
 
@@ -61,9 +62,10 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
 
         Database::Result registrar_credit_id_result = _ctx.get_conn().exec_params(
                 // clang-format off
-                "SELECT id FROM registrar_credit "
-                "WHERE registrar_id = $1::bigint "
-                "AND zone_id = $2::bigint ",
+                "SELECT id "
+                  "FROM registrar_credit "
+                 "WHERE registrar_id = $1::bigint "
+                   "AND zone_id = $2::bigint ",
                 // clang-format on
                 Database::query_param_list(registrar_id)(zone_id));
 
@@ -77,19 +79,18 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
             _ctx.get_conn().exec("LOCK TABLE registrar_credit IN ACCESS EXCLUSIVE MODE");
             Database::Result init_credit_result = _ctx.get_conn().exec_params(
                     // clang-format off
-                    "WITH cte AS "
-                    "(INSERT INTO registrar_credit "
-                    "(credit, registrar_id, zone_id) "
-                    "VALUES (0, $1::bigint, $2::bigint) "
-                    "ON CONFLICT DO NOTHING "
-                    "RETURNING id) "
+                    "WITH cte AS ("
+                        "INSERT INTO registrar_credit (credit, registrar_id, zone_id) "
+                        "VALUES (0, $1::bigint, $2::bigint) "
+                        "ON CONFLICT DO NOTHING "
+                        "RETURNING id) "
                     "SELECT id FROM cte "
-                    "WHERE EXISTS (SELECT 1 FROM cte) "
-                    "UNION ALL "
+                     "WHERE EXISTS (SELECT 1 FROM cte) "
+                     "UNION ALL "
                     "SELECT rc.id FROM registrar_credit rc "
-                    "WHERE NOT EXISTS (SELECT 1 FROM cte) "
-                    "AND rc.registrar_id = $1::bigint "
-                    "AND rc.zone_id = $2::bigint ",
+                     "WHERE NOT EXISTS (SELECT 1 FROM cte) "
+                       "AND rc.registrar_id = $1::bigint "
+                       "AND rc.zone_id = $2::bigint ",
                     // clang-format on
                     Database::query_param_list(registrar_id)(zone_id));
             if (init_credit_result.size() == 1)
@@ -104,10 +105,9 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
 
         Database::Result registrar_credit_transaction_id_result = _ctx.get_conn().exec_params(
                 // clang-format off
-                "INSERT INTO registrar_credit_transaction "
-                "(id, balance_change, registrar_credit_id) "
-                "VALUES (DEFAULT, $1::numeric, $2::bigint) "
-                "RETURNING id",
+                 "INSERT INTO registrar_credit_transaction (id, balance_change, registrar_credit_id) "
+                 "VALUES (DEFAULT, $1::numeric, $2::bigint) "
+                 "RETURNING id",
                 // clang-format on
                 Database::query_param_list(credit_change_)(registrar_credit_id));
 
@@ -128,7 +128,7 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
     }
     catch (const LibFred::Zone::NonExistentZone&)
     {
-        throw NonexistentZone();
+        throw;
     }
     catch (const LibFred::Registrar::ZoneAccess::GetRegistrarZoneAccessException&)
     {
@@ -136,15 +136,15 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
     }
     catch (const NonexistentZoneAccess&)
     {
-        throw ;
+        throw;
     }
     catch (const CreateTransactionException&)
     {
-        throw ;
+        throw;
     }
     catch (const std::exception& e)
     {
-        std::cout << e.what() << std::endl;
+        LOGGER.info(e.what());
         throw CreateTransactionException();
     }
     throw CreateTransactionException();

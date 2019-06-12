@@ -35,11 +35,6 @@ struct NonexistentRegistrar : std::exception
     const char* what() const noexcept override;
 };
 
-struct NonexistentZone : std::exception
-{
-    const char* what() const noexcept override;
-};
-
 struct NonexistentZoneAccess : std::exception
 {
     const char* what() const noexcept override;

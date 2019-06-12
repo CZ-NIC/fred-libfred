@@ -32,19 +32,14 @@ const char* NonexistentRegistrar::what() const noexcept
     return "Registrar does not exist.";
 }
 
-const char* NonexistentZone::what() const noexcept
-{
-    return "Zone does not exist.";
-}
-
 const char* NonexistentZoneAccess::what() const noexcept
 {
-    return "Registrar hasn't a zone access.";
+    return "Registrar is not granted access to this zone.";
 }
 
 const char* ZoneAccessException::what() const noexcept
 {
-    return "Failed to create transaction due to getting a zone access.";
+    return "Failed to discover registrar's access to this zone.";
 }
 
 } // namespace LibFred::Registrar::Credit

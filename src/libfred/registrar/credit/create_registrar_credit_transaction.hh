@@ -31,7 +31,8 @@ namespace Credit {
 class CreateRegistrarCreditTransaction
 {
 public:
-    CreateRegistrarCreditTransaction(const std::string& _registrar,
+    CreateRegistrarCreditTransaction(
+            const std::string& _registrar,
             const std::string& _zone,
             Decimal _credit_change);
 

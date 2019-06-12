@@ -4,6 +4,7 @@
 #include "libfred/registrar/info_registrar_data.hh"
 #include "libfred/registrar/zone_access/add_registrar_zone_access.hh"
 #include "libfred/zone/create_zone.hh"
+#include "libfred/zone/exceptions.hh"
 
 #include "libfred/db_settings.hh"
 #include "libfred/opcontext.hh"
@@ -63,7 +64,7 @@ BOOST_AUTO_TEST_CASE(registrar_credit_nonexistent_zone)
     BOOST_CHECK_THROW(
         ::LibFred::Registrar::Credit::CreateRegistrarCreditTransaction(registrar.handle, zone_fqdn, change_credit)
             .exec(ctx),
-        ::LibFred::Registrar::Credit::NonexistentZone);
+        ::LibFred::Zone::NonExistentZone);
 }
 
 BOOST_AUTO_TEST_CASE(registrar_credit_nonexistent_zone_access)
