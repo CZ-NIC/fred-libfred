@@ -3,6 +3,7 @@
 #include "libfred/registrar/info_registrar.hh"
 #include "libfred/registrar/info_registrar_data.hh"
 #include "libfred/registrar/zone_access/add_registrar_zone_access.hh"
+#include "libfred/registrar/zone_access/registrar_zone_access_history.hh"
 #include "libfred/zone/create_zone.hh"
 #include "libfred/zone/exceptions.hh"
 
@@ -19,6 +20,8 @@
 
 #include <string>
 
+namespace {
+
 void init_registrar_credit(::LibFred::OperationContext& _ctx,
         unsigned long long _registrar_id,
         unsigned long long _zone_id)
@@ -26,7 +29,7 @@ void init_registrar_credit(::LibFred::OperationContext& _ctx,
     _ctx.get_conn().exec_params(
             "INSERT INTO registrar_credit (registrar_id, zone_id, credit) "
             "VALUES ($1::bigint, $2::bigint, 0) "
-            "ON CONFLICT DO NOTHING ",
+            "ON CONFLICT DO NOTHING",
             Database::query_param_list(_registrar_id)(_zone_id));
 }
 
@@ -37,8 +40,8 @@ struct CreateRegistrarCreditTransactionFixture : virtual public Test::instantiat
     ::LibFred::InfoRegistrarData registrar;
 
     CreateRegistrarCreditTransactionFixture()
-            : zone_fqdn(RandomDataGenerator().xstring(5)),
-              change_credit(RandomDataGenerator().xnumstring(8))
+        : zone_fqdn(RandomDataGenerator().xstring(5)),
+          change_credit(RandomDataGenerator().xnumstring(8))
     {
         ::LibFred::OperationContextCreator ctx;
         registrar = Test::registrar::make(ctx);
@@ -46,7 +49,183 @@ struct CreateRegistrarCreditTransactionFixture : virtual public Test::instantiat
     }
 };
 
+struct EmptyFixture { };
+
+}//namespace {anonymous}
+
 BOOST_FIXTURE_TEST_SUITE(TestCreateRegistrarCreditTransaction, CreateRegistrarCreditTransactionFixture)
+
+BOOST_FIXTURE_TEST_CASE(registrar_zone_access_history_test, EmptyFixture)
+{
+    ::LibFred::Registrar::ZoneAccess::RegistrarZoneAccessHistory registrar_zone_access_history;
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    ::LibFred::Registrar::ZoneAccess::TimeInterval time_interval;
+    time_interval.from_date = boost::gregorian::from_string("2019-05-13");
+    time_interval.to_date = boost::none;
+    auto invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(1ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["aBc"].size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    // <2019-05-13, oo)
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+
+    registrar_zone_access_history.invoices_by_zone.clear();
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 0);
+    time_interval.from_date = boost::gregorian::from_string("2019-05-13");
+    time_interval.to_date = boost::gregorian::from_string("2019-06-13");
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 1);
+    // <2019-05-13, 2019-06-13>
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+
+    time_interval.from_date = boost::gregorian::from_string("2019-07-13");
+    time_interval.to_date = boost::none;
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(2ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 2);
+    // <2019-05-13, 2019-06-13>, <2019-07-13, oo)
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-14")));
+
+    registrar_zone_access_history.invoices_by_zone.clear();
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 0);
+    time_interval.from_date = boost::gregorian::from_string("2019-05-13");
+    time_interval.to_date = boost::gregorian::from_string("2019-06-13");
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(1ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 1);
+    time_interval.from_date = boost::gregorian::from_string("2019-07-13");
+    time_interval.to_date = boost::gregorian::from_string("2019-08-13");
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(2ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 2);
+    // <2019-05-13, 2019-06-13>, <2019-07-13, 2019-08-13>
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-08-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-08-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-08-14")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-09-14")));
+
+    registrar_zone_access_history.invoices_by_zone.clear();
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 0);
+    time_interval.from_date = boost::gregorian::from_string("2019-07-13");
+    time_interval.to_date = boost::gregorian::from_string("2019-08-13");
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(2ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 1);
+    time_interval.from_date = boost::gregorian::from_string("2019-05-13");
+    time_interval.to_date = boost::gregorian::from_string("2019-06-13");
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(1ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 2);
+    // <2019-05-13, 2019-06-13>, <2019-07-13, 2019-08-13>
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-07-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-08-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-08-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-08-14")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-09-14")));
+
+    registrar_zone_access_history.invoices_by_zone.clear();
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 0);
+    time_interval.from_date = boost::gregorian::from_string("2019-05-13");
+    time_interval.to_date = boost::gregorian::from_string("2019-05-13");
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(1ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 1);
+    // <2019-05-13, 2019-05-13>
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+
+    time_interval.from_date = boost::gregorian::from_string("2019-06-13");
+    time_interval.to_date = boost::gregorian::from_string("2019-06-13");
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(3ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 2);
+    // <2019-05-13, 2019-05-13>, <2019-06-13, 2019-06-13>
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-12")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-04-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+
+    time_interval.from_date = boost::gregorian::from_string("2019-05-14");
+    time_interval.to_date = boost::gregorian::from_string("2019-06-12");
+    invoice_id = Util::make_strong<::LibFred::Registrar::ZoneAccess::RegistrarInvoiceId>(2ull);
+    registrar_zone_access_history.invoices_by_zone["abc"].insert({time_interval, invoice_id});
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone.size(), 1);
+    BOOST_CHECK_EQUAL(registrar_zone_access_history.invoices_by_zone["abc"].size(), 3);
+    // <2019-05-13, 2019-05-13>, <2019-05-14, 2019-06-12>, <2019-06-13, 2019-06-13>
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-13")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-14")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-05-15")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-11")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-12")));
+    BOOST_CHECK(has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-13")));
+    BOOST_CHECK(!has_access(registrar_zone_access_history, "abc", boost::gregorian::from_string("2019-06-14")));
+}
 
 BOOST_AUTO_TEST_CASE(registrar_credit_nonexistent_registrar)
 {
@@ -98,4 +277,4 @@ BOOST_AUTO_TEST_CASE(create_registrar_credit_transaction)
             .exec(ctx);
 }
 
-BOOST_AUTO_TEST_SUITE_END(); //TestCreateRegistrarCreditTransaction
+BOOST_AUTO_TEST_SUITE_END()//TestCreateRegistrarCreditTransaction
