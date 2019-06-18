@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "libfred/db_settings.hh"
 #include "libfred/registrar/credit/create_registrar_credit_transaction.hh"
 #include "libfred/registrar/credit/exceptions.hh"
@@ -22,7 +23,7 @@
 #include "libfred/zone/exceptions.hh"
 #include "libfred/zone/info_zone.hh"
 #include "libfred/registrar/zone_access/exceptions.hh"
-#include "libfred/registrar/zone_access/get_registrar_zone_access.hh"
+#include "libfred/registrar/zone_access/get_zone_access_history.hh"
 #include "libfred/registrar/zone_access/registrar_zone_access_type.hh"
 
 namespace LibFred {
@@ -50,13 +51,10 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
         const auto zone_id = LibFred::Zone::get_zone_id(
                 LibFred::Zone::InfoZone(zone_).exec(_ctx));
 
-        const LibFred::Registrar::ZoneAccess::RegistrarZoneAccesses zone_access =
-                LibFred::Registrar::ZoneAccess::GetZoneAccess(registrar_)
-                        .set_zone_fqdn(zone_)
-                        .set_date(boost::gregorian::day_clock::local_day())
-                        .exec(_ctx);
-        if (zone_access.zone_accesses.size() == 0)
+        const auto zone_access_history = LibFred::Registrar::ZoneAccess::GetZoneAccessHistory(registrar_).exec(_ctx);
+        if (!LibFred::Registrar::ZoneAccess::has_access(zone_access_history, zone_, boost::gregorian::day_clock::local_day()))
         {
+            _ctx.get_log().debug("registrar \"" + registrar_ + "\" has no access to zone \"" + zone_ + "\"");
             throw NonexistentZoneAccess();
         }
 

@@ -16,13 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef GET_REGISTRAR_ZONE_ACCESS_HH_D244602CE4E742B08CA40AE73028E1EF
-#define GET_REGISTRAR_ZONE_ACCESS_HH_D244602CE4E742B08CA40AE73028E1EF
+
+#ifndef GET_ZONE_ACCESS_HISTORY_HH_D244602CE4E742B08CA40AE73028E1EF
+#define GET_ZONE_ACCESS_HISTORY_HH_D244602CE4E742B08CA40AE73028E1EF
 
 #include "libfred/opcontext.hh"
-#include "libfred/registrar/zone_access/registrar_zone_access_type.hh"
-
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include "libfred/registrar/zone_access/registrar_zone_access_history.hh"
 
 #include <string>
 
@@ -30,24 +29,17 @@ namespace LibFred {
 namespace Registrar {
 namespace ZoneAccess {
 
-class GetZoneAccess {
+class GetZoneAccessHistory
+{
 public:
-    explicit GetZoneAccess(const std::string& _registrar_handle);
-
-    GetZoneAccess& set_zone_fqdn(const std::string& _zone_fqdn);
-
-    GetZoneAccess& set_date(const boost::gregorian::date& _date);
-
-    RegistrarZoneAccesses exec(OperationContext& _ctx) const;
-
+    explicit GetZoneAccessHistory(const std::string& _registrar_handle);
+    RegistrarZoneAccessHistory exec(OperationContext& _ctx) const;
 private:
     std::string registrar_handle_;
-    std::string zone_fqdn_;
-    boost::gregorian::date date_;
 };
 
-} // namespace LibFred::Registrar::ZoneAccess
-} // namespace LibFred::Registrar
-} // namespace LibFred
+}//namespace LibFred::Registrar::ZoneAccess
+}//namespace LibFred::Registrar
+}//namespace LibFred
 
-#endif
+#endif//GET_ZONE_ACCESS_HISTORY_HH_D244602CE4E742B08CA40AE73028E1EF

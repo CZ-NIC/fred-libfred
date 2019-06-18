@@ -186,7 +186,8 @@ set(LIBFRED_SOURCES
     src/libfred/registrar/group/membership/info_group_membership_by_registrar.cc
     src/libfred/registrar/zone_access/add_registrar_zone_access.cc
     src/libfred/registrar/zone_access/exceptions.cc
-    src/libfred/registrar/zone_access/get_registrar_zone_access.cc
+    src/libfred/registrar/zone_access/get_zone_access_history.cc
+    src/libfred/registrar/zone_access/registrar_zone_access_history.cc
     src/libfred/registrar/zone_access/update_registrar_zone_access.cc
     src/libfred/zone/create_zone.cc
     src/libfred/zone/exceptions.cc
