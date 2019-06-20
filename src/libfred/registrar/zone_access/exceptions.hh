@@ -25,47 +25,42 @@ namespace LibFred {
 namespace Registrar {
 namespace ZoneAccess {
 
-struct AddRegistrarZoneAccessException : std::exception
+struct AddRegistrarZoneAccessException : virtual std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct NonexistentRegistrar : std::exception
+struct NonexistentRegistrar : virtual std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct NonexistentZone : std::exception
+struct NonexistentZone : virtual std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct UpdateRegistrarZoneAccessException : std::exception
+struct UpdateRegistrarZoneAccessException : virtual std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct NoUpdateData : std::exception
+struct NoUpdateData : virtual std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct NonexistentZoneAccess : std::exception
+struct NonexistentZoneAccess : virtual std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct GetRegistrarZoneAccessException : std::exception
+struct OverlappingZoneAccessRange : virtual std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct OverlappingZoneAccessRange : std::exception
-{
-    const char* what() const noexcept override;
-};
-
-struct InvalidDateFrom : std::exception
+struct InvalidDateFrom : virtual std::exception
 {
     const char* what() const noexcept override;
 };

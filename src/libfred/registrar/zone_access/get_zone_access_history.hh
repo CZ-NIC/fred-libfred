@@ -23,6 +23,7 @@
 #include "libfred/opcontext.hh"
 #include "libfred/registrar/zone_access/registrar_zone_access_history.hh"
 
+#include <exception>
 #include <string>
 
 namespace LibFred {
@@ -34,6 +35,7 @@ class GetZoneAccessHistory
 public:
     explicit GetZoneAccessHistory(const std::string& _registrar_handle);
     RegistrarZoneAccessHistory exec(OperationContext& _ctx) const;
+    struct Exception : virtual std::exception { };
 private:
     std::string registrar_handle_;
 };
