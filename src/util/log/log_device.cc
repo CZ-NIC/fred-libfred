@@ -35,20 +35,34 @@ namespace Logging {
 
 namespace {
 
-class Is
+struct FilterLimit
+{
+    explicit FilterLimit(Log::Severity severity) : value(severity) { }
+    const Log::Severity value;
+};
+
+class LowerSeverityIsFilteredOut
 {
 public:
-    explicit Is(Log::Severity lhs)
-        : lhs_(lhs)
+    explicit LowerSeverityIsFilteredOut(FilterLimit limit)
+        : limit_(limit.value)
     { }
-    bool less_important_than(Log::Severity rhs)const
+    bool is_important_enough(Log::Severity severity_of_logged_event)const noexcept
     {
-        const bool lhs_is_numerically_greater_than_rhs = rhs < lhs_;
-        const bool lhs_is_less_important_than_rhs = lhs_is_numerically_greater_than_rhs;
-        return lhs_is_less_important_than_rhs;
+        const bool insufficient_severity = LessImportant()(severity_of_logged_event, limit_);
+        return !insufficient_severity;
     }
 private:
-    const Log::Severity lhs_;
+    const Log::Severity limit_;
+    struct LessImportant
+    {
+        bool operator()(Log::Severity lhs, Log::Severity rhs)const noexcept
+        {
+            const bool lhs_is_numerically_greater_than_rhs = rhs < lhs;
+            const bool lhs_is_less_important_than_rhs = lhs_is_numerically_greater_than_rhs;
+            return lhs_is_less_important_than_rhs;
+        }
+    };
 };
 
 std::string severity2str(Log::Severity severity_of_logged_event)
@@ -134,8 +148,7 @@ public:
 private:
     bool is_sufficient(Log::Severity severity_of_logged_event)const override
     {
-        const bool insufficient_severity = Is(severity_of_logged_event).less_important_than(min_severity_);
-        return !insufficient_severity;
+        return LowerSeverityIsFilteredOut(FilterLimit(min_severity_)).is_important_enough(severity_of_logged_event);
     }
     std::ostream& get_output_stream()override { return ofs_; }
     std::ofstream ofs_;
@@ -156,8 +169,7 @@ public:
 private:
     bool is_sufficient(Log::Severity severity_of_logged_event)const override
     {
-        const bool insufficient_severity = Is(severity_of_logged_event).less_important_than(min_severity_);
-        return !insufficient_severity;
+        return LowerSeverityIsFilteredOut(FilterLimit(min_severity_)).is_important_enough(severity_of_logged_event);
     }
     std::ostream& get_output_stream()override { return std::cout; }
     const Log::Severity min_severity_;
@@ -200,8 +212,7 @@ private:
     }
     bool is_sufficient(Log::Severity severity_of_logged_event)const override
     {
-        const bool insufficient_severity = Is(severity_of_logged_event).less_important_than(min_severity_);
-        return !insufficient_severity;
+        return LowerSeverityIsFilteredOut(FilterLimit(min_severity_)).is_important_enough(severity_of_logged_event);
     }
     static int get_syslog_facility_local(int index)
     {
