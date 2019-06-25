@@ -52,11 +52,6 @@ const char* NonexistentZoneAccess::what() const noexcept
     return "Registrar zone access doesn't exist.";
 }
 
-const char* GetRegistrarZoneAccessException::what() const noexcept
-{
-    return "Failed to get registrar zone access due to an unknown exception.";
-}
-
 const char* OverlappingZoneAccessRange::what() const noexcept
 {
     return "Range of registrar zone access overlaps with the other one.";

@@ -50,7 +50,7 @@ RegistrarZoneAccessHistory GetZoneAccessHistory::exec(OperationContext& _ctx)con
         {
             if (db_result[0][column_registrar_id].isnull())
             {
-                struct RegistrarDoesNotExist : GetRegistrarZoneAccessException
+                struct RegistrarDoesNotExist : NonexistentRegistrar, Exception
                 {
                     const char* what() const noexcept override
                     {
@@ -83,33 +83,51 @@ RegistrarZoneAccessHistory GetZoneAccessHistory::exec(OperationContext& _ctx)con
                 const bool successfully_inserted = retval.invoices_by_zone[zone_fqdn].insert({invoice_time, invoice_id}).second;
                 if (!successfully_inserted)
                 {
-                    struct InvoiceInsertionFailure : GetRegistrarZoneAccessException
+                    struct InvoiceInsertionFailure : OverlappingZoneAccessRange, Exception
                     {
                         const char* what() const noexcept override
                         {
                             return "invoice insertion failed";
                         }
                     };
+                    _ctx.get_log().debug("for registrar \"" + registrar_handle_ + "\" in \"" + zone_fqdn + "\" zone "
+                                         "access range overlapping detected");
                     throw InvoiceInsertionFailure();
                 }
             }
         }
         return retval;
     }
-    catch (const GetRegistrarZoneAccessException& e)
+    catch (const NonexistentRegistrar&)
     {
-        _ctx.get_log().info(std::string("GetZoneAccessHistory::exec() throws GetRegistrarZoneAccessException("
-                                        "\"") + e.what() + "\") exception");
+        _ctx.get_log().info("GetZoneAccessHistory::exec() throws NonexistentRegistrar() exception");
+        throw;
+    }
+    catch (const OverlappingZoneAccessRange&)
+    {
+        _ctx.get_log().info("GetZoneAccessHistory::exec() throws OverlappingZoneAccessRange() exception");
+        throw;
+    }
+    catch (const Exception& e)
+    {
+        _ctx.get_log().info(std::string("GetZoneAccessHistory::exec() throws Exception(\"") + e.what() + "\")");
         throw;
     }
     catch (const std::exception& e)
     {
-        _ctx.get_log().warning(std::string("GetZoneAccessHistory::exec() throws std::exception(\"") + e.what() + "\")");
-        throw GetRegistrarZoneAccessException();
+        _ctx.get_log().warning(std::string("GetZoneAccessHistory::exec() caught an std::exception(\"") + e.what() + "\")");
+        struct UnknownException : Exception
+        {
+            const char* what() const noexcept override
+            {
+                return "Failed to get registrar's zone access due to an unknown exception.";
+            }
+        };
+        throw UnknownException();
     }
     catch (...)
     {
-        _ctx.get_log().error("GetZoneAccessHistory::exec() throws unexpected exception");
+        _ctx.get_log().error("GetZoneAccessHistory::exec() throws an unexpected exception");
         throw;
     }
 }
