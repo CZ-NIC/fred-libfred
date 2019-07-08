@@ -27,6 +27,20 @@ namespace Nsset {
 
 namespace {
 
+template <Object_Type::Enum object_type, typename T>
+bool does_object_exist(
+        OperationContext& ctx,
+        T get_object_id_rule)
+{
+    Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
+    const std::string object_id_rule = get_object_id_rule(params);
+    return 0 < ctx.get_conn().exec_params(
+            "SELECT 0 "
+            "FROM object_registry "
+            "WHERE type=get_object_type_id($1::TEXT) AND "
+                  "id=(" + object_id_rule + ")", params).size();
+}
+
 template <typename T>
 NssetDataHistory get_nsset_data_history(
         OperationContext& ctx,
@@ -98,11 +112,7 @@ NssetDataHistory get_nsset_data_history(
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        if (ctx.get_conn().exec_params(
-                "SELECT 0 "
-                "FROM object_registry "
-                "WHERE type=get_object_type_id($1::TEXT) AND "
-                      "id=(" + object_id_rule + ")", params).size() <= 0)
+        if (!does_object_exist<object_type>(ctx, get_object_id_rule))
         {
             ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
             throw ObjectDoesNotExist<object_type>();
