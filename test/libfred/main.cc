@@ -30,6 +30,8 @@
 #include "test/fake-src/util/cfg/handle_logging_args.hh"
 #include "test/fake-src/util/cfg/handle_database_args.hh"
 
+#include "src/util/log/add_log_device.hh"
+
 // dynamic library version
 #include <boost/test/unit_test.hpp>
 #include <boost/assign/list_of.hpp>
@@ -63,22 +65,23 @@ void setup_logging(CfgArgs* cfg_instance_ptr)
 {
     const HandleLoggingArgs* const handler_ptr = cfg_instance_ptr->get_handler_ptr_by_type<HandleLoggingArgs>();
 
-    const auto log_device = static_cast<Logging::Log::Device>(handler_ptr->log_type);
-
-    switch (log_device)
+    switch (handler_ptr->log_type)
     {
-        case Logging::Log::Device::file:
-            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::file>(
-                    static_cast<std::string>(handler_ptr->log_file),
+        case 0:
+            Logging::add_console_device(
+                    Logging::Manager::instance_ref(),
                     static_cast<Logging::Log::Severity>(handler_ptr->log_level));
             break;
-        case Logging::Log::Device::syslog:
-            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::syslog>(
-                    static_cast<int>(handler_ptr->log_syslog_facility),
+        case 1:
+            Logging::add_file_device(
+                    Logging::Manager::instance_ref(),
+                    handler_ptr->log_file,
                     static_cast<Logging::Log::Severity>(handler_ptr->log_level));
             break;
-        case Logging::Log::Device::console:
-            Logging::Manager::instance_ref().add_handler_of<Logging::Log::Device::console>(
+        case 2:
+            Logging::add_syslog_device(
+                    Logging::Manager::instance_ref(),
+                    handler_ptr->log_syslog_facility,
                     static_cast<Logging::Log::Severity>(handler_ptr->log_level));
             break;
     }
