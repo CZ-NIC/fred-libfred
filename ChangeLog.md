@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 3.0.0 (2019-06-10)
+ * Fix operations for retrieving historical data (too many parameters in query)
+ * Simplify logging interface
+
 ## 2.0.0 (2019-06-25)
  * Add new operations for retrieving historical data of domains and their state flags (by _id_, _fqdn_, _uuid_)
  * Add new operations for retrieving historical data of nssets and their state flags (by _id_, _handle_, _uuid_)
