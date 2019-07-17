@@ -23,6 +23,7 @@
 #include "libfred/opexception.hh"
 #include "libfred/poll/message_type.hh"
 
+#include <set>
 /**
  *  @file
  *  common implementation for creating epp action poll messages
@@ -44,7 +45,15 @@ struct CreatePollMessage
      * @throws LibFred::OperationException an operation specific exception
      * @throws LibFred::InternalError an unexpected exception
      */
-    unsigned long long exec(LibFred::OperationContext& _ctx, unsigned long long _history_id)const;
+    unsigned long long exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const;
+};
+
+
+template<Object_Type::Enum object_type>
+struct CreateUpdateOperationPollMessage
+{
+    using Result = std::set<unsigned long long>;
+    Result exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const;
 };
 
 } // namespace LibFred::Poll

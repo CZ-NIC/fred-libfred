@@ -64,7 +64,6 @@ struct SponsoringRegistrar
     };
 };
 
-
 typedef unsigned long long (*CreatePollMessageFunction)(
         LibFred::OperationContext&,
         unsigned long long,
@@ -193,6 +192,7 @@ struct MessageTypeTraits<MessageType::delete_domain>
 const CreatePollMessageFunction MessageTypeTraits<MessageType::delete_domain>::create_poll_message =
         create_poll_eppaction_message<message_type>;
 
+
 template <SponsoringRegistrar::Enum recipient>
 struct GetPrimaryRecipientImpl { };
 
@@ -223,67 +223,74 @@ struct GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_start>
 
 constexpr char GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_start>::sql[];
 
-template<SponsoringRegistrar::Enum recipient, Object_Type::Enum object_type>
-struct GetPrimaryRecipient
+
+struct TooManyRows : InternalError
 {
-    unsigned long long exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
+    TooManyRows() : InternalError("too many rows") { }
+};
+
+
+struct NotFound : OperationException
+{
+    const char* what() const noexcept
     {
-        const std::string requested_object_type_handle = Conversion::Enums::to_db_handle(object_type);
-        const Database::Result db_res =
-                _ctx.get_conn().exec_params(
-                        GetPrimaryRecipientImpl<recipient>::sql,
-                        Database::query_param_list(_history_id)(requested_object_type_handle));
-
-        switch (db_res.size())
-        {
-            case 0:
-            {
-                struct NotFound : OperationException
-                {
-                    const char* what() const noexcept { return "object history not found"; }
-                };
-                throw NotFound();
-            }
-            case 1:
-                break;
-            default:
-            {
-                struct TooManyRows : InternalError
-                {
-                    TooManyRows() : InternalError("too many rows") { }
-                };
-                throw TooManyRows();
-            }
-        }
-
-        const bool object_type_corresponds_to_message_type = static_cast<bool>(db_res[0][0]);
-        if (!object_type_corresponds_to_message_type)
-        {
-            struct NotCorrespondingObjectType : OperationException
-            {
-                const char* what() const noexcept
-                {
-                    return "associated object is not of the type corresponding to the given message type";
-                }
-            };
-            throw NotCorrespondingObjectType();
-        }
-
-        return static_cast<unsigned long long>(db_res[0][1]);
+        return "object history not found";
     }
 };
 
 
+struct NotCorrespondingObjectType : OperationException
+{
+    const char* what() const noexcept
+    {
+        return "associated object is not of the type corresponding to the given message type";
+    }
+};
+
+
+template<MessageType::Enum message_type>
+struct GetPrimaryRecipient
+{
+    unsigned long long exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
+    {
+        using MessageTraits = MessageTypeTraits<message_type>;
+        const std::string requested_object_type_handle = Conversion::Enums::to_db_handle(MessageTraits::object_type);
+        const Database::Result result =
+                _ctx.get_conn().exec_params(
+                        GetPrimaryRecipientImpl<MessageTraits::recipient>::sql,
+                        Database::query_param_list(_history_id)(requested_object_type_handle));
+
+        if (result.size() == 0)
+        {
+            throw NotFound();
+        }
+        else if (result.size() > 1)
+        {
+            throw TooManyRows();
+        }
+
+        const bool object_type_corresponds_to_message_type = static_cast<bool>(result[0][0]);
+        if (!object_type_corresponds_to_message_type)
+        {
+            throw NotCorrespondingObjectType();
+        }
+
+        return static_cast<unsigned long long>(result[0][1]);
+    }
+};
+
 } // namespace LibFred::Poll::{anonymous}
+
 
 template <MessageType::Enum message_type>
 unsigned long long CreatePollMessage<message_type>::exec(
         LibFred::OperationContext& _ctx,
         unsigned long long _history_id) const
 {
-    typedef MessageTypeTraits<message_type> MessageTraits;
-    const auto recipient_registrar_id = GetPrimaryRecipient<MessageTraits::recipient, MessageTraits::object_type>().exec(_ctx, _history_id);
-    return MessageTraits::create_poll_message(_ctx, _history_id, recipient_registrar_id);
+    using MessageTraits = MessageTypeTraits<message_type>;
+
+    const auto primary_recipient = GetPrimaryRecipient<message_type>().exec(_ctx, _history_id);
+    return MessageTraits::create_poll_message(_ctx, _history_id, primary_recipient);
 }
 
 template struct CreatePollMessage<MessageType::transfer_contact>;
@@ -298,6 +305,137 @@ template struct CreatePollMessage<MessageType::update_keyset>;
 
 template struct CreatePollMessage<MessageType::delete_contact>;
 template struct CreatePollMessage<MessageType::delete_domain>;
+
+
+namespace {
+
+template<MessageType::Enum message_type>
+struct GetAdditionalRecipients
+{
+    std::set<unsigned long long> exec(LibFred::OperationContext&, unsigned long long) const
+    {
+        return {};
+    }
+};
+
+
+template<>
+struct GetAdditionalRecipients<MessageType::update_contact>
+{
+    std::set<unsigned long long> exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
+    {
+        Database::Result result = _ctx.get_conn().exec_params(
+            "WITH contact_ AS ( "
+            "SELECT tsrange(h.valid_from, coalesce(h.valid_to, 'infinity')) AS valid_range, oh.id AS contact_id, "
+                    "oh.clid AS contact_clid "
+            "FROM history h "
+            "JOIN object_history oh ON oh.historyid = h.id "
+            "WHERE h.id = $1::BIGINT "
+            ") "
+            "SELECT DISTINCT d_oh.clid "
+            "FROM contact_ c "
+            "JOIN domain_history dh ON dh.registrant = c.contact_id "
+            "JOIN object_history d_oh ON d_oh.historyid = dh.historyid "
+            "JOIN history d_h ON d_h.id = dh.historyid "
+                    "AND c.valid_range && tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
+            "WHERE d_oh.clid != c.contact_clid "
+            "UNION "
+            "SELECT DISTINCT d_oh.clid "
+            "FROM contact_ c "
+            "JOIN domain_contact_map_history dcmh ON dcmh.contactid = c.contact_id "
+            "JOIN object_history d_oh ON d_oh.historyid = dcmh.historyid "
+            "JOIN history d_h ON d_h.id = dcmh.historyid "
+                    "AND c.valid_range && tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
+            "WHERE d_oh.clid != c.contact_clid ",
+            Database::query_param_list(_history_id)
+        );
+        std::set<unsigned long long> registrars;
+        for (const auto& row : result)
+        {
+            registrars.insert(static_cast<unsigned long long>(row[0]));
+        }
+        return registrars;
+    }
+};
+
+template <Object_Type::Enum object_type>
+struct UpdateOperationMessageTypeTraits { };
+
+template<>
+struct UpdateOperationMessageTypeTraits<Object_Type::contact>
+{
+    using Traits = MessageTypeTraits<MessageType::update_contact>;
+};
+
+template<>
+struct UpdateOperationMessageTypeTraits<Object_Type::domain>
+{
+    using Traits = MessageTypeTraits<MessageType::update_domain>;
+};
+
+template<>
+struct UpdateOperationMessageTypeTraits<Object_Type::nsset>
+{
+    using Traits = MessageTypeTraits<MessageType::update_nsset>;
+};
+
+template<>
+struct UpdateOperationMessageTypeTraits<Object_Type::keyset>
+{
+    using Traits = MessageTypeTraits<MessageType::update_keyset>;
+};
+
+
+bool was_update_done_by_sponsoring_registrar(LibFred::OperationContext& _ctx, unsigned long long _history_id)
+{
+    Database::Result result = _ctx.get_conn().exec_params(
+        "SELECT oh_act.clid = oh_act.upid "
+        "FROM object_history oh_act "
+        "JOIN history h ON h.next = oh_act.historyid "
+        "JOIN object_history oh_prev ON oh_prev.historyid = h.id "
+        "WHERE oh_act.clid = oh_prev.clid "
+        "AND oh_act.historyid = $1::BIGINT",
+        Database::query_param_list(_history_id)
+    );
+
+    if (result.size() == 0)
+    {
+        throw NotFound();
+    }
+    else if (result.size() > 1)
+    {
+        throw TooManyRows();
+    }
+    return static_cast<bool>(result[0][0]);
+}
+
+} // namespace LibFred::Poll::{anonymous}
+
+
+template <Object_Type::Enum object_type>
+typename CreateUpdateOperationPollMessage<object_type>::Result CreateUpdateOperationPollMessage<object_type>::exec(
+        LibFred::OperationContext& _ctx,
+        unsigned long long _history_id) const
+{
+    using MessageTraits = typename UpdateOperationMessageTypeTraits<object_type>::Traits;
+
+    auto recipients = GetAdditionalRecipients<MessageTraits::message_type>().exec(_ctx, _history_id);
+
+    const auto should_notify_sponsoring_registrar = !was_update_done_by_sponsoring_registrar(_ctx, _history_id);
+    if (should_notify_sponsoring_registrar)
+    {
+        recipients.insert(GetPrimaryRecipient<MessageTraits::message_type>().exec(_ctx, _history_id));
+    }
+
+    CreateUpdateOperationPollMessage<object_type>::Result poll_messages;
+    for (const auto& registrar_id : recipients)
+    {
+        poll_messages.insert(MessageTraits::create_poll_message(_ctx, _history_id, registrar_id));
+    }
+    return poll_messages;
+}
+
+template struct CreateUpdateOperationPollMessage<Object_Type::contact>;
 
 } // namespace LibFred::Poll
 } // namespace LibFred
