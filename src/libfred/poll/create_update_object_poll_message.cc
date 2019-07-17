@@ -58,7 +58,7 @@ void CreateUpdateObjectPollMessage::exec(LibFred::OperationContext &_ctx, unsign
     switch (Conversion::Enums::from_db_handle<Object_Type>(static_cast<std::string>(db_res[0][0])))
     {
         case Object_Type::contact:
-            CreatePollMessage<MessageType::update_contact>().exec(_ctx, _history_id);
+            CreateUpdateOperationPollMessage<Object_Type::contact>().exec(_ctx, _history_id);
             return;
         case Object_Type::domain:
             CreatePollMessage<MessageType::update_domain>().exec(_ctx, _history_id);

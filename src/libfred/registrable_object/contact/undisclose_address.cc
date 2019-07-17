@@ -35,7 +35,7 @@ void undisclose_address(
 {
     LibFred::UpdateContactById update_contact(_contact_id, _registrar_handle);
     const unsigned long long history_id = update_contact.set_discloseaddress(false).exec(_ctx); // #21767
-    LibFred::Poll::CreatePollMessage<LibFred::Poll::MessageType::update_contact>().exec(_ctx, history_id);
+    LibFred::Poll::CreateUpdateOperationPollMessage<LibFred::Object_Type::contact>().exec(_ctx, history_id);
 }
 
 namespace {
