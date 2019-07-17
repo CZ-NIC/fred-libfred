@@ -59,10 +59,11 @@ struct SponsoringRegistrar
 {
     enum Enum
     {
-        who_did_the_action,
-        at_the_transfer_start,
+        at_action_end,
+        at_action_start,
     };
 };
+
 
 typedef unsigned long long (*CreatePollMessageFunction)(
         LibFred::OperationContext&,
@@ -77,7 +78,7 @@ struct MessageTypeTraits<MessageType::transfer_contact>
 {
     static const MessageType::Enum message_type = MessageType::transfer_contact;
     static const Object_Type::Enum object_type = Object_Type::contact;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_the_transfer_start;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_start;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -89,7 +90,7 @@ struct MessageTypeTraits<MessageType::transfer_domain>
 {
     static const MessageType::Enum message_type = MessageType::transfer_domain;
     static const Object_Type::Enum object_type = Object_Type::domain;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_the_transfer_start;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_start;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -101,7 +102,7 @@ struct MessageTypeTraits<MessageType::transfer_nsset>
 {
     static const MessageType::Enum message_type = MessageType::transfer_nsset;
     static const Object_Type::Enum object_type = Object_Type::nsset;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_the_transfer_start;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_start;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -113,7 +114,7 @@ struct MessageTypeTraits<MessageType::transfer_keyset>
 {
     static const MessageType::Enum message_type = MessageType::transfer_keyset;
     static const Object_Type::Enum object_type = Object_Type::keyset;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_the_transfer_start;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_start;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -125,7 +126,7 @@ struct MessageTypeTraits<MessageType::update_contact>
 {
     static const MessageType::Enum message_type = MessageType::update_contact;
     static const Object_Type::Enum object_type = Object_Type::contact;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::who_did_the_action;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_end;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -137,7 +138,7 @@ struct MessageTypeTraits<MessageType::update_domain>
 {
     static const MessageType::Enum message_type = MessageType::update_domain;
     static const Object_Type::Enum object_type = Object_Type::domain;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::who_did_the_action;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_end;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -149,7 +150,7 @@ struct MessageTypeTraits<MessageType::update_nsset>
 {
     static const MessageType::Enum message_type = MessageType::update_nsset;
     static const Object_Type::Enum object_type = Object_Type::nsset;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::who_did_the_action;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_end;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -161,7 +162,7 @@ struct MessageTypeTraits<MessageType::update_keyset>
 {
     static const MessageType::Enum message_type = MessageType::update_keyset;
     static const Object_Type::Enum object_type = Object_Type::keyset;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::who_did_the_action;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_end;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -173,7 +174,7 @@ struct MessageTypeTraits<MessageType::delete_contact>
 {
     static const MessageType::Enum message_type = MessageType::delete_contact;
     static const Object_Type::Enum object_type = Object_Type::contact;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::who_did_the_action;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_end;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -185,7 +186,7 @@ struct MessageTypeTraits<MessageType::delete_domain>
 {
     static const MessageType::Enum message_type = MessageType::delete_domain;
     static const Object_Type::Enum object_type = Object_Type::domain;
-    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::who_did_the_action;
+    static const SponsoringRegistrar::Enum recipient = SponsoringRegistrar::at_action_end;
     static const CreatePollMessageFunction create_poll_message;
 };
 
@@ -196,7 +197,7 @@ template <SponsoringRegistrar::Enum recipient>
 struct GetPrimaryRecipientImpl { };
 
 template <>
-struct GetPrimaryRecipientImpl<SponsoringRegistrar::who_did_the_action>
+struct GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_end>
 {
     static constexpr char sql[] =
         "SELECT eot.id IS NOT NULL,oh.clid "
@@ -207,10 +208,10 @@ struct GetPrimaryRecipientImpl<SponsoringRegistrar::who_did_the_action>
 
 };
 
-constexpr char GetPrimaryRecipientImpl<SponsoringRegistrar::who_did_the_action>::sql[];
+constexpr char GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_end>::sql[];
 
 template <>
-struct GetPrimaryRecipientImpl<SponsoringRegistrar::at_the_transfer_start>
+struct GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_start>
 {
     static constexpr char sql[] =
         "SELECT eot.id IS NOT NULL,oh.clid "
@@ -220,7 +221,7 @@ struct GetPrimaryRecipientImpl<SponsoringRegistrar::at_the_transfer_start>
         "WHERE oh.historyid=(SELECT id FROM history WHERE next=$1::BIGINT)";
 };
 
-constexpr char GetPrimaryRecipientImpl<SponsoringRegistrar::at_the_transfer_start>::sql[];
+constexpr char GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_start>::sql[];
 
 template<SponsoringRegistrar::Enum recipient, Object_Type::Enum object_type>
 struct GetPrimaryRecipient
