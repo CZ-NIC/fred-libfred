@@ -315,7 +315,7 @@ struct GetAdditionalRecipients<MessageType::update_contact>
     {
         Database::Result result = _ctx.get_conn().exec_params(
             "WITH contact_ AS ( "
-            "SELECT tsrange(h.valid_from, coalesce(h.valid_to, 'infinity')) AS valid_range, oh.id AS contact_id, "
+            "SELECT h.valid_from AS update_timestamp, oh.id AS contact_id, "
                     "oh.clid AS contact_clid "
             "FROM history h "
             "JOIN object_history oh ON oh.historyid = h.id "
@@ -326,7 +326,7 @@ struct GetAdditionalRecipients<MessageType::update_contact>
             "JOIN domain_history dh ON dh.registrant = c.contact_id "
             "JOIN object_history d_oh ON d_oh.historyid = dh.historyid "
             "JOIN history d_h ON d_h.id = dh.historyid "
-                    "AND c.valid_range && tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
+                    "AND c.update_timestamp <@ tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
             "WHERE d_oh.clid != c.contact_clid "
             "UNION "
             "SELECT DISTINCT d_oh.clid "
@@ -334,7 +334,7 @@ struct GetAdditionalRecipients<MessageType::update_contact>
             "JOIN domain_contact_map_history dcmh ON dcmh.contactid = c.contact_id "
             "JOIN object_history d_oh ON d_oh.historyid = dcmh.historyid "
             "JOIN history d_h ON d_h.id = dcmh.historyid "
-                    "AND c.valid_range && tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
+                    "AND c.update_timestamp <@ tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
             "WHERE d_oh.clid != c.contact_clid ",
             Database::query_param_list(_history_id)
         );
