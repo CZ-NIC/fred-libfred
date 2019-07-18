@@ -312,7 +312,7 @@ namespace {
 template<MessageType::Enum message_type>
 struct GetAdditionalRecipients
 {
-    std::set<unsigned long long> exec(LibFred::OperationContext&, unsigned long long) const
+    auto exec(LibFred::OperationContext&, unsigned long long) const
     {
         return {};
     }
@@ -322,7 +322,7 @@ struct GetAdditionalRecipients
 template<>
 struct GetAdditionalRecipients<MessageType::update_contact>
 {
-    std::set<unsigned long long> exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
+    auto exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
     {
         Database::Result result = _ctx.get_conn().exec_params(
             "WITH contact_ AS ( "
