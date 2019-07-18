@@ -224,21 +224,6 @@ struct GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_start>
 constexpr char GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_start>::sql[];
 
 
-struct TooManyRows : InternalError
-{
-    TooManyRows() : InternalError("too many rows") { }
-};
-
-
-struct NotFound : OperationException
-{
-    const char* what() const noexcept override
-    {
-        return "object history not found";
-    }
-};
-
-
 template<MessageType::Enum message_type>
 struct GetPrimaryRecipient
 {
@@ -251,13 +236,25 @@ struct GetPrimaryRecipient
                         GetPrimaryRecipientImpl<MessageTraits::recipient>::sql,
                         Database::query_param_list(_history_id)(requested_object_type_handle));
 
-        if (result.size() == 0)
+        switch (result.size())
         {
-            throw NotFound();
-        }
-        else if (result.size() > 1)
-        {
-            throw TooManyRows();
+            case 0:
+                struct NotFound : OperationException
+                {
+                    const char* what() const noexcept override
+                    {
+                        return "object history not found";
+                    }
+                };
+                throw NotFound();
+            case 1:
+                break;
+            default:
+                struct TooManyRows : InternalError
+                {
+                    TooManyRows() : InternalError("too many rows") { }
+                };
+                throw TooManyRows();
         }
 
         const bool object_type_corresponds_to_message_type = static_cast<bool>(result[0][0]);
@@ -396,13 +393,25 @@ bool was_update_done_by_sponsoring_registrar(LibFred::OperationContext& _ctx, un
         Database::query_param_list(_history_id)
     );
 
-    if (result.size() == 0)
+    switch (result.size())
     {
-        throw NotFound();
-    }
-    else if (result.size() > 1)
-    {
-        throw TooManyRows();
+        case 0:
+            struct NotFound : OperationException
+            {
+                const char* what() const noexcept override
+                {
+                    return "object history not found";
+                }
+            };
+            throw NotFound();
+        case 1:
+            break;
+        default:
+            struct TooManyRows : InternalError
+            {
+                TooManyRows() : InternalError("too many rows") { }
+            };
+            throw TooManyRows();
     }
     return static_cast<bool>(result[0][0]);
 }
