@@ -339,7 +339,7 @@ struct GetAdditionalRecipients<MessageType::update_contact>
             Database::query_param_list(_history_id)
         );
         std::set<unsigned long long> registrars;
-        for (auto i = 0; i < result.size(); ++i)
+        for (auto i = 0u; i < result.size(); ++i)
         {
             registrars.insert(static_cast<unsigned long long>(result[i][0]));
         }
