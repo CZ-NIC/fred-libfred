@@ -313,7 +313,7 @@ struct GetAdditionalRecipients<MessageType::update_contact>
 {
     auto exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
     {
-        Database::Result result = _ctx.get_conn().exec_params(
+        const Database::Result result = _ctx.get_conn().exec_params(
             "WITH contact_ AS ( "
             "SELECT h.valid_from AS update_timestamp, oh.id AS contact_id, "
                     "oh.clid AS contact_clid "
@@ -377,7 +377,7 @@ struct UpdateOperationMessageTypeTraits<Object_Type::keyset>
 
 bool was_update_done_by_sponsoring_registrar(LibFred::OperationContext& _ctx, unsigned long long _history_id)
 {
-    Database::Result result = _ctx.get_conn().exec_params(
+    const Database::Result result = _ctx.get_conn().exec_params(
         "SELECT oh_act.clid = oh_act.upid "
         "FROM object_history oh_act "
         "JOIN history h ON h.next = oh_act.historyid "
