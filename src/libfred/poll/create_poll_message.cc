@@ -239,15 +239,6 @@ struct NotFound : OperationException
 };
 
 
-struct NotCorrespondingObjectType : OperationException
-{
-    const char* what() const noexcept override
-    {
-        return "associated object is not of the type corresponding to the given message type";
-    }
-};
-
-
 template<MessageType::Enum message_type>
 struct GetPrimaryRecipient
 {
@@ -272,6 +263,13 @@ struct GetPrimaryRecipient
         const bool object_type_corresponds_to_message_type = static_cast<bool>(result[0][0]);
         if (!object_type_corresponds_to_message_type)
         {
+            struct NotCorrespondingObjectType : OperationException
+            {
+                const char* what() const noexcept override
+                {
+                    return "associated object is not of the type corresponding to the given message type";
+                }
+            };
             throw NotCorrespondingObjectType();
         }
 
