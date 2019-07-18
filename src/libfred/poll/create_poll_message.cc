@@ -232,7 +232,7 @@ struct TooManyRows : InternalError
 
 struct NotFound : OperationException
 {
-    const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "object history not found";
     }
@@ -241,7 +241,7 @@ struct NotFound : OperationException
 
 struct NotCorrespondingObjectType : OperationException
 {
-    const char* what() const noexcept
+    const char* what() const noexcept override
     {
         return "associated object is not of the type corresponding to the given message type";
     }
