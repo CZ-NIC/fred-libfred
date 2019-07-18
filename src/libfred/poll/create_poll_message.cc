@@ -305,13 +305,7 @@ template struct CreatePollMessage<MessageType::delete_domain>;
 namespace {
 
 template<MessageType::Enum message_type>
-struct GetAdditionalRecipients
-{
-    auto exec(LibFred::OperationContext&, unsigned long long) const
-    {
-        return {};
-    }
-};
+struct GetAdditionalRecipients;
 
 
 template<>
