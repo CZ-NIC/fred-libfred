@@ -225,7 +225,11 @@ set(LIBFRED_SOURCES
     src/util/types/date_interval.cc
     src/util/types/datetime.cc
     src/util/types/datetime_interval.cc
-    src/util/types/id.cc)
+    src/util/types/id.cc
+    src/util/random/algorithm/boost_date.cc
+    src/util/random/algorithm/boost_time.cc
+    src/util/random/char_set/char_set.cc
+    src/util/random/seeders/nondeterministic_seeder.cc)
 
 add_library(fred SHARED ${LIBFRED_SOURCES})
 add_library(fred::library ALIAS fred)
