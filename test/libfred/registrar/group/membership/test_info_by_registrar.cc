@@ -20,6 +20,8 @@
 #include "libfred/registrar/group/membership/create_registrar_group_membership.hh"
 #include "libfred/registrar/group/membership/info_group_membership_by_registrar.hh"
 #include "libfred/registrar/group/membership/exceptions.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include "libfred/opcontext.hh"
 #include "libfred/db_settings.hh"
@@ -38,11 +40,11 @@ struct test_membership_by_registrar_fixture : virtual public Test::instantiate_d
     {
         LibFred::OperationContextCreator ctx;
         reg = Test::registrar::make(ctx);
-        RandomDataGenerator rdg;
+        Random::Generator rdn;
         for (int i = 0; i < 5; ++i)
         {
             const unsigned long long group_id =
-                LibFred::Registrar::CreateRegistrarGroup(std::string("test_reg_grp_") + rdg.xnumstring(6)).exec(ctx);
+                LibFred::Registrar::CreateRegistrarGroup(std::string("test_reg_grp_") + rdn.get_seq(Random::CharSet::num, 6)).exec(ctx);
             mem_map[LibFred::Registrar::CreateRegistrarGroupMembership(reg.id, group_id, today).exec(ctx)] = group_id;
         }
         LibFred::Registrar::CreateRegistrarGroupMembership(

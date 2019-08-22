@@ -32,9 +32,10 @@
 #include "libfred/registrable_object/domain/info_domain_diff.hh"
 #include "libfred/registrable_object/domain/renew_domain.hh"
 #include "libfred/registrable_object/domain/update_domain.hh"
-#include "util/random_data_generator.hh"
 #include "test/libfred/util.hh"
 #include "test/setup/fixtures.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include <boost/test/unit_test.hpp>
 
@@ -52,7 +53,7 @@ struct create_domain_fixture : public Test::instantiate_db_template
     std::string test_enum_domain;
 
     create_domain_fixture()
-    : xmark(RandomDataGenerator().xnumstring(9))
+    : xmark(Random::Generator().get_seq(Random::CharSet::num, 9))
     , admin_contact2_handle(std::string("TEST-ADMIN-CONTACT3-HANDLE")+xmark)
     , registrant_contact_handle(std::string("TEST-REGISTRANT-CONTACT-HANDLE") + xmark)
     , test_domain_handle ( std::string("fred")+xmark+".cz")

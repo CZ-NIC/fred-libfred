@@ -23,7 +23,8 @@
 #include "libfred/zone/zone_soa/create_zone_soa.hh"
 #include "libfred/zone/zone_soa/default_values.hh"
 #include "libfred/zone/zone_soa/exceptions.hh"
-#include "util/random_data_generator.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include "test/libfred/zone/zone_soa/util.hh"
 #include "test/libfred/zone/util.hh"
@@ -39,7 +40,7 @@ namespace Test {
 struct CreateZoneSoaFixture
 {
     CreateZoneSoaFixture(LibFred::OperationContext& _ctx)
-        : fqdn(RandomDataGenerator().xstring(3)),
+        : fqdn(Random::Generator().get_seq(Random::CharSet::alpha, 3)),
           hostmaster("hostmaster@nic.cz"),
           ns_fqdn("a.ns.nic." + fqdn)
     {
@@ -93,7 +94,7 @@ unsigned long long get_zone_soa_id(
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 {
-    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(RandomDataGenerator().xstring(3), hostmaster, ns_fqdn)
+    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(Random::Generator().get_seq(Random::CharSet::alpha, 3), hostmaster, ns_fqdn)
                 .exec(ctx),
            ::LibFred::Zone::NonExistentZone);
 }

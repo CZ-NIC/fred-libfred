@@ -57,7 +57,8 @@
 #include "libfred/registrar/info_registrar_diff.hh"
 #include "util/db/nullable.hh"
 #include "util/optional_value.hh"
-#include "util/random_data_generator.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 #include "test/fake-src/util/tz/europe/prague.hh"
 #include "test/fake-src/util/tz/get_psql_handle_of.hh"
 
@@ -66,6 +67,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/static_assert.hpp>
 
+#include <limits>
 #include <utility>
 #include <vector>
 
@@ -229,7 +231,7 @@ struct CreateX_factory<::LibFred::CreateRegistrar>
     create_type make(const Optional<std::string>& _handle = Optional<std::string>())
     {
         return create_type(
-            _handle.isset() ? _handle.get_value() : "REGISTRAR_" + RandomDataGenerator().xnumstring(20)
+            _handle.isset() ? _handle.get_value() : "REGISTRAR_" + Random::Generator().get_seq(Random::CharSet::num, 20)
         );
     }
 
@@ -255,7 +257,7 @@ struct CreateX_factory<::LibFred::CreateContact>
             const Optional<std::string>& _handle = Optional<std::string>())
     {
         return create_type(
-            _handle.isset() ? _handle.get_value() : "CONTACT_" + RandomDataGenerator().xnumstring(20),
+            _handle.isset() ? _handle.get_value() : "CONTACT_" + Random::Generator().get_seq(Random::CharSet::num, 20),
             _registrar_handle);
     }
 
@@ -283,7 +285,7 @@ struct CreateX_factory<::LibFred::CreateDomain>
             const Optional<std::string>& _fqdn = Optional<std::string>())
     {
         return create_type(
-            _fqdn.isset() ? _fqdn.get_value() : RandomDataGenerator().xnumstring(20) + ".cz",  // TODO zavisle na existenci .cz zony, coz bychom casem mohli odstranit
+            _fqdn.isset() ? _fqdn.get_value() : Random::Generator().get_seq(Random::CharSet::num, 20) + ".cz",  // TODO zavisle na existenci .cz zony, coz bychom casem mohli odstranit
             _registrar,
             _registrant);
     }
@@ -313,7 +315,7 @@ struct CreateX_factory<::LibFred::CreateNsset>
             const Optional<std::string>& _handle = Optional<std::string>())
     {
         return create_type(
-            _handle.isset() ? _handle.get_value() : "NSSET_" + RandomDataGenerator().xnumstring(20),
+            _handle.isset() ? _handle.get_value() : "NSSET_" + Random::Generator().get_seq(Random::CharSet::num, 20),
             _registrar);
     }
 
@@ -341,7 +343,7 @@ struct CreateX_factory<::LibFred::CreateKeyset>
             const Optional<std::string>& _handle = Optional<std::string>())
     {
         return create_type(
-                _handle.isset() ? _handle.get_value() : "KEYSET_" + RandomDataGenerator().xnumstring(20),
+                _handle.isset() ? _handle.get_value() : "KEYSET_" + Random::Generator().get_seq(Random::CharSet::num, 20),
                 _registrar);
     }
 
@@ -375,27 +377,27 @@ boost::ptr_vector<Tobject>& generate_test_data(boost::ptr_vector<Tobject>& obj_v
 template<>
 inline ::LibFred::CreateRegistrar generate_test_data<>(::LibFred::CreateRegistrar obj)
 {
-    RandomDataGenerator rnd;
+    Random::Generator rnd;
 
-    obj.set_name("Jan " + rnd.xnstring(7) + " Novak");
-    obj.set_organization("Zakoupil a Zboril a " + rnd.xnstring(7) + " s. r. o.");
-    obj.set_street1("Na rynku " + rnd.xnumstring(3) + "/" + rnd.xnumstring(2));
-    obj.set_street2(rnd.xnumstring(1) + ". patro");
-    obj.set_street3(rnd.xnumstring(1) + ". dvere vlevo");
-    obj.set_city("Praha " + rnd.xnumstring(1));
-    obj.set_stateorprovince("Kraj c." + rnd.xnumstring(2));
-    obj.set_postalcode(rnd.xnumstring(3) + " " + rnd.xnumstring(2));
+    obj.set_name("Jan " + rnd.get_seq(Random::CharSet::alphanum, 7) + " Novak");
+    obj.set_organization("Zakoupil a Zboril a " + rnd.get_seq(Random::CharSet::alphanum, 7) + " s. r. o.");
+    obj.set_street1("Na rynku " + rnd.get_seq(Random::CharSet::num, 3) + "/" + rnd.get_seq(Random::CharSet::num, 2));
+    obj.set_street2(rnd.get_seq(Random::CharSet::num, 1) + ". patro");
+    obj.set_street3(rnd.get_seq(Random::CharSet::num, 1) + ". dvere vlevo");
+    obj.set_city("Praha " + rnd.get_seq(Random::CharSet::num, 1));
+    obj.set_stateorprovince("Kraj c." + rnd.get_seq(Random::CharSet::num, 2));
+    obj.set_postalcode(rnd.get_seq(Random::CharSet::num, 3) + " " + rnd.get_seq(Random::CharSet::num, 2));
     static const std::string country("CZ");
     obj.set_country(country);
-    obj.set_telephone("+" + rnd.xnumstring(3) + " " + rnd.xnumstring(9));
-    obj.set_fax("+" + rnd.xnumstring(3) + " " + rnd.xnumstring(9));
-    obj.set_email(rnd.xnstring(7) + "@" + rnd.xnstring(7) + "." + country);
-    obj.set_url("www." + rnd.xnstring(20) + "." + country);
+    obj.set_telephone("+" + rnd.get_seq(Random::CharSet::num, 3) + " " + rnd.get_seq(Random::CharSet::num, 9));
+    obj.set_fax("+" + rnd.get_seq(Random::CharSet::num, 3) + " " + rnd.get_seq(Random::CharSet::num, 9));
+    obj.set_email(rnd.get_seq(Random::CharSet::alphanum, 7) + "@" + rnd.get_seq(Random::CharSet::alphanum, 7) + "." + country);
+    obj.set_url("www." + rnd.get_seq(Random::CharSet::alphanum, 20) + "." + country);
     obj.set_system(true);
-    const std::string ico(rnd.xnumstring(8));
+    const std::string ico(rnd.get_seq(Random::CharSet::num, 8));
     obj.set_ico(ico);
     obj.set_dic(country + ico);
-    obj.set_variable_symbol(rnd.xnumstring(6));
+    obj.set_variable_symbol(rnd.get_seq(Random::CharSet::num, 6));
     obj.set_payment_memo_regex(".*");   // TODO - casem mozno doplnit realnejsi exemplar
     obj.set_vat_payer(true);
 
@@ -405,30 +407,30 @@ inline ::LibFred::CreateRegistrar generate_test_data<>(::LibFred::CreateRegistra
 template<>
 inline ::LibFred::CreateContact generate_test_data<>(::LibFred::CreateContact obj)
 {
-    RandomDataGenerator rnd;
+    Random::Generator rnd;
 
     ::LibFred::Contact::PlaceAddress place;
-    place.street1 = std::string("Na rynku ") + rnd.xnumstring(3) + "/" + rnd.xnumstring(2);
-    place.street2 = rnd.xnumstring(1) + ". patro";
-    place.street3 = rnd.xnumstring(1) + ". dvere vlevo";
-    place.city = std::string("Praha ") + rnd.xnumstring(1);
-    place.stateorprovince = std::string("Kraj c.") + rnd.xnumstring(2);
-    place.postalcode = rnd.xnumstring(3) + " " + rnd.xnumstring(2);
+    place.street1 = std::string("Na rynku ") + rnd.get_seq(Random::CharSet::num, 3) + "/" + rnd.get_seq(Random::CharSet::num, 2);
+    place.street2 = rnd.get_seq(Random::CharSet::num, 1) + ". patro";
+    place.street3 = rnd.get_seq(Random::CharSet::num, 1) + ". dvere vlevo";
+    place.city = std::string("Praha ") + rnd.get_seq(Random::CharSet::num, 1);
+    place.stateorprovince = std::string("Kraj c.") + rnd.get_seq(Random::CharSet::num, 2);
+    place.postalcode = rnd.get_seq(Random::CharSet::num, 3) + " " + rnd.get_seq(Random::CharSet::num, 2);
     static const std::string country("CZ");
     place.country = country;
 
-    obj.set_authinfo(rnd.xnstring(10));
-    obj.set_name("Jan " + rnd.xnstring(7) + " Novak");
-    obj.set_organization("Zakoupil a Zboril a " + rnd.xnstring(7) + " s. r. o.");
+    obj.set_authinfo(rnd.get_seq(Random::CharSet::alphanum, 10));
+    obj.set_name("Jan " + rnd.get_seq(Random::CharSet::alphanum, 7) + " Novak");
+    obj.set_organization("Zakoupil a Zboril a " + rnd.get_seq(Random::CharSet::alphanum, 7) + " s. r. o.");
     obj.set_place(place);
-    obj.set_telephone("+" + rnd.xnumstring(3) + " " + rnd.xnumstring(9));
-    obj.set_fax("+" + rnd.xnumstring(3) + " " + rnd.xnumstring(9));
-    const std::string email(rnd.xnstring(7) + "@" + rnd.xnstring(7) + "." + country);
+    obj.set_telephone("+" + rnd.get_seq(Random::CharSet::num, 3) + " " + rnd.get_seq(Random::CharSet::num, 9));
+    obj.set_fax("+" + rnd.get_seq(Random::CharSet::num, 3) + " " + rnd.get_seq(Random::CharSet::num, 9));
+    const std::string email(rnd.get_seq(Random::CharSet::alphanum, 7) + "@" + rnd.get_seq(Random::CharSet::alphanum, 7) + "." + country);
     obj.set_email(email);
-    obj.set_notifyemail(rnd.xnumstring(1) + email);
-    obj.set_vat(country + rnd.xnumstring(8));
+    obj.set_notifyemail(rnd.get_seq(Random::CharSet::num, 1) + email);
+    obj.set_vat(country + rnd.get_seq(Random::CharSet::num, 8));
     obj.set_ssntype("BIRTHDAY");
-    obj.set_ssn(rnd.xnumstring(4) + "-" + rnd.xnumstring(2) + "-" + rnd.xnumstring(2));
+    obj.set_ssn(rnd.get_seq(Random::CharSet::num, 4) + "-" + rnd.get_seq(Random::CharSet::num, 2) + "-" + rnd.get_seq(Random::CharSet::num, 2));
     obj.set_disclosename(true);
     obj.set_discloseorganization(true);
     obj.set_discloseaddress(true);
@@ -438,7 +440,7 @@ inline ::LibFred::CreateContact generate_test_data<>(::LibFred::CreateContact ob
     obj.set_disclosevat(true);
     obj.set_discloseident(true);
     obj.set_disclosenotifyemail(true);
-    obj.set_logd_request_id(rnd.xuint());
+    obj.set_logd_request_id(rnd.get(std::numeric_limits<unsigned>::min(), std::numeric_limits<unsigned>::max()));
 
     return obj;
 }
@@ -446,17 +448,17 @@ inline ::LibFred::CreateContact generate_test_data<>(::LibFred::CreateContact ob
 template<>
 inline ::LibFred::CreateDomain generate_test_data<>(::LibFred::CreateDomain obj)
 {
-    RandomDataGenerator rnd;
-    obj.set_authinfo(rnd.xnstring(15));
+    Random::Generator rnd;
+    obj.set_authinfo(rnd.get_seq(Random::CharSet::alphanum, 15));
     return obj;
 }
 
 template<>
 inline ::LibFred::CreateNsset generate_test_data<>(::LibFred::CreateNsset obj)
 {
-    RandomDataGenerator rnd;
+    Random::Generator rnd;
 
-    obj.set_authinfo(rnd.xnstring(15));
+    obj.set_authinfo(rnd.get_seq(Random::CharSet::alphanum, 15));
     obj.set_dns_hosts(
             boost::assign::list_of(
                     ::LibFred::DnsHost(
@@ -470,9 +472,9 @@ inline ::LibFred::CreateNsset generate_test_data<>(::LibFred::CreateNsset obj)
 template<>
 inline ::LibFred::CreateKeyset generate_test_data<>(::LibFred::CreateKeyset obj)
 {
-    RandomDataGenerator rnd;
+    Random::Generator rnd;
 
-    obj.set_authinfo(rnd.xnstring(15));
+    obj.set_authinfo(rnd.get_seq(Random::CharSet::alphanum, 15));
     obj.set_dns_keys(
             boost::assign::list_of(::LibFred::DnsKey(1, 1, 3, "abcde")));
     return obj;

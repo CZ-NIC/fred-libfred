@@ -32,7 +32,6 @@
 #include "libfred/registrable_object/contact/create_contact.hh"
 #include "libfred/db_settings.hh"
 #include "util/db/nullable.hh"
-#include "util/random_data_generator.hh"
 
 #include "test/libfred/contact/verification/setup_utils.hh"
 #include "test/setup/fixtures.hh"

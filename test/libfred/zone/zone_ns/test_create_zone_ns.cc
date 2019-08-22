@@ -19,7 +19,8 @@
 #include "libfred/zone/zone_ns/create_zone_ns.hh"
 #include "libfred/zone/create_zone.hh"
 #include "libfred/zone/exceptions.hh"
-#include "util/random_data_generator.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 #include "test/libfred/zone/util.hh"
 #include "test/setup/fixtures.hh"
 
@@ -35,7 +36,7 @@ namespace Test {
 struct CreateZoneNsFixture
 {
     explicit CreateZoneNsFixture(::LibFred::OperationContext&)
-        : zone(RandomDataGenerator().xstring(3)),
+        : zone(Random::Generator().get_seq(Random::CharSet::alpha, 3)),
           nameserver_fqdn("a.ns.nic." + zone)
     { }
     ~CreateZoneNsFixture()

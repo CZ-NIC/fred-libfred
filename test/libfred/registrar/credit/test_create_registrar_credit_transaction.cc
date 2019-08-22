@@ -27,10 +27,11 @@
 
 #include "libfred/db_settings.hh"
 #include "libfred/opcontext.hh"
-#include "util/random_data_generator.hh"
 #include "test/libfred/util.hh"
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
@@ -58,8 +59,8 @@ struct CreateRegistrarCreditTransactionFixture : virtual public Test::instantiat
     ::LibFred::InfoRegistrarData registrar;
 
     CreateRegistrarCreditTransactionFixture()
-        : zone_fqdn(RandomDataGenerator().xstring(5)),
-          change_credit(RandomDataGenerator().xnumstring(8))
+        : zone_fqdn(Random::Generator().get_seq(Random::CharSet::alpha, 5)),
+          change_credit(Random::Generator().get_seq(Random::CharSet::num, 8))
     {
         ::LibFred::OperationContextCreator ctx;
         registrar = Test::registrar::make(ctx);
@@ -248,7 +249,7 @@ BOOST_FIXTURE_TEST_CASE(registrar_zone_access_history_test, EmptyFixture)
 BOOST_AUTO_TEST_CASE(registrar_credit_nonexistent_registrar)
 {
     ::LibFred::OperationContextCreator ctx;
-    const std::string nonexistent_registrar = RandomDataGenerator().xstring(15);
+    const std::string nonexistent_registrar = Random::Generator().get_seq(Random::CharSet::alpha, 15);
     BOOST_CHECK_THROW(
         ::LibFred::Registrar::Credit::CreateRegistrarCreditTransaction(nonexistent_registrar, zone_fqdn, change_credit)
             .exec(ctx),
