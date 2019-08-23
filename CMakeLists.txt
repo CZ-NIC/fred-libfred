@@ -208,7 +208,6 @@ set(LIBFRED_SOURCES
     src/util/idn_utils.cc
     src/util/password_storage.cc
     src/util/printable.cc
-    src/util/random.cc
     src/util/util.cc
     src/util/db/param_query_composition.cc
     src/util/db/value.cc
