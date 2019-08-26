@@ -496,6 +496,7 @@ target_include_directories(test-libfred
 
 target_link_libraries(test-libfred PRIVATE
     fred::library
+    Threads::Threads
     ${Mpdec_LIBRARY}
     ${LIBIDN_LIBRARIES}
     ${Boost_DATE_TIME_LIBRARY}
