@@ -448,6 +448,9 @@ add_executable(test-libfred
     test/libfred/nsset/test_info_nsset.cc
     test/libfred/nsset/test_transfer_nsset.cc
     test/libfred/nsset/test_update_nsset.cc
+    test/libfred/random/mock_engine.cc
+    test/libfred/random/mock_seeder.cc
+    test/libfred/random/test_random.cc
     test/libfred/registrar/test_create_registrar.cc
     test/libfred/registrar/test_get_registrar_zone_credit.cc
     test/libfred/registrar/test_info_registrar.cc
