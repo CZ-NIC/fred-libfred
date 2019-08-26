@@ -26,8 +26,9 @@
 #include "engine_management.hh"
 #include "seeders/nondeterministic_seeder.hh"
 
-#include <cstddef>
-#include <random>
+#include <algorithm> // std::shuffle
+#include <cstddef> // std::size_t
+#include <random> // std::mt19937_64
 
 namespace Random {
 
@@ -55,6 +56,12 @@ public:
     auto get_seq(const T (&_source_set)[N], std::size_t _result_size)
     {
         return Algorithm::SequenceGenerator<T>(_source_set, _result_size)(engine_);
+    }
+
+    template<typename RandomIt>
+    void shuffle(RandomIt first, RandomIt last)
+    {
+        std::shuffle(first, last, engine_);
     }
 private:
     decltype(I::template get_engine<E, S>()) engine_;
