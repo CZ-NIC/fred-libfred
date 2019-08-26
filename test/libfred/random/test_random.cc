@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(string_custom_char_set_composition_test)
 
 BOOST_AUTO_TEST_CASE(string_lower_alpha_composition_test)
 {
-    const std::string s = Random::Generator().get_seq(Random::CharSet::lower_case_letters(), sequence_size);
+    const std::string s = Random::Generator().get_seq(Random::CharSet::small_letters(), sequence_size);
     BOOST_CHECK_EQUAL(s.size(), sequence_size);
     if (!std::all_of(s.begin(), s.end(), is_lower_alpha))
     {
@@ -386,7 +386,7 @@ BOOST_AUTO_TEST_CASE(string_lower_alpha_composition_test)
 
 BOOST_AUTO_TEST_CASE(string_upper_alpha_composition_test)
 {
-    const std::string s = Random::Generator().get_seq(Random::CharSet::upper_case_letters(), sequence_size);
+    const std::string s = Random::Generator().get_seq(Random::CharSet::capital_letters(), sequence_size);
     BOOST_CHECK_EQUAL(s.size(), sequence_size);
     if (!std::all_of(s.begin(), s.end(), is_upper_alpha))
     {
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE(char_lower_alpha_test)
 {
     for (int i = 0; i < num_of_checks; ++i)
     {
-        const char rand_char = Random::Generator().get(Random::CharSet::lower_case_letters());
+        const char rand_char = Random::Generator().get(Random::CharSet::small_letters());
         BOOST_REQUIRE_MESSAGE(is_lower_alpha(rand_char), "rand_char was " << rand_char);
     }
 }
@@ -473,7 +473,7 @@ BOOST_AUTO_TEST_CASE(char_upper_alpha_test)
 {
     for (int i = 0; i < num_of_checks; ++i)
     {
-        const char rand_char = Random::Generator().get(Random::CharSet::upper_case_letters());
+        const char rand_char = Random::Generator().get(Random::CharSet::capital_letters());
         BOOST_REQUIRE_MESSAGE(is_upper_alpha(rand_char), "rand_char was " << rand_char);
     }
 }

@@ -23,12 +23,12 @@
 namespace Random {
 namespace CharSet {
 
-constexpr auto& lower_case_letters()
+constexpr auto& small_letters()
 {
     return "abcdefghijklmnopqrstuvwxyz";
 }
 
-constexpr auto& upper_case_letters()
+constexpr auto& capital_letters()
 {
     return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 }
@@ -48,6 +48,18 @@ constexpr auto& letters_and_digits()
 {
     return "abcdefghijklmnopqrstuvwxyz"
            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+           "0123456789";
+}
+
+constexpr auto& capital_letters_and_digits()
+{
+    return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+           "0123456789";
+}
+
+constexpr auto& small_letters_and_digits()
+{
+    return "abcdefghijklmnopqrstuvwxyz"
            "0123456789";
 }
 
