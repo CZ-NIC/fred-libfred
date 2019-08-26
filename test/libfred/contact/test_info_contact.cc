@@ -46,7 +46,7 @@ struct test_contact_fixture_6da88b63b0bc46e29f6d0ce3181fd5d8 : public Test::inst
     std::string test_contact_history_handle;
 
     test_contact_fixture_6da88b63b0bc46e29f6d0ce3181fd5d8()
-    :xmark(Random::Generator().get_seq(Random::CharSet::num, 6))
+    :xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , test_contact_handle(std::string("TEST-CONTACT-HANDLE")+xmark)
     , test_contact_history_handle(std::string("TEST-CONTACT-HISTORY-HANDLE")+xmark)
     {

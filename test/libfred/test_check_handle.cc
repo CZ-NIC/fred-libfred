@@ -65,7 +65,7 @@ struct check_handle_fixture : public Test::instantiate_db_template
     std::string test_keyset_handle_rem;
 
     check_handle_fixture()
-    : xmark(Random::Generator().get_seq(Random::CharSet::num, 6))
+    : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , admin_contact_handle(std::string("TEST-ADMIN-C-") + xmark)
     , admin_contact_handle_rem(std::string("TEST-ADMIN-C-") + xmark + "-REM")
     , test_nsset_handle(std::string("TEST-NSSET-") + xmark)

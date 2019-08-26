@@ -67,7 +67,7 @@ struct update_public_request_fixture : virtual Test::instantiate_db_template,
                                        PublicRequestAuthTypeFake
 {
     update_public_request_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           public_request_type(*this)
     {
         ::LibFred::OperationContextCreator ctx;

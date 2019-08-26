@@ -43,7 +43,7 @@ const std::string server_name = "test-create-registrar";
 struct test_registrar_fixture : virtual public Test::instantiate_db_template
 {
     test_registrar_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           test_registrar_handle(std::string("TEST-REGISTRAR-HANDLE") + xmark)
     {
         static unsigned long long var_symbol = 1234560000;

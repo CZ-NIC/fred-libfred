@@ -399,8 +399,8 @@ BOOST_AUTO_TEST_CASE(test_Update)
     logd_request_post_reset.push_back( boost::make_tuple(logd_request_id1, logd_request_id2, logd_request_id2 ) );
     logd_request_post_reset.push_back( boost::make_tuple(logd_request_id1, logd_request_id2, logd_request_id3 ) );
 
-    Optional<std::string> error_msg_id1 = Random::Generator().get_seq(Random::CharSet::alphanum, 20);
-    Optional<std::string> error_msg_id2 = Random::Generator().get_seq(Random::CharSet::alphanum, 20);
+    Optional<std::string> error_msg_id1 = Random::Generator().get_seq(Random::CharSet::letters_and_digits(), 20);
+    Optional<std::string> error_msg_id2 = Random::Generator().get_seq(Random::CharSet::letters_and_digits(), 20);
     std::vector<Optional<std::string> > error_msg_post_created;
     std::vector<std::pair<Optional<std::string>, Optional<std::string> > > error_msg_post_reset;
     error_msg_post_created.push_back( Optional<std::string>() );

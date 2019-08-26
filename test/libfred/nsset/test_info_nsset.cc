@@ -56,7 +56,7 @@ struct info_nsset_fixture : Test::instantiate_db_template
     ::LibFred::InfoNssetOutput test_info_nsset_output;
 
     info_nsset_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           admin_contact2_handle("TEST-ADMIN-CONTACT2-HANDLE" + xmark),
           admin_contact3_handle("TEST-ADMIN-CONTACT3-HANDLE" + xmark),
           test_nsset_handle("TEST-NSSET-HANDLE" + xmark),

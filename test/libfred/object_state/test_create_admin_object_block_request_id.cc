@@ -55,7 +55,7 @@ struct create_administrative_object_block_request_id_fixture : public Test::inst
     ::LibFred::StatusList status_list;
 
     create_administrative_object_block_request_id_fixture()
-    :   xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+    :   xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
         admin_contact2_handle(std::string("TEST-OSR-ADMIN-CONTACT-HANDLE") + xmark),
         registrant_contact_handle(std::string("TEST-OSR-REGISTRANT-CONTACT-HANDLE") + xmark),
         test_domain_fqdn ( std::string("fred")+xmark+".cz")

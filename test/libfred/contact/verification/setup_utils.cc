@@ -42,12 +42,12 @@ setup_testdef::setup_testdef() {
         try {
             ::LibFred::OperationContextCreator ctx;
 
-            testdef_handle_ = "TEST_" + Random::Generator().get_seq(Random::CharSet::num, 15);
+            testdef_handle_ = "TEST_" + Random::Generator().get_seq(Random::CharSet::digits(), 15);
             testdef_id_ = static_cast<long>(
                 ctx.get_conn().exec(
                     "INSERT INTO enum_contact_test "
                     "   (id, handle) "
-                    "   VALUES ("+Random::Generator().get_seq(Random::CharSet::num, 9)+", '"+testdef_handle_+"') "
+                    "   VALUES ("+Random::Generator().get_seq(Random::CharSet::digits(), 9)+", '"+testdef_handle_+"') "
                     "   RETURNING id;"
                 )[0][0]);
 
@@ -65,7 +65,7 @@ setup_nonexistent_testdef_handle::setup_nonexistent_testdef_handle() {
     do {
         ::LibFred::OperationContextCreator ctx;
 
-        testdef_handle = "NONEX_TEST_" + Random::Generator().get_seq(Random::CharSet::num, 15);
+        testdef_handle = "NONEX_TEST_" + Random::Generator().get_seq(Random::CharSet::digits(), 15);
         res = ctx.get_conn().exec(
             "SELECT handle FROM enum_contact_testsuite WHERE handle='"+testdef_handle+"';" );
     } while(res.size() != 0);
@@ -118,12 +118,12 @@ setup_empty_testsuite::setup_empty_testsuite() {
         try {
             ::LibFred::OperationContextCreator ctx;
 
-            testsuite_handle = "TESTSUITE_" + Random::Generator().get_seq(Random::CharSet::num, 15) ;
+            testsuite_handle = "TESTSUITE_" + Random::Generator().get_seq(Random::CharSet::digits(), 15) ;
             testsuite_id = static_cast<long>(
                 ctx.get_conn().exec(
                     "INSERT INTO enum_contact_testsuite "
                     "   (id, handle)"
-                    "   VALUES ("+Random::Generator().get_seq(Random::CharSet::num, 9)+", '"+testsuite_handle+"')"
+                    "   VALUES ("+Random::Generator().get_seq(Random::CharSet::digits(), 9)+", '"+testsuite_handle+"')"
                     "   RETURNING id;"
                 )[0][0]);
 
@@ -147,7 +147,7 @@ setup_empty_testsuite::setup_empty_testsuite(const std::string& _testsuite_handl
                 ctx.get_conn().exec(
                     "INSERT INTO enum_contact_testsuite "
                     "   (id, handle)"
-                    "   VALUES ("+Random::Generator().get_seq(Random::CharSet::num, 9)+", '"+testsuite_handle+"')"
+                    "   VALUES ("+Random::Generator().get_seq(Random::CharSet::digits(), 9)+", '"+testsuite_handle+"')"
                     "   RETURNING id;"
                 )[0][0]);
 
@@ -170,7 +170,7 @@ setup_nonexistent_testsuite_handle::setup_nonexistent_testsuite_handle() {
     do {
         ::LibFred::OperationContextCreator ctx;
 
-        testsuite_handle = "NONEX_TESTSUITE_" + Random::Generator().get_seq(Random::CharSet::num, 15);
+        testsuite_handle = "NONEX_TESTSUITE_" + Random::Generator().get_seq(Random::CharSet::digits(), 15);
         res = ctx.get_conn().exec(
             "SELECT handle FROM enum_contact_testsuite WHERE handle='"+testsuite_handle+"';" );
     } while(res.size() != 0);
@@ -190,12 +190,12 @@ setup_check_status::setup_check_status() {
         try {
             ::LibFred::OperationContextCreator ctx;
 
-            status_handle = "STATUS_" + Random::Generator().get_seq(Random::CharSet::num, 15);
+            status_handle = "STATUS_" + Random::Generator().get_seq(Random::CharSet::digits(), 15);
             res = ctx.get_conn().exec(
                 "INSERT "
                 "   INTO enum_contact_check_status "
                 "   (id, handle) "
-                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::num, 9) + ", '"+status_handle+"') "
+                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::digits(), 9) + ", '"+status_handle+"') "
                 "   RETURNING id;" );
 
             ctx.commit_transaction();
@@ -223,7 +223,7 @@ setup_check_status::setup_check_status(const std::string& _handle)
                 "INSERT "
                 "   INTO enum_contact_check_status "
                 "   (id, handle ) "
-                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::num, 9) + ", '"+status_handle+"') "
+                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::digits(), 9) + ", '"+status_handle+"') "
                 "   RETURNING id;" );
 
             ctx.commit_transaction();
@@ -244,12 +244,12 @@ setup_test_status::setup_test_status() {
         try {
             ::LibFred::OperationContextCreator ctx;
 
-            status_handle_ = "STATUS_" + Random::Generator().get_seq(Random::CharSet::num, 15);
+            status_handle_ = "STATUS_" + Random::Generator().get_seq(Random::CharSet::digits(), 15);
             res = ctx.get_conn().exec(
                 "INSERT "
                 "   INTO enum_contact_test_status "
                 "   (id, handle ) "
-                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::num, 9) + ", '"+status_handle_+"') "
+                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::digits(), 9) + ", '"+status_handle_+"') "
                 "   RETURNING id;" );
 
             ctx.commit_transaction();
@@ -276,7 +276,7 @@ setup_test_status::setup_test_status(const std::string& _handle)
                 "INSERT "
                 "   INTO enum_contact_test_status "
                 "   (id, handle ) "
-                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::num, 9) + ", '" + status_handle_ + "') "
+                "   VALUES (" + Random::Generator().get_seq(Random::CharSet::digits(), 9) + ", '" + status_handle_ + "') "
                 "   RETURNING id;" );
 
             ctx.commit_transaction();
@@ -291,7 +291,7 @@ setup_test_status::setup_test_status(const std::string& _handle)
 }
 
 setup_error_msg::setup_error_msg() {
-    error_msg = "ERROR_MSG_" + Random::Generator().get_seq(Random::CharSet::num, 20);
+    error_msg = "ERROR_MSG_" + Random::Generator().get_seq(Random::CharSet::digits(), 20);
 }
 
 setup_check::setup_check(const std::string& _testsuite_handle, Optional<unsigned long long> _logd_request)
@@ -329,7 +329,7 @@ setup_nonexistent_check_status_handle::setup_nonexistent_check_status_handle() {
     // prevent handle collisions
     Database::Result res;
     do {
-        status_handle = "STATUS_" + Random::Generator().get_seq(Random::CharSet::num, 15);
+        status_handle = "STATUS_" + Random::Generator().get_seq(Random::CharSet::digits(), 15);
         res = ctx.get_conn().exec(
             "SELECT handle "
             "   FROM enum_contact_check_status "
@@ -357,7 +357,7 @@ setup_nonexistent_test_status_handle::setup_nonexistent_test_status_handle() {
     // prevent handle collisions
     do {
         ::LibFred::OperationContextCreator ctx;
-        status_handle = "STATUS_" + Random::Generator().get_seq(Random::CharSet::num, 15);
+        status_handle = "STATUS_" + Random::Generator().get_seq(Random::CharSet::digits(), 15);
         res = ctx.get_conn().exec(
             "SELECT handle "
             "   FROM enum_contact_test_status "

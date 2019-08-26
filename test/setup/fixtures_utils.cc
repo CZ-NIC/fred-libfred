@@ -29,7 +29,7 @@ unsigned long long generate_random_bigserial()
 
 std::string generate_random_handle()
 {
-    return Random::Generator().get_seq(Random::CharSet::num, 20);
+    return Random::Generator().get_seq(Random::CharSet::digits(), 20);
 }
 
 unsigned long long get_nonexistent_object_id(::LibFred::OperationContext& ctx)

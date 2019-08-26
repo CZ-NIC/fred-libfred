@@ -36,7 +36,7 @@ namespace {
 struct test_get_registrar_zone_credit_fixture:Test::instantiate_db_template
 {
     test_get_registrar_zone_credit_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           registrar_1_handle("TEST-REGISTRAR1-HANDLE" + xmark),
           registrar_2_handle("TEST-REGISTRAR2-HANDLE" + xmark)
     {

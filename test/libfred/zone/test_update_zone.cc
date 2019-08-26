@@ -40,7 +40,7 @@ struct update_zone_fixture
 
     update_zone_fixture(::LibFred::OperationContext& _ctx)
     {
-        non_enum_zone.fqdn = Random::Generator().get_seq(Random::CharSet::alpha, 3);
+        non_enum_zone.fqdn = Random::Generator().get_seq(Random::CharSet::letters(), 3);
         non_enum_zone.expiration_period_min_in_months = 1;
         non_enum_zone.expiration_period_max_in_months = 2;
         non_enum_zone.dots_max = 1;

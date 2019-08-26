@@ -35,7 +35,7 @@ const std::string server_name = "test-create-public-request-auth";
 struct create_public_request_auth_fixture : public virtual Test::instantiate_db_template
 {
     create_public_request_auth_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           password("Km92bm8ga2xlc2xv")
     {
         ::LibFred::OperationContextCreator ctx;

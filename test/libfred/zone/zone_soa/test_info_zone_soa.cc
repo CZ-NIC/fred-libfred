@@ -42,7 +42,7 @@ namespace Test {
 struct InfoZoneSoaFixture
 {
     InfoZoneSoaFixture(::LibFred::OperationContext& _ctx)
-        :fqdn(Random::Generator().get_seq(Random::CharSet::alpha, 3))
+        :fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3))
     {
         zone_soa.ttl = ::LibFred::Zone::default_ttl_in_seconds;
         zone_soa.hostmaster = "hostmaster@nic.cz";
@@ -71,7 +71,7 @@ BOOST_FIXTURE_TEST_SUITE(TestInfoZoneSoa, SupplyFixtureCtx<InfoZoneSoaFixture>)
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone_soa)
 {
-    BOOST_CHECK_THROW(::LibFred::Zone::InfoZoneSoa(Random::Generator().get_seq(Random::CharSet::alpha, 5))
+    BOOST_CHECK_THROW(::LibFred::Zone::InfoZoneSoa(Random::Generator().get_seq(Random::CharSet::letters(), 5))
                 .exec(ctx),
            ::LibFred::Zone::NonExistentZone);
 }

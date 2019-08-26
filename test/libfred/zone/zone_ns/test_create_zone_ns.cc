@@ -36,7 +36,7 @@ namespace Test {
 struct CreateZoneNsFixture
 {
     explicit CreateZoneNsFixture(::LibFred::OperationContext&)
-        : zone(Random::Generator().get_seq(Random::CharSet::alpha, 3)),
+        : zone(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           nameserver_fqdn("a.ns.nic." + zone)
     { }
     ~CreateZoneNsFixture()

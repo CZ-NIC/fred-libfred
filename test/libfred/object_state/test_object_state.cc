@@ -55,7 +55,7 @@ struct test_contact_fixture_8470af40b863415588b78b1fb1782e7e : public Test::inst
     std::string test_contact_handle;
 
     test_contact_fixture_8470af40b863415588b78b1fb1782e7e()
-    :xmark(Random::Generator().get_seq(Random::CharSet::num, 6))
+    :xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , test_contact_handle(std::string("TEST-CONTACT-HANDLE")+xmark)
     {
         ::LibFred::OperationContextCreator ctx;

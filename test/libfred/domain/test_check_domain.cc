@@ -68,7 +68,7 @@ struct check_domain_fixture : public Test::instantiate_db_template
     std::string blacklisted_domain_name;
 
     check_domain_fixture()
-    : xmark(Random::Generator().get_seq(Random::CharSet::num, 6))
+    : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , admin_contact_handle(std::string("TEST-ADMIN-CONTACT-HANDLE")+xmark)
     , registrant_contact_handle(std::string("TEST-REGISTRANT-CONTACT-HANDLE")+xmark)
     , test_nsset_handle ( std::string("TEST-NSSET-")+xmark+"-HANDLE")

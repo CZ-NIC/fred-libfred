@@ -57,7 +57,7 @@ struct cancel_object_state_request_id_fixture : public Test::instantiate_db_temp
     ::LibFred::StatusList status_list;
 
     cancel_object_state_request_id_fixture()
-    :xmark(Random::Generator().get_seq(Random::CharSet::num, 6))
+    :xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , admin_contact2_handle(std::string("TEST-COSR-ADMIN-CONTACT-HANDLE") + xmark)
     , registrant_contact_handle(std::string("TEST-COSR-REGISTRANT-CONTACT-HANDLE") + xmark)
     , test_domain_fqdn ( std::string("fred")+xmark+".cz")

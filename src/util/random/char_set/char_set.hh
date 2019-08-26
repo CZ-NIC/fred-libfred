@@ -23,22 +23,33 @@
 namespace Random {
 namespace CharSet {
 
-extern const char lower_alpha[sizeof("abcdefghijklmnopqrstuvwxyz")];
+constexpr auto& lower_case_letters()
+{
+    return "abcdefghijklmnopqrstuvwxyz";
+}
 
-extern const char upper_alpha[sizeof("ABCDEFGHIJKLMNOPQRSTUVWXYZ")];
+constexpr auto& upper_case_letters()
+{
+    return "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+}
 
-extern const char alpha[
-    sizeof("abcdefghijklmnopqrstuvwxyz"
-           "ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-];
+constexpr auto& letters()
+{
+    return "abcdefghijklmnopqrstuvwxyz"
+           "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+}
 
-extern const char num[sizeof("0123456789")];
+constexpr auto& digits()
+{
+    return "0123456789";
+}
 
-extern const char alphanum[
-    sizeof("abcdefghijklmnopqrstuvwxyz"
+constexpr auto& letters_and_digits()
+{
+    return "abcdefghijklmnopqrstuvwxyz"
            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-           "0123456789")
-];
+           "0123456789";
+}
 
 } // namespace Random::CharSet
 } // namespace Random

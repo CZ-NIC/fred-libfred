@@ -44,7 +44,7 @@ struct copy_contact_fixture : public Test::instantiate_db_template
     std::string dst_contact_handle;
 
     copy_contact_fixture()
-    :   xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+    :   xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
         src_contact_handle(std::string("TEST-COPY-CONTACT-SRC-HANDLE") + xmark),
         dst_contact_handle(std::string("TEST-COPY-CONTACT-DST-HANDLE") + xmark)
     {

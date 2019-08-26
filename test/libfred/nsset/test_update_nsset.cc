@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(info_nsset)
             ctx.get_conn().exec("SELECT handle FROM registrar WHERE system ORDER BY id LIMIT 1")[0][0]);
     BOOST_CHECK(!registrar_handle.empty());//expecting existing system registrar
 
-    const std::string xmark = Random::Generator().get_seq(Random::CharSet::num, 6);
+    const std::string xmark = Random::Generator().get_seq(Random::CharSet::digits(), 6);
 
     const std::string admin_contact2_handle = "TEST-ADMIN-CONTACT2-HANDLE" + xmark;
     ::LibFred::Contact::PlaceAddress place;
@@ -105,7 +105,7 @@ struct update_nsset_fixture : Test::instantiate_db_template
     std::string test_nsset_handle;
 
     update_nsset_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           admin_contact2_handle("TEST-ADMIN-CONTACT2-HANDLE" + xmark),
           admin_contact3_handle("TEST-ADMIN-CONTACT3-HANDLE" + xmark),
           test_nsset_handle("TEST-NSSET-HANDLE" + xmark)

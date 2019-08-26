@@ -47,7 +47,7 @@ struct create_contact_fixture : public virtual Test::instantiate_db_template
     ::LibFred::ContactAddressList addresses;
 
     create_contact_fixture()
-    : xmark(Random::Generator().get_seq(Random::CharSet::num, 6))
+    : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , create_contact_handle(std::string("TEST-CREATE-CONTACT-HANDLE") + xmark)
     , contact_name(std::string("TEST-CREATE-CONTACT NAME") + xmark)
     {

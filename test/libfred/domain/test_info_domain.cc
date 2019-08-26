@@ -73,7 +73,7 @@ struct test_domain_fixture : public Test::instantiate_db_template
     ::LibFred::InfoDomainOutput test_info_domain_output;
 
     test_domain_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           admin_contact_handle(std::string("TEST-ADMIN-CONTACT-HANDLE") + xmark),
           admin_contact1_handle(std::string("TEST-ADMIN-CONTACT2-HANDLE") + xmark),
           admin_contact2_handle(std::string("TEST-ADMIN-CONTACT3-HANDLE") + xmark),

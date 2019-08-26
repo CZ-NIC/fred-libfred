@@ -38,7 +38,7 @@ struct create_zone_fixture
     int ex_period_max;
 
     create_zone_fixture(::LibFred::OperationContext&)
-        : fqdn(Random::Generator().get_seq(Random::CharSet::alpha, 3)),
+        : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           ex_period_min(6),
           ex_period_max(12)
     {}

@@ -42,7 +42,7 @@ namespace Test {
 struct UpdateZoneNsFixture
 {
     explicit UpdateZoneNsFixture(::LibFred::OperationContext& _ctx)
-        : zone(Random::Generator().get_seq(Random::CharSet::alpha, 3))
+        : zone(Random::Generator().get_seq(Random::CharSet::letters(), 3))
     {
         info_zone_ns.zone_id = ::LibFred::Zone::CreateZone(zone, 6, 12).exec(_ctx);
         info_zone_ns.nameserver_fqdn = "a.ns.nic.cz";
@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(set_zone_ns_update_ip_address)
 
 BOOST_AUTO_TEST_CASE(set_zone_ns_update_all)
 {
-   zone = Random::Generator().get_seq(Random::CharSet::alpha, 3);
+   zone = Random::Generator().get_seq(Random::CharSet::letters(), 3);
    info_zone_ns.zone_id = ::LibFred::Zone::CreateZone(zone, 6, 12).exec(ctx);
 
    std::transform(zone.begin(), zone.end(), zone.begin(), ::tolower);

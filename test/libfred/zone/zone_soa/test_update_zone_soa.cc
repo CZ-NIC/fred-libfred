@@ -41,7 +41,7 @@ namespace Test {
 struct UpdateZoneSoaFixture
 {
     explicit UpdateZoneSoaFixture(::LibFred::OperationContext& _ctx)
-        : fqdn(Random::Generator().get_seq(Random::CharSet::alpha, 3)),
+        : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           hostmaster("hostmaster@nic.cz"),
           ns_fqdn("t.ns.nic." + fqdn)
     {
@@ -66,7 +66,7 @@ BOOST_FIXTURE_TEST_SUITE(TestUpdateZoneSoa, SupplyFixtureCtx<UpdateZoneSoaFixtur
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 {
-    BOOST_CHECK_THROW(::LibFred::Zone::UpdateZoneSoa(Random::Generator().get_seq(Random::CharSet::alpha, 3))
+    BOOST_CHECK_THROW(::LibFred::Zone::UpdateZoneSoa(Random::Generator().get_seq(Random::CharSet::letters(), 3))
                 .set_ttl(zone_soa.ttl)
                 .exec(ctx),
            ::LibFred::Zone::NonExistentZone);

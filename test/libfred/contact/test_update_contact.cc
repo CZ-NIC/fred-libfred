@@ -56,7 +56,7 @@ struct update_contact_fixture : public Test::instantiate_db_template
     ::LibFred::ContactAddressList addresses;
 
     update_contact_fixture()
-        : xmark(Random::Generator().get_seq(Random::CharSet::num, 6)),
+        : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6)),
           test_contact_handle(std::string("TEST-CONTACT-HANDLE") + xmark)
     {
         ::LibFred::OperationContextCreator ctx;

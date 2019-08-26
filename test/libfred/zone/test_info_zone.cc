@@ -75,7 +75,7 @@ BOOST_FIXTURE_TEST_SUITE(TestInfoZone, SupplyFixtureCtx<info_zone_fixture>)
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 {
-    std::string fqdn = Random::Generator().get_seq(Random::CharSet::alpha, 5);
+    std::string fqdn = Random::Generator().get_seq(Random::CharSet::letters(), 5);
     BOOST_CHECK_THROW(::LibFred::Zone::InfoZone(fqdn)
                 .exec(ctx),
            ::LibFred::Zone::NonExistentZone);

@@ -70,7 +70,7 @@ CreatePublicRequestAuth::Result CreatePublicRequestAuth::exec(const LockedPublic
     try {
         CreatePublicRequest::cancel_on_create(_type, _locked_object, registrar_id_, _create_log_request_id);
         Result result;
-        result.identification = Random::Generator().get_seq(Random::CharSet::alpha, PUBLIC_REQUEST_AUTH_IDENTIFICATION_LENGTH);
+        result.identification = Random::Generator().get_seq(Random::CharSet::letters(), PUBLIC_REQUEST_AUTH_IDENTIFICATION_LENGTH);
         const std::string public_request_type = _type.get_public_request_type();
         const std::string password = _type.generate_passwords(_locked_object);
         Database::query_param_list params(public_request_type);                             // $1::TEXT

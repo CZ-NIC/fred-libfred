@@ -40,7 +40,7 @@ namespace Test {
 struct CreateZoneSoaFixture
 {
     CreateZoneSoaFixture(LibFred::OperationContext& _ctx)
-        : fqdn(Random::Generator().get_seq(Random::CharSet::alpha, 3)),
+        : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           hostmaster("hostmaster@nic.cz"),
           ns_fqdn("a.ns.nic." + fqdn)
     {
@@ -94,7 +94,7 @@ unsigned long long get_zone_soa_id(
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 {
-    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(Random::Generator().get_seq(Random::CharSet::alpha, 3), hostmaster, ns_fqdn)
+    BOOST_CHECK_THROW(::LibFred::Zone::CreateZoneSoa(Random::Generator().get_seq(Random::CharSet::letters(), 3), hostmaster, ns_fqdn)
                 .exec(ctx),
            ::LibFred::Zone::NonExistentZone);
 }

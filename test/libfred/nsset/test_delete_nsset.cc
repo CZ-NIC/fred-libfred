@@ -59,7 +59,7 @@ struct delete_nsset_fixture : public Test::instantiate_db_template
     std::string test_domain_fqdn;
 
     delete_nsset_fixture()
-    :xmark(Random::Generator().get_seq(Random::CharSet::num, 6))
+    :xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , admin_contact_handle(std::string("TEST-ADMIN-CONTACT3-HANDLE")+xmark)
     , test_nsset_handle ( std::string("TEST-DEL-NSSET-")+xmark+"-HANDLE")
     , test_domain_fqdn ( std::string("fred")+xmark+".cz")
