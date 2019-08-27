@@ -25,6 +25,7 @@
 #include "uniform_distribution.hh"
 #include "util/random/details/utils.hh"
 
+#include <algorithm>
 #include <cstddef>
 #include <string>
 #include <vector>
@@ -54,10 +55,11 @@ public:
     {
         Sequence seq;
         seq.reserve(result_size_);
-        for (std::size_t i = 0; i < result_size_; ++i)
+        const auto generator = [this, &_engine]()
         {
-            seq.push_back(selector_(_engine));
-        }
+            return this->selector_(_engine);
+        };
+        std::generate_n(seq.begin(), result_size_, generator);
         return seq;
     }
 private:
