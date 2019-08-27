@@ -26,7 +26,6 @@
 #include <stdexcept>
 #include <type_traits>
 
-
 namespace Random {
 namespace Algorithm {
 

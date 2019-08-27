@@ -26,14 +26,14 @@ namespace Random {
 namespace Details {
 
 template<typename T>
-using IsSimpleChar = std::integral_constant<bool,
+using IsCharStrict = std::integral_constant<bool,
                          std::is_same<T, char>::value ||
                          std::is_same<T, char16_t>::value ||
                          std::is_same<T, char32_t>::value ||
                          std::is_same<T, wchar_t>::value>;
 
 template<typename T>
-using IsChar = IsSimpleChar<std::remove_cv_t<T>>;
+using IsChar = IsCharStrict<std::remove_cv_t<T>>;
 
 } // namespace Random::Details
 } // namespace Random

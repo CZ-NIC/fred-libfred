@@ -33,12 +33,14 @@ template<typename T>
 class RandomElementSelector
 {
 public:
+    // Warning: This constructor is only appropriate when the _source_set
+    // array has lifetime longer than or equal to that of this object.
     template<std::size_t N,
              // Compensate for null termination byte in a string.
              bool null_terminated = Random::Details::IsChar<T>::value>
-    RandomElementSelector(const T (&_source_set)[N]) :
-        src_begin_(_source_set), 
-        offset_generator_(std::size_t(0), null_terminated ? N - 2 : N - 1)
+    RandomElementSelector(const T (&_source_set)[N])
+        : src_begin_(_source_set),
+          offset_generator_(std::size_t(0), null_terminated ? N - 2 : N - 1)
     {
         static_assert(null_terminated ? (N > 1) : (N > 0), "zero array size");
     }

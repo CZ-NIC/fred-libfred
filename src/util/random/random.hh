@@ -32,6 +32,16 @@
 
 namespace Random {
 
+// Manages instance of random engine according to the template arguments. Creates
+// facade for convenient use of algorithms in the Algorithm namespace. These are
+// displaced in a separate namespace to allow their independent use.
+//
+// @tparam I strategy for engine management; typically ThreadLocalEngineInstance
+//           or GlobalEngineInstance
+// @tparam E random number engine; typically one from std::random - e.g. std::mt19937_64,
+//           std::ranlux48, etc.
+// @tparam S seeder - type providing member function get_seed returning either a single
+//           integral value or std::seed_seq
 template<typename I, typename E, typename S>
 class BasicGenerator
 {

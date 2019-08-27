@@ -42,9 +42,12 @@ template<
 class SequenceGenerator
 {
 public:
+    // Warning: This constructor is only appropriate when the _source_set
+    // array has lifetime longer than or equal to that of this object.
     template<std::size_t N>
     SequenceGenerator(const T (&_source_set)[N], std::size_t _result_size)
-        : selector_(_source_set), result_size_(_result_size) {}
+        : selector_(_source_set), result_size_(_result_size)
+    { }
 
     template<typename E>
     auto operator()(E& _engine)

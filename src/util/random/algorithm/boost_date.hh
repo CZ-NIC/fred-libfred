@@ -24,7 +24,7 @@
 #include "uniform_distribution.hh"
 
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <utility> // declval
+#include <utility> // std::declval
 
 namespace Random {
 namespace Algorithm {

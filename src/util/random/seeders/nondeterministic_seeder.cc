@@ -20,12 +20,11 @@
 #include "nondeterministic_seeder.hh"
 
 #include <chrono>
-#include <cstddef>
-#include <cstdint>
+#include <cstddef> // std::size_t
+#include <cstdint> // std::uint32_t, std::int32_t
 #include <iterator> // std::back_inserter
 #include <mutex>
 #include <random>
-#include <stdexcept>
 #include <type_traits>
 #include <utility> // std::forward
 #include <vector>
@@ -34,6 +33,9 @@ namespace Random {
 namespace Seeders {
 namespace {
 
+// This is needed to prevent the compiler from generating shift-count-overflow warning
+// when shifting a value by a number greater than or equal to the number of bits in
+// its representation.
 template<std::size_t bits,
          typename T,
          std::enable_if_t<std::is_integral<T>::value && (bits < sizeof(T) * 8), int> = 0>
@@ -71,8 +73,9 @@ void normalize(Inserter&& _inserter, T _source_value)
     }
 }
 
-// Decomposes given values into chunks of type S, storing these in the given
-// destination container.
+// Decomposes given values into chunks of type S, storing these using the given
+// inserter. This is necessary in order to preserve all entropy contained in the
+// input values, since std::seed_seq only uses the lower 32 bits of each value.
 template<typename Inserter, typename T0, typename ...Ts>
 void normalize(Inserter&& _inserter, T0 _first_source_value, Ts... _other_source_values)
 {
@@ -93,7 +96,7 @@ auto get_high_quality_seeds()
     // Combine output from random_device with time measurements from (possibly) different sources.
     // Note that high_resolution_clock may be an alias for system_clock or steady_clock
     // (system_clock in gcc 5.3.0).
-    std::vector<uint32_t> seeds;
+    std::vector<std::uint32_t> seeds;
     normalize(
         std::back_inserter(seeds),
         hw_entropy_source(),
@@ -106,7 +109,10 @@ auto get_high_quality_seeds()
     return seeds;
 }
 
-// Global generator initialized with "perfect" seed, used for initializing other generators.
+// Global generator initialized with a high-quality seed.
+// Provides entropy for the NondeterministicSeeder.
+// This approach was chosen in order to only use the hardware entropy source a constant
+// number of times, during initialization.
 class GlobalRandomNumberGenerator
 {
 public:
@@ -128,7 +134,9 @@ public:
         std::lock_guard<std::mutex> locker_;
     };
 
-    // @tparam C container containing seed values
+    // Combines output from the global pseudorandom generator with precise
+    // time measurements and a simple counter.
+    // @tparam C container for the generated seed values
     template<typename C>
     C generate_seeds()
     {
