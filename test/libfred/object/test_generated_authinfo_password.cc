@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE(test_empty_input)
 BOOST_AUTO_TEST_CASE(test_allowed_chars)
 {
     BOOST_CHECK(
-        ! ::LibFred::get_chars_allowed_in_generated_authinfopw().empty()
+        sizeof(::LibFred::get_chars_allowed_in_generated_authinfopw()) != 0
     );
 }
 
