@@ -38,10 +38,14 @@ struct SqlConvert<std::chrono::time_point<std::chrono::system_clock, R>>
     static boost::posix_time::ptime convert_from_time_point(const TimePoint& from)
     {
         const auto nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(from.time_since_epoch()).count();
-        const auto sec_part = nanoseconds / 1'000'000'000;
+        const auto sec_part_long = nanoseconds / 1'000'000'000;
+        static constexpr auto seconds_per_hour = 60 * 60;
+        const auto sec_part = sec_part_long % seconds_per_hour;
+        const auto hour_part = sec_part_long / seconds_per_hour;
         const auto nsec_part = nanoseconds % 1'000'000'000;
         return boost::posix_time::from_time_t(0) +
-               boost::posix_time::seconds(static_cast<long>(sec_part)) +
+               boost::posix_time::hours(hour_part) +
+               boost::posix_time::seconds(sec_part) +
 #ifdef BOOST_DATE_TIME_HAS_NANOSECONDS
                boost::posix_time::nanoseconds(nsec_part);
 #else
@@ -52,9 +56,10 @@ struct SqlConvert<std::chrono::time_point<std::chrono::system_clock, R>>
     static TimePoint convert_to_time_point(const boost::posix_time::ptime& from)
     {
         const boost::posix_time::time_duration time_since_epoch = from - boost::posix_time::from_time_t(0);
-        const auto sec_part = std::chrono::system_clock::from_time_t(time_since_epoch.total_seconds());
-        const auto nsec_part = time_since_epoch.fractional_seconds() * (1'000'000'000 / time_since_epoch.ticks_per_second());
-        return sec_part + std::chrono::nanoseconds(nsec_part);
+        const auto total_nanoseconds = time_since_epoch.total_nanoseconds();
+        const auto sec_part = std::chrono::system_clock::from_time_t(total_nanoseconds / 1'000'000'000);
+        const auto nsec_part = std::chrono::nanoseconds(total_nanoseconds % 1'000'000'000);
+        return sec_part + nsec_part;
     }
 
     static TimePoint from(const std::string& src)
