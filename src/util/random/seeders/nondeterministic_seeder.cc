@@ -26,11 +26,11 @@
 #include <mutex>
 #include <random>
 #include <type_traits>
-#include <utility> // std::forward
 #include <vector>
 
 namespace Random {
 namespace Seeders {
+
 namespace {
 
 // This is needed to prevent the compiler from generating shift-count-overflow warning
@@ -52,19 +52,19 @@ void right_shift(T& _value)
     _value = 0;
 }
 
-template<typename Inserter, typename T>
-void normalize(Inserter&& _inserter, T _source_value)
+template<typename Inserter, typename S>
+void normalize(Inserter& _inserter, S _source_value)
 {
-    static_assert(std::is_unsigned<typename Inserter::container_type::value_type>::value,
-            "expected unsigned result type");
-    static_assert(std::is_integral<T>::value, "expected integral source type");
+    using D = typename Inserter::container_type::value_type;
+    static_assert(std::is_unsigned<D>::value, "expected unsigned destination type");
+    static_assert(std::is_integral<S>::value, "expected integral source type");
 
-    static constexpr std::size_t result_size = sizeof(typename Inserter::container_type::value_type);
-    static constexpr std::size_t source_size = sizeof(T);
+    static constexpr std::size_t result_size = sizeof(D);
+    static constexpr std::size_t source_size = sizeof(S);
     static constexpr std::size_t chunks = (source_size + result_size - 1) / result_size;
     static_assert(chunks > 0, "zero chunks");
-    static_assert(chunks * result_size >= source_size, "too few chunks");
-    static_assert((chunks - 1) * result_size < source_size, "too many chunks");
+    static_assert(sizeof(D[chunks]) >= sizeof(S), "too few chunks");
+    static_assert((sizeof(D[chunks]) - sizeof(D)) < sizeof(S), "too many chunks");
 
     for (std::size_t i = 0; i < chunks; ++i)
     {
@@ -77,10 +77,10 @@ void normalize(Inserter&& _inserter, T _source_value)
 // inserter. This is necessary in order to preserve all entropy contained in the
 // input values, since std::seed_seq only uses the lower 32 bits of each value.
 template<typename Inserter, typename T0, typename ...Ts>
-void normalize(Inserter&& _inserter, T0 _first_source_value, Ts... _other_source_values)
+void normalize(Inserter& _inserter, T0 _first_source_value, Ts... _other_source_values)
 {
-    normalize(std::forward<Inserter>(_inserter), _first_source_value);
-    normalize(std::forward<Inserter>(_inserter), _other_source_values...);
+    normalize(_inserter, _first_source_value);
+    normalize(_inserter, _other_source_values...);
 }
 
 template<typename T>
@@ -97,15 +97,16 @@ auto get_high_quality_seeds()
     // Note that high_resolution_clock may be an alias for system_clock or steady_clock
     // (system_clock in gcc 5.3.0).
     std::vector<std::uint32_t> seeds;
+    auto inserter = std::back_inserter(seeds);
     normalize(
-        std::back_inserter(seeds),
-        hw_entropy_source(),
-        get_ticks<std::chrono::high_resolution_clock>(),
-        hw_entropy_source(),
-        get_ticks<std::chrono::steady_clock>(),
-        hw_entropy_source(),
-        get_ticks<std::chrono::system_clock>(),
-        hw_entropy_source());
+            inserter,
+            hw_entropy_source(),
+            get_ticks<std::chrono::high_resolution_clock>(),
+            hw_entropy_source(),
+            get_ticks<std::chrono::steady_clock>(),
+            hw_entropy_source(),
+            get_ticks<std::chrono::system_clock>(),
+            hw_entropy_source());
     return seeds;
 }
 
@@ -137,20 +138,21 @@ public:
     // Combines output from the global pseudorandom generator with precise
     // time measurements and a simple counter.
     // @tparam C container for the generated seed values
-    template<typename C>
+    template <typename C>
     C generate_seeds()
     {
-        typename std::remove_const<C>::type seed_container;
+        C seed_container;
+        auto inserter = std::back_inserter(seed_container);
         normalize(
-            std::back_inserter(seed_container),
-            generator_(engine_),
-            get_ticks<std::chrono::high_resolution_clock>(),
-            generator_(engine_),
-            get_ticks<std::chrono::steady_clock>(),
-            generator_(engine_),
-            get_ticks<std::chrono::system_clock>(),
-            generator_(engine_),
-            counter_);
+                inserter,
+                generator_(engine_),
+                get_ticks<std::chrono::high_resolution_clock>(),
+                generator_(engine_),
+                get_ticks<std::chrono::steady_clock>(),
+                generator_(engine_),
+                get_ticks<std::chrono::system_clock>(),
+                generator_(engine_),
+                counter_);
         ++counter_;
         return seed_container;
     }
@@ -168,10 +170,12 @@ private:
           // Cast from unsigned to signed is implementation-defined,
           // but that doesn't bother us.
           counter_(static_cast<std::int32_t>(generator_(engine_)))
-    { }
+    {
+        intermediate_seeds_.clear();
+    }
 
     // auxiliary values only used in the constructor
-    const decltype(get_high_quality_seeds()) intermediate_seeds_;
+    decltype(get_high_quality_seeds()) intermediate_seeds_;
     std::seed_seq seeder_;
 
     std::mutex mutex_;
@@ -187,7 +191,9 @@ NondeterministicSeeder::NondeterministicSeeder()
             GlobalRandomNumberGenerator::Access()
                 .template generate_seeds<decltype(intermediate_seeds_)>()),
       seed_(intermediate_seeds_.cbegin(), intermediate_seeds_.cend())
-{ }
+{
+    intermediate_seeds_.clear();
+}
 
 std::seed_seq& NondeterministicSeeder::get_seed()
 {

@@ -35,7 +35,7 @@ public:
     std::seed_seq& get_seed();
 private:
     // auxiliary value only used during construction
-    const std::vector<std::uint32_t> intermediate_seeds_;
+    std::vector<std::uint32_t> intermediate_seeds_;
 
     std::seed_seq seed_;
 };
