@@ -25,7 +25,8 @@
 #include "libfred/zone/zone_soa/info_zone_soa_data.hh"
 #include "libfred/zone/zone_soa/info_zone_soa.hh"
 #include "libfred/zone/zone_soa/exceptions.hh"
-#include "util/random_data_generator.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include "test/libfred/zone/util.hh"
 #include "test/libfred/zone/zone_soa/util.hh"
@@ -41,7 +42,7 @@ namespace Test {
 struct InfoZoneSoaFixture
 {
     InfoZoneSoaFixture(::LibFred::OperationContext& _ctx)
-        :fqdn(RandomDataGenerator().xstring(3))
+        :fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3))
     {
         zone_soa.ttl = ::LibFred::Zone::default_ttl_in_seconds;
         zone_soa.hostmaster = "hostmaster@nic.cz";
@@ -70,7 +71,7 @@ BOOST_FIXTURE_TEST_SUITE(TestInfoZoneSoa, SupplyFixtureCtx<InfoZoneSoaFixture>)
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone_soa)
 {
-    BOOST_CHECK_THROW(::LibFred::Zone::InfoZoneSoa(RandomDataGenerator().xstring(5))
+    BOOST_CHECK_THROW(::LibFred::Zone::InfoZoneSoa(Random::Generator().get_seq(Random::CharSet::letters(), 5))
                 .exec(ctx),
            ::LibFred::Zone::NonExistentZone);
 }

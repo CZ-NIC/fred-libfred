@@ -28,7 +28,7 @@ namespace LibFred
      *
      * Characters should be visually distinct to prevent confusion (e. g. 'l', 'I', '1' are not allowed).
      */
-    inline std::string get_chars_allowed_in_generated_authinfopw() {
+    constexpr auto& get_chars_allowed_in_generated_authinfopw() {
         return "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
     }
 

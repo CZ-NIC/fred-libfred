@@ -19,7 +19,6 @@
 #include "libfred/opcontext.hh"
 #include "libfred/opexception.hh"
 
-#include "util/random_data_generator.hh"
 #include "test/setup/fixtures.hh"
 #include "test/libfred/util.hh"
 

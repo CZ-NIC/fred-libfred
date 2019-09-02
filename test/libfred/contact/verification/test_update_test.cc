@@ -24,6 +24,7 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <limits>
 
 #include "libfred/registrable_object/contact/verification/create_check.hh"
 #include "libfred/registrable_object/contact/verification/create_test.hh"
@@ -35,7 +36,8 @@
 #include "libfred/db_settings.hh"
 #include "util/optional_value.hh"
 #include "util/is_equal_optional_nullable.hh"
-#include "util/random_data_generator.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include "test/libfred/contact/verification/setup_utils.hh"
 #include "test/setup/fixtures.hh"
@@ -378,9 +380,11 @@ BOOST_AUTO_TEST_CASE(test_Update)
     status_post_created.push_back(status1.status_handle_);
     status_post_reset.push_back(std::make_pair(status1.status_handle_, status2.status_handle_));
 
-    Optional<unsigned long long> logd_request_id1 = RandomDataGenerator().xuint();
-    Optional<unsigned long long> logd_request_id2 = RandomDataGenerator().xuint();
-    Optional<unsigned long long> logd_request_id3 = RandomDataGenerator().xuint();
+    auto min = std::numeric_limits<unsigned long long>::min();
+    auto max = std::numeric_limits<unsigned long long>::max();
+    Optional<unsigned long long> logd_request_id1 = Random::Generator().get(min, max);
+    Optional<unsigned long long> logd_request_id2 = Random::Generator().get(min, max);
+    Optional<unsigned long long> logd_request_id3 = Random::Generator().get(min, max);
     std::vector<std::pair<Optional<unsigned long long>, Optional<unsigned long long> > > logd_request_post_created;
     std::vector<boost::tuple<Optional<unsigned long long>, Optional<unsigned long long>, Optional<unsigned long long> > > logd_request_post_reset;
     logd_request_post_created.push_back( std::make_pair( Optional<unsigned long long>(), Optional<unsigned long long>() ) );
@@ -395,8 +399,8 @@ BOOST_AUTO_TEST_CASE(test_Update)
     logd_request_post_reset.push_back( boost::make_tuple(logd_request_id1, logd_request_id2, logd_request_id2 ) );
     logd_request_post_reset.push_back( boost::make_tuple(logd_request_id1, logd_request_id2, logd_request_id3 ) );
 
-    Optional<std::string> error_msg_id1 = RandomDataGenerator().xnstring(20);
-    Optional<std::string> error_msg_id2 = RandomDataGenerator().xnstring(20);
+    Optional<std::string> error_msg_id1 = Random::Generator().get_seq(Random::CharSet::letters_and_digits(), 20);
+    Optional<std::string> error_msg_id2 = Random::Generator().get_seq(Random::CharSet::letters_and_digits(), 20);
     std::vector<Optional<std::string> > error_msg_post_created;
     std::vector<std::pair<Optional<std::string>, Optional<std::string> > > error_msg_post_reset;
     error_msg_post_created.push_back( Optional<std::string>() );

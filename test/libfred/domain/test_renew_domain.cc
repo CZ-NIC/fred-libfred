@@ -50,8 +50,9 @@
 #include "libfred/registrable_object/nsset/info_nsset.hh"
 #include "libfred/registrable_object/nsset/info_nsset_diff.hh"
 #include "libfred/registrable_object/nsset/update_nsset.hh"
-#include "util/random_data_generator.hh"
 #include "test/setup/fixtures.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/test/unit_test.hpp>
@@ -70,7 +71,7 @@ struct renew_domain_fixture : virtual public Test::instantiate_db_template
     std::string test_enum_fqdn;
 
     renew_domain_fixture()
-    : xmark(RandomDataGenerator().xnumstring(9))
+    : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 9))
     , admin_contact2_handle(std::string("TEST-ADMIN-CONTACT3-HANDLE")+xmark)
     , registrant_contact_handle(std::string("TEST-REGISTRANT-CONTACT-HANDLE") + xmark)
     , test_fqdn(std::string("fred")+xmark+".cz")

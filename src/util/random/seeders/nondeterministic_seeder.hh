@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,25 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef RANDOM_HH_287356A4FEE34BE9BE4B8C9B92BA9B63
-#define RANDOM_HH_287356A4FEE34BE9BE4B8C9B92BA9B63
 
-#include <string>
+#ifndef NONDETERMINISTIC_SEEDER_HH_AE5D1C96197B4857AC61A2279A8315D0
+#define NONDETERMINISTIC_SEEDER_HH_AE5D1C96197B4857AC61A2279A8315D0
+
+#include <cstdint>
+#include <random>
+#include <vector>
 
 namespace Random {
+namespace Seeders {
 
-int integer(int _min, int _max);
+class NondeterministicSeeder
+{
+public:
+    NondeterministicSeeder();
 
-std::string string_from(unsigned _len, const std::string& _allowed);
+    std::seed_seq& get_seed();
+private:
+    // auxiliary value only used during construction
+    std::vector<std::uint32_t> intermediate_seeds_;
 
-std::string string_lower_alpha(unsigned _len);
+    std::seed_seq seed_;
+};
 
-std::string string_upper_alpha(unsigned _len);
-
-std::string string_alpha(unsigned _len);
-
-std::string string_alphanum(unsigned _len);
-
+} // namespace Random::Seeders
 } // namespace Random
 
-#endif /*RANDOM_UTIL_H_*/
+#endif

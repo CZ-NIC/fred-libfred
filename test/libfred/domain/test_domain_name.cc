@@ -25,7 +25,6 @@
 #include "libfred/registrable_object/domain/info_domain_diff.hh"
 #include "libfred/registrable_object/domain/renew_domain.hh"
 #include "libfred/registrable_object/domain/update_domain.hh"
-#include "util/random_data_generator.hh"
 #include "test/setup/fixtures.hh"
 
 #include <boost/test/unit_test.hpp>

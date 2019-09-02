@@ -24,12 +24,12 @@ namespace Test {
 
 unsigned long long generate_random_bigserial()
 {
-    return std::abs(RandomDataGenerator().xint());
+    return Random::Generator().get(0, std::numeric_limits<int>::max());
 }
 
 std::string generate_random_handle()
 {
-    return RandomDataGenerator().xnumstring(20);
+    return Random::Generator().get_seq(Random::CharSet::digits(), 20);
 }
 
 unsigned long long get_nonexistent_object_id(::LibFred::OperationContext& ctx)

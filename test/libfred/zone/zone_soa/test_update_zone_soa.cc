@@ -25,7 +25,8 @@
 #include "libfred/zone/zone_soa/info_zone_soa.hh"
 #include "libfred/zone/zone_soa/update_zone_soa.hh"
 #include "libfred/zone/zone_soa/exceptions.hh"
-#include "util/random_data_generator.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 #include "test/libfred/zone/zone_soa/util.hh"
 #include "test/libfred/zone/util.hh"
 #include "test/setup/fixtures.hh"
@@ -40,7 +41,7 @@ namespace Test {
 struct UpdateZoneSoaFixture
 {
     explicit UpdateZoneSoaFixture(::LibFred::OperationContext& _ctx)
-        : fqdn(RandomDataGenerator().xstring(3)),
+        : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           hostmaster("hostmaster@nic.cz"),
           ns_fqdn("t.ns.nic." + fqdn)
     {
@@ -65,7 +66,7 @@ BOOST_FIXTURE_TEST_SUITE(TestUpdateZoneSoa, SupplyFixtureCtx<UpdateZoneSoaFixtur
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_zone)
 {
-    BOOST_CHECK_THROW(::LibFred::Zone::UpdateZoneSoa(RandomDataGenerator().xstring(3))
+    BOOST_CHECK_THROW(::LibFred::Zone::UpdateZoneSoa(Random::Generator().get_seq(Random::CharSet::letters(), 3))
                 .set_ttl(zone_soa.ttl)
                 .exec(ctx),
            ::LibFred::Zone::NonExistentZone);

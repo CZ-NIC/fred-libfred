@@ -44,8 +44,9 @@
 #include "libfred/registrable_object/nsset/info_nsset.hh"
 #include "libfred/registrable_object/nsset/info_nsset_diff.hh"
 #include "libfred/registrable_object/nsset/update_nsset.hh"
-#include "util/random_data_generator.hh"
 #include "test/setup/fixtures.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include <boost/asio/ip/address.hpp>
 #include <boost/test/unit_test.hpp>
@@ -67,7 +68,7 @@ struct check_domain_fixture : public Test::instantiate_db_template
     std::string blacklisted_domain_name;
 
     check_domain_fixture()
-    : xmark(RandomDataGenerator().xnumstring(6))
+    : xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
     , admin_contact_handle(std::string("TEST-ADMIN-CONTACT-HANDLE")+xmark)
     , registrant_contact_handle(std::string("TEST-REGISTRANT-CONTACT-HANDLE")+xmark)
     , test_nsset_handle ( std::string("TEST-NSSET-")+xmark+"-HANDLE")

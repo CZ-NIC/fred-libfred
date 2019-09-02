@@ -208,7 +208,6 @@ set(LIBFRED_SOURCES
     src/util/idn_utils.cc
     src/util/password_storage.cc
     src/util/printable.cc
-    src/util/random.cc
     src/util/util.cc
     src/util/db/param_query_composition.cc
     src/util/db/value.cc
@@ -225,7 +224,10 @@ set(LIBFRED_SOURCES
     src/util/types/date_interval.cc
     src/util/types/datetime.cc
     src/util/types/datetime_interval.cc
-    src/util/types/id.cc)
+    src/util/types/id.cc
+    src/util/random/algorithm/boost_date.cc
+    src/util/random/algorithm/boost_time.cc
+    src/util/random/seeders/nondeterministic_seeder.cc)
 
 add_library(fred SHARED ${LIBFRED_SOURCES})
 add_library(fred::library ALIAS fred)
@@ -444,6 +446,9 @@ add_executable(test-libfred
     test/libfred/nsset/test_info_nsset.cc
     test/libfred/nsset/test_transfer_nsset.cc
     test/libfred/nsset/test_update_nsset.cc
+    test/libfred/random/mock_engine.cc
+    test/libfred/random/mock_seeder.cc
+    test/libfred/random/test_random.cc
     test/libfred/registrar/test_create_registrar.cc
     test/libfred/registrar/test_get_registrar_zone_credit.cc
     test/libfred/registrar/test_info_registrar.cc
@@ -491,6 +496,7 @@ target_include_directories(test-libfred
 
 target_link_libraries(test-libfred PRIVATE
     fred::library
+    Threads::Threads
     ${Mpdec_LIBRARY}
     ${LIBIDN_LIBRARIES}
     ${Boost_DATE_TIME_LIBRARY}

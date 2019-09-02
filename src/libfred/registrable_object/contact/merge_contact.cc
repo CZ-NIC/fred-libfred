@@ -39,7 +39,6 @@
 #include "libfred/object_state/perform_object_state_request.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/poll/create_update_object_poll_message.hh"
-#include "util/random.hh"
 
 #include <boost/algorithm/string.hpp>
 

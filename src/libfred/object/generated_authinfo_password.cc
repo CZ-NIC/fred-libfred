@@ -18,6 +18,7 @@
  */
 #include "libfred/object/generated_authinfo_password.hh"
 
+#include <iterator>
 #include <string>
 #include <set>
 
@@ -31,11 +32,11 @@ namespace LibFred
     static inline std::string::size_type max_length() { return 300; }
     /* This is not the most efficient solution. Expecting to be optimized in case it is an issue (but avoiding less clear and potentially unnecessary premature optimization for now). */
     static inline std::set<char> get_allowed_chars() {
-        const std::string allowed_chars_as_string = get_chars_allowed_in_generated_authinfopw();
+        const auto& allowed_chars_as_string = get_chars_allowed_in_generated_authinfopw();
 
         return std::set<char>(
-            allowed_chars_as_string.begin(),
-            allowed_chars_as_string.end()
+            std::begin(allowed_chars_as_string),
+            std::end(allowed_chars_as_string)
         );
     }
 

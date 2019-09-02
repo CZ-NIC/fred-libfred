@@ -22,7 +22,8 @@
 #include "libfred/zone/zone_ns/info_zone_ns_data.hh"
 #include "libfred/zone/zone_ns/info_zone_ns.hh"
 #include "libfred/zone/zone_ns/exceptions.hh"
-#include "util/random_data_generator.hh"
+#include "util/random/char_set/char_set.hh"
+#include "util/random/random.hh"
 
 #include "test/libfred/zone/zone_ns/util.hh"
 #include "test/libfred/zone/util.hh"
@@ -38,7 +39,7 @@ namespace Test {
 struct InfoZoneNsFixture
 {
     explicit InfoZoneNsFixture(::LibFred::OperationContext& _ctx)
-        : zone(RandomDataGenerator().xstring(3))
+        : zone(Random::Generator().get_seq(Random::CharSet::letters(), 3))
     {
         info_zone_ns.zone_id = ::LibFred::Zone::CreateZone(zone, 6, 12).exec(_ctx);
         std::transform(zone.begin(), zone.end(), zone.begin(), ::tolower);
