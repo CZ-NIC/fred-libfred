@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 4.0.0 (2019-09-11)
+ * Reworked random data generator interface (previous interfaces were removed)
+ * Fix overflow in `SqlConvert<std::chrono::time_point<std::chrono::system_clock, R>>`
+
 ## 3.0.0 (2019-06-10)
  * Fix operations for retrieving historical data (too many parameters in query)
  * Simplify logging interface
