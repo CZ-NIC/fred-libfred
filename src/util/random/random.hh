@@ -57,7 +57,7 @@ public:
     }
 
     template<typename T, std::size_t N>
-    T get(const T (&_source_set)[N]) 
+    T get(const T (&_source_set)[N])
     {
         return Algorithm::RandomElementSelector<T>(_source_set)(engine_);
     }

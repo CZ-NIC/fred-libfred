@@ -34,10 +34,10 @@ namespace Random {
 namespace Algorithm {
 
 template<
-    typename T, 
+    typename T,
     typename Sequence = std::conditional_t<
         Random::Details::IsChar<T>::value,
-        std::basic_string<T>, 
+        std::basic_string<T>,
         std::vector<T>>
     >
 class SequenceGenerator

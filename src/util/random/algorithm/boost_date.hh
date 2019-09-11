@@ -32,7 +32,7 @@ namespace Algorithm {
 template<>
 class UniformDistribution<boost::gregorian::date>
 {
-public:    
+public:
     UniformDistribution(const boost::gregorian::date& _min, const boost::gregorian::date& _max);
 
     // Generate random gregorian date between given boundaries (both inclusive).

@@ -179,7 +179,7 @@ setup_nonexistent_testsuite_handle::setup_nonexistent_testsuite_handle() {
 
 setup_logd_request_id::setup_logd_request_id() {
     logd_request_id = Random::Generator().get(
-                std::numeric_limits<unsigned>::min(), 
+                std::numeric_limits<unsigned>::min(),
                 std::numeric_limits<unsigned>::max());
 }
 

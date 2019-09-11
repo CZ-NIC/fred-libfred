@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(multi_thread_generator_test)
         {
             // for num_of_threads=3, 1-p ~ 7e-10
             BOOST_ERROR("Generator was most probably seeded with "
-                        "the same seed in 2 different threads: " 
+                        "the same seed in 2 different threads: "
                         << vec_to_string(results));
         }
     }
@@ -213,8 +213,8 @@ BOOST_AUTO_TEST_CASE(multi_thread_const_seed_generator_test)
     const auto job = []() -> int
     {
        return Random::BasicGenerator<
-           Random::ThreadLocalEngineInstance, 
-           Random::DefaultEngine, 
+           Random::ThreadLocalEngineInstance,
+           Random::DefaultEngine,
            Random::Seeders::DeterministicSeeder>()
                .get(int_min, int_max);
     };
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE(multi_thread_const_seed_generator_test)
     {
         BOOST_ERROR("Generator with DeterministicSeeder produced different outputs in different threads: "
                 << vec_to_string(results));
-    }        
+    }
 }
 
 BOOST_AUTO_TEST_CASE(multi_thread_custom_seed_generator_const_seed_test)
@@ -240,8 +240,8 @@ BOOST_AUTO_TEST_CASE(multi_thread_custom_seed_generator_const_seed_test)
     const auto job = []() -> int
     {
        return Random::BasicGenerator<
-           Random::ThreadLocalEngineInstance, 
-           Random::DefaultEngine, 
+           Random::ThreadLocalEngineInstance,
+           Random::DefaultEngine,
            Random::Seeders::CustomDeterministicSeeder<42>>()
                .get(int_min, int_max);
     };
@@ -259,7 +259,7 @@ BOOST_AUTO_TEST_CASE(multi_thread_custom_seed_generator_const_seed_test)
         BOOST_ERROR("Generator with CustomDeterministicSeeder produced different outputs in "
                     "different threads, even though it was given the same seed (" << const_seed << "): "
                     << vec_to_string(results));
-    }        
+    }
 }
 
 BOOST_AUTO_TEST_CASE(multi_thread_custom_seed_generator_test)
@@ -267,8 +267,8 @@ BOOST_AUTO_TEST_CASE(multi_thread_custom_seed_generator_test)
     const auto job_A = []() -> int
     {
        return Random::BasicGenerator<
-           Random::ThreadLocalEngineInstance, 
-           Random::DefaultEngine, 
+           Random::ThreadLocalEngineInstance,
+           Random::DefaultEngine,
            Random::Seeders::CustomDeterministicSeeder<0>>()
                .get(int_min, int_max);
     };
@@ -276,8 +276,8 @@ BOOST_AUTO_TEST_CASE(multi_thread_custom_seed_generator_test)
     const auto job_B = []() -> int
     {
        return Random::BasicGenerator<
-           Random::ThreadLocalEngineInstance, 
-           Random::DefaultEngine, 
+           Random::ThreadLocalEngineInstance,
+           Random::DefaultEngine,
            Random::Seeders::CustomDeterministicSeeder<1>>()
                .get(int_min, int_max);
     };
@@ -292,7 +292,7 @@ BOOST_AUTO_TEST_CASE(multi_thread_custom_seed_generator_test)
         BOOST_ERROR("Generators with CustomDeterministicSeeder produced the same outputs "
                     "in 2 different threads, even though they were initialized with different seeds. "
                     "Output: " << result_A);
-    }        
+    }
 }
 
 
@@ -327,21 +327,21 @@ BOOST_AUTO_TEST_CASE(random_integral_inclusiveness_test)
 BOOST_AUTO_TEST_CASE(random_integral_incorrect_bounds_order_test)
 {
     BOOST_CHECK_THROW(
-            Random::Generator().get(1, 0), 
+            Random::Generator().get(1, 0),
             std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_CASE(random_real_number_incorrect_bounds_order_test)
 {
     BOOST_CHECK_THROW(
-            Random::Generator().get(1.0, 0.0), 
+            Random::Generator().get(1.0, 0.0),
             std::invalid_argument);
 }
 
 BOOST_AUTO_TEST_CASE(random_real_number_empty_interval_test)
 {
     BOOST_CHECK_THROW(
-            Random::Generator().get(1.0, 1.0), 
+            Random::Generator().get(1.0, 1.0),
             std::invalid_argument);
 }
 
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(random_real_number_span_too_large_test)
     BOOST_CHECK_THROW(
             Random::Generator().get(
                 std::numeric_limits<double>::lowest(),
-                std::numeric_limits<double>::max()), 
+                std::numeric_limits<double>::max()),
             std::invalid_argument);
 }
 
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE(string_custom_char_set_composition_test)
     };
     if (!std::all_of(s.begin(), s.end(), is_valid))
     {
-        BOOST_ERROR("output from get_seq<char>(\"" << char_set_arr << "\", )" 
+        BOOST_ERROR("output from get_seq<char>(\"" << char_set_arr << "\", )"
                 << sequence_size << " was: " << s);
     }
 }
