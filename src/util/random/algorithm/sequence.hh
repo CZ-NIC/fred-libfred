@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -59,7 +60,7 @@ public:
         {
             return this->selector_(_engine);
         };
-        std::generate_n(seq.begin(), result_size_, generator);
+        std::generate_n(std::back_inserter(seq), result_size_, generator);
         return seq;
     }
 private:
