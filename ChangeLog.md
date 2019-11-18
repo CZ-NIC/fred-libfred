@@ -1,5 +1,9 @@
 # ChangeLog
 
+## 4.0.1 (2019-11-18)
+ * Fix random sequence generator
+ * Fix CMake `libpq` detection (set `PostgreSQL_ADDITIONAL_VERSIONS` instead of `PostgreSQL_KNOWN_VERSIONS`)
+
 ## 4.0.0 (2019-09-11)
  * Reworked random data generator interface (previous interfaces were removed)
  * Fix overflow in `SqlConvert<std::chrono::time_point<std::chrono::system_clock, R>>`
