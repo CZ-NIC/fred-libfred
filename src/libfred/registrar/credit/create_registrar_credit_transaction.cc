@@ -73,7 +73,7 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
         }
         else
         {
-            _ctx.get_conn().exec("LOCK TABLE registrar_credit IN ACCESS EXCLUSIVE MODE");
+            _ctx.get_conn().exec("LOCK TABLE registrar_credit IN EXCLUSIVE MODE");
             const Database::Result init_credit_result = _ctx.get_conn().exec_params(
                     // clang-format off
                     "WITH cte AS ("
