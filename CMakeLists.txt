@@ -300,47 +300,36 @@ find_package(Boost 1.53.0
 find_package(PkgConfig REQUIRED)
 pkg_search_module(LIBIDN REQUIRED libidn>=0.5.18)
 
-get_directory_property(hasParent PARENT_DIRECTORY)
-if(hasParent)
-    set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src PARENT_SCOPE)
-else()
-    set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src)
-endif()
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(LIBFRED_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${PostgreSQL_INCLUDE_DIRS})
 
-target_include_directories(fred
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${PostgreSQL_INCLUDE_DIRS})
+target_include_directories(fred PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${LIBFRED_INCLUDE_DIRS})
 
-target_include_directories(fred-static
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${PostgreSQL_INCLUDE_DIRS})
+target_include_directories(fred-static PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${LIBFRED_INCLUDE_DIRS})
+
+set(LIBFRED_LIBRARIES
+    Threads::Threads
+    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_THREAD_LIBRARY}
+    ${Boost_DATE_TIME_LIBRARY}
+    ${Boost_RANDOM_LIBRARY}
+    ${Boost_REGEX_LIBRARY}
+    ${Mpdec_LIBRARY}
+    ${LIBIDN_LIBRARIES}
+    ${PostgreSQL_LIBRARIES})
 
 target_link_libraries(fred PRIVATE
-    Threads::Threads
-    ${Boost_SYSTEM_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_DATE_TIME_LIBRARY}
-    ${Boost_RANDOM_LIBRARY}
-    ${Boost_REGEX_LIBRARY}
-    ${Mpdec_LIBRARY}
-    ${LIBIDN_LIBRARIES}
-    ${PostgreSQL_LIBRARIES})
+    ${LIBFRED_LIBRARIES})
 
 target_link_libraries(fred-static
-    Threads::Threads
-    ${Boost_SYSTEM_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_DATE_TIME_LIBRARY}
-    ${Boost_RANDOM_LIBRARY}
-    ${Boost_REGEX_LIBRARY}
-    ${Mpdec_LIBRARY}
-    ${LIBIDN_LIBRARIES}
-    ${PostgreSQL_LIBRARIES})
+    ${LIBFRED_LIBRARIES})
 
 install(TARGETS fred
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -488,19 +477,19 @@ set_target_properties(test-libfred PROPERTIES
     CXX_EXTENSIONS NO
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
 
-target_include_directories(test-libfred
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${PostgreSQL_INCLUDE_DIRS})
+target_include_directories(test-libfred PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${LIBFRED_INCLUDE_DIRS})
 
 target_link_libraries(test-libfred PRIVATE
     fred::library
-    Threads::Threads
-    ${Mpdec_LIBRARY}
-    ${LIBIDN_LIBRARIES}
-    ${Boost_DATE_TIME_LIBRARY}
-    ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    ${Boost_REGEX_LIBRARY}
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY})
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${LIBFRED_LIBRARIES})
+
+get_directory_property(has_parent PARENT_DIRECTORY)
+if(has_parent)
+    set(${PROJECT_NAME}_INCLUDE_DIRS ${LIBFRED_INCLUDE_DIRS} PARENT_SCOPE)
+    set(${PROJECT_NAME}_LIBRARIES ${LIBFRED_LIBRARIES} PARENT_SCOPE)
+endif()
