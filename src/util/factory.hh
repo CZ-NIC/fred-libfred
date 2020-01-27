@@ -157,7 +157,7 @@ typename FactoryAutoRegister<Base, Derived, Key>::ExecRegistration FactoryAutoRe
  * even if concrete implementations are statically linked
  */
 #define FACTORY_MODULE_INIT_DECL(name) \
-    bool name##_init(); static bool name = name##_init();
+    bool name##_init(); static bool name [[gnu::unused]] = name##_init();
 
 #define FACTORY_MODULE_INIT_DEFI(name) \
     bool name##_init() { return true; }

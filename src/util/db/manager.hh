@@ -95,7 +95,7 @@ public:
     std::unique_ptr<connection_type> acquire()const
     {
         std::unique_ptr<connection_type> conn(new connection_type(conn_factory_.acquire()));
-        return std::move(conn);
+        return conn;
     }
 private:
     connection_factory conn_factory_;
