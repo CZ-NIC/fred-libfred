@@ -427,6 +427,12 @@ add_executable(test-libfred
     test/libfred/registrar/group/membership/test_end.cc
     test/libfred/registrar/group/membership/test_info_by_group.cc
     test/libfred/registrar/group/membership/test_info_by_registrar.cc
+    test/libfred/registrar/epp_auth/test_add_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_get_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_clone_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_update_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_delete_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/util.cc
     test/libfred/zone/test_create_zone.cc
     test/libfred/zone/test_info_zone.cc
     test/libfred/zone/test_update_zone.cc
