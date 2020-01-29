@@ -327,6 +327,7 @@ add_executable(test-libfred
     test/libfred/contact/test_merge_contact.cc
     test/libfred/contact/test_transfer_contact.cc
     test/libfred/contact/test_update_contact.cc
+    test/libfred/contact/test_undisclose_address.cc
     test/libfred/contact/verification/setup_utils.cc
     test/libfred/contact/verification/test_create_check.cc
     test/libfred/contact/verification/test_create_test.cc
