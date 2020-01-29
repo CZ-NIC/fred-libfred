@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -40,6 +40,7 @@
 #include "util/random/random.hh"
 
 #include "test/libfred/contact/verification/setup_utils.hh"
+#include "test/libfred/contact/verification/util.hh"
 #include "test/setup/fixtures.hh"
 
 #include <boost/lexical_cast.hpp>
@@ -380,11 +381,9 @@ BOOST_AUTO_TEST_CASE(test_Update)
     status_post_created.push_back(status1.status_handle_);
     status_post_reset.push_back(std::make_pair(status1.status_handle_, status2.status_handle_));
 
-    auto min = std::numeric_limits<unsigned long long>::min();
-    auto max = std::numeric_limits<unsigned long long>::max();
-    Optional<unsigned long long> logd_request_id1 = Random::Generator().get(min, max);
-    Optional<unsigned long long> logd_request_id2 = Random::Generator().get(min, max);
-    Optional<unsigned long long> logd_request_id3 = Random::Generator().get(min, max);
+    const auto logd_request_id1 = Test::random_log_request_id();
+    const auto logd_request_id2 = Test::random_log_request_id();
+    const auto logd_request_id3 = Test::random_log_request_id();
     std::vector<std::pair<Optional<unsigned long long>, Optional<unsigned long long> > > logd_request_post_created;
     std::vector<boost::tuple<Optional<unsigned long long>, Optional<unsigned long long>, Optional<unsigned long long> > > logd_request_post_reset;
     logd_request_post_created.push_back( std::make_pair( Optional<unsigned long long>(), Optional<unsigned long long>() ) );

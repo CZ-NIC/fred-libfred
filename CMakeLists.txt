@@ -337,6 +337,7 @@ add_executable(test-libfred
     test/libfred/contact/verification/test_list_checks.cc
     test/libfred/contact/verification/test_update_check.cc
     test/libfred/contact/verification/test_update_test.cc
+    test/libfred/contact/verification/util.cc
     test/libfred/domain/test_create_domain.cc
     test/libfred/domain/test_create_domain_name_blacklist_id.cc
     test/libfred/domain/test_delete_domain.cc
