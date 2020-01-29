@@ -386,6 +386,7 @@ add_executable(test-libfred
     test/libfred/notifier/test_gather_email_content_nsset_delete.cc
     test/libfred/notifier/test_gather_email_content_nsset_transfer.cc
     test/libfred/notifier/test_gather_email_content_nsset_update.cc
+    test/libfred/notifier/test_process_one_notification_request.cc
     test/libfred/object/test_generate_authinfo_password.cc
     test/libfred/object/test_generated_authinfo_password.cc
     test/libfred/object/test_registry_object_type.cc
