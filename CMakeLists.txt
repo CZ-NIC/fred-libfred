@@ -434,6 +434,9 @@ add_executable(test-libfred
     test/libfred/registrar/epp_auth/test_update_registrar_epp_auth.cc
     test/libfred/registrar/epp_auth/test_delete_registrar_epp_auth.cc
     test/libfred/registrar/epp_auth/util.cc
+    test/libfred/registrar/zone_access/test_add_zone_access.cc
+    test/libfred/registrar/zone_access/test_update_zone_access.cc
+    test/libfred/registrar/zone_access/util.cc
     test/libfred/zone/test_create_zone.cc
     test/libfred/zone/test_info_zone.cc
     test/libfred/zone/test_update_zone.cc
