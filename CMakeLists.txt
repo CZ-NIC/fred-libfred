@@ -412,6 +412,7 @@ add_executable(test-libfred
     test/libfred/random/mock_seeder.cc
     test/libfred/random/test_random.cc
     test/libfred/registrar/test_create_registrar.cc
+    test/libfred/registrar/test_update_registrar.cc
     test/libfred/registrar/test_get_registrar_zone_credit.cc
     test/libfred/registrar/test_info_registrar.cc
     test/libfred/registrar/test_registrar_zone_access.cc
