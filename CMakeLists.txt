@@ -299,6 +299,7 @@ find_package(Boost 1.53.0
     REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(LIBIDN REQUIRED libidn>=0.5.18)
+pkg_search_module(LIBCRYPTO REQUIRED libcrypto)
 
 set(LIBFRED_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -323,6 +324,7 @@ set(LIBFRED_LIBRARIES
     ${Boost_REGEX_LIBRARY}
     ${Mpdec_LIBRARY}
     ${LIBIDN_LIBRARIES}
+    ${LIBCRYPTO_LIBRARIES}
     ${PostgreSQL_LIBRARIES})
 
 target_link_libraries(fred PRIVATE
@@ -483,7 +485,7 @@ target_include_directories(test-libfred PUBLIC
     ${LIBFRED_INCLUDE_DIRS})
 
 target_link_libraries(test-libfred PRIVATE
-    fred::library
+    fred-static::library
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${LIBFRED_LIBRARIES})
