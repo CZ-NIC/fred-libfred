@@ -229,25 +229,6 @@ set(LIBFRED_SOURCES
     src/util/random/algorithm/boost_time.cc
     src/util/random/seeders/nondeterministic_seeder.cc)
 
-add_library(fred SHARED ${LIBFRED_SOURCES})
-add_library(fred::library ALIAS fred)
-
-set_target_properties(fred PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION 0
-    CXX_STANDARD 14
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
-    PUBLIC_HEADER include/libfred/db_settings.hh)
-
-target_compile_options(fred
-    PUBLIC "-ggdb"
-    PUBLIC "-grecord-gcc-switches"
-    PUBLIC "-Wall"
-    PUBLIC "-Wextra"
-    PUBLIC "-fdiagnostics-color=auto")
-
 add_library(fred-static STATIC ${LIBFRED_SOURCES})
 add_library(fred-static::library ALIAS fred-static)
 
@@ -305,11 +286,6 @@ set(LIBFRED_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${PostgreSQL_INCLUDE_DIRS})
 
-target_include_directories(fred PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${LIBFRED_INCLUDE_DIRS})
-
 target_include_directories(fred-static PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
@@ -327,15 +303,8 @@ set(LIBFRED_LIBRARIES
     ${LIBCRYPTO_LIBRARIES}
     ${PostgreSQL_LIBRARIES})
 
-target_link_libraries(fred PRIVATE
-    ${LIBFRED_LIBRARIES})
-
 target_link_libraries(fred-static
     ${LIBFRED_LIBRARIES})
-
-install(TARGETS fred
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(TARGETS fred-static
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
