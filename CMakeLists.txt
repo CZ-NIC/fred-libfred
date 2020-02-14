@@ -312,6 +312,31 @@ install(TARGETS fred-static
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
+set(LIBFRED_TEST_COMMON_SOURCES
+    test/libfred/contact/verification/setup_utils.cc
+    test/libfred/registrar/epp_auth/util.cc)
+
+add_library(fred-test-common-static STATIC ${LIBFRED_TEST_COMMON_SOURCES})
+add_library(fred-test-common-static::library ALIAS fred-test-common-static)
+
+target_include_directories(fred-test-common-static PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${LIBFRED_INCLUDE_DIRS})
+
+target_link_libraries(fred-test-common-static
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${LIBFRED_LIBRARIES})
+
+set_target_properties(fred-test-common-static PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    CXX_STANDARD 14
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
+    OUTPUT_NAME "fred-test-common")
+
 add_executable(test-libfred
     test/fake-src/util/tz/europe/prague.cc
     test/libfred/main.cc
@@ -328,7 +353,6 @@ add_executable(test-libfred
     test/libfred/contact/test_transfer_contact.cc
     test/libfred/contact/test_update_contact.cc
     test/libfred/contact/test_undisclose_address.cc
-    test/libfred/contact/verification/setup_utils.cc
     test/libfred/contact/verification/test_create_check.cc
     test/libfred/contact/verification/test_create_test.cc
     test/libfred/contact/verification/test_django_email_format_check.cc
@@ -434,7 +458,6 @@ add_executable(test-libfred
     test/libfred/registrar/epp_auth/test_clone_registrar_epp_auth.cc
     test/libfred/registrar/epp_auth/test_update_registrar_epp_auth.cc
     test/libfred/registrar/epp_auth/test_delete_registrar_epp_auth.cc
-    test/libfred/registrar/epp_auth/util.cc
     test/libfred/registrar/zone_access/test_add_zone_access.cc
     test/libfred/registrar/zone_access/test_update_zone_access.cc
     test/libfred/registrar/zone_access/util.cc
@@ -468,6 +491,7 @@ target_include_directories(test-libfred PUBLIC
 
 target_link_libraries(test-libfred PRIVATE
     fred-static::library
+    fred-test-common-static::library
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${LIBFRED_LIBRARIES})
