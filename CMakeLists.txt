@@ -319,10 +319,13 @@ set(LIBFRED_TEST_COMMON_SOURCES
 add_library(fred-test-common-static STATIC ${LIBFRED_TEST_COMMON_SOURCES})
 add_library(fred-test-common-static::library ALIAS fred-test-common-static)
 
-target_include_directories(fred-test-common-static PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${LIBFRED_INCLUDE_DIRS})
+target_include_directories(fred-test-common-static
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${LIBFRED_INCLUDE_DIRS})
 
 target_link_libraries(fred-test-common-static
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
