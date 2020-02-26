@@ -312,6 +312,34 @@ install(TARGETS fred-static
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
+set(LIBFRED_TEST_COMMON_SOURCES
+    test/libfred/contact/verification/setup_utils.cc
+    test/libfred/registrar/epp_auth/util.cc)
+
+add_library(fred-test-common-static STATIC ${LIBFRED_TEST_COMMON_SOURCES})
+add_library(fred-test-common-static::library ALIAS fred-test-common-static)
+
+target_include_directories(fred-test-common-static
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${LIBFRED_INCLUDE_DIRS})
+
+target_link_libraries(fred-test-common-static
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    ${LIBFRED_LIBRARIES})
+
+set_target_properties(fred-test-common-static PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    CXX_STANDARD 14
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
+    OUTPUT_NAME "fred-test-common")
+
 add_executable(test-libfred
     test/fake-src/util/tz/europe/prague.cc
     test/libfred/main.cc
@@ -327,7 +355,7 @@ add_executable(test-libfred
     test/libfred/contact/test_merge_contact.cc
     test/libfred/contact/test_transfer_contact.cc
     test/libfred/contact/test_update_contact.cc
-    test/libfred/contact/verification/setup_utils.cc
+    test/libfred/contact/test_undisclose_address.cc
     test/libfred/contact/verification/test_create_check.cc
     test/libfred/contact/verification/test_create_test.cc
     test/libfred/contact/verification/test_django_email_format_check.cc
@@ -336,6 +364,7 @@ add_executable(test-libfred
     test/libfred/contact/verification/test_list_checks.cc
     test/libfred/contact/verification/test_update_check.cc
     test/libfred/contact/verification/test_update_test.cc
+    test/libfred/contact/verification/util.cc
     test/libfred/domain/test_create_domain.cc
     test/libfred/domain/test_create_domain_name_blacklist_id.cc
     test/libfred/domain/test_delete_domain.cc
@@ -385,6 +414,7 @@ add_executable(test-libfred
     test/libfred/notifier/test_gather_email_content_nsset_delete.cc
     test/libfred/notifier/test_gather_email_content_nsset_transfer.cc
     test/libfred/notifier/test_gather_email_content_nsset_update.cc
+    test/libfred/notifier/test_process_one_notification_request.cc
     test/libfred/object/test_generate_authinfo_password.cc
     test/libfred/object/test_generated_authinfo_password.cc
     test/libfred/object/test_registry_object_type.cc
@@ -410,6 +440,7 @@ add_executable(test-libfred
     test/libfred/random/mock_seeder.cc
     test/libfred/random/test_random.cc
     test/libfred/registrar/test_create_registrar.cc
+    test/libfred/registrar/test_update_registrar.cc
     test/libfred/registrar/test_get_registrar_zone_credit.cc
     test/libfred/registrar/test_info_registrar.cc
     test/libfred/registrar/test_registrar_zone_access.cc
@@ -425,6 +456,14 @@ add_executable(test-libfred
     test/libfred/registrar/group/membership/test_end.cc
     test/libfred/registrar/group/membership/test_info_by_group.cc
     test/libfred/registrar/group/membership/test_info_by_registrar.cc
+    test/libfred/registrar/epp_auth/test_add_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_get_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_clone_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_update_registrar_epp_auth.cc
+    test/libfred/registrar/epp_auth/test_delete_registrar_epp_auth.cc
+    test/libfred/registrar/zone_access/test_add_zone_access.cc
+    test/libfred/registrar/zone_access/test_update_zone_access.cc
+    test/libfred/registrar/zone_access/util.cc
     test/libfred/zone/test_create_zone.cc
     test/libfred/zone/test_info_zone.cc
     test/libfred/zone/test_update_zone.cc
@@ -455,6 +494,7 @@ target_include_directories(test-libfred PUBLIC
 
 target_link_libraries(test-libfred PRIVATE
     fred-static::library
+    fred-test-common-static::library
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${LIBFRED_LIBRARIES})
