@@ -247,6 +247,10 @@ target_compile_options(fred-static
     PUBLIC "-Wextra"
     PUBLIC "-fdiagnostics-color=auto")
 
+target_include_directories(fred-static PUBLIC
+    $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
 set(PACKAGE libfred)
 set(HAVE_BOOST_SERIALIZATION 1)
 set(HAVE_LOGGER 1)
@@ -288,8 +292,8 @@ set(LIBFRED_INCLUDE_DIRS
 
 target_include_directories(fred-static PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${LIBFRED_INCLUDE_DIRS})
+    ${LIBFRED_INCLUDE_DIRS}
+    ${CMAKE_BINARY_DIR})
 
 set(LIBFRED_LIBRARIES
     Threads::Threads
@@ -312,25 +316,22 @@ install(TARGETS fred-static
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
 
-set(LIBFRED_TEST_COMMON_SOURCES
+add_library(fred-test-common-static STATIC
     test/libfred/contact/verification/setup_utils.cc
     test/libfred/registrar/epp_auth/util.cc)
-
-add_library(fred-test-common-static STATIC ${LIBFRED_TEST_COMMON_SOURCES})
 add_library(fred-test-common-static::library ALIAS fred-test-common-static)
 
 target_include_directories(fred-test-common-static
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${LIBFRED_INCLUDE_DIRS})
+        ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(fred-test-common-static
+target_link_libraries(fred-test-common-static PUBLIC
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    ${LIBFRED_LIBRARIES})
+    fred-static::library)
 
 set_target_properties(fred-test-common-static PROPERTIES
     VERSION ${PROJECT_VERSION}
