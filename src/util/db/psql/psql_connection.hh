@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -29,6 +29,7 @@
 
 #include <libpq-fe.h>
 
+#include <istream>
 #include <string>
 
 namespace Database {
@@ -66,6 +67,8 @@ public:
     ResultType exec_params(
             const std::string& _query, //one command query
             const QueryParams& params);//parameters data
+
+    ResultType copy_from(std::istream& input_data, const std::string& table_name, std::size_t buffer_size);
 
     void setQueryTimeout(unsigned t);
 
