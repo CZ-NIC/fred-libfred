@@ -1,8 +1,9 @@
 # ChangeLog
 
-## UNRELEASED
- * Add COPY FROM support to database layer
+## 4.2.0 (2020-07-27)
+ * Add `COPY FROM` support to database layer
  * Add new tests
+ * Fix CMake targets to simplify usage in dependent projects
 
 ## 4.1.0 (2020-02-19)
  * Provide `libfred_LIBRARIES` and `libfred_INCLUDE_DIRS` for dependent projects in CMake
