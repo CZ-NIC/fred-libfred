@@ -479,6 +479,7 @@ add_executable(test-libfred
     test/libfred/zone/zone_soa/util.cc
     test/util/test_case_insensitive.cc
     test/util/test_password_storage.cc
+    test/util/test_db.cc
     test/setup/fixtures.cc
     test/setup/fixtures_utils.cc)
 

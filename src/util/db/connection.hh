@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,6 +34,7 @@
 #include "util/db/query_param.hh"
 #include "util/db/param_query_composition.hh"
 
+#include <istream>
 #include <string>
 #include <vector>
 
@@ -166,6 +167,26 @@ public:
     {
         std::pair<std::string, QueryParams> param_query_pair = param_query.get_query();
         return this->exec_params(param_query_pair.first, param_query_pair.second);
+    }
+
+    result_type copy_from(std::istream& input_data, const std::string& table_name, std::size_t buffer_size=8192)
+    {
+        this->check_open();
+        try
+        {
+#ifdef HAVE_LOGGER
+            LOGGER.debug(boost::format{"exec COPY FROM [table=%1%, buffer_size=%2%]"} % table_name % buffer_size);
+#endif
+            return result_type{this->get_opened_connection().copy_from(input_data, table_name, buffer_size)};
+        }
+        catch (const ResultFailed&)
+        {
+            throw;
+        }
+        catch (...)
+        {
+            throw ResultFailed{"COPY FROM failed"};
+        }
     }
 
     std::string escape(const std::string& _in)

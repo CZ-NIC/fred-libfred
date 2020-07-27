@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -21,8 +21,9 @@
  *  Implementation of connection object for PSQL database.
  */
 
-#include "util/db/psql/psql_connection.hh"
 #include "util/db/db_exceptions.hh"
+#include "util/db/psql/psql_connection.hh"
+#include "util/log/logger.hh"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -194,6 +195,77 @@ PSQLConnection::ResultType PSQLConnection::exec_params(
 
     throw ResultFailed("query: " + query + " "
                        "Params:" + params_dump + " (" + PQerrorMessage(psql_conn_) + ")");
+}
+
+
+PSQLConnection::ResultType PSQLConnection::copy_from(std::istream& input_data, const std::string& table_name, std::size_t buffer_size)
+{
+    auto get_last_result = [](const auto conn) {
+        std::shared_ptr<PGresult> result = nullptr;
+        std::shared_ptr<PGresult> last_result = nullptr;
+        auto result_failed = false;
+        while ((result = std::shared_ptr<PGresult>{PQgetResult(conn), PQclear}) != nullptr)
+        {
+            if (PQstatus(conn) == CONNECTION_BAD)
+            {
+                throw ResultFailed{std::string{"PQgetResult: connection lost"}};
+            }
+            if (!result_failed && PQresultStatus(result.get()) != PGRES_COMMAND_OK)
+            {
+                result_failed = true;
+            }
+            last_result = result;
+        }
+        if (result_failed)
+        {
+            return std::shared_ptr<PGresult>{nullptr};
+        }
+        return last_result;
+    };
+    const auto copy_query = std::string{"COPY "} + table_name + " FROM STDIN";
+#ifdef HAVE_LOGGER
+    LOGGER.debug(copy_query);
+#endif
+    const auto copy_result = std::shared_ptr<PGresult>{PQexec(psql_conn_, copy_query.c_str()), PQclear};
+    if (PQresultStatus(copy_result.get()) != PGRES_COPY_IN)
+    {
+        throw ResultFailed{copy_query};
+    }
+
+    static constexpr auto read_error_message = "COPY FROM failed - Input data read error";
+    std::vector<char> buffer(buffer_size, 0);
+    while (!input_data.eof())
+    {
+        input_data.read(buffer.data(), buffer.size());
+        const auto size_read = input_data.gcount();
+        if ((input_data.fail() && !input_data.eof()) || input_data.bad())
+        {
+            const int result_data_end = PQputCopyEnd(psql_conn_, read_error_message);
+            if (result_data_end != 1)
+            {
+                throw ResultFailed{PQerrorMessage(psql_conn_)};
+            }
+            get_last_result(psql_conn_);
+            throw ResultFailed{read_error_message};
+        }
+        const auto result_data_copy = PQputCopyData(psql_conn_, buffer.data(), size_read);
+        if (result_data_copy != 1)
+        {
+            throw ResultFailed{PQerrorMessage(psql_conn_)};
+        }
+    }
+    static const char* const no_error_message = nullptr;
+    const int result_data_end = PQputCopyEnd(psql_conn_, no_error_message);
+    if (result_data_end != 1)
+    {
+        throw ResultFailed{PQerrorMessage(psql_conn_)};
+    }
+    const auto last_result = get_last_result(psql_conn_);
+    if (last_result == nullptr)
+    {
+        throw ResultFailed{"COPY FROM failed - result not ok"};
+    }
+    return PSQLResult(last_result);
 }
 
 void PSQLConnection::setQueryTimeout(unsigned t)

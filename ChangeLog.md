@@ -1,6 +1,7 @@
 # ChangeLog
 
 ## UNRELEASED
+ * Add COPY FROM support to database layer
  * Add new tests
 
 ## 4.1.0 (2020-02-19)
