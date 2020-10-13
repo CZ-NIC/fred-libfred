@@ -2,7 +2,7 @@
    :target: https://fred.nic.cz
    :alt: FRED
 
-
+=============================
 FRED: The Programming Library
 =============================
 
@@ -26,7 +26,7 @@ Learn more about the project and our community on the `FRED's home page <https:/
 Documentation for the whole FRED project is available on-line, visit https://fred.nic.cz/documentation.
 
 Table of Contents
------------------
+=================
 
 
 * `Dependencies <#dependencies>`_
@@ -40,26 +40,26 @@ Table of Contents
 * `License <#license>`_
 
 Dependencies
-------------
+============
 
 Dependencies are managed with CMake and they are listed in a docker image
 for each supported platform in `scripts/docker <scripts/docker>`_.
 
 Configuration
--------------
+=============
 
 See the example configuration in `libfred.conf.example <libfred.conf.example>`_.
 
 Development
------------
+===========
 
 Building
-^^^^^^^^
+--------
 
 This component is not to be built separately, but as a part of ``fred-server``.
 
 Versioning
-^^^^^^^^^^
+----------
 
 Use semantic versioning ``major.minor.patch`` and bump:
 
@@ -72,13 +72,13 @@ For pre-releases use ``-rcX`` suffix (\ ``major.minor.patch-rcX``\ )
 where ``X`` starts at ``1`` and consecutively increments.
 
 Maintainers
------------
+===========
 
 
 * Jiri Sadek [jiri.sadek@nic.cz](mailto:jiri.sadek@nic.cz)
 * Jaromir Talir [jaromir.talir@nic.cz](mailto:jaromir.talir@nic.cz)
 
 License
--------
+=======
 
 See `LICENSE <LICENSE>`_.
