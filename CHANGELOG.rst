@@ -1,11 +1,13 @@
 ChangeLog
 =========
 
-UNRELEASED
-----------
+4.2.0 (2020-07-27)
+------------------
 
 
-* Add new tests
+ * Add `COPY FROM` support to database layer
+ * Add new tests
+ * Fix CMake targets to simplify usage in dependent projects
 
 4.1.0 (2020-02-19)
 ------------------
