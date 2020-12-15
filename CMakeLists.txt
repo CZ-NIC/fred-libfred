@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(LIBFRED_VERSION "4.1.0")
-project(libfred
+project(LibFred
     VERSION ${LIBFRED_VERSION}
     LANGUAGES CXX)
 
@@ -226,10 +226,10 @@ set(LIBFRED_SOURCES
     src/util/random/algorithm/boost_time.cc
     src/util/random/seeders/nondeterministic_seeder.cc)
 
-add_library(fred-static STATIC ${LIBFRED_SOURCES})
-add_library(fred-static::library ALIAS fred-static)
+add_library(fred STATIC ${LIBFRED_SOURCES})
+add_library(Fred::library ALIAS fred)
 
-set_target_properties(fred-static PROPERTIES
+set_target_properties(fred PROPERTIES
     VERSION ${PROJECT_VERSION}
     CXX_STANDARD 14
     CXX_STANDARD_REQUIRED YES
@@ -237,14 +237,14 @@ set_target_properties(fred-static PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
     OUTPUT_NAME "fred")
 
-target_compile_options(fred-static
+target_compile_options(fred
     PUBLIC "-ggdb"
     PUBLIC "-grecord-gcc-switches"
     PUBLIC "-Wall"
     PUBLIC "-Wextra"
     PUBLIC "-fdiagnostics-color=auto")
 
-target_include_directories(fred-static PUBLIC
+target_include_directories(fred PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
@@ -287,27 +287,27 @@ set(LIBFRED_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${PostgreSQL_INCLUDE_DIRS})
 
-target_include_directories(fred-static PUBLIC
+target_include_directories(fred PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${LIBFRED_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR})
 
 set(LIBFRED_LIBRARIES
     Threads::Threads
-    ${Boost_SYSTEM_LIBRARY}
-    ${Boost_THREAD_LIBRARY}
-    ${Boost_DATE_TIME_LIBRARY}
-    ${Boost_RANDOM_LIBRARY}
-    ${Boost_REGEX_LIBRARY}
+    Boost::system
+    Boost::thread
+    Boost::date_time
+    Boost::random
+    Boost::regex
     ${Mpdec_LIBRARY}
     ${LIBIDN_LIBRARIES}
     ${LIBCRYPTO_LIBRARIES}
     ${PostgreSQL_LIBRARIES})
 
-target_link_libraries(fred-static
+target_link_libraries(fred
     ${LIBFRED_LIBRARIES})
 
-install(TARGETS fred-static
+install(TARGETS fred
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
@@ -326,9 +326,9 @@ target_include_directories(fred-test-common-static
         ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(fred-test-common-static PUBLIC
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-    ${Boost_PROGRAM_OPTIONS_LIBRARY}
-    fred-static::library)
+    Boost::unit_test_framework
+    Boost::program_options
+    Fred::library)
 
 set_target_properties(fred-test-common-static PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -492,15 +492,101 @@ target_include_directories(test-libfred PUBLIC
     ${LIBFRED_INCLUDE_DIRS})
 
 target_link_libraries(test-libfred PRIVATE
-    fred-static::library
+    Fred::library
     fred-test-common-static::library
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+    Boost::unit_test_framework
+    Boost::program_options
     ${LIBFRED_LIBRARIES})
 
-get_directory_property(has_parent PARENT_DIRECTORY)
-if(has_parent)
+get_directory_property(LIBFRED_HAS_PARENT PARENT_DIRECTORY)
+if(LIBFRED_HAS_PARENT)
     set(${PROJECT_NAME}_INCLUDE_DIRS ${LIBFRED_INCLUDE_DIRS} PARENT_SCOPE)
     set(${PROJECT_NAME}_LIBRARIES ${LIBFRED_LIBRARIES} PARENT_SCOPE)
     set(LIBFRED_VERSION ${LIBFRED_VERSION} PARENT_SCOPE)
+endif()
+
+find_program(GIT_PROGRAM git)
+if("${LIBFRED_HAS_PARENT}" STREQUAL "")
+    include(GNUInstallDirs)
+
+    install(TARGETS fred
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
+    add_custom_target(uninstall
+        COMMAND xargs -L10 rm -v < ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt
+        COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt | xargs -L1 dirname | sort | uniq | xargs -L10 rmdir -p --ignore-fail-on-non-empty)
+
+    if(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_PROGRAM)
+        string(TOLOWER "${PROJECT_NAME}-${PROJECT_VERSION}" TARBALL_FILE_NAME)
+        if(NOT TARGET dist)
+            add_custom_command(OUTPUT ${TARBALL_FILE_NAME}.tar.gz
+                COMMAND ${GIT_PROGRAM} archive --format=tar.gz --prefix=${TARBALL_FILE_NAME}/ HEAD -o ${CMAKE_BINARY_DIR}/${TARBALL_FILE_NAME}.tar.gz
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+            add_custom_target(dist DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TARBALL_FILE_NAME}.tar.gz)
+        endif()
+
+        if(DEFINED ENV{DISTCHECK_CMAKE_FLAGS})
+            set(distcheck_flags $ENV{DISTCHECK_CMAKE_FLAGS})
+        endif()
+
+        if(NOT TARGET distcheck)
+            set(DISTCHECK_BUILD_DIR "_build")
+            set(DISTCHECK_INSTALL_DIR "_inst")
+            if(${CMAKE_GENERATOR} STREQUAL "Ninja")
+                set(DISTCHECK_BUILD_CMD "ninja")
+            else()
+                set(DISTCHECK_BUILD_CMD "$(MAKE)")
+            endif()
+            add_custom_target(clean_before_distcheck
+                COMMAND rm -rf ${DISTCHECK_BUILD_DIR} ${DISTCHECK_INSTALL_DIR} ${TARBALL_FILE_NAME}
+                COMMENT "cleaning before distcheck start")
+            add_custom_target(distcheck_make_dirs
+                COMMAND mkdir ${DISTCHECK_BUILD_DIR} ${DISTCHECK_INSTALL_DIR}
+                COMMENT "make distcheck build and install directories"
+                DEPENDS clean_before_distcheck)
+            add_custom_target(distcheck_unpack_archive
+                COMMAND tar xzf ${TARBALL_FILE_NAME}.tar.gz
+                COMMENT "Checking the distribution archive..."
+                DEPENDS dist distcheck_make_dirs)
+            add_custom_target(distcheck_configure
+                COMMAND ${CMAKE_COMMAND} -G${CMAKE_GENERATOR} ${distcheck_flags} -DCMAKE_INSTALL_PREFIX=../${DISTCHECK_INSTALL_DIR} ../${TARBALL_FILE_NAME}
+                COMMENT "configure distcheck"
+                DEPENDS distcheck_unpack_archive
+                WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+            add_custom_target(distcheck_make
+                COMMAND ${DISTCHECK_BUILD_CMD}
+                COMMENT "make"
+                DEPENDS distcheck_configure
+                WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+            add_custom_target(distcheck_install
+                COMMAND ${DISTCHECK_BUILD_CMD} install
+                COMMENT "make install"
+                DEPENDS distcheck_make
+                WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+            add_custom_target(distcheck_uninstall
+                COMMAND ${DISTCHECK_BUILD_CMD} uninstall
+                COMMENT "make uninstall"
+                DEPENDS distcheck_install
+                WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+            add_custom_target(distcheck_clean
+                COMMAND ${DISTCHECK_BUILD_CMD} clean
+                COMMENT "make clean"
+                DEPENDS distcheck_uninstall
+                WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+            add_custom_target(distcheck
+                COMMAND rm -rf ${DISTCHECK_BUILD_DIR} ${DISTCHECK_INSTALL_DIR} ${TARBALL_FILE_NAME}
+                COMMENT "PASS: '${TARBALL_FILE_NAME}.tar.gz' is ready for distribution."
+                DEPENDS distcheck_clean)
+        endif()
+    else()
+        message(STATUS "no git -- not including dist and distcheck targets")
+    endif()
+elseif(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_PROGRAM)
+    if(NOT TARGET dist_libfred)
+        message(STATUS "LIBPG_PREFIX: ${LIBPG_PREFIX}")
+        add_custom_target(dist_libfred
+            COMMAND ${GIT_PROGRAM} -C ${CMAKE_CURRENT_SOURCE_DIR} archive --format=tar --prefix=${LIBPG_PREFIX}/ HEAD > ${CMAKE_BINARY_DIR}/.libfred.tar
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    endif()
 endif()
