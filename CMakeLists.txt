@@ -1,12 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
 project(libfred
-    VERSION 0.1.0
+    VERSION 4.1.0
     LANGUAGES CXX)
-
-if("CXX" IN_LIST languages)
-    message("C++ enabled")
-endif()
 
 include(GNUInstallDirs)
 
