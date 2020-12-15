@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
+set(LIBFRED_VERSION "4.1.0")
 project(libfred
-    VERSION 4.1.0
+    VERSION ${LIBFRED_VERSION}
     LANGUAGES CXX)
 
 include(GNUInstallDirs)
@@ -501,4 +502,5 @@ get_directory_property(has_parent PARENT_DIRECTORY)
 if(has_parent)
     set(${PROJECT_NAME}_INCLUDE_DIRS ${LIBFRED_INCLUDE_DIRS} PARENT_SCOPE)
     set(${PROJECT_NAME}_LIBRARIES ${LIBFRED_LIBRARIES} PARENT_SCOPE)
+    set(LIBFRED_VERSION ${LIBFRED_VERSION} PARENT_SCOPE)
 endif()
