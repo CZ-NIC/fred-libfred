@@ -1,6 +1,6 @@
-FROM fedora:29
+FROM fedora:32
+
 RUN dnf -y clean all                  \
-        && dnf -y update              \
         && dnf -y install             \
                 cmake                 \
                 pkgconf               \
@@ -12,6 +12,6 @@ RUN dnf -y clean all                  \
                 mpdecimal-devel       \
                 libssh-devel          \
                 openssl-devel
-RUN rpm -Uvh https://download.postgresql.org/pub/repos/yum/reporpms/F-29-x86_64/pgdg-fedora-repo-latest.noarch.rpm \
-        && dnf -y update \
+
+RUN rpm -Uvh https://download.postgresql.org/pub/repos/yum/reporpms/F-32-x86_64/pgdg-fedora-repo-latest.noarch.rpm \
         && dnf -y install postgresql96-devel
