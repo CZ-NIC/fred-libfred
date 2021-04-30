@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 4.1.1 (2021-04-21)
+ * Optimize registration check for enum domains
+
 ## 4.1.0 (2020-02-19)
  * Provide `libfred_LIBRARIES` and `libfred_INCLUDE_DIRS` for dependent projects in CMake
  * Remove unused shared library from build
