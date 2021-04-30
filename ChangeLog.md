@@ -5,6 +5,9 @@
  * Remove unused shared library from build
  * Fix warning messages
 
+## 4.0.2 (2021-04-21)
+ * Optimize registration check for enum domains
+
 ## 4.0.1 (2019-11-18)
  * Fix random sequence generator
  * Fix CMake `libpq` detection (set `PostgreSQL_ADDITIONAL_VERSIONS` instead of `PostgreSQL_KNOWN_VERSIONS`)

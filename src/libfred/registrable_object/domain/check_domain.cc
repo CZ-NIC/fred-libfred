@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -213,10 +213,17 @@ namespace LibFred
             if (zone.is_enum)
             {
                 Database::Result conflicting_fqdn_res  = ctx.get_conn().exec_params(
-                    "SELECT o.name, o.id FROM object_registry o WHERE o.type=get_object_type_id('domain'::text) "
-                    "AND o.erdate ISNULL ""AND (($1::text LIKE '%.'|| o.name) "
-                    "OR (o.name LIKE '%.'||$1::text) OR o.name=LOWER($1::text)) LIMIT 1"
-                , Database::query_param_list(no_root_dot_fqdn));
+                        "SELECT obr.name, obr.id "
+                        "FROM object_registry obr "
+                        "JOIN domain d ON d.id = obr.id " // helps to dramatically reduce the number of candidate objects!!!
+                        "WHERE obr.type = get_object_type_id('domain'::TEXT) AND "
+                              "obr.erdate IS NULL AND "
+                              "(($1::TEXT LIKE ('%.' || obr.name)) OR "
+                               "(obr.name LIKE ('%.' || $1::TEXT)) OR "
+                               "(obr.name = LOWER($1::TEXT))) AND "
+                              "d.zone = $2::INT "
+                        "LIMIT 1",
+                        Database::query_param_list(no_root_dot_fqdn)(zone.id));
                 if (conflicting_fqdn_res.size() > 0)//have conflicting_fqdn
                 {
                     conflicting_fqdn_out = static_cast<std::string>(conflicting_fqdn_res[0][0]);
