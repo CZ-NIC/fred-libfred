@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 4.2.1 (2021-04-21)
+ * Optimize registration check for enum domains
+
 ## 4.2.0 (2020-07-27)
  * Add `COPY FROM` support to database layer
  * Add new tests
