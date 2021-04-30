@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+4.3.0 (2021-04-30)
+------------------
+
+* Add bumpversion configuration
+* Rename changelog to CHANGELOG.rst to match all FRED projects
+* Fix CMake (distcheck, versioning)
+
+
 4.2.1 (2021-04-21)
 ------------------
 
