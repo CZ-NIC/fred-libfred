@@ -586,7 +586,7 @@ elseif(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_PROGRAM)
     if(NOT TARGET dist_libfred)
         message(STATUS "LIBFRED_PREFIX: ${LIBFRED_PREFIX}")
         add_custom_target(dist_libfred
-            COMMAND ${GIT_PROGRAM} -C ${CMAKE_CURRENT_SOURCE_DIR} archive --format=tar --prefix=${LIBFRED_PREFIX}/ HEAD > ${CMAKE_BINARY_DIR}/.libfred.tar
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+            COMMAND ${GIT_PROGRAM} archive --format=tar --prefix=${LIBFRED_PREFIX}/ HEAD > ${CMAKE_BINARY_DIR}/.libfred.tar
+	    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
 endif()
