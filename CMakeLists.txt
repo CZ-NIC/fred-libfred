@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(LIBFRED_VERSION "4.3.0")
+set(LIBFRED_VERSION "4.3.1")
 project(LibFred
     VERSION ${LIBFRED_VERSION}
     LANGUAGES CXX)
@@ -307,12 +307,6 @@ set(LIBFRED_LIBRARIES
 target_link_libraries(fred
     ${LIBFRED_LIBRARIES})
 
-install(TARGETS fred
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
-
 add_library(fred-test-common-static STATIC
     test/libfred/contact/verification/setup_utils.cc
     test/libfred/registrar/epp_auth/util.cc)
@@ -510,9 +504,10 @@ if("${LIBFRED_HAS_PARENT}" STREQUAL "")
     include(GNUInstallDirs)
 
     install(TARGETS fred
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/fred.pc DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pkgconfig)
+
     add_custom_target(uninstall
         COMMAND xargs -L10 rm -v < ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt
         COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt | xargs -L1 dirname | sort | uniq | xargs -L10 rmdir -p --ignore-fail-on-non-empty)
@@ -586,7 +581,7 @@ elseif(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_PROGRAM)
     if(NOT TARGET dist_libfred)
         message(STATUS "LIBFRED_PREFIX: ${LIBFRED_PREFIX}")
         add_custom_target(dist_libfred
-            COMMAND ${GIT_PROGRAM} -C ${CMAKE_CURRENT_SOURCE_DIR} archive --format=tar --prefix=${LIBFRED_PREFIX}/ HEAD > ${CMAKE_BINARY_DIR}/.libfred.tar
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+            COMMAND ${GIT_PROGRAM} archive --format=tar --prefix=${LIBFRED_PREFIX}/ HEAD > ${CMAKE_BINARY_DIR}/.libfred.tar
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
 endif()
