@@ -1,5 +1,8 @@
 # ChangeLog
 
+## 4.0.3 (2021-08-09)
+ * Rewrite query for update contact poll message (additional recipients) without using TSRANGE
+
 ## 4.0.2 (2021-04-21)
  * Optimize registration check for enum domains
 
