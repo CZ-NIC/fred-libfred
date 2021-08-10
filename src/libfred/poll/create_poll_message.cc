@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -325,17 +325,17 @@ struct GetAdditionalRecipients<MessageType::update_contact>
             "FROM contact_ c "
             "JOIN domain_history dh ON dh.registrant = c.contact_id "
             "JOIN object_history d_oh ON d_oh.historyid = dh.historyid "
-            "JOIN history d_h ON d_h.id = dh.historyid "
-                    "AND c.update_timestamp <@ tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
+            "JOIN history d_h ON d_h.id = dh.historyid AND "
+                                "d_h.valid_from <= c.update_timestamp AND c.update_timestamp < coalesce(d_h.valid_to, 'infinity') "
             "WHERE d_oh.clid != c.contact_clid "
             "UNION "
             "SELECT DISTINCT d_oh.clid "
             "FROM contact_ c "
             "JOIN domain_contact_map_history dcmh ON dcmh.contactid = c.contact_id "
             "JOIN object_history d_oh ON d_oh.historyid = dcmh.historyid "
-            "JOIN history d_h ON d_h.id = dcmh.historyid "
-                    "AND c.update_timestamp <@ tsrange(d_h.valid_from, coalesce(d_h.valid_to, 'infinity')) "
-            "WHERE d_oh.clid != c.contact_clid ",
+            "JOIN history d_h ON d_h.id = dcmh.historyid AND "
+                                "d_h.valid_from <= c.update_timestamp AND c.update_timestamp < coalesce(d_h.valid_to, 'infinity') "
+            "WHERE d_oh.clid != c.contact_clid",
             Database::query_param_list(_history_id)
         );
         std::set<unsigned long long> registrars;

@@ -27,7 +27,7 @@ stages:
   script:
     - cmake .
     - job_count=$(($(grep -c processor /proc/cpuinfo) / 2 + 1))
-    - grep "distcheck:" Makefile && make -j "$job_count" distcheck || make -j "$job_count"
+    - grep "^distcheck:" Makefile && make -j "$job_count" distcheck || make -j "$job_count"
 
 
 
