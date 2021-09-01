@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef CONTACT_STATE_HH_F582B2CFFE08EDCAF2A8C04B8F99E131//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define CONTACT_STATE_HH_F582B2CFFE08EDCAF2A8C04B8F99E131
 
@@ -45,6 +46,11 @@ extern const char server_delete_prohibited[];
 extern const char server_transfer_prohibited[];
 extern const char server_update_prohibited[];
 
+extern const char server_contact_name_change_prohibited[];
+extern const char server_contact_organization_change_prohibited[];
+extern const char server_contact_ident_change_prohibited[];
+extern const char server_contact_permanent_address_change_prohibited[];
+
 }//namespace LibFred::RegistrableObject::Contact::StateFlagName
 
 using DeleteCandidate = State::Flag::AutomaticExternal<StateFlagName::delete_candidate>;
@@ -65,6 +71,11 @@ using ServerDeleteProhibited = State::Flag::ManualExternal<StateFlagName::server
 using ServerTransferProhibited = State::Flag::ManualExternal<StateFlagName::server_transfer_prohibited>;
 using ServerUpdateProhibited = State::Flag::ManualExternal<StateFlagName::server_update_prohibited>;
 
+using ServerContactNameChangeProhibited = State::Flag::ManualExternal<StateFlagName::server_contact_name_change_prohibited>;
+using ServerContactOrganizationChangeProhibited = State::Flag::ManualExternal<StateFlagName::server_contact_organization_change_prohibited>;
+using ServerContactIdentChangeProhibited = State::Flag::ManualExternal<StateFlagName::server_contact_ident_change_prohibited>;
+using ServerContactPermanentAddressChangeProhibited = State::Flag::ManualExternal<StateFlagName::server_contact_permanent_address_change_prohibited>;
+
 using ContactStateProvide = State::Of<Object_Type::contact,
         DeleteCandidate,
         Linked,
@@ -78,7 +89,11 @@ using ContactStateProvide = State::Of<Object_Type::contact,
         ServerBlocked,
         ServerDeleteProhibited,
         ServerTransferProhibited,
-        ServerUpdateProhibited>;
+        ServerUpdateProhibited,
+        ServerContactNameChangeProhibited,
+        ServerContactOrganizationChangeProhibited,
+        ServerContactIdentChangeProhibited,
+        ServerContactPermanentAddressChangeProhibited>;
 
 using ContactState = typename ContactStateProvide::Type;
 
