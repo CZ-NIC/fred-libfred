@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #include "mock_engine.hh"
 
 #include <atomic>
@@ -52,16 +51,6 @@ void MockEngine::reset()
 MockEngine::result_type MockEngine::operator()()
 {
     return 0;
-}
-
-MockEngine::result_type MockEngine::min() const
-{
-    return std::numeric_limits<result_type>::min();
-}
-
-MockEngine::result_type MockEngine::max() const
-{
-    return std::numeric_limits<result_type>::max();
 }
 
 std::atomic<int> MockEngine::number_created_(0);

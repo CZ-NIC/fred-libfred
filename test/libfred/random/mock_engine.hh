@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef MOCK_GENERATOR_HH_39D54367AD214969A7758E8CEF70D772
 #define MOCK_GENERATOR_HH_39D54367AD214969A7758E8CEF70D772
 
 #include <atomic>
 #include <cstdint>
+#include <limits>
 
 class MockEngine
 {
@@ -53,9 +53,15 @@ public:
 
     result_type operator()();
 
-    result_type min() const;
+    static constexpr result_type min()
+    {
+        return std::numeric_limits<result_type>::min();
+    }
 
-    result_type max() const;
+    static constexpr result_type max()
+    {
+        return std::numeric_limits<result_type>::max();
+    }
 
 private:
     static std::atomic<int> number_created_;
