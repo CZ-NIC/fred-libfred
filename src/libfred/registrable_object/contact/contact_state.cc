@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrable_object/contact/contact_state.hh"
 #include "util/flagset_impl.hh"
 
@@ -42,6 +43,11 @@ constexpr const char server_delete_prohibited[] = "serverDeleteProhibited";
 constexpr const char server_transfer_prohibited[] = "serverTransferProhibited";
 constexpr const char server_update_prohibited[] = "serverUpdateProhibited";
 
+constexpr const char server_contact_name_change_prohibited[] = "serverContactNameChangeProhibited";
+constexpr const char server_contact_organization_change_prohibited[] = "serverContactOrganizationChangeProhibited";
+constexpr const char server_contact_ident_change_prohibited[] = "serverContactIdentChangeProhibited";
+constexpr const char server_contact_permanent_address_change_prohibited[] = "serverContactPermanentAddressChangeProhibited";
+
 }//namespace LibFred::RegistrableObject::Contact::StateFlagName
 }//namespace LibFred::RegistrableObject::Contact
 }//namespace LibFred::RegistrableObject
@@ -64,6 +70,10 @@ template class FlagSet<ContactStateProvide,
         ServerBlocked,
         ServerDeleteProhibited,
         ServerTransferProhibited,
-        ServerUpdateProhibited>;
+        ServerUpdateProhibited,
+        ServerContactNameChangeProhibited,
+        ServerContactOrganizationChangeProhibited,
+        ServerContactIdentChangeProhibited,
+        ServerContactPermanentAddressChangeProhibited>;
 
 }//namespace Util
