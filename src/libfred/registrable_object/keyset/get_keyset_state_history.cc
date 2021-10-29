@@ -106,7 +106,7 @@ KeysetStateHistory get_keyset_state_history(
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw ObjectDoesNotExist<object_type>();
     }
     const bool limit_is_invalid = static_cast<bool>(dbres[0][0]);

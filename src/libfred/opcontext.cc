@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -22,6 +22,8 @@
  */
 
 #include "libfred/opcontext.hh"
+
+#include "src/util/log/log.hh"
 
 #include <stdexcept>
 
@@ -57,8 +59,7 @@ std::unique_ptr<Database::StandaloneConnection> get_database_conn()
 }//namespace LibFred::{anonymous}
 
 OperationContext::OperationContext()
-    : conn_(get_database_conn()),
-      log_(LOGGER)
+    : conn_(get_database_conn())
 {
     conn_->exec("START TRANSACTION ISOLATION LEVEL READ COMMITTED");
 }
@@ -92,7 +93,7 @@ OperationContext::~OperationContext()
     {
         try
         {
-            log_.error("OperationContext::~OperationContext: rollback failed");
+            FREDLOG_ERROR("OperationContext::~OperationContext: rollback failed");
         }
         catch (...) { }
     }
@@ -104,7 +105,7 @@ OperationContext::~OperationContext()
     {
         try
         {
-            log_.error("OperationContext::~OperationContext: database connection destroying failed");
+            FREDLOG_ERROR("OperationContext::~OperationContext: database connection destroying failed");
         }
         catch (...) { }
     }

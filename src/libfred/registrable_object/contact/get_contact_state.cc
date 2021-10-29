@@ -46,7 +46,7 @@ GetContactStateById::Result GetContactStateById::exec(OperationContext& ctx)cons
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -88,7 +88,7 @@ GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& 
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -127,7 +127,7 @@ GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;

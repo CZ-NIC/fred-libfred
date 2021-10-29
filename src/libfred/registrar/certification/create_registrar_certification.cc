@@ -120,12 +120,12 @@ unsigned long long CreateRegistrarCertification::exec(OperationContext& _ctx) co
     }
     catch (const std::exception& e)
     {
-        LOGGER.info(e.what());
+        FREDLOG_INFO(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to create registrar certification due to unknown exception");
+        FREDLOG_INFO("Failed to create registrar certification due to unknown exception");
         throw;
     }
 }

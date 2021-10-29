@@ -31,7 +31,7 @@
 #include "util/db/transaction.hh"
 
 #ifdef HAVE_LOGGER
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
 #endif
 
 #include <atomic>

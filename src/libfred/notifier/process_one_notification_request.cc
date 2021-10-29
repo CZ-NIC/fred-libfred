@@ -168,7 +168,7 @@ bool process_one_notification_request(LibFred::OperationContext& _ctx, std::shar
         const Database::Result notification_to_send_res = process_postgres_locking_exception::get_notification_to_send(_ctx);
 
         if (notification_to_send_res.size() < 1) {
-            _ctx.get_log().info(log_prefix + "no record found in notification_queue");
+            FREDLOG_INFO(log_prefix + "no record found in notification_queue");
             return false;
         }
 
@@ -208,7 +208,7 @@ bool process_one_notification_request(LibFred::OperationContext& _ctx, std::shar
             }
         }
 
-        _ctx.get_log().info(log_prefix + "completed - transaction not yet comitted");
+        FREDLOG_INFO(log_prefix + "completed - transaction not yet comitted");
 
         try
         {
@@ -228,19 +228,19 @@ bool process_one_notification_request(LibFred::OperationContext& _ctx, std::shar
     }
     catch (const ExceptionInterface& e)
     {
-        _ctx.get_log().error(log_prefix + "exception :" + e.what());
+        FREDLOG_ERROR(log_prefix + "exception :" + e.what());
         throw;
 
     }
     catch (const std::exception& e)
     {
-        _ctx.get_log().error(log_prefix + "exception :" + e.what());
+        FREDLOG_ERROR(log_prefix + "exception :" + e.what());
         throw;
 
     }
     catch (...)
     {
-        _ctx.get_log().error(log_prefix + "unknown exception");
+        FREDLOG_ERROR(log_prefix + "unknown exception");
         throw;
     }
 }

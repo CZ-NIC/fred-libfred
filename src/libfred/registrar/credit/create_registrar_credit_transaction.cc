@@ -53,7 +53,7 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
         const auto zone_access_history = LibFred::Registrar::ZoneAccess::GetZoneAccessHistory(registrar_).exec(_ctx);
         if (!LibFred::Registrar::ZoneAccess::has_access(zone_access_history, zone_, boost::gregorian::day_clock::local_day()))
         {
-            _ctx.get_log().debug("registrar \"" + registrar_ + "\" has no access to zone \"" + zone_ + "\"");
+            FREDLOG_DEBUG("registrar \"" + registrar_ + "\" has no access to zone \"" + zone_ + "\"");
             throw NonexistentZoneAccess();
         }
 
@@ -145,7 +145,7 @@ unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx
     }
     catch (const std::exception& e)
     {
-        LOGGER.info(e.what());
+        FREDLOG_INFO(e.what());
         throw CreateTransactionException();
     }
     throw CreateTransactionException();

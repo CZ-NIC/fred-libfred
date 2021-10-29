@@ -47,7 +47,7 @@ GetNssetStateById::Result GetNssetStateById::exec(OperationContext& ctx) const
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -90,7 +90,7 @@ GetNssetStateByHandle::Result GetNssetStateByHandle::exec(OperationContext& ctx)
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -130,7 +130,7 @@ GetNssetStateByUuid::Result GetNssetStateByUuid::exec(OperationContext& ctx) con
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;

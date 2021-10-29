@@ -27,7 +27,7 @@
 #include "config.h"
 
 #ifdef HAVE_LOGGER
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
 #endif
 
 #include "util/db/db_exceptions.hh"
@@ -74,7 +74,7 @@ public:
 #ifdef HAVE_LOGGER
             try
             {
-                LOGGER.info("connection closed");
+                FREDLOG_INFO("connection closed");
             }
             catch (...) {}
 #endif
@@ -87,7 +87,7 @@ public:
         try
         {
 #ifdef HAVE_LOGGER
-            LOGGER.debug(boost::format("exec query [%1%]") % _stmt);
+            FREDLOG_DEBUG(boost::format("exec query [%1%]") % _stmt);
 #endif
             return result_type(this->get_opened_connection().exec(_stmt));
         }
@@ -109,7 +109,7 @@ public:
         try
         {
 #ifdef HAVE_LOGGER
-            LOGGER.debug(boost::format("exec query [%1%]") % _stmt);
+            FREDLOG_DEBUG(boost::format("exec query [%1%]") % _stmt);
 #endif
             return result_type(this->get_opened_connection().exec_params(_stmt, //one command query
                                                                          params));//parameters data
@@ -131,19 +131,16 @@ public:
         try
         {
 #ifdef HAVE_LOGGER
-            if (LOGGER.is_sufficient<Logging::Log::Severity::debug>())
+            std::string value;
+            std::string params_dump;
+            std::size_t params_counter = 0;
+            for (const auto& param : params)
             {
-                std::string value;
-                std::string params_dump;
-                std::size_t params_counter = 0;
-                for (const auto& param : params)
-                {
-                    ++params_counter;
-                    value = param.is_null() ? "[null]" : "'" + param.print_buffer() + "'";
-                    params_dump += " $" + boost::lexical_cast<std::string>(params_counter) + ": " + value;
-                }
-                LOGGER.debug(boost::format("exec query [%1%] params %2%") % _stmt % params_dump);
+                ++params_counter;
+                value = param.is_null() ? "[null]" : "'" + param.print_buffer() + "'";
+                params_dump += " $" + boost::lexical_cast<std::string>(params_counter) + ": " + value;
             }
+            FREDLOG_DEBUG(boost::format("exec query [%1%] params %2%") % _stmt % params_dump);
 #endif
             return result_type(this->get_opened_connection().exec_params(_stmt, //one command query
                                                                          params));//parameters data
@@ -175,7 +172,7 @@ public:
         try
         {
 #ifdef HAVE_LOGGER
-            LOGGER.debug(boost::format{"exec COPY FROM [table=%1%, buffer_size=%2%]"} % table_name % buffer_size);
+            FREDLOG_DEBUG(boost::format{"exec COPY FROM [table=%1%, buffer_size=%2%]"} % table_name % buffer_size);
 #endif
             return result_type{this->get_opened_connection().copy_from(input_data, table_name, buffer_size)};
         }
@@ -220,7 +217,7 @@ public:
     {
         this->get_opened_connection().setQueryTimeout(t);
 #ifdef HAVE_LOGGER
-        LOGGER.debug(boost::format("sql statement timout set to %1%ms") % t);
+        FREDLOG_DEBUG(boost::format("sql statement timout set to %1%ms") % t);
 #endif
     }
 private:

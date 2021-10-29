@@ -53,12 +53,12 @@ void UpdateRegistrarGroup::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER.error(e.what());
+        FREDLOG_ERROR(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to update registrar group due to an unknown exception");
+        FREDLOG_INFO("Failed to update registrar group due to an unknown exception");
         throw;
     }
 }

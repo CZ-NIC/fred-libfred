@@ -48,7 +48,7 @@ void CancelObjectStateRequestId::exec(OperationContext &_ctx)
         object_state_names += (*pState) + " ";
     }
 
-    _ctx.get_log().debug(std::string(
+    FREDLOG_DEBUG(std::string(
         "CancelObjectStateRequest::exec object id: ") + boost::lexical_cast< std::string >(object_id_)
         + " object state name: " + object_state_names);
 
@@ -126,7 +126,7 @@ void CancelObjectStateRequestId::exec(OperationContext &_ctx)
         for (Database::Result::Iterator pRow = cmd_result.begin(); pRow != cmd_result.end(); ++pRow) {
             rid += " " + std::string((*pRow)[REQUEST_ID_IDX]);
         }
-        _ctx.get_log().debug(rid);
+        FREDLOG_DEBUG(rid);
         return;
     }
     for (Database::Result::Iterator pRow = cmd_result.begin(); pRow != cmd_result.end(); ++pRow) {

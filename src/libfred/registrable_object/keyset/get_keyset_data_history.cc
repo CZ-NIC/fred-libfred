@@ -114,10 +114,10 @@ KeysetDataHistory get_keyset_data_history(
     {
         if (!does_object_exist<object_type>(ctx, get_object_id_rule))
         {
-            ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+            FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
             throw ObjectDoesNotExist<object_type>();
         }
-        ctx.get_log().debug("invalid " + Conversion::Enums::to_db_handle(object_type) + " history interval");
+        FREDLOG_DEBUG("invalid " + Conversion::Enums::to_db_handle(object_type) + " history interval");
         throw InvalidHistoryIntervalSpecification<object_type>();
     }
     KeysetDataHistory history;

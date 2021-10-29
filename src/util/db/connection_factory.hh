@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -30,7 +30,7 @@
 #include "config.h"
 
 #ifdef HAVE_LOGGER
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
 #endif
 
 #include <boost/format.hpp>
@@ -54,7 +54,7 @@ public:
         : need_to_open_(args...)
     {
 #ifdef HAVE_LOGGER
-        TRACE(boost::format("<CALL> Database::Factory::Simple::Simple('%1%')") %
+        FREDLOG_TRACE(boost::format("<CALL> Database::Factory::Simple::Simple('%1%')") %
                   T::to_publicable_string(need_to_open_));
 #endif
     }
@@ -62,7 +62,7 @@ public:
     ~Simple()
     {
 #ifdef HAVE_LOGGER
-        TRACE("<CALL> Database::Factory::Simple::~Simple()");
+        FREDLOG_TRACE("<CALL> Database::Factory::Simple::~Simple()");
 #endif
     }
 

@@ -103,12 +103,12 @@ void UpdateRegistrarCertification::exec(OperationContext& _ctx) const
     }
     catch (const std::exception& e)
     {
-        LOGGER.info(e.what());
+        FREDLOG_INFO(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to update registrar certification due to an unknown exception");
+        FREDLOG_INFO("Failed to update registrar certification due to an unknown exception");
         throw;
     }
 }

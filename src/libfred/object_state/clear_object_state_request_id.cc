@@ -58,7 +58,7 @@ ClearObjectStateRequestId::Requests ClearObjectStateRequestId::exec(OperationCon
             rid += " " + static_cast<std::string>(cmd_result[idx][0]);
             result.push_back(static_cast<LibFred::ObjectId>(cmd_result[idx][0]));
         }
-        _ctx.get_log().debug(rid);
+        FREDLOG_DEBUG(rid);
     }
     return result;
 }
