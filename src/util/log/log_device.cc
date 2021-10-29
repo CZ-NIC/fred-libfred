@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "src/util/log/log_device.hh"
-#include "src/util/log/context.hh"
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/mutex.hpp>
@@ -104,27 +104,15 @@ private:
     DeviceHandler& msg(Log::Severity severity_of_logged_event, const std::string& msg)override
     {
         const auto str_now = get_current_time();
-        const auto context = Context::get();
         const auto severity = severity2str(severity_of_logged_event);
         auto& out = this->get_output_stream();
         boost::mutex::scoped_lock scoped_lock(mutex_);
 
-        if (!context.empty())
-        {
-            out << boost::format("[%1%] %|23t|[%2%] %|34t|[%3%] -- %4%") %
-                   str_now %
-                   severity %
-                   context %
-                   msg;
-        }
-        else
-        {
-            out << boost::format("[%1%] %|23t|[%2%] %|34t|%3%") %
-                   str_now %
-                   severity %
-                   msg;
-        }
-        out << std::endl;
+        out << boost::format("[%1%] %|23t|[%2%] %|34t|%3%") %
+                str_now %
+                severity %
+                msg
+            << std::endl;
         return *this;
     }
     virtual std::ostream& get_output_stream() = 0;
@@ -185,8 +173,6 @@ public:
 private:
     DeviceHandler& msg(Log::Severity severity_of_logged_event, const std::string& msg)override
     {
-        const auto context = Context::get();
-        const std::string prefix = (context.empty() ? "" : "[" + context + "] -- ");
         struct LogLevel
         {
             static int from(Log::Severity severity_of_logged_event)
@@ -206,7 +192,7 @@ private:
                 return LOG_DEBUG;
             }
         };
-        syslog(syslog_facility_ | LogLevel::from(severity_of_logged_event), "%s", (prefix + msg).c_str());
+        syslog(syslog_facility_ | LogLevel::from(severity_of_logged_event), "%s", msg.c_str());
         return *this;
     }
     bool is_sufficient(Log::Severity severity_of_logged_event)const override

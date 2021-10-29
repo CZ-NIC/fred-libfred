@@ -210,7 +210,6 @@ set(LIBFRED_SOURCES
     src/util/db/value.cc
     src/util/db/psql/psql_connection.cc
     src/util/db/psql/psql_result.cc
-    src/util/log/context.cc
     src/util/log/log.cc
     src/util/log/log_device.cc
     src/util/password_storage/base64.cc
