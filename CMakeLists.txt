@@ -78,6 +78,8 @@ function(set_common_properties_on_targets)
             LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
         target_include_directories(${target_name}
+            PUBLIC
+                ${CMAKE_CURRENT_SOURCE_DIR}/src
             PRIVATE
                 ${CMAKE_CURRENT_SOURCE_DIR}
                 ${CMAKE_CURRENT_BINARY_DIR}
