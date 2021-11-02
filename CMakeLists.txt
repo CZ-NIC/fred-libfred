@@ -87,11 +87,6 @@ function(set_common_properties_on_targets)
         target_compile_options(${target_name}
             PRIVATE
                 $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -ggdb -grecord-gcc-switches>)
-        target_compile_definitions(${target_name}
-            PRIVATE
-                SPDLOG_ACTIVE_LEVEL=${SPDLOG_ACTIVE_LEVEL}
-                FMT_STRING_ALIAS=${FMT_STRING_ALIAS}
-                FMT_HEADER_ONLY=${FMT_HEADER_ONLY})
     endforeach()
 endfunction()
 
