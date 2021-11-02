@@ -12,7 +12,7 @@ project(LibFred
 
 # build options
 
-option(LIBFRED_BUILD_TESTS "Build ${PACKAGE_NAME} tests" OFF)
+option(LIBFRED_BUILD_TESTS "Build ${PACKAGE_NAME} tests" ON)
 
 # compile options
 
@@ -21,6 +21,7 @@ set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Specifies the build type. Possible 
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 option(THREADS_PREFER_PTHREAD_FLAG "The -pthread compiler and linker flag preference." TRUE)
 option(CMAKE_EXPORT_COMPILE_COMMANDS "If enabled, generates a compile_commands.json file containing the exact compiler calls." ON)
+option(USE_LIBLOG "Library uses LibLog for application logging." TRUE)
 
 # externals
 
@@ -61,7 +62,9 @@ pkg_search_module(LIBIDN REQUIRED libidn>=0.5.18)
 pkg_search_module(LIBCRYPTO REQUIRED libcrypto)
 
 # configuration files
-
+if(${USE_LIBLOG})
+    set(HAVE_LOGGER "1")
+endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 configure_file(fred.pc.in fred.pc @ONLY)
 
