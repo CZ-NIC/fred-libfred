@@ -88,6 +88,8 @@ function(set_common_properties_on_targets)
                 ${CMAKE_CURRENT_BINARY_DIR}
                 ${PostgreSQL_INCLUDE_DIRS})
         target_compile_options(${target_name}
+            PUBLIC
+                $<$<CXX_COMPILER_ID:GNU>:-Wno-deprecated-copy>
             PRIVATE
                 $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -ggdb -grecord-gcc-switches>)
     endforeach()
