@@ -343,9 +343,11 @@ include(GNUInstallDirs)
 install(TARGETS fred
     DESTINATION ${CMAKE_INSTALL_SLIBDIR})
 
-add_custom_target(uninstall
-    COMMAND xargs -L10 rm -v < ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt
-    COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt | xargs -L1 dirname | sort | uniq | xargs -L10 rmdir -p --ignore-fail-on-non-empty)
+if(NOT TARGET uninstall)
+    add_custom_target(uninstall
+        COMMAND xargs -L10 rm -v < ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt
+        COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt | xargs -L1 dirname | sort | uniq | xargs -L10 rmdir -p --ignore-fail-on-non-empty)
+endif()
 
 # dist
 
