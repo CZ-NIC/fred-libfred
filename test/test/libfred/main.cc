@@ -126,36 +126,38 @@ struct handle_command_line_args
         CfgArgs::init<HandleTestsArgs>(config_handlers)->handle(
                 boost::unit_test::framework::master_test_suite().argc,
                 boost::unit_test::framework::master_test_suite().argv).copy_onlynospaces_args();
+        setup_logging(CfgArgs::instance());
     }
     HandlerPtrVector config_handlers;
-};
 
-void setup_logging(CfgArgs* cfg_instance_ptr)
-{
-    const HandleLoggingArgs* const handler_ptr = cfg_instance_ptr->get_handler_ptr_by_type<HandleLoggingArgs>();
-
-    LibLog::LogConfig log_config;
-    const auto has_log_device = [&]()
+    static void setup_logging(CfgArgs* cfg_instance_ptr)
     {
-        switch (handler_ptr->log_type)
+        const HandleLoggingArgs* const handler_ptr = cfg_instance_ptr->get_handler_ptr_by_type<HandleLoggingArgs>();
+
+        LibLog::LogConfig log_config;
+        const auto has_log_device = [&]()
         {
-            case 0:
-                log_config.add_sink_config(make_console_config(static_cast<LogSeverity>(handler_ptr->log_level)));
-                return true;
-            case 1:
-                log_config.add_sink_config(make_file_config(static_cast<LogSeverity>(handler_ptr->log_level), handler_ptr->log_file));
-                return true;
-            case 2:
-                log_config.add_sink_config(make_syslog_config(static_cast<LogSeverity>(handler_ptr->log_level), handler_ptr->log_syslog_facility));
-                return true;
+            switch (handler_ptr->log_type)
+            {
+                case 0:
+                    log_config.add_sink_config(make_console_config(static_cast<LogSeverity>(handler_ptr->log_level)));
+                    return true;
+                case 1:
+                    log_config.add_sink_config(make_file_config(static_cast<LogSeverity>(handler_ptr->log_level), handler_ptr->log_file));
+                    return true;
+                case 2:
+                    log_config.add_sink_config(make_syslog_config(static_cast<LogSeverity>(handler_ptr->log_level), handler_ptr->log_syslog_facility));
+                    return true;
+            }
+            return false;
+        }();
+        if (has_log_device)
+        {
+            LibLog::Log::start<LibLog::ThreadMode::multi_threaded>(log_config);
         }
-        return false;
-    }();
-    if (has_log_device)
-    {
-        LibLog::Log::start<LibLog::ThreadMode::multi_threaded>(log_config);
     }
-}
+
+};
 
 }//namespace Test::{anonymous}
 }//namespace Test
@@ -164,11 +166,6 @@ struct global_fixture
 {
     Test::handle_command_line_args handle_admin_db_cmd_line_args;
     Test::create_db_template crete_db_template;
-
-    global_fixture()
-    {
-        Test::setup_logging(CfgArgs::instance());
-    }
 };
 
 BOOST_GLOBAL_FIXTURE(global_fixture);
