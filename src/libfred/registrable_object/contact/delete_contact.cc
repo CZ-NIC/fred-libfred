@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -37,15 +37,24 @@ namespace LibFred {
 
 namespace {
 
-void delete_contact_impl(OperationContext& _ctx, unsigned long long _id)
+void delete_contact_impl(const OperationContext& _ctx, unsigned long long _id)
 {
-    const Database::query_param_list params(_id);
-    _ctx.get_conn().exec_params(
-        "DELETE FROM contact_address WHERE contactid=$1::BIGINT", params);
     const Database::Result delete_contact_res = _ctx.get_conn().exec_params(
-        "DELETE FROM contact WHERE id=$1::BIGINT RETURNING id", params);
+        "WITH detach_identity AS ("
+            "UPDATE contact_identity "
+            "SET valid_to = NOW() "
+            "WHERE contact_id = $1::BIGINT AND "
+                  "valid_to IS NULL), "
+        "delete_address AS ("
+            "DELETE FROM contact_address "
+            "WHERE contactid = $1::BIGINT) "
+        "DELETE FROM contact "
+        "WHERE id = $1::BIGINT "
+        "RETURNING id",
+        Database::query_param_list{_id});
 
-    if (delete_contact_res.size() != 1) {
+    if (delete_contact_res.size() != 1)
+    {
         BOOST_THROW_EXCEPTION(LibFred::InternalError("delete contact failed"));
     }
 }
