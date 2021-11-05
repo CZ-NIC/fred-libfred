@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -132,6 +132,41 @@ public:
     static ContactSelectionFilterType registration_name()
     {
         return MCS_FILTER_IDENTIFIED_CONTACT;
+    }
+};
+
+class FilterIdentityAttached
+    : public ContactSelectionFilterBase,
+      public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterIdentityAttached>
+{
+public:
+    std::vector<std::string> operator()(
+            OperationContext& ctx,
+            const std::vector<std::string>& contacts) override
+    {
+        std::vector<std::string> filtered;
+        std::for_each(contacts.begin(), contacts.end(), [&](auto&& contact_handle)
+                {
+                    const auto db_res = ctx.get_conn().exec_params(
+                            "SELECT 0 "
+                            "FROM object_registry obr "
+                            "JOIN contact_identity ci ON ci.contact_id = obr.id "
+                            "WHERE obr.erdate IS NULL AND "
+                                  "obr.name = UPPER($1::TEXT) AND "
+                                  "obr.type = get_object_type_id('contact') AND "
+                                  "ci.valid_to IS NULL",
+                            Database::query_param_list(contact_handle));
+                    if (db_res.size() == 1)
+                    {
+                        filtered.push_back(contact_handle);
+                    }
+                });
+        return filtered;
+    }
+
+    static ContactSelectionFilterType registration_name()
+    {
+        return MCS_FILTER_IDENTITY_ATTACHED;
     }
 };
 
