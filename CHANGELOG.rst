@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+5.0.0 (2021-11-05)
+------------------
+
+* Add new contact states to inform that some of the contact attributes are locked and cannot be changed
+* Modify *contact merge* operation and *contact auto merge procedure* to be aware of linked external identity to contact
+* Modify *contact delete* operation to unlink external identity from contact
+
+
 4.3.2 (2021-08-09)
 ------------------
 
