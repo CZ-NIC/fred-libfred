@@ -242,7 +242,8 @@ target_compile_options(fred
     PUBLIC "-grecord-gcc-switches"
     PUBLIC "-Wall"
     PUBLIC "-Wextra"
-    PUBLIC "-fdiagnostics-color=auto")
+    PUBLIC "-fdiagnostics-color=auto"
+    PUBLIC "-Wno-deprecated-copy")
 
 target_include_directories(fred PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
