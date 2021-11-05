@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -46,6 +46,22 @@
 #include <string>
 
 namespace LibFred {
+
+namespace {
+
+bool is_attached_to_identity(
+        const OperationContext& ctx,
+        unsigned long long contact_id)
+{
+    return 0 < ctx.get_conn().exec_params(
+            "SELECT 0 "
+            "FROM contact_identity "
+            "WHERE contact_id = $1::BIGINT AND "
+                  "valid_to IS NULL "
+            "LIMIT 1", Database::query_param_list{contact_id}).size();
+}
+
+}//namespace LibFred::{anonymous}
 
 MergeContact::MergeContact(
         const std::string& from_contact_handle,
@@ -636,7 +652,8 @@ bool MergeContact::DefaultDiffContacts::operator()(
         src_contact_states.presents(Object_State::server_blocked) ||
         src_contact_states.presents(Object_State::server_delete_prohibited) ||
         src_contact_states.presents(Object_State::contact_in_manual_verification) ||
-        src_contact_states.presents(Object_State::contact_failed_manual_verification))
+        src_contact_states.presents(Object_State::contact_failed_manual_verification) ||
+        is_attached_to_identity(ctx, src_contact_id))
     {
         BOOST_THROW_EXCEPTION(MergeContact::Exception().set_src_contact_invalid(src_contact_handle));
     }

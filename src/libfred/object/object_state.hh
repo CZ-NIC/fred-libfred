@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
-*  @file
-*  header of LibFred::Object_State class
-*/
+
 #ifndef OBJECT_STATE_HH_A7838AEAF86D4E8D9E6B3269351FA976
 #define OBJECT_STATE_HH_A7838AEAF86D4E8D9E6B3269351FA976
 
@@ -67,6 +64,10 @@ public:
         validation_warning1,                ///< means database `validationWarning1` state
         validation_warning2,                ///< means database `validationWarning2` state
         outzone_unguarded_warning,          ///< means database `outzoneUnguardedWarning` state
+        server_contact_name_change_prohibited,             ///< means database `serverContactNameChangeProhibited` state
+        server_contact_organization_change_prohibited,     ///< means database `serverContactOrganizationChangeProhibited` state
+        server_contact_ident_change_prohibited,            ///< means database `serverContactIdentChangeProhibited` state
+        server_contact_permanent_address_change_prohibited,///< means database `serverContactPermanentAddressChangeProhibited` state
     };
 };
 
@@ -107,6 +108,10 @@ inline std::string to_db_handle(LibFred::Object_State::Enum value)
         case LibFred::Object_State::validation_warning1:                 return "validationWarning1";
         case LibFred::Object_State::validation_warning2:                 return "validationWarning2";
         case LibFred::Object_State::outzone_unguarded_warning:           return "outzoneUnguardedWarning";
+        case LibFred::Object_State::server_contact_name_change_prohibited:              return "serverContactNameChangeProhibited";
+        case LibFred::Object_State::server_contact_organization_change_prohibited:      return "serverContactOrganizationChangeProhibited";
+        case LibFred::Object_State::server_contact_ident_change_prohibited:             return "serverContactIdentChangeProhibited";
+        case LibFred::Object_State::server_contact_permanent_address_change_prohibited: return "serverContactPermanentAddressChangeProhibited";
     }
     throw std::invalid_argument("value doesn't exist in LibFred::Object_State::Enum");
 }
@@ -143,7 +148,11 @@ inline LibFred::Object_State::Enum from_db_handle<LibFred::Object_State>(const s
                 LibFred::Object_State::validated_contact,
                 LibFred::Object_State::validation_warning1,
                 LibFred::Object_State::validation_warning2,
-                LibFred::Object_State::outzone_unguarded_warning
+                LibFred::Object_State::outzone_unguarded_warning,
+                LibFred::Object_State::server_contact_name_change_prohibited,
+                LibFred::Object_State::server_contact_organization_change_prohibited,
+                LibFred::Object_State::server_contact_ident_change_prohibited,
+                LibFred::Object_State::server_contact_permanent_address_change_prohibited
             };
     return inverse_transformation(db_handle, possible_results, to_db_handle);
 }
