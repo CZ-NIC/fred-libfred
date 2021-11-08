@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef GET_NSSET_STATE_HISTORY_HH_BE20E4A8F2414369AB43550162E172CE
 #define GET_NSSET_STATE_HISTORY_HH_BE20E4A8F2414369AB43550162E172CE
 
@@ -38,7 +37,7 @@ public:
     using Result = NssetStateHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
-    Result exec(OperationContext& ctx, const HistoryInterval& range) const;
+    Result exec(const OperationContext& ctx, const HistoryInterval& range) const;
 private:
     unsigned long long nsset_id_;
 };
@@ -51,7 +50,7 @@ public:
     using Result = NssetStateHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
-    Result exec(OperationContext& ctx, const HistoryInterval& range) const;
+    Result exec(const OperationContext& ctx, const HistoryInterval& range) const;
 private:
     std::string handle_;
 };
@@ -64,7 +63,7 @@ public:
     using Result = NssetStateHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
-    Result exec(OperationContext& ctx, const HistoryInterval& range) const;
+    Result exec(const OperationContext& ctx, const HistoryInterval& range) const;
 private:
     NssetUuid uuid_;
 };

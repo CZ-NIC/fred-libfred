@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -31,7 +31,7 @@ DeleteRegistrarEppAuth::DeleteRegistrarEppAuth(const unsigned long long _id)
 {
 }
 
-void DeleteRegistrarEppAuth::exec(OperationContext& _ctx) const
+void DeleteRegistrarEppAuth::exec(const OperationContext& _ctx) const
 {
     try
     {

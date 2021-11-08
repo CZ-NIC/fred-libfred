@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -108,7 +108,7 @@ UpdateNsset& UpdateNsset::set_tech_check_level(short tech_check_level)
     return *this;
 }
 
-unsigned long long UpdateNsset::exec(OperationContext& ctx)
+unsigned long long UpdateNsset::exec(const OperationContext& ctx)
 {
     namespace ip = boost::asio::ip;
 

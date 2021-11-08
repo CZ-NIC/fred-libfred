@@ -22,7 +22,7 @@
 namespace LibFred {
 namespace Registrar {
 
-std::vector<GroupMembershipByRegistrar> InfoGroupMembershipByRegistrar::exec(OperationContext& _ctx)
+std::vector<GroupMembershipByRegistrar> InfoGroupMembershipByRegistrar::exec(const OperationContext& _ctx)
 {
     try
     {

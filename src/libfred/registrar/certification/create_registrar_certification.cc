@@ -43,7 +43,7 @@ CreateRegistrarCertification& CreateRegistrarCertification::set_valid_until(boos
   return *this;
 }
 
-unsigned long long CreateRegistrarCertification::exec(OperationContext& _ctx) const
+unsigned long long CreateRegistrarCertification::exec(const OperationContext& _ctx) const
 {
     try
     {

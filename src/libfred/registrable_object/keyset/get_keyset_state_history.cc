@@ -30,7 +30,7 @@ namespace {
 
 template <typename T>
 KeysetStateHistory get_keyset_state_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -193,7 +193,7 @@ GetKeysetStateHistoryById::GetKeysetStateHistoryById(unsigned long long keyset_i
 }
 
 GetKeysetStateHistoryById::Result GetKeysetStateHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -218,7 +218,7 @@ GetKeysetStateHistoryByHandle::GetKeysetStateHistoryByHandle(const std::string& 
 }
 
 GetKeysetStateHistoryByHandle::Result GetKeysetStateHistoryByHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -250,7 +250,7 @@ GetKeysetStateHistoryByUuid::GetKeysetStateHistoryByUuid(const KeysetUuid& _keys
 }
 
 GetKeysetStateHistoryByUuid::Result GetKeysetStateHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

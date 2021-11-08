@@ -39,7 +39,7 @@ namespace Test {
 
 struct CreateZoneSoaFixture
 {
-    CreateZoneSoaFixture(LibFred::OperationContext& _ctx)
+    CreateZoneSoaFixture(const LibFred::OperationContext& _ctx)
         : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           hostmaster("hostmaster@nic.cz"),
           ns_fqdn("a.ns.nic." + fqdn)
@@ -55,7 +55,7 @@ struct CreateZoneSoaFixture
 BOOST_FIXTURE_TEST_SUITE(TestCreateZoneSoa, SupplyFixtureCtx<CreateZoneSoaFixture>)
 
 unsigned long long get_zone_soa_id(
-        ::LibFred::OperationContext& _ctx,
+        const ::LibFred::OperationContext& _ctx,
         const std::string& _fqdn,
         const std::string& _hostmaster,
         const std::string& _ns_fqdn,

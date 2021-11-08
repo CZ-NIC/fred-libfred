@@ -29,7 +29,7 @@ namespace {
 
 template <Object_Type::Enum object_type, typename T>
 bool does_object_exist(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         T get_object_id_rule)
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -43,7 +43,7 @@ bool does_object_exist(
 
 template <typename T>
 NssetDataHistory get_nsset_data_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -155,7 +155,7 @@ GetNssetDataHistoryById::GetNssetDataHistoryById(unsigned long long nsset_id)
 }
 
 GetNssetDataHistoryById::Result GetNssetDataHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -180,7 +180,7 @@ GetNssetDataHistoryByHandle::GetNssetDataHistoryByHandle(const std::string& nsse
 }
 
 GetNssetDataHistoryByHandle::Result GetNssetDataHistoryByHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -212,7 +212,7 @@ GetNssetDataHistoryByUuid::GetNssetDataHistoryByUuid(const NssetUuid& nsset_uuid
 }
 
 GetNssetDataHistoryByUuid::Result GetNssetDataHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

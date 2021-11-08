@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@ CloneRegistrarEppAuth::CloneRegistrarEppAuth(const unsigned long long _id,
 {
 }
 
-unsigned long long CloneRegistrarEppAuth::exec(OperationContext& _ctx) const
+unsigned long long CloneRegistrarEppAuth::exec(const OperationContext& _ctx) const
 {
     try
     {

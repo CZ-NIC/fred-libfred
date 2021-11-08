@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -78,7 +78,7 @@ public:
      * @param ctx contains reference to database and logging interface
      * @return list of ObjectStateDescription
      */
-    std::vector<ObjectStateDescription> exec(OperationContext& ctx);
+    std::vector<ObjectStateDescription> exec(const OperationContext& ctx);
 private:
     const std::string description_language_;/**< requested language of object state descriptions like 'EN' or 'CS'*/
     bool external_states;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -43,7 +43,7 @@ namespace LibFred
         return *this;
     }
 
-    InfoRegistrarOutput InfoRegistrarByHandle::exec(OperationContext& ctx,
+    InfoRegistrarOutput InfoRegistrarByHandle::exec(const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoRegistrarOutput> registrar_res;
@@ -94,7 +94,7 @@ namespace LibFred
         return *this;
     }
 
-    InfoRegistrarOutput InfoRegistrarById::exec(OperationContext& ctx,
+    InfoRegistrarOutput InfoRegistrarById::exec(const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoRegistrarOutput> registrar_res;
@@ -144,7 +144,7 @@ namespace LibFred
         return *this;
     }
 
-    std::vector<InfoRegistrarOutput> InfoRegistrarAllExceptSystem::exec(OperationContext& ctx,
+    std::vector<InfoRegistrarOutput> InfoRegistrarAllExceptSystem::exec(const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
     {
             return InfoRegistrar()

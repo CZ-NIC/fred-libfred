@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -49,7 +49,7 @@ public:
             const Optional<std::string>& _dst_registrar_handle,
             RequestId _request_id);
     CopyContact& set_registrar_handle(const std::string& _registrar_handle);
-    ObjectId exec(OperationContext& _ctx);
+    ObjectId exec(const OperationContext& _ctx);
 
 //exception impl
     DECLARE_EXCEPTION_DATA(src_contact_handle_not_found, std::string);

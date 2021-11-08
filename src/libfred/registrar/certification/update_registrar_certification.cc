@@ -43,7 +43,7 @@ UpdateRegistrarCertification::UpdateRegistrarCertification(
 {
 }
 
-void UpdateRegistrarCertification::exec(OperationContext& _ctx) const
+void UpdateRegistrarCertification::exec(const OperationContext& _ctx) const
 {
     try
     {

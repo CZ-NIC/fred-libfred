@@ -24,7 +24,7 @@
 namespace LibFred {
 namespace Registrar {
 
-void EndRegistrarGroupMembership::exec(OperationContext& _ctx)
+void EndRegistrarGroupMembership::exec(const OperationContext& _ctx)
 {
     try
     {

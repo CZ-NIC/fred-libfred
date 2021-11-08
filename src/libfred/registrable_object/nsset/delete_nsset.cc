@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@
 
 namespace LibFred
 {
-    static void delete_nsset_impl(OperationContext& ctx, unsigned long long id) {
+    static void delete_nsset_impl(const OperationContext& ctx, unsigned long long id) {
         ctx.get_conn().exec_params(
             "DELETE FROM nsset_contact_map "
             "   WHERE nssetid = $1::integer",
@@ -63,7 +63,7 @@ namespace LibFred
     : handle_(handle)
     {}
 
-    void DeleteNssetByHandle::exec(OperationContext& _ctx)
+    void DeleteNssetByHandle::exec(const OperationContext& _ctx)
     {
         try
         {
@@ -102,7 +102,7 @@ namespace LibFred
     : id_(id)
     {}
 
-    void DeleteNssetById::exec(OperationContext& _ctx)
+    void DeleteNssetById::exec(const OperationContext& _ctx)
     {
         try
         {

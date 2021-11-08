@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -61,7 +61,7 @@ public:
      * @return unique numeric identification of opened public request given type of given object
      * @throw Exception if something wrong happened
      */
-    PublicRequestId exec(OperationContext &_ctx,
+    PublicRequestId exec(const OperationContext& _ctx,
                          const LockedPublicRequestsOfObject &_locked_object,
                          const Optional< LogRequestId > &_log_request_id = Optional< LogRequestId >())const;
 private:

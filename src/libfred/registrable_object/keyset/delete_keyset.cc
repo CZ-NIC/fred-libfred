@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@
 
 namespace LibFred
 {
-    void delete_keyset_impl(OperationContext& ctx, unsigned long long id) {
+    void delete_keyset_impl(const OperationContext& ctx, unsigned long long id) {
         ctx.get_conn().exec_params(
             "DELETE FROM keyset_contact_map "
             "   WHERE keysetid = $1::integer",
@@ -64,7 +64,7 @@ namespace LibFred
         : handle_(handle)
     { }
 
-    void DeleteKeysetByHandle::exec(OperationContext& ctx)
+    void DeleteKeysetByHandle::exec(const OperationContext& ctx)
     {
         try
         {
@@ -103,7 +103,7 @@ namespace LibFred
         : id_(_id)
     { }
 
-    void DeleteKeysetById::exec(OperationContext& ctx) {
+    void DeleteKeysetById::exec(const OperationContext& ctx) {
         try {
             get_object_id_by_object_id_with_lock(
                 ctx,

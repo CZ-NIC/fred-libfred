@@ -59,7 +59,7 @@ CreateContactCheck& CreateContactCheck::set_logd_request_id(unsigned long long _
     return *this;
 }
 
-std::string CreateContactCheck::exec(OperationContext& _ctx)
+std::string CreateContactCheck::exec(const OperationContext& _ctx)
 {
     FREDLOG_DEBUG("CreateContactCheck exec() started");
     FREDLOG_INFO(to_string());

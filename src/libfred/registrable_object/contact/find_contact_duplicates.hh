@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -38,7 +38,7 @@ public:
     FindContactDuplicates& set_exclude_contacts(const std::set<std::string>& _exclude_contacts);
     FindContactDuplicates& set_specific_contact(const std::string& _dest_contact_handle);
 
-    std::set<std::string> exec(LibFred::OperationContext& _ctx);
+    std::set<std::string> exec(const LibFred::OperationContext& _ctx);
 
 private:
     Optional<std::string> registrar_handle_;

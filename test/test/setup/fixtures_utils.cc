@@ -32,37 +32,37 @@ std::string generate_random_handle()
     return Random::Generator().get_seq(Random::CharSet::digits(), 20);
 }
 
-unsigned long long get_nonexistent_object_id(::LibFred::OperationContext& ctx)
+unsigned long long get_nonexistent_object_id(const ::LibFred::OperationContext& ctx)
 {
     return get_nonexistent_value(ctx, "object_registry", "id", "bigint", generate_random_bigserial);
 }
 
-unsigned long long get_nonexistent_object_historyid(::LibFred::OperationContext& ctx)
+unsigned long long get_nonexistent_object_historyid(const ::LibFred::OperationContext& ctx)
 {
     return get_nonexistent_value(ctx, "object_history", "historyid", "bigint", generate_random_bigserial);
 }
 
-std::string get_nonexistent_object_handle(::LibFred::OperationContext& ctx)
+std::string get_nonexistent_object_handle(const ::LibFred::OperationContext& ctx)
 {
     return get_nonexistent_value(ctx, "object_registry", "name", "text", generate_random_handle);
 }
 
-unsigned long long get_nonexistent_message_id(::LibFred::OperationContext& ctx)
+unsigned long long get_nonexistent_message_id(const ::LibFred::OperationContext& ctx)
 {
     return get_nonexistent_value(ctx, "message", "id", "bigint", generate_random_bigserial);
 }
 
-unsigned long long get_nonexistent_registrar_id(::LibFred::OperationContext& ctx)
+unsigned long long get_nonexistent_registrar_id(const ::LibFred::OperationContext& ctx)
 {
     return get_nonexistent_value(ctx, "registrar", "id", "bigint", generate_random_bigserial);
 }
 
-unsigned long long  get_nonexistent_zone_id(::LibFred::OperationContext& ctx)
+unsigned long long  get_nonexistent_zone_id(const ::LibFred::OperationContext& ctx)
 {
     return get_nonexistent_value(ctx, "zone", "id", "bigint", generate_random_bigserial);
 }
 
-unsigned long long get_cz_zone_id(::LibFred::OperationContext& ctx)
+unsigned long long get_cz_zone_id(const ::LibFred::OperationContext& ctx)
 {
     return static_cast<unsigned long long>(ctx.get_conn().exec("SELECT id FROM zone WHERE fqdn='cz'")[0][0]);
 }
@@ -74,7 +74,7 @@ add_admin_contacts_to_domain::add_admin_contacts_to_domain(
       registrar_handle_(_registrar_handle)
 { }
 
-std::pair<std::string, std::vector<std::string>> add_admin_contacts_to_domain::exec(::LibFred::OperationContext& ctx)
+std::pair<std::string, std::vector<std::string>> add_admin_contacts_to_domain::exec(const ::LibFred::OperationContext& ctx)
 {
     ::LibFred::UpdateDomain update_domain(domain_handle_, registrar_handle_);
     for (const auto& c : values_)
@@ -92,7 +92,7 @@ add_admin_contact_to_domains::add_admin_contact_to_domains(
       registrar_handle_(_registrar_handle)
 { }
 
-std::pair<std::string, std::vector<std::string>> add_admin_contact_to_domains::exec(::LibFred::OperationContext& ctx)
+std::pair<std::string, std::vector<std::string>> add_admin_contact_to_domains::exec(const ::LibFred::OperationContext& ctx)
 {
     for (const auto& d : values_)
     {

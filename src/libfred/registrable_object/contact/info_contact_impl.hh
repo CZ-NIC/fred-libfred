@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -142,7 +142,7 @@ public:
     * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
     * @return info data about the contact
     */
-    std::vector<InfoContactOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC");
+    std::vector<InfoContactOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC");
 private:
     Database::ParamQuery make_query(const std::string& local_timestamp_pg_time_zone_name);/**< info query generator @return query string with query params*/
     bool history_query_;/**< flag to query history records of the contact */

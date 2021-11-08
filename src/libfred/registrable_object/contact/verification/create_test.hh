@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,7 +72,7 @@ public:
      * @throws LibFred::ExceptionTestNotInMyTestsuite
      * @throws LibFred::ExceptionCheckTestPairAlreadyExists
      */
-    void exec(OperationContext& ctx);
+    void exec(const OperationContext& ctx);
 
     std::string to_string()const;
 private:

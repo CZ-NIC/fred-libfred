@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -23,7 +23,7 @@
 namespace LibFred {
 namespace Poll {
 
-unsigned long long CreateLowCreditMessages::exec(OperationContext& _ctx) const
+unsigned long long CreateLowCreditMessages::exec(const OperationContext& _ctx) const
 {
     const Database::Result sql_query_result = _ctx.get_conn().exec(
         "WITH "

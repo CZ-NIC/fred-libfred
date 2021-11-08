@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -36,7 +36,7 @@ AddRegistrarEppAuth::AddRegistrarEppAuth(
 {
 }
 
-unsigned long long AddRegistrarEppAuth::exec(OperationContext& _ctx) const
+unsigned long long AddRegistrarEppAuth::exec(const OperationContext& _ctx) const
 {
     const auto encrypted_password = PasswordStorage::encrypt_password_by_preferred_method(plain_password_);
 

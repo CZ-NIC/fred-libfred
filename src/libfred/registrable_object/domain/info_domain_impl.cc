@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -238,7 +238,7 @@ Database::ParamQuery InfoDomain::make_admin_query(unsigned long long id, unsigne
     return query;
 }
 
-std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)const
+std::vector<InfoDomainOutput> InfoDomain::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)const
 {
     std::vector<InfoDomainOutput> result;
 

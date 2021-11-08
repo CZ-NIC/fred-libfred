@@ -51,7 +51,7 @@ UpdateContactCheck& UpdateContactCheck::set_logd_request_id(unsigned long long _
     return *this;
 }
 
-void UpdateContactCheck::exec (OperationContext& _ctx)
+void UpdateContactCheck::exec (const OperationContext& _ctx)
 {
     FREDLOG_DEBUG("UpdateContactCheck exec() started");
     FREDLOG_INFO(to_string());

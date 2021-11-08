@@ -25,7 +25,7 @@
 namespace LibFred {
 namespace Registrar {
 
-void UpdateRegistrarGroup::exec(OperationContext& _ctx)
+void UpdateRegistrarGroup::exec(const OperationContext& _ctx)
 {
     try
     {

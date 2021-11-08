@@ -38,7 +38,7 @@ struct update_registrar_fixture
 {
     ::LibFred::InfoRegistrarData registrar;
 
-    update_registrar_fixture(::LibFred::OperationContext& _ctx)
+    update_registrar_fixture(const ::LibFred::OperationContext& _ctx)
     {
         registrar.handle = Random::Generator().get_seq(Random::CharSet::letters(), 12);
         registrar.name = Nullable<std::string>("Testname");

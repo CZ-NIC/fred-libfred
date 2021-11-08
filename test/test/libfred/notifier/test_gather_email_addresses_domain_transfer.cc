@@ -214,7 +214,7 @@ struct has_domain_operation_followed_by_future_changes
         const std::string& _fqdn,
         const std::string& _registrar_handle,
         Tdomainoperation& _operation,
-        ::LibFred::OperationContext& _ctx)
+        const ::LibFred::OperationContext& _ctx)
     {
         const unsigned long long to_be_notified_hid = _operation.exec(_ctx);
 

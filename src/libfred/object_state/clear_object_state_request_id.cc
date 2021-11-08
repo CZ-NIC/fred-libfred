@@ -30,7 +30,7 @@ ClearObjectStateRequestId::ClearObjectStateRequestId(ObjectId _object_id)
     : object_id_(_object_id)
 {}
 
-ClearObjectStateRequestId::Requests ClearObjectStateRequestId::exec(OperationContext &_ctx)
+ClearObjectStateRequestId::Requests ClearObjectStateRequestId::exec(const OperationContext& _ctx)
 {
     LockObjectStateRequestLock(object_id_).exec(_ctx);
 

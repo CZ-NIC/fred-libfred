@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,7 +72,7 @@ namespace LibFred
 
     }
 
-    std::vector<MergeContactNotificationEmail> MergeContactEmailNotificationData::exec(OperationContext& //ctx //possibly for logging
+    std::vector<MergeContactNotificationEmail> MergeContactEmailNotificationData::exec(const OperationContext& //ctx //possibly for logging
             )
     {
         std::vector<MergeContactNotificationEmail> result;
@@ -223,7 +223,7 @@ namespace LibFred
     : email_data_(email_data)
     {}
 
-    std::vector<MergeContactNotificationEmailWithAddr> MergeContactNotificationEmailAddr::exec(OperationContext& ctx)
+    std::vector<MergeContactNotificationEmailWithAddr> MergeContactNotificationEmailAddr::exec(const OperationContext& ctx)
     {
         std::vector<MergeContactNotificationEmailWithAddr> result;
         try

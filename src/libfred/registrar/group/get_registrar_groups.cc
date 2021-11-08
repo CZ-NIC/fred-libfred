@@ -23,7 +23,7 @@
 namespace LibFred {
 namespace Registrar {
 
-std::vector<RegistrarGroup> GetRegistrarGroups::exec(OperationContext& _ctx)
+std::vector<RegistrarGroup> GetRegistrarGroups::exec(const OperationContext& _ctx)
 {
     try
     {

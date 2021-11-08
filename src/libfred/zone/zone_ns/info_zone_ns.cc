@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -29,7 +29,7 @@ InfoZoneNs::InfoZoneNs(unsigned long long _id)
 {
 }
 
-InfoZoneNsData InfoZoneNs::exec(OperationContext& _ctx) const
+InfoZoneNsData InfoZoneNs::exec(const OperationContext& _ctx) const
 {
     Database::Result result;
     try

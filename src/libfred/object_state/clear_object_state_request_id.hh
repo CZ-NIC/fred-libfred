@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -39,7 +39,7 @@ class ClearObjectStateRequestId
 public:
     ClearObjectStateRequestId(ObjectId _object_id);
     typedef std::vector<ObjectId> Requests;
-    Requests exec(OperationContext &_ctx);
+    Requests exec(const OperationContext& _ctx);
 
     DECLARE_EXCEPTION_DATA(object_id_not_found, ObjectId);
 

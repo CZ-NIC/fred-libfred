@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -40,7 +40,7 @@ namespace LibFred
         logd_request_id_(_logd_request_id)
     { }
 
-    unsigned long long TransferContact::exec(OperationContext& _ctx) {
+    unsigned long long TransferContact::exec(const OperationContext& _ctx) {
 
         try {
             if (authinfopw_for_authorization_ != LibFred::InfoContactById(contact_id_).set_lock().exec(_ctx).info_contact_data.authinfopw ) {
@@ -56,7 +56,7 @@ namespace LibFred
 
         struct ExceptionTranslation {
             static unsigned long long transfer_object(
-                LibFred::OperationContext& _ctx,
+                const LibFred::OperationContext& _ctx,
                 const unsigned long long _contact_id,
                 const std::string& _new_registrar_handle,
                 const Nullable<unsigned long long>& _logd_request_id

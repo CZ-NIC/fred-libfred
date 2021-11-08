@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -37,13 +37,13 @@ struct RequestFeeInfoEvent
 };
 
 RequestFeeInfoEvent get_request_fee_info_message(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long registrar_id,
         const boost::posix_time::ptime& period_to,
         const std::string& time_zone);
 
 RequestFeeInfoEvent get_last_request_fee_info_message(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long registrar_id);
 
 } // namespace LibFred::Poll

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -116,7 +116,7 @@ public:
     * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
     * @return info data about the keyset descendingly ordered by keyset historyid
     */
-    std::vector<InfoKeysetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC")const;
+    std::vector<InfoKeysetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC")const;
 private:
     Database::ParamQuery make_info_keyset_projection_query(const std::string& local_timestamp_pg_time_zone_name)const;
     Database::ParamQuery make_tech_contact_query(unsigned long long id, unsigned long long historyid)const;

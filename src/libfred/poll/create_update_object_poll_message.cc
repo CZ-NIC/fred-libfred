@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -24,7 +24,7 @@
 namespace LibFred {
 namespace Poll {
 
-void CreateUpdateObjectPollMessage::exec(LibFred::OperationContext &_ctx, unsigned long long _history_id)const
+void CreateUpdateObjectPollMessage::exec(const LibFred::OperationContext& _ctx, unsigned long long _history_id)const
 {
     const Database::Result db_res = _ctx.get_conn().exec_params(
             "SELECT eot.name "

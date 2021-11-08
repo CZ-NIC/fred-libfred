@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -89,7 +89,7 @@ DomainNameValidator& DomainNameValidator::set_zone_name(const DomainName& _zone_
     return *this;
 }
 
-DomainNameValidator& DomainNameValidator::set_ctx(OperationContext& _ctx)
+DomainNameValidator& DomainNameValidator::set_ctx(const OperationContext& _ctx)
 {
     ctx_= &_ctx;
 
@@ -347,7 +347,7 @@ public:
 }//namespace LibFred::Domain::{anonymous}
 
 void insert_domain_name_checker_name_into_database(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& checker_name,
         const std::string& checker_description)
 {
@@ -357,7 +357,7 @@ void insert_domain_name_checker_name_into_database(
 }
 
 void set_domain_name_validation_config_into_database(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& zone_name,
         const std::vector<std::string>& checker_names)
 {
@@ -375,7 +375,7 @@ void set_domain_name_validation_config_into_database(
 }
 
 std::vector<std::string> get_domain_name_validation_config_for_zone(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& zone_name)
 {
     std::vector<std::string> checker_names;

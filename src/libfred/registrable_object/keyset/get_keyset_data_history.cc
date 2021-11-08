@@ -29,7 +29,7 @@ namespace {
 
 template <Object_Type::Enum object_type, typename T>
 bool does_object_exist(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         T get_object_id_rule)
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -43,7 +43,7 @@ bool does_object_exist(
 
 template <typename T>
 KeysetDataHistory get_keyset_data_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -155,7 +155,7 @@ GetKeysetDataHistoryById::GetKeysetDataHistoryById(unsigned long long keyset_id)
 }
 
 GetKeysetDataHistoryById::Result GetKeysetDataHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -180,7 +180,7 @@ GetKeysetDataHistoryByHandle::GetKeysetDataHistoryByHandle(const std::string& ke
 }
 
 GetKeysetDataHistoryByHandle::Result GetKeysetDataHistoryByHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -212,7 +212,7 @@ GetKeysetDataHistoryByUuid::GetKeysetDataHistoryByUuid(const KeysetUuid& keyset_
 }
 
 GetKeysetDataHistoryByUuid::Result GetKeysetDataHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

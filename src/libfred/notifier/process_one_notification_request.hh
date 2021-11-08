@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -66,7 +66,7 @@ struct FailedToLockRequest { };
  * @throws FailedToSendMail
  * @throws FailedToLockRequest in case other transaction is holding lock
  */
-bool process_one_notification_request(LibFred::OperationContext& _ctx, std::shared_ptr<LibFred::Mailer::Manager> _mailer);
+bool process_one_notification_request(const LibFred::OperationContext& _ctx, std::shared_ptr<LibFred::Mailer::Manager> _mailer);
 
 }
 #endif

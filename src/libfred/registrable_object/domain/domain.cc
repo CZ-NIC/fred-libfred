@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -23,7 +23,7 @@ namespace LibFred {
 namespace Domain {
 
 DomainFqdnSyntaxValidity::Enum get_domain_fqdn_syntax_validity(
-       OperationContext& ctx,
+       const OperationContext& ctx,
        const std::string& domain_fqdn,
        const bool is_system_registrar)
 {
@@ -40,7 +40,7 @@ DomainFqdnSyntaxValidity::Enum get_domain_fqdn_syntax_validity(
 * \throws ExceptionInvalidFqdn
 */
 DomainRegistrability::Enum get_domain_registrability_by_domain_fqdn(
-       OperationContext& ctx,
+       const OperationContext& ctx,
        const std::string& domain_fqdn,
        const bool is_system_registrar)
 {

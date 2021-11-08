@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -71,7 +71,7 @@ public:
      * @throws LibFred::ExceptionUnknownTestsuiteHandle
      * @return handle of created contact_check record.
      */
-    std::string exec(OperationContext& ctx);
+    std::string exec(const OperationContext& ctx);
     // serialization
     std::string to_string()const;
 private:

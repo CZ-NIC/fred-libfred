@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -39,7 +39,7 @@ struct UnknownObject : std::exception
 
 template <Object_Type::Enum object_type>
 unsigned long long get_id_of_registered(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& handle);
 
 } // namespace LibFred

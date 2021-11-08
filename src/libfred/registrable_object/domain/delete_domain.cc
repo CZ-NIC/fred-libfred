@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -40,7 +40,7 @@ namespace LibFred
     : fqdn_(_fqdn)
     {}
 
-    static void delete_domain_impl(OperationContext& ctx, unsigned long long id) {
+    static void delete_domain_impl(const OperationContext& ctx, unsigned long long id) {
         ctx.get_conn().exec_params(
             "DELETE FROM domain_contact_map "
             "   WHERE domainid = $1::integer",
@@ -65,7 +65,7 @@ namespace LibFred
         }
     }
 
-    void DeleteDomainByFqdn::exec(OperationContext& _ctx)
+    void DeleteDomainByFqdn::exec(const OperationContext& _ctx)
     {
         try
         {
@@ -107,7 +107,7 @@ namespace LibFred
         : id_(_id)
     { }
 
-    void DeleteDomainById::exec(OperationContext& _ctx) {
+    void DeleteDomainById::exec(const OperationContext& _ctx) {
         try
         {
             get_object_id_by_object_id_with_lock(

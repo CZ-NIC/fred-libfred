@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2020-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -26,12 +26,12 @@
 
 namespace Test {
 
-unsigned long long get_epp_auth_id(::LibFred::OperationContext& _ctx,
+unsigned long long get_epp_auth_id(const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
         const boost::optional<std::string>& _plain_password);
 
-unsigned long long add_epp_authentications(::LibFred::OperationContext& _ctx,
+unsigned long long add_epp_authentications(const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
         const std::string& _plain_password);

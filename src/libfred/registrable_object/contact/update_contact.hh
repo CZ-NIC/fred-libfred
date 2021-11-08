@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -486,7 +486,7 @@ public:
      * @param contact designated for the update
      * @return new history_id
      */
-    unsigned long long exec(OperationContext& ctx, const InfoContactOutput& contact);
+    unsigned long long exec(const OperationContext& ctx, const InfoContactOutput& contact);
 
     /**
      * Dumps state of the instance into the string
@@ -627,7 +627,7 @@ public:
      * @param ctx contains reference to database and logging interface
      * @return new history_id
      */
-    unsigned long long exec(LibFred::OperationContext& ctx);
+    unsigned long long exec(const LibFred::OperationContext& ctx);
 
     /**
      * Dumps state of the instance into the string
@@ -741,7 +741,7 @@ public:
      * @param ctx contains reference to database and logging interface
      * @return new history_id
      */
-    unsigned long long exec(LibFred::OperationContext& ctx);
+    unsigned long long exec(const LibFred::OperationContext& ctx);
 
     /**
      * Dumps state of the instance into the string

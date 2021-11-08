@@ -29,7 +29,7 @@ namespace {
 
 template <Object_Type::Enum object_type, typename T>
 bool does_object_exist(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         T get_object_id_rule)
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -43,7 +43,7 @@ bool does_object_exist(
 
 template <typename T>
 DomainDataHistory get_domain_data_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -154,7 +154,7 @@ GetDomainDataHistoryById::GetDomainDataHistoryById(unsigned long long domain_id)
 { }
 
 GetDomainDataHistoryById::Result GetDomainDataHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -179,7 +179,7 @@ GetDomainDataHistoryByFqdn::GetDomainDataHistoryByFqdn(const std::string& fqdn)
 }
 
 GetDomainDataHistoryByFqdn::Result GetDomainDataHistoryByFqdn::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -210,7 +210,7 @@ GetDomainDataHistoryByUuid::GetDomainDataHistoryByUuid(const DomainUuid& domain_
 { }
 
 GetDomainDataHistoryByUuid::Result GetDomainDataHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

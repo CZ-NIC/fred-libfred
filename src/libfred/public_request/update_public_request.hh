@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -143,7 +143,7 @@ public:
      * @param _id registrar id
      * @return operation instance reference to allow method chaining
      */
-    UpdatePublicRequest& set_registrar_id(OperationContext &_ctx, const std::string &_registrar_handle);
+    UpdatePublicRequest& set_registrar_id(const OperationContext& _ctx, const std::string &_registrar_handle);
 
     /**
      * Sets on_status_action of public request.
@@ -191,7 +191,7 @@ public:
                 const PublicRequestTypeIface &_public_request_type,
                 const Optional< LogRequestId > &_resolve_log_request_id = Optional< LogRequestId >())const;
 private:
-    Result update(OperationContext &_ctx,
+    Result update(const OperationContext& _ctx,
                   PublicRequestId _public_request_id,
                   const PublicRequestTypeIface &_public_request_type,
                   const Optional< LogRequestId > &_resolve_log_request_id)const;

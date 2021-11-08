@@ -79,7 +79,7 @@ CreateAdminObjectBlockRequestId& CreateAdminObjectBlockRequestId::set_logd_reque
     return *this;
 }
 
-std::string CreateAdminObjectBlockRequestId::exec(OperationContext& _ctx)
+std::string CreateAdminObjectBlockRequestId::exec(const OperationContext& _ctx)
 {
     this->check_administrative_block_status_only(_ctx);
     this->check_server_blocked_status_absent(_ctx);
@@ -128,7 +128,7 @@ std::string CreateAdminObjectBlockRequestId::exec(OperationContext& _ctx)
     return handle_name;
 }
 
-void CreateAdminObjectBlockRequestId::check_administrative_block_status_only(OperationContext& _ctx)const
+void CreateAdminObjectBlockRequestId::check_administrative_block_status_only(const OperationContext& _ctx)const
 {
     if (status_list_.empty())
     {
@@ -160,7 +160,7 @@ void CreateAdminObjectBlockRequestId::check_administrative_block_status_only(Ope
     }
 }
 
-void CreateAdminObjectBlockRequestId::check_server_blocked_status_absent(OperationContext& _ctx)const
+void CreateAdminObjectBlockRequestId::check_server_blocked_status_absent(const OperationContext& _ctx)const
 {
     static unsigned long long serverBlockedId = 0;
     if (serverBlockedId == 0)

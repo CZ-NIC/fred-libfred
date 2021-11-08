@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -43,7 +43,7 @@ FindContactDuplicates& FindContactDuplicates::set_exclude_contacts(const std::se
     return *this;
 }
 
-std::set<std::string> FindContactDuplicates::exec(LibFred::OperationContext& _ctx)
+std::set<std::string> FindContactDuplicates::exec(const LibFred::OperationContext& _ctx)
 {
     std::set<std::string> result;
     Database::QueryParams dup_params;

@@ -41,7 +41,7 @@ namespace Test {
 
 struct InfoZoneSoaFixture
 {
-    InfoZoneSoaFixture(::LibFred::OperationContext& _ctx)
+    InfoZoneSoaFixture(const ::LibFred::OperationContext& _ctx)
         :fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3))
     {
         zone_soa.ttl = ::LibFred::Zone::default_ttl_in_seconds;

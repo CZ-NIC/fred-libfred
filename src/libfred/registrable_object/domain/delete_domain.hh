@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -58,7 +58,7 @@ public:
     * Executes delete.
     * @param ctx contains reference to database and logging interface
     */
-    void exec(OperationContext& ctx);
+    void exec(const OperationContext& ctx);
 
     /**
     * Dumps state of the instance into the string
@@ -95,7 +95,7 @@ public:
     * Executes delete.
     * @param ctx contains reference to database and logging interface
     */
-    void exec(OperationContext& ctx);
+    void exec(const OperationContext& ctx);
 
     /**
     * Dumps state of the instance into the string

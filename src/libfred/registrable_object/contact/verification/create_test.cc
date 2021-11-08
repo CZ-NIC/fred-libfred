@@ -57,7 +57,7 @@ namespace LibFred
         return *this;
     }
 
-    void CreateContactTest::exec(OperationContext& _ctx) {
+    void CreateContactTest::exec(const OperationContext& _ctx) {
         FREDLOG_DEBUG("CreateContactTest exec() started");
         FREDLOG_INFO(to_string());
 

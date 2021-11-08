@@ -29,7 +29,7 @@ GetNssetStateById::GetNssetStateById(unsigned long long nsset_id)
 {
 }
 
-GetNssetStateById::Result GetNssetStateById::exec(OperationContext& ctx) const
+GetNssetStateById::Result GetNssetStateById::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
     const std::string sql =
@@ -68,7 +68,7 @@ GetNssetStateByHandle::GetNssetStateByHandle(const std::string& fqdn)
 {
 }
 
-GetNssetStateByHandle::Result GetNssetStateByHandle::exec(OperationContext& ctx) const
+GetNssetStateByHandle::Result GetNssetStateByHandle::exec(const OperationContext& ctx) const
 {
     static const std::string sql_handle_case_normalize_function =
             object_type == Object_Type::domain ? "LOWER"
@@ -111,7 +111,7 @@ GetNssetStateByUuid::GetNssetStateByUuid(const NssetUuid& nsset_uuid)
 {
 }
 
-GetNssetStateByUuid::Result GetNssetStateByUuid::exec(OperationContext& ctx) const
+GetNssetStateByUuid::Result GetNssetStateByUuid::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params;
     const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";

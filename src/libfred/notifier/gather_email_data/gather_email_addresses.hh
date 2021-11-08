@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@
 namespace Notification {
 
 std::set<std::string> gather_email_addresses(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     const EventOnObject& _event_on_object,
     unsigned long long _history_id_post_change
 );

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -46,7 +46,7 @@ CreateZone& CreateZone::set_sending_warning_letter(const boost::optional<bool> _
     return *this;
 }
 
-unsigned long long CreateZone::exec(OperationContext& _ctx) const
+unsigned long long CreateZone::exec(const OperationContext& _ctx) const
 {
     const bool enum_zone = is_enum_zone(fqdn_);
     const bool enum_val_period_is_set = enum_validation_period_in_months_ != boost::none;

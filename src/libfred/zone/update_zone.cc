@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -61,7 +61,7 @@ UpdateZone& UpdateZone::set_sending_warning_letter(
     return *this;
 }
 
-unsigned long long UpdateZone::exec(OperationContext& _ctx) const
+unsigned long long UpdateZone::exec(const OperationContext& _ctx) const
 {
     const bool values_for_update_are_set = (expiration_period_min_in_months_ != boost::none
             || expiration_period_max_in_months_ != boost::none

@@ -29,7 +29,7 @@ GetDomainStateById::GetDomainStateById(unsigned long long domain_id)
 {
 }
 
-GetDomainStateById::Result GetDomainStateById::exec(OperationContext& ctx) const
+GetDomainStateById::Result GetDomainStateById::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
     const std::string sql =
@@ -68,7 +68,7 @@ GetDomainStateByFqdn::GetDomainStateByFqdn(const std::string& fqdn)
 {
 }
 
-GetDomainStateByFqdn::Result GetDomainStateByFqdn::exec(OperationContext& ctx) const
+GetDomainStateByFqdn::Result GetDomainStateByFqdn::exec(const OperationContext& ctx) const
 {
     static const std::string sql_handle_case_normalize_function =
             object_type == Object_Type::domain ? "LOWER"
@@ -111,7 +111,7 @@ GetDomainStateByUuid::GetDomainStateByUuid(const DomainUuid& domain_uuid)
 {
 }
 
-GetDomainStateByUuid::Result GetDomainStateByUuid::exec(OperationContext& ctx) const
+GetDomainStateByUuid::Result GetDomainStateByUuid::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params;
     const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";

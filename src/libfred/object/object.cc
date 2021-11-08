@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -71,7 +71,7 @@ CreateObject& CreateObject::set_logd_request_id(const Nullable<unsigned long lon
     return *this;
 }
 
-CreateObject::Result  CreateObject::exec(OperationContext& ctx)
+CreateObject::Result  CreateObject::exec(const OperationContext& ctx)
 {
     Result result;
 
@@ -182,7 +182,7 @@ UpdateObject& UpdateObject::set_logd_request_id(const Nullable<unsigned long lon
     return *this;
 }
 
-unsigned long long UpdateObject::exec(OperationContext& ctx)
+unsigned long long UpdateObject::exec(const OperationContext& ctx)
 {
     unsigned long long history_id = 0;
     try
@@ -268,7 +268,7 @@ InsertHistory::InsertHistory(const Nullable<unsigned long long>& logd_request_id
 , object_id_(object_id)
 {}
 
-unsigned long long InsertHistory::exec(OperationContext& ctx)
+unsigned long long InsertHistory::exec(const OperationContext& ctx)
 {
     unsigned long long history_id = 0;
     try
@@ -309,7 +309,7 @@ std::string InsertHistory::to_string() const
     );
 }
 
-static void delete_object_impl(OperationContext& ctx, unsigned long long id) {
+static void delete_object_impl(const OperationContext& ctx, unsigned long long id) {
     const Database::Result update_erdate_res = ctx.get_conn().exec_params(
         "UPDATE object_registry "
         "SET erdate=now() "
@@ -337,7 +337,7 @@ DeleteObjectByHandle::DeleteObjectByHandle(const std::string& handle
 , obj_type_(obj_type)
 {}
 
-void DeleteObjectByHandle::exec(OperationContext& ctx)
+void DeleteObjectByHandle::exec(const OperationContext& ctx)
 {
     try
     {
@@ -376,7 +376,7 @@ DeleteObjectById::DeleteObjectById(unsigned long long id)
     : id_(id)
 { }
 
-void DeleteObjectById::exec(OperationContext& ctx) {
+void DeleteObjectById::exec(const OperationContext& ctx) {
     try
     {
         get_object_id_by_object_id_with_lock(

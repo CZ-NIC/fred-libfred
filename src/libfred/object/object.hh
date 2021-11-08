@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,7 +72,7 @@ public:
         unsigned long long object_id;
         unsigned long long history_id;
     };
-    Result exec(OperationContext& ctx);
+    Result exec(const OperationContext& ctx);
 
     std::string to_string()const;
 private:
@@ -109,7 +109,7 @@ public:
     UpdateObject& set_authinfo(const std::string& authinfo);
     UpdateObject& set_logd_request_id(const Nullable<unsigned long long>& logd_request_id);
 
-    unsigned long long exec(OperationContext& ctx);//return history_id
+    unsigned long long exec(const OperationContext& ctx);//return history_id
 
     std::string to_string()const;
 private:
@@ -124,7 +124,7 @@ class InsertHistory : public Util::Printable<InsertHistory>
 {
 public:
     InsertHistory(const Nullable<unsigned long long>& logd_request_id, unsigned long long object_id);
-    unsigned long long exec(OperationContext& ctx);
+    unsigned long long exec(const OperationContext& ctx);
 
     std::string to_string()const;
 private:
@@ -144,7 +144,7 @@ public:
     DeleteObjectByHandle(const std::string& handle
             , const std::string& obj_type);
 
-    void exec(OperationContext& ctx);
+    void exec(const OperationContext& ctx);
 
     std::string to_string()const;
 private:
@@ -163,7 +163,7 @@ public:
 
     DeleteObjectById(unsigned long long id);
 
-    void exec(OperationContext& ctx);
+    void exec(const OperationContext& ctx);
 
     std::string to_string()const;
 private:

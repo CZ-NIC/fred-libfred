@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -30,7 +30,7 @@ GetRegistrarEppAuth::GetRegistrarEppAuth(const std::string& _registrar_handle)
 {
 }
 
-RegistrarEppAuthData GetRegistrarEppAuth::exec(OperationContext& _ctx) const
+RegistrarEppAuthData GetRegistrarEppAuth::exec(const OperationContext& _ctx) const
 {
     try
     {

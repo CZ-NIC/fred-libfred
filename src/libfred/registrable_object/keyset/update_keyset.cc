@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -102,7 +102,7 @@ UpdateKeyset& UpdateKeyset::set_logd_request_id(unsigned long long logd_request_
     return *this;
 }
 
-unsigned long long UpdateKeyset::exec(OperationContext& ctx)
+unsigned long long UpdateKeyset::exec(const OperationContext& ctx)
 {
     unsigned long long history_id = 0;
 

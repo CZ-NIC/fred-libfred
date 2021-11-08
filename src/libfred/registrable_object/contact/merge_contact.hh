@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -319,13 +319,13 @@ struct MergeContactOutput : Util::Printable<MergeContactOutput>
 class MergeContact : public Util::Printable<MergeContact>
 {
 public:
-    typedef boost::function<bool(OperationContext& ctx,
+    typedef boost::function<bool(const OperationContext& ctx,
                                  const std::string& src_contact_handle,
                                  const std::string& dst_contact_handle)> DiffContacts;
 
     struct DefaultDiffContacts
     {
-        bool operator()(OperationContext& ctx,
+        bool operator()(const OperationContext& ctx,
             const std::string& src_contact_handle,
             const std::string& dst_contact_handle) const;
     };
@@ -365,13 +365,13 @@ public:
     MergeContact(const std::string& from_contact_handle, const std::string& to_contact_handle, const std::string& registrar,
         DiffContacts diff_contacts_impl = DefaultDiffContacts());
     MergeContact& set_logd_request_id(unsigned long long logd_request_id);
-    MergeContactOutput exec_dry_run(OperationContext& ctx);//history_id not set in output
-    MergeContactOutput exec(OperationContext& ctx);
+    MergeContactOutput exec_dry_run(const OperationContext& ctx);//history_id not set in output
+    MergeContactOutput exec(const OperationContext& ctx);
     std::string to_string()const;
 private:
-    MergeContactLockedContactId lock_object_registry_row_for_update(OperationContext& ctx, bool dry_run);
-    void diff_contacts(OperationContext& ctx);
-    MergeContactOutput merge_contact_impl(OperationContext& ctx, bool dry_run);
+    MergeContactLockedContactId lock_object_registry_row_for_update(const OperationContext& ctx, bool dry_run);
+    void diff_contacts(const OperationContext& ctx);
+    MergeContactOutput merge_contact_impl(const OperationContext& ctx, bool dry_run);
 
     const std::string src_contact_handle_;//source contact identifier
     const std::string dst_contact_handle_;//destination contact identifier
@@ -380,7 +380,7 @@ private:
     DiffContacts diff_contacts_impl_;//implementation of diff_contacts
 };
 
-void create_poll_messages(const LibFred::MergeContactOutput& merge_data, LibFred::OperationContext& ctx);
+void create_poll_messages(const LibFred::MergeContactOutput& merge_data, const LibFred::OperationContext& ctx);
 
 }//namespace LibFred
 

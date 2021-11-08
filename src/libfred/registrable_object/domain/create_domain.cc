@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -144,7 +144,7 @@ CreateDomain& CreateDomain::set_logd_request_id(unsigned long long logd_request_
     return *this;
 }
 
-CreateDomain::Result CreateDomain::exec(OperationContext& ctx, const std::string& returned_timestamp_pg_time_zone_name)
+CreateDomain::Result CreateDomain::exec(const OperationContext& ctx, const std::string& returned_timestamp_pg_time_zone_name)
 {
     try
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -31,7 +31,7 @@ ObjectHasState::ObjectHasState(unsigned long long object_id, Object_State::Enum 
       state_(state)
 {}
 
-bool ObjectHasState::exec(OperationContext &ctx)
+bool ObjectHasState::exec(const OperationContext& ctx)
 {
     LockObjectStateRequestLock(object_id_).exec(ctx);
 

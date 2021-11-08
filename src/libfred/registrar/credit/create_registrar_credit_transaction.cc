@@ -40,7 +40,7 @@ CreateRegistrarCreditTransaction::CreateRegistrarCreditTransaction(
 {
 }
 
-unsigned long long CreateRegistrarCreditTransaction::exec(OperationContext& _ctx) const
+unsigned long long CreateRegistrarCreditTransaction::exec(const OperationContext& _ctx) const
 {
     try
     {

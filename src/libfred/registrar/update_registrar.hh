@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,7 +72,7 @@ public:
 
     UpdateRegistrarById& set_payment_memo_regex(const boost::optional<std::string>& _payment_memo_regex);
 
-    void exec(OperationContext& _ctx) const;
+    void exec(const OperationContext& _ctx) const;
 
 private:
     unsigned long long id_;

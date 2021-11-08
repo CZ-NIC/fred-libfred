@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -25,14 +25,14 @@ namespace LibFred
 
 namespace Nsset
 {
-    NssetHandleState::SyntaxValidity::Enum get_handle_syntax_validity(OperationContext& _ctx, const std::string& _nsset_handle) {
+    NssetHandleState::SyntaxValidity::Enum get_handle_syntax_validity(const OperationContext& _ctx, const std::string& _nsset_handle) {
         if (TestHandleOf< Object_Type::nsset >(_nsset_handle).is_invalid_handle(_ctx) ) {
             return NssetHandleState::SyntaxValidity::invalid;
         }
         return NssetHandleState::SyntaxValidity::valid;
     }
 
-    NssetHandleState::Registrability::Enum get_handle_registrability(OperationContext& _ctx, const std::string& _nsset_handle) {
+    NssetHandleState::Registrability::Enum get_handle_registrability(const OperationContext& _ctx, const std::string& _nsset_handle) {
         if (TestHandleOf< Object_Type::nsset >(_nsset_handle).is_registered(_ctx) ) {
             return NssetHandleState::Registrability::registered;
         }

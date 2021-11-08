@@ -56,7 +56,7 @@ static const ContactSelectionFilterType MCS_FILTER_RECENTLY_CREATED = "mcs_filte
 struct ContactSelectionFilterBase
 {
   virtual ~ContactSelectionFilterBase() {}
-  virtual std::vector<std::string> operator()(OperationContext& ctx, const std::vector<std::string>& contact_handle) = 0;
+  virtual std::vector<std::string> operator()(const OperationContext& ctx, const std::vector<std::string>& contact_handle) = 0;
 };
 
 struct MergeContactSelectionOutput : Util::Printable<MergeContactSelectionOutput>
@@ -99,7 +99,7 @@ public:
 
     MergeContactSelection(const std::vector<std::string>& contact_handle,
                           const std::vector<ContactSelectionFilterType>& filter);
-    MergeContactSelectionOutput exec(OperationContext& ctx);
+    MergeContactSelectionOutput exec(const OperationContext& ctx);
 
     std::string to_string()const;
 private:

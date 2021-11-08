@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -49,7 +49,7 @@ namespace LibFred
         return *this;
     }
 
-    InfoNssetOutput InfoNssetByHandle::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    InfoNssetOutput InfoNssetByHandle::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoNssetOutput> nsset_res;
 
@@ -103,7 +103,7 @@ namespace LibFred
         return *this;
     }
 
-    InfoNssetOutput InfoNssetById::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    InfoNssetOutput InfoNssetById::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoNssetOutput> nsset_res;
 
@@ -265,7 +265,7 @@ std::string InfoNssetByHistoryUuid::to_string() const
         return *this;
     }
 
-    std::vector<InfoNssetOutput> InfoNssetByDNSFqdn::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    std::vector<InfoNssetOutput> InfoNssetByDNSFqdn::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoNssetOutput> nsset_res;
 
@@ -330,7 +330,7 @@ std::string InfoNssetByHistoryUuid::to_string() const
         return *this;
     }
 
-    std::vector<InfoNssetOutput> InfoNssetByTechContactHandle::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    std::vector<InfoNssetOutput> InfoNssetByTechContactHandle::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoNssetOutput> nsset_res;
 
@@ -395,7 +395,7 @@ std::string InfoNssetByHistoryUuid::to_string() const
         return *this;
     }
 
-    std::vector<InfoNssetOutput> InfoNssetHistoryByRoid::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    std::vector<InfoNssetOutput> InfoNssetHistoryByRoid::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoNssetOutput> nsset_res;
 
@@ -439,7 +439,7 @@ std::string InfoNssetByHistoryUuid::to_string() const
         return *this;
     }
 
-    std::vector<InfoNssetOutput> InfoNssetHistoryById::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    std::vector<InfoNssetOutput> InfoNssetHistoryById::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoNssetOutput> nsset_history_res;
 
@@ -482,7 +482,7 @@ std::string InfoNssetByHistoryUuid::to_string() const
         return *this;
     }
 
-    InfoNssetOutput InfoNssetHistoryByHistoryid::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    InfoNssetOutput InfoNssetHistoryByHistoryid::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoNssetOutput> nsset_history_res;
 

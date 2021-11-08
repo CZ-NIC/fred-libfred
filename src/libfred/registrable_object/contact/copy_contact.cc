@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -78,7 +78,7 @@ Optional<ContactAddressList> to_optional(ContactAddressList _l)
 
 }//namespace LibFred::{anonymous}
 
-ObjectId CopyContact::exec(OperationContext &_ctx)
+ObjectId CopyContact::exec(const OperationContext& _ctx)
 {
     const Database::Result check_args_res = _ctx.get_conn().exec_params(
         "SELECT "

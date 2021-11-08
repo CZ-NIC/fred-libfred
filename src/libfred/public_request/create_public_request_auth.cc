@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -51,7 +51,7 @@ CreatePublicRequestAuth& CreatePublicRequestAuth::set_registrar_id(RegistrarId _
 }
 
 CreatePublicRequestAuth& CreatePublicRequestAuth::set_registrar_id(
-    OperationContext &_ctx,
+    const OperationContext& _ctx,
     const std::string &_registrar_handle)
 {
     const Database::Result res = _ctx.get_conn().exec_params(

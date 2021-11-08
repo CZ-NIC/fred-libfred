@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -82,7 +82,7 @@ RenewDomain& RenewDomain::set_logd_request_id(unsigned long long logd_request_id
     return *this;
 }
 
-unsigned long long RenewDomain::exec(OperationContext& ctx)
+unsigned long long RenewDomain::exec(const OperationContext& ctx)
 {
     try
     {

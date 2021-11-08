@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -110,7 +110,7 @@ public:
      * @param _output_timezone Postgres time zone input type (as string e. g. "Europe/Prague") for conversion to local time values.
      * @return Data of existing check in InfoContactCheckOutput structured.
      */
-    std::vector<ListChecksItem> exec(OperationContext& _ctx, const std::string& _output_timezone = "Europe/Prague");
+    std::vector<ListChecksItem> exec(const OperationContext& _ctx, const std::string& _output_timezone = "Europe/Prague");
 
     std::string to_string()const;
 private:

@@ -25,7 +25,7 @@
 namespace LibFred {
 namespace Registrar {
 
-unsigned long long CreateRegistrarGroup::exec(OperationContext& _ctx)
+unsigned long long CreateRegistrarGroup::exec(const OperationContext& _ctx)
 {
     try
     {

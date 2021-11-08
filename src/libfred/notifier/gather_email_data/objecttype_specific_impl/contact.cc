@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -374,7 +374,7 @@ std::map<std::string, std::string> gather_contact_update_data_change(
 }//namespace Notification::{anonymous}
 
 std::map<std::string, std::string> gather_contact_data_change(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         notified_event _event,
         unsigned long long _history_id_post_change)
 {
@@ -397,7 +397,7 @@ std::map<std::string, std::string> gather_contact_data_change(
 }
 
 std::set<std::string> get_emails_to_notify_contact_event(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         notified_event _event,
         unsigned long long _history_id_after_change)
 {

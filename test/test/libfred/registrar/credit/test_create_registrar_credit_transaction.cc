@@ -41,7 +41,7 @@
 
 namespace {
 
-void init_registrar_credit(::LibFred::OperationContext& _ctx,
+void init_registrar_credit(const ::LibFred::OperationContext& _ctx,
         unsigned long long _registrar_id,
         unsigned long long _zone_id)
 {

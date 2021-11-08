@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -27,7 +27,7 @@
 namespace Notification {
 
 void enqueue_notification(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     const notified_event    _event,
     unsigned long long      _done_by_registrar,
     unsigned long long      _object_historyid_post_change,

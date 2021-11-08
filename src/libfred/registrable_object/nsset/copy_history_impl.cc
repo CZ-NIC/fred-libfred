@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -21,7 +21,7 @@
 namespace LibFred
 {
     void copy_nsset_data_to_nsset_history_impl(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         const unsigned long long _nsset_id,
         const unsigned long long _historyid
     ) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -42,7 +42,7 @@ namespace LibFred
         return *this;
     }
 
-    void PerformObjectStateRequest::exec(OperationContext &_ctx)
+    void PerformObjectStateRequest::exec(const OperationContext& _ctx)
     {
         _ctx.get_conn().exec_params(
             "SELECT update_object_states($1::integer)",

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -61,7 +61,7 @@ const char* get_sql_conversion_function<uppercase>() { return "UPPER"; }
 
 template < Object_Type::Enum object_type >
 unsigned long long get_id_of_registered(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& handle)
 {
     static const std::string normalize_function =
@@ -87,9 +87,9 @@ unsigned long long get_id_of_registered(
     return static_cast<unsigned long long>(dbres[0][0]);
 }
 
-template unsigned long long get_id_of_registered<Object_Type::contact>(OperationContext&, const std::string&);
-template unsigned long long get_id_of_registered<Object_Type::nsset>(OperationContext&, const std::string&);
-template unsigned long long get_id_of_registered<Object_Type::domain>(OperationContext&, const std::string&);
-template unsigned long long get_id_of_registered<Object_Type::keyset>(OperationContext&, const std::string&);
+template unsigned long long get_id_of_registered<Object_Type::contact>(const OperationContext& , const std::string&);
+template unsigned long long get_id_of_registered<Object_Type::nsset>(const OperationContext& , const std::string&);
+template unsigned long long get_id_of_registered<Object_Type::domain>(const OperationContext& , const std::string&);
+template unsigned long long get_id_of_registered<Object_Type::keyset>(const OperationContext& , const std::string&);
 
 } // namespace LibFred

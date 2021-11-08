@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -245,7 +245,7 @@ std::string update_value(
 }//namespace LibFred::{anonymous}
 
 template <class DERIVED>
-unsigned long long UpdateContact<DERIVED>::exec(OperationContext& ctx, const InfoContactOutput& contact)
+unsigned long long UpdateContact<DERIVED>::exec(const OperationContext& ctx, const InfoContactOutput& contact)
 {
     unsigned long long history_id = 0;
 
@@ -715,7 +715,7 @@ UpdateContactById::UpdateContactById(
       select_contact_by_id_(LibFred::InfoContactById(id_).set_lock())
 {}
 
-unsigned long long UpdateContactById::exec(LibFred::OperationContext& ctx)
+unsigned long long UpdateContactById::exec(const LibFred::OperationContext& ctx)
 {
     try
     {
@@ -864,7 +864,7 @@ UpdateContactByHandle::UpdateContactByHandle(
       select_contact_by_handle_(LibFred::InfoContactByHandle(handle_).set_lock())
 {}
 
-unsigned long long UpdateContactByHandle::exec(LibFred::OperationContext& ctx)
+unsigned long long UpdateContactByHandle::exec(const LibFred::OperationContext& ctx)
 {
     try
     {

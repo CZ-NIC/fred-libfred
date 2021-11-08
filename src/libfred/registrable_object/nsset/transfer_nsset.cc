@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -45,7 +45,7 @@ namespace LibFred
      * @returns true if _authinfopw_for_authorization is correct
      * @throws UnknownNssetId
      */
-    static bool is_transfer_authorized(OperationContext& _ctx, const unsigned long long _nsset_id, const std::string& _authinfopw_for_authorization) {
+    static bool is_transfer_authorized(const OperationContext& _ctx, const unsigned long long _nsset_id, const std::string& _authinfopw_for_authorization) {
 
         LibFred::InfoNssetData nsset_data;
 
@@ -75,7 +75,7 @@ namespace LibFred
         return false;
     }
 
-    unsigned long long TransferNsset::exec(OperationContext& _ctx) {
+    unsigned long long TransferNsset::exec(const OperationContext& _ctx) {
 
         if (is_transfer_authorized(_ctx, nsset_id_, authinfopw_for_authorization_) ) {
             unsigned long long new_history_id;
