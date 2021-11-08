@@ -61,6 +61,9 @@ public:
     OperationContext(OperationContext&& src);
 
     OperationContext(const OperationContext&) = delete;
+
+    ~OperationContext();
+
     OperationContext& operator=(const OperationContext&) = delete;
     OperationContext& operator=(OperationContext&&) = delete;
 
@@ -74,7 +77,6 @@ public:
 private:
     OperationContext();
     OperationContext(std::unique_ptr<DbConn> conn);
-    ~OperationContext();
     std::unique_ptr<DbConn> conn_;
     friend class OperationContextCreator;
     friend class OperationContextTwoPhaseCommit;

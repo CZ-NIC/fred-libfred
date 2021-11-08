@@ -35,6 +35,7 @@ add_executable(test-libfred
     test/libfred/main.cc
     test/libfred/test_check_handle.cc
     test/libfred/test_flagset.cc
+    test/libfred/test_opcontext_by_libpg.cc
     test/libfred/test_opexception.cc
 #    test/libfred/contact/test_contact_history.cc
 #    test/libfred/contact/test_contact_state.cc
