@@ -43,12 +43,12 @@ namespace Database {
 /**
  * \class  Connection_
  * \brief  Standard connection proxy class
+ * \tparam connection_driver implementation e.g. PSQLConnection
  */
 template <class connection_driver, class manager_type>
 class Connection_
 {
 public:
-    using driver_type = connection_driver;//e.g. PSQLConnection
     using result_type = typename manager_type::result_type;
 
     explicit Connection_(connection_driver* _conn) : conn_(_conn) { }
@@ -219,6 +219,12 @@ public:
 #ifdef HAVE_LOGGER
         FREDLOG_DEBUG(boost::format("sql statement timout set to %1%ms") % t);
 #endif
+    }
+
+    template <typename T>
+    bool is_derived_from() const
+    {
+        return dynamic_cast<T*>(conn_) != nullptr;
     }
 private:
     void check_open()const

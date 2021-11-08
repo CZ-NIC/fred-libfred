@@ -58,6 +58,10 @@ PSQLConnection::PSQLConnection(const OpenType& need_to_open)
 #endif
 }
 
+PSQLConnection::PSQLConnection(PGconn* conn)
+    : psql_conn_{conn}
+{}
+
 PSQLConnection::~PSQLConnection()
 {
     this->close();

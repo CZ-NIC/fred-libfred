@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -52,7 +52,7 @@ public:
 
     explicit PSQLConnection(const OpenType& need_to_open);// throw (ConnectionFailed)
 
-    ~PSQLConnection();
+    virtual ~PSQLConnection();
 
     static std::string to_publicable_string(const OpenType& need_to_open);
 
@@ -80,6 +80,7 @@ public:
 
     bool is_in_valid_transaction()const;
 private:
+    explicit PSQLConnection(PGconn* conn);// used by the TerribleHack class
     PGconn* psql_conn_; ///< wrapped connection structure from libpq library
     friend class TerribleHack;
 };
