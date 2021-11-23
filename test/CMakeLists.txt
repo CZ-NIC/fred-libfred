@@ -13,14 +13,12 @@ target_include_directories(fred-test-common-static PUBLIC
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/..
-    ${PostgreSQL_INCLUDE_DIRS})
+    ${CMAKE_CURRENT_BINARY_DIR}/..)
 
 target_link_libraries(fred-test-common-static PUBLIC
     Boost::unit_test_framework
     Boost::program_options
-    Fred::library
-    ${PostgreSQL_LIBRARIES})
+    Fred::library)
 
 set_target_properties(fred-test-common-static PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -184,16 +182,14 @@ target_include_directories(test-libfred PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/..
-    ${PostgreSQL_INCLUDE_DIRS})
+    ${CMAKE_CURRENT_BINARY_DIR}/..)
 
 target_link_libraries(test-libfred PUBLIC
     Fred::library
 PRIVATE
     fred-test-common-static::library
     Boost::unit_test_framework
-    Boost::program_options
-    ${PostgreSQL_LIBRARIES})
+    Boost::program_options)
 
 include(GNUInstallDirs)
 
