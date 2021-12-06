@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -156,7 +156,11 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id_bad)
     ::LibFred::StatusList bad_status_list = status_list;
     try {
         ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
-        const Database::Result status_result = ctx.get_conn().exec("SELECT name FROM enum_object_states WHERE NOT (manual AND 3=ANY(types))");
+        const Database::Result status_result = ctx.get_conn().exec(
+                "SELECT name "
+                "FROM enum_object_states "
+                "WHERE NOT (manual AND 3=ANY(types)) AND "
+                      "name NOT LIKE 'server%'");
         for (::size_t idx = 0; idx < status_result.size(); ++idx) {
             bad_status_list.insert(status_result[idx][0]);
         }
@@ -167,7 +171,7 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id_bad)
     }
     catch (const ::LibFred::CreateAdminObjectBlockRequestId::Exception &ex) {
         BOOST_CHECK(ex.is_set_vector_of_state_not_found());
-        BOOST_CHECK(ex.get_vector_of_state_not_found().size() == (bad_status_list.size() - status_list.size()));
+        BOOST_CHECK_EQUAL(ex.get_vector_of_state_not_found().size(), (bad_status_list.size() - status_list.size()));
     }
 
     ::LibFred::StatusList status_list_a;

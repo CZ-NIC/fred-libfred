@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -656,6 +656,21 @@ struct contact
         info_data = make(ctx, _handle, _registrar_handle, _timezone);
         ctx.commit_transaction();
     }
+
+    void update(::LibFred::OperationContext& ctx)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateContactByHandle{info_data.handle, registrar};
+        op.set_name("Kontaktice Změněná");
+        op.exec(ctx);
+        info_data = ::LibFred::InfoContactByHandle{info_data.handle}.exec(ctx).info_contact_data;
+    }
 };
 
 struct domain
@@ -685,6 +700,22 @@ struct domain
         ::LibFred::OperationContextCreator ctx;
         info_data = make(ctx, _timezone);
         ctx.commit_transaction();
+    }
+
+    void update(::LibFred::OperationContext& ctx,
+                const std::string& admin_contact)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateDomain{info_data.fqdn, registrar};
+        op.add_admin_contact(admin_contact);
+        op.exec(ctx);
+        info_data = ::LibFred::InfoDomainByFqdn{info_data.fqdn}.exec(ctx).info_domain_data;
     }
 };
 
@@ -733,6 +764,22 @@ struct nsset
         info_data = make(ctx, _handle, _registrar_handle, _timezone);
         ctx.commit_transaction();
     }
+
+    void update(::LibFred::OperationContext& ctx,
+                const std::string& tech_contact)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateNsset{info_data.handle, registrar};
+        op.add_tech_contact(tech_contact);
+        op.exec(ctx);
+        info_data = ::LibFred::InfoNssetByHandle{info_data.handle}.exec(ctx).info_nsset_data;
+    }
 };
 
 struct keyset
@@ -779,6 +826,22 @@ struct keyset
         ::LibFred::OperationContextCreator ctx;
         info_data = make(ctx, _handle, _registrar_handle, _timezone);
         ctx.commit_transaction();
+    }
+
+    void update(::LibFred::OperationContext& ctx,
+                const std::string& tech_contact)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateKeyset{info_data.handle, registrar};
+        op.add_tech_contact(tech_contact);
+        op.exec(ctx);
+        info_data = ::LibFred::InfoKeysetByHandle{info_data.handle}.exec(ctx).info_keyset_data;
     }
 };
 
