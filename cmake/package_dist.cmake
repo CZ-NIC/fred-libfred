@@ -12,22 +12,24 @@ function(package_dist)
 
         if(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_PROGRAM)
             if(NOT TARGET dist)
+                message(STATUS "${PACKAGE_NAME}: Creating target dist")
                 add_custom_target(dist
                     COMMAND ${GIT_PROGRAM} archive --format=tar --prefix=${__PACKAGE_TARNAME}/ HEAD > ${CMAKE_BINARY_DIR}/.${__PACKAGE_TARNAME}.tar
-                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
                     string(TOUPPER "${PACKAGE_NAME}" package_name_upper_case)
                     foreach(dependency ${${package_name_upper_case}_DEPENDENCIES})
                         string(TOLOWER "${dependency}" dependency_lower_case)
+                        message(STATUS "${PACKAGE_NAME}: Adding to target dist dependent target dist_${dependency_lower_case}")
                         add_custom_command(
                             TARGET dist
                             COMMAND [ ! -f ${CMAKE_BINARY_DIR}/.${dependency_lower_case}.tar ] || (tar --concatenate --file=${CMAKE_BINARY_DIR}/.${__PACKAGE_TARNAME}.tar ${CMAKE_BINARY_DIR}/.${dependency_lower_case}.tar && rm ${CMAKE_BINARY_DIR}/.${dependency_lower_case}.tar)
-                            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
                         add_dependencies(dist "dist_${dependency_lower_case}")
                     endforeach()
                     add_custom_command(
                         TARGET dist
                         COMMAND cat ${CMAKE_BINARY_DIR}/.${__PACKAGE_TARNAME}.tar | gzip > ${CMAKE_BINARY_DIR}/${__PACKAGE_TARNAME}.tar.gz && rm ${CMAKE_BINARY_DIR}/.${__PACKAGE_TARNAME}.tar
-                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
             endif()
 
             if(DEFINED ENV{DISTCHECK_CMAKE_FLAGS})
@@ -89,17 +91,19 @@ function(package_dist)
     elseif(EXISTS ${CMAKE_SOURCE_DIR}/.git AND GIT_PROGRAM)
         string(TOLOWER "${__PACKAGE_NAME}" package_name_lower_case)
         if(NOT TARGET dist_${package_name_lower_case})
+            message(STATUS "${PACKAGE_NAME}: Creating target dist_${package_name_lower_case}")
             add_custom_target(dist_${package_name_lower_case}
                 COMMAND ${GIT_PROGRAM} -C ${CMAKE_CURRENT_SOURCE_DIR} archive --format=tar --prefix=${__PACKAGE_PREFIX}/ HEAD > ${CMAKE_BINARY_DIR}/.${package_name_lower_case}.tar
-                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
             string(TOUPPER "${PACKAGE_NAME}" package_name_upper_case)
             foreach(dependency ${${package_name_upper_case}_DEPENDENCIES})
                 string(TOLOWER "${dependency}" dependency_lower_case)
                 #if(NOT TARGET dist_${dependency_lower_case}) # FIXME check if build in this directory
+                    message(STATUS "${PACKAGE_NAME}: Adding to target dist_${package_name_lower_case} dependent target dist_${dependency_lower_case}")
                     add_custom_command(
                         TARGET dist_${package_name_lower_case}
                         COMMAND [ ! -f ${CMAKE_BINARY_DIR}/.${dependency_lower_case}.tar ] || (tar --concatenate --file=${CMAKE_BINARY_DIR}/.${package_name_lower_case}.tar ${CMAKE_BINARY_DIR}/.${dependency_lower_case}.tar && rm ${CMAKE_BINARY_DIR}/.${dependency_lower_case}.tar)
-                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
                 #endif()
                 add_dependencies("dist_${package_name_lower_case}" "dist_${dependency_lower_case}")
             endforeach()
