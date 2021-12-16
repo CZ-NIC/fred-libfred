@@ -266,7 +266,8 @@ set(Mpdec_LIBRARY mpdec)
 
 find_package(Threads REQUIRED)
 set(Threads_LIBRARIES Threads::Threads)
-set(PostgreSQL_ADDITIONAL_VERSIONS "9.6")
+set(PostgreSQL_ADDITIONAL_VERSIONS "13")
+set(PostgreSQL_TYPE_INCLUDE_DIR /usr/include/postgresql)
 find_package(PostgreSQL ${PostgreSQL_ADDITIONAL_VERSIONS} REQUIRED)
 find_package(Boost 1.53.0
     COMPONENTS
