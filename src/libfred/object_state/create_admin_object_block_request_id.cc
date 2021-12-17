@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -175,11 +175,11 @@ void CreateAdminObjectBlockRequestId::check_server_blocked_status_absent(Operati
             BOOST_THROW_EXCEPTION(Exception().add_state_not_found("serverBlocked"));
         }
         serverBlockedId = static_cast<unsigned long long>(obj_state_res[0][0]);
-        _ctx.get_log().debug("serverBlockedId = " + boost::lexical_cast<std::string>(serverBlockedId));
+        FREDLOG_DEBUG("serverBlockedId = " + boost::lexical_cast<std::string>(serverBlockedId));
     }
-    _ctx.get_log().debug("LockObjectStateRequestLock call");
+    FREDLOG_DEBUG("LockObjectStateRequestLock call");
     LockObjectStateRequestLock(object_id_).exec(_ctx);
-    _ctx.get_log().debug("LockObjectStateRequestLock success");
+    FREDLOG_DEBUG("LockObjectStateRequestLock success");
     const Database::Result rcheck = _ctx.get_conn().exec_params(
         "SELECT 1 "
         "FROM object_state "

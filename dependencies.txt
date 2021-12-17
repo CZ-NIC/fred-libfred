@@ -1,0 +1,2 @@
+# <repository> <commitish> <clone-path>
+fred/liblog release/1.4 external/lib/liblog

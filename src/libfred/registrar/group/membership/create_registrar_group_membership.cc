@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -70,12 +70,12 @@ unsigned long long CreateRegistrarGroupMembership::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER.error(e.what());
+        FREDLOG_ERROR(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to create registrar group membership due to an unknown exception");
+        FREDLOG_INFO("Failed to create registrar group membership due to an unknown exception");
         throw;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -53,8 +53,8 @@ UpdateContactCheck& UpdateContactCheck::set_logd_request_id(unsigned long long _
 
 void UpdateContactCheck::exec (OperationContext& _ctx)
 {
-    _ctx.get_log().debug("UpdateContactCheck exec() started");
-    _ctx.get_log().info(to_string());
+    FREDLOG_DEBUG("UpdateContactCheck exec() started");
+    FREDLOG_INFO(to_string());
 
     // using solo select for easy checking of existence (subselect would be strange)
     const Database::Result status_res = _ctx.get_conn().exec_params(
@@ -104,7 +104,7 @@ void UpdateContactCheck::exec (OperationContext& _ctx)
         throw;
     }
 
-    _ctx.get_log().debug("UpdateContactCheck executed successfully");
+    FREDLOG_DEBUG("UpdateContactCheck executed successfully");
 }
 
 std::string UpdateContactCheck::to_string() const

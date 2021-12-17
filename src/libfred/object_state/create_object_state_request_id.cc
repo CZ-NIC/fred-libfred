@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -80,7 +80,7 @@ std::pair<std::string, unsigned long long> CreateObjectStateRequestId::exec(Oper
         object_state_names += (*pState) + " ";
     }
 
-    _ctx.get_log().debug(
+    FREDLOG_DEBUG(
         "CreateObjectStateRequestId::exec object id: " + boost::lexical_cast< std::string >(object_id_) +
         " object state name: " + object_state_names +
         " valid from: " + boost::posix_time::to_iso_string(valid_from_.get_value_or_default()) +

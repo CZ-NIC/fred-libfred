@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -28,7 +28,7 @@
 #include "config.h"
 
 #ifdef HAVE_LOGGER
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
 #endif
 
 #include <string>
@@ -61,7 +61,7 @@ public:
   Result_(const result_type &_result) : result_(_result)
   {
 #ifdef HAVE_LOGGER
-      LOGGER.debug(boost::format("result created -- rows=%1%") % size());
+      FREDLOG_DEBUG(boost::format("result created -- rows=%1%") % size());
 #endif
   }
 

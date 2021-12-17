@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,70 +16,35 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef LOG_HH_122CBA13F35A4A728F0E7A261062A564
 #define LOG_HH_122CBA13F35A4A728F0E7A261062A564
 
+#include "liblog/liblog.hh"
+
 #include <boost/format.hpp>
 
-#include <list>
-#include <memory>
-#include <string>
-
-namespace Logging {
-
-class Log
+template <>
+struct fmt::formatter<boost::format>: formatter<std::string>
 {
-public:
-    Log();
-    ~Log();
-
-    enum class Severity
+    // parse is inherited from formatter<std::string>.
+    template <typename FormatContext>
+    auto format(const boost::format& fmt, FormatContext& ctx)
     {
-        emerg,
-        alert,
-        crit,
-        err,
-        warning,
-        notice,
-        info,
-        debug,
-        trace
-    };
-
-    class DeviceHandler;
-    Log& add_device_handler(std::unique_ptr<DeviceHandler>&& device_handler);
-
-    template <Severity severity>
-    bool is_sufficient()const;
-
-    void trace(const std::string& msg)const;
-    void trace(const boost::format& frmt)const;
-    void debug(const std::string& msg)const;
-    void debug(const boost::format& frmt)const;
-    void info(const std::string& msg)const;
-    void info(const boost::format& frmt)const;
-    void notice(const std::string& msg)const;
-    void notice(const boost::format& frmt)const;
-    void warning(const std::string& msg)const;
-    void warning(const boost::format& frmt)const;
-    void error(const std::string& msg)const;
-    void error(const boost::format& frmt)const;
-    void critical(const std::string& msg)const;
-    void critical(const boost::format& frmt)const;
-    void alert(const std::string& msg)const;
-    void alert(const boost::format& frmt)const;
-    void emerg(const std::string& msg)const;
-    void emerg(const boost::format& frmt)const;
-
-    /**
-     * support for old style formatting log
-     */
-    template <Severity severity_of_logged_event>
-    void message(const char* format, ...)const;
-private:
-    std::list<std::unique_ptr<DeviceHandler>> handlers_;
+        return formatter<std::string>::format(fmt.str(), ctx);
+    }
 };
 
-}//namespace Logging
+#define FREDLOG_TRACE(msg) LIBLOG_TRACE("{}", (msg))
+#define FREDLOG_DEBUG(msg) LIBLOG_DEBUG("{}", (msg))
+#define FREDLOG_INFO(msg) LIBLOG_INFO("{}", (msg))
+#define FREDLOG_NOTICE(msg) LIBLOG_INFO("{}", (msg))
+#define FREDLOG_WARNING(msg) LIBLOG_WARNING("{}", (msg))
+#define FREDLOG_ERROR(msg) LIBLOG_ERROR("{}", (msg))
+#define FREDLOG_CRITICAL(msg) LIBLOG_CRITICAL("{}", (msg))
+#define FREDLOG_ALERT(msg) LIBLOG_CRITICAL("{}", (msg))
+#define FREDLOG_EMERG(msg) LIBLOG_CRITICAL("{}", (msg))
+
+#define FREDLOG_SET_CONTEXT(cls, var, ...) LIBLOG_SET_CONTEXT(cls, var, ## __VA_ARGS__)
 
 #endif//LOG_HH_122CBA13F35A4A728F0E7A261062A564

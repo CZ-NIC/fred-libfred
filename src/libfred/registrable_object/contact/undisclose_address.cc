@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -76,13 +76,13 @@ void undisclose_address_async(
 
     if (are_preconditions_met_for_async_undisclose_address(ctx, _contact_id))
     {
-        ctx.get_log().info(boost::format("processing async undisclose address of contact %1%: "
+        FREDLOG_INFO(boost::format("processing async undisclose address of contact %1%: "
                                          "preconditions met, undisclosing address") % _contact_id);
         undisclose_address(ctx, _contact_id, _registrar_handle);
     }
     else
     {
-        ctx.get_log().info(boost::format("processing async undisclose address of contact %1%: "
+        FREDLOG_INFO(boost::format("processing async undisclose address of contact %1%: "
                                          "preconditions not met, doing nothing") % _contact_id);
     }
 

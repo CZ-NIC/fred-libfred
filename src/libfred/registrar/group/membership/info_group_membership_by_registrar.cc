@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -54,7 +54,7 @@ std::vector<GroupMembershipByRegistrar> InfoGroupMembershipByRegistrar::exec(Ope
     }
     catch (...)
     {
-        LOGGER.info("Failed to get info group membership by registrar due to an unknown exception");
+        FREDLOG_INFO("Failed to get info group membership by registrar due to an unknown exception");
         throw;
     }
 }

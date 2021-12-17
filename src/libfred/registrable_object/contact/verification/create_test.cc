@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -58,8 +58,8 @@ namespace LibFred
     }
 
     void CreateContactTest::exec(OperationContext& _ctx) {
-        _ctx.get_log().debug("CreateContactTest exec() started");
-        _ctx.get_log().info(to_string());
+        FREDLOG_DEBUG("CreateContactTest exec() started");
+        FREDLOG_INFO(to_string());
 
         // using solo select for easy checking of existence (subselect would be strange)
         const Database::Result check_res = _ctx.get_conn().exec_params(
@@ -152,7 +152,7 @@ namespace LibFred
             throw;
         }
 
-        _ctx.get_log().debug("CreateContactTest executed successfully");
+        FREDLOG_DEBUG("CreateContactTest executed successfully");
     }
 
     std::string CreateContactTest::to_string() const {

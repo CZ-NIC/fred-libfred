@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -57,7 +57,7 @@ RegistrarZoneAccessHistory GetZoneAccessHistory::exec(OperationContext& _ctx)con
                         return "registrar does not exist";
                     }
                 };
-                _ctx.get_log().debug("registrar \"" + registrar_handle_ + "\" does not exist");
+                FREDLOG_DEBUG("registrar \"" + registrar_handle_ + "\" does not exist");
                 throw RegistrarDoesNotExist();
             }
         }
@@ -90,7 +90,7 @@ RegistrarZoneAccessHistory GetZoneAccessHistory::exec(OperationContext& _ctx)con
                             return "invoice insertion failed";
                         }
                     };
-                    _ctx.get_log().debug("for registrar \"" + registrar_handle_ + "\" in \"" + zone_fqdn + "\" zone "
+                    FREDLOG_DEBUG("for registrar \"" + registrar_handle_ + "\" in \"" + zone_fqdn + "\" zone "
                                          "access range overlapping detected");
                     throw InvoiceInsertionFailure();
                 }
@@ -100,22 +100,22 @@ RegistrarZoneAccessHistory GetZoneAccessHistory::exec(OperationContext& _ctx)con
     }
     catch (const NonexistentRegistrar&)
     {
-        _ctx.get_log().info("GetZoneAccessHistory::exec() throws NonexistentRegistrar() exception");
+        FREDLOG_INFO("GetZoneAccessHistory::exec() throws NonexistentRegistrar() exception");
         throw;
     }
     catch (const OverlappingZoneAccessRange&)
     {
-        _ctx.get_log().info("GetZoneAccessHistory::exec() throws OverlappingZoneAccessRange() exception");
+        FREDLOG_INFO("GetZoneAccessHistory::exec() throws OverlappingZoneAccessRange() exception");
         throw;
     }
     catch (const Exception& e)
     {
-        _ctx.get_log().info(std::string("GetZoneAccessHistory::exec() throws Exception(\"") + e.what() + "\")");
+        FREDLOG_INFO(std::string("GetZoneAccessHistory::exec() throws Exception(\"") + e.what() + "\")");
         throw;
     }
     catch (const std::exception& e)
     {
-        _ctx.get_log().warning(std::string("GetZoneAccessHistory::exec() caught an std::exception(\"") + e.what() + "\")");
+        FREDLOG_WARNING(std::string("GetZoneAccessHistory::exec() caught an std::exception(\"") + e.what() + "\")");
         struct UnknownException : Exception
         {
             const char* what() const noexcept override
@@ -127,7 +127,7 @@ RegistrarZoneAccessHistory GetZoneAccessHistory::exec(OperationContext& _ctx)con
     }
     catch (...)
     {
-        _ctx.get_log().error("GetZoneAccessHistory::exec() throws an unexpected exception");
+        FREDLOG_ERROR("GetZoneAccessHistory::exec() throws an unexpected exception");
         throw;
     }
 }

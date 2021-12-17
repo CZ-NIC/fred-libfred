@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -25,7 +25,7 @@
 #define VALUE_HH_345838BAA73C4BD3ACC134711E9B1E05
 
 #include "util/util.hh"
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
 #include "util/types/data_types.hh"
 #include "util/types/convert_sql_pod.hh"
 #include "util/types/convert_sql_boost_datetime.hh"

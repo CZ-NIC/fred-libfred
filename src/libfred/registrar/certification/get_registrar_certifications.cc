@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -70,12 +70,12 @@ std::vector<RegistrarCertification> GetRegistrarCertifications::exec(OperationCo
     }
     catch (const std::exception& e)
     {
-        LOGGER.info(e.what());
+        FREDLOG_INFO(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to get registrar certifications due to unknown exception");
+        FREDLOG_INFO("Failed to get registrar certifications due to unknown exception");
         throw;
     }
 }
