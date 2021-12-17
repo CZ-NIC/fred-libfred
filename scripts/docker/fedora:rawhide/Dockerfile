@@ -1,7 +1,8 @@
-FROM fedora:33
+FROM fedora:rawhide
 
 RUN dnf -y clean all                  \
         && dnf -y install             \
+                findutils             \
                 cmake                 \
                 pkgconf               \
                 make                  \
@@ -11,7 +12,5 @@ RUN dnf -y clean all                  \
                 libidn-devel          \
                 mpdecimal-devel       \
                 libssh-devel          \
-                openssl-devel
-
-RUN rpm -Uvh https://download.postgresql.org/pub/repos/yum/reporpms/F-33-x86_64/pgdg-fedora-repo-latest.noarch.rpm \
-        && dnf -y install postgresql96-devel
+                openssl-devel         \
+                postgresql-server-devel
