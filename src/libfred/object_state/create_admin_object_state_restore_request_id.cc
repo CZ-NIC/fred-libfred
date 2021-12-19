@@ -63,7 +63,7 @@ CreateAdminObjectStateRestoreRequestId& CreateAdminObjectStateRestoreRequestId::
     return *this;
 }
 
-void CreateAdminObjectStateRestoreRequestId::exec(OperationContext& _ctx)
+void CreateAdminObjectStateRestoreRequestId::exec(const OperationContext& _ctx)
 {
     const ObjectStateId server_blocked_id = this->check_server_blocked_status_present(_ctx);
     enum ResultColumnIndex
@@ -143,7 +143,7 @@ void CreateAdminObjectStateRestoreRequestId::exec(OperationContext& _ctx)
 }
 
 ObjectStateId CreateAdminObjectStateRestoreRequestId::check_server_blocked_status_present(
-        OperationContext& _ctx)const
+        const OperationContext& _ctx)const
 {
     static ObjectStateId server_blocked_id = 0;
     if (server_blocked_id == 0)

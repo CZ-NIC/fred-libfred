@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef GET_NSSET_STATE_HH_2F51E52905A84B0CAED322022F4D81C4
 #define GET_NSSET_STATE_HH_2F51E52905A84B0CAED322022F4D81C4
 
@@ -36,7 +35,7 @@ public:
     static constexpr auto object_type = Object_Type::nsset;
     using Result = NssetState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx) const;
+    Result exec(const OperationContext& ctx) const;
 private:
     unsigned long long nsset_id_;
 };
@@ -48,7 +47,7 @@ public:
     static constexpr auto object_type = Object_Type::nsset;
     using Result = NssetState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx) const;
+    Result exec(const OperationContext& ctx) const;
 private:
     std::string fqdn_;
 };
@@ -60,7 +59,7 @@ public:
     static constexpr auto object_type = Object_Type::nsset;
     using Result = NssetState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx) const;
+    Result exec(const OperationContext& ctx) const;
 private:
     NssetUuid uuid_;
 };

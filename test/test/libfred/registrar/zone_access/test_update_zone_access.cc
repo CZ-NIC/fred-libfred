@@ -47,7 +47,7 @@ struct UpdateRegistrarZoneAccessFixture
     boost::gregorian::date from_date;
     boost::gregorian::date to_date;
 
-    UpdateRegistrarZoneAccessFixture(::LibFred::OperationContext& _ctx)
+    UpdateRegistrarZoneAccessFixture(const ::LibFred::OperationContext& _ctx)
         : registrar_handle(Random::Generator().get_seq(Random::CharSet::letters(), 10)),
           zone_fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           ex_period_min(Random::Generator().get(1, 5)),

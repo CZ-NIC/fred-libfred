@@ -37,7 +37,7 @@ struct create_zone_fixture
     int ex_period_min;
     int ex_period_max;
 
-    create_zone_fixture(::LibFred::OperationContext&)
+    create_zone_fixture(const ::LibFred::OperationContext& )
         : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           ex_period_min(6),
           ex_period_max(12)
@@ -48,7 +48,7 @@ struct create_zone_fixture
 
 BOOST_FIXTURE_TEST_SUITE(TestCreateZone, SupplyFixtureCtx<create_zone_fixture>)
 
-size_t exists_new_zone(const std::string& _fqdn, ::LibFred::OperationContext& _ctx)
+size_t exists_new_zone(const std::string& _fqdn, const ::LibFred::OperationContext& _ctx)
 {
     const Database::Result db_result = _ctx.get_conn().exec_params(
             "SELECT 1 FROM zone AS z "

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -37,7 +37,7 @@ namespace LibFred {
     /**
      * @throws ExceptionMultipleObjectHistories in case history table has multiple records with given history_id
      */
-    inline Nullable<unsigned long long> get_previous_object_historyid(LibFred::OperationContext& _ctx, unsigned long long history_id) {
+    inline Nullable<unsigned long long> get_previous_object_historyid(const LibFred::OperationContext& _ctx, unsigned long long history_id) {
 
         const Database::Result older_history_id_res = _ctx.get_conn().exec_params(
             "SELECT id FROM history WHERE next = $1::integer", Database::query_param_list(history_id)

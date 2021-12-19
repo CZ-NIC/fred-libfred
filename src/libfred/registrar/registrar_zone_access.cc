@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -29,7 +29,7 @@ namespace LibFred {
 bool is_zone_accessible_by_registrar(unsigned long long _registrar_id,
         unsigned long long _zone_id,
         boost::gregorian::date _local_today,
-        OperationContext& _ctx)
+        const OperationContext& _ctx)
 {
     const bool is_registrar_system = LibFred::InfoRegistrarById(_registrar_id).exec(_ctx).info_registrar_data.system.get_value_or(false);
 

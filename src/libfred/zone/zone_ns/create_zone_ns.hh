@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -36,7 +36,7 @@ public:
     CreateZoneNs& set_nameserver_ip_addresses(
             const std::vector<boost::asio::ip::address>& _nameserver_ip_addresses);
 
-    unsigned long long exec(OperationContext& _ctx) const;
+    unsigned long long exec(const OperationContext& _ctx) const;
 private:
     std::string zone_fqdn_;
     std::string nameserver_fqdn_;

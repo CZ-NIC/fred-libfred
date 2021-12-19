@@ -28,6 +28,7 @@
 #include "test/fake-src/util/cfg/handle_args.hh"
 #include "libfred/db_settings.hh"
 
+#include <boost/optional.hpp>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
 
@@ -42,93 +43,136 @@
  */
 class HandleDatabaseArgs : public HandleArgs
 {
-protected:
-    std::string conn_info;
 public:
-
     std::shared_ptr<boost::program_options::options_description>
-        get_options_description()
+    get_options_description()
     {
-        std::shared_ptr<boost::program_options::options_description> db_opts(
-                new boost::program_options::options_description(
-                        std::string("Database connection configuration")));
+        auto db_opts = std::make_shared<boost::program_options::options_description>(
+                "Database connection configuration");
         db_opts->add_options()
-                ("database.name", boost::program_options
-                            ::value<std::string>()->default_value(std::string("fred"))
-                        , "database name")
-                ("database.user", boost::program_options
-                            ::value<std::string>()->default_value(std::string("fred"))
-                        , "database user name")
-                ("database.password", boost::program_options
-                            ::value<std::string>(), "database password")
-                ("database.host", boost::program_options
-                            ::value<std::string>()->default_value(std::string("localhost"))
-                        , "database hostname")
-                ("database.port", boost::program_options
-                            ::value<unsigned int>(), "database port number")
-                ("database.timeout", boost::program_options
-                            ::value<unsigned int>(), "database timeout");
-
+                ("database.name",
+                        boost::program_options::value<std::string>()->default_value("fred"),
+                        "database name")
+                ("database.user",
+                        boost::program_options::value<std::string>()->default_value("fred"),
+                        "database user name")
+                ("database.password",
+                        boost::program_options::value<std::string>(),
+                        "database password")
+                ("database.host",
+                        boost::program_options::value<std::string>()->default_value("localhost"),
+                        "database hostname")
+                ("database.port",
+                        boost::program_options::value<unsigned int>(),
+                        "database port number")
+                ("database.timeout",
+                        boost::program_options::value<unsigned int>(),
+                        "database timeout");
         return db_opts;
-    }//get_options_description
+    }
 
-    void handle( int argc, char* argv[],  FakedArgs &fa)
+    void handle(int argc, char* argv[], FakedArgs& fa)
     {
         boost::program_options::variables_map vm;
         handler_parse_args()(get_options_description(), vm, argc, argv, fa);
 
         /* construct connection string */
-        conn_info += "host=";
-        conn_info += vm["database.host"].as<std::string>();
-        conn_info += " ";
+        host_ = vm["database.host"].as<std::string>();
+        conn_info_ += "host=" + host_ + " ";
 
         if (vm.count("database.port") == 1)
         {
-            conn_info += "port=";
-            conn_info += boost::lexical_cast<std::string>(vm["database.port"].as<unsigned>());
-            conn_info += " ";
+            port_ = vm["database.port"].as<unsigned>();
+            conn_info_ += "port=" + boost::lexical_cast<std::string>(*port_) + " ";
         }
 
-        conn_info += "dbname=";
-        conn_info += vm["database.name"].as<std::string>();
-        conn_info += " ";
+        db_name_ = vm["database.name"].as<std::string>();
+        conn_info_ += "dbname=" + db_name_ + " ";
 
-        conn_info += "user=";
-        conn_info += vm["database.user"].as<std::string>();
-        conn_info += " ";
+        user_ = vm["database.user"].as<std::string>();
+        conn_info_ += "user=" + user_ + " ";
 
         if (vm.count("database.password") == 1)
         {
-            conn_info += "password=";
-            conn_info += vm["database.password"].as<std::string>();
-            conn_info += " ";
+            password_ = vm["database.password"].as<std::string>();
+            conn_info_ += "password=" + *password_ + " ";
         }
 
         if (vm.count("database.timeout") == 1)
         {
-            conn_info += "connect_timeout=";
-            conn_info += boost::lexical_cast<std::string>(vm["database.timeout"].as<unsigned>());
-            conn_info += " ";
+            connect_timeout_sec_ = vm["database.timeout"].as<unsigned>();
+            conn_info_ += "connect_timeout=" + boost::lexical_cast<std::string>(*connect_timeout_sec_) + " ";
         }
 
-        Database::emplace_default_manager<Database::StandaloneManager>(conn_info);
-    }//handle
+        Database::emplace_default_manager<Database::StandaloneManager>(conn_info_);
+    }
 
-    std::string get_conn_info() {
-        if (conn_info.empty()) {
+    const std::string& get_conn_info() const
+    {
+        if (conn_info_.empty())
+        {
             throw std::runtime_error("Wrong usage: Connection info not initialized yet");
         }
-        return conn_info;
+        return conn_info_;
     }
-};//class HandleDatabaseArgs
+ 
+    const std::string& get_host() const
+    {
+        return host_;
+    }
+ 
+    bool has_port() const noexcept
+    {
+        return port_ != boost::none;
+    }
+    unsigned get_port() const
+    {
+        return *port_;
+    }
+ 
+    const std::string& get_db_name() const
+    {
+        return db_name_;
+    }
+ 
+    const std::string& get_user() const
+    {
+        return user_;
+    }
+ 
+    bool has_password() const noexcept
+    {
+        return password_ != boost::none;
+    }
+    const std::string& get_password() const
+    {
+        return *password_;
+    }
+ 
+    bool has_connect_timeout() const noexcept
+    {
+        return connect_timeout_sec_ != boost::none;
+    }
+    unsigned get_connect_timeout_sec() const
+    {
+        return *connect_timeout_sec_;
+    }
+private:
+    std::string conn_info_;
+    std::string host_;
+    boost::optional<unsigned> port_;
+    std::string db_name_;
+    std::string user_;
+    boost::optional<std::string> password_;
+    boost::optional<unsigned> connect_timeout_sec_;
+};
 
 /**
  * \class HandleLoggingArgsGrp
  * \brief database options handler with option groups
  */
-
-class HandleDatabaseArgsGrp : public HandleGrpArgs
-                            , private HandleDatabaseArgs
+class HandleDatabaseArgsGrp : public HandleGrpArgs,
+                              private HandleDatabaseArgs
 {
 public:
     std::shared_ptr<boost::program_options::options_description>
@@ -143,8 +187,7 @@ public:
         return option_group_index;
     }//handle
 
-    const std::string& get_conn_info(){return HandleDatabaseArgs::conn_info;}
-};//class HandleDatabaseArgsGrp
-
+    const std::string& get_conn_info() const { return this->HandleDatabaseArgs::get_conn_info(); }
+};
 
 #endif

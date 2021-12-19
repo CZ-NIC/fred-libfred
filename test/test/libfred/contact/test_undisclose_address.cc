@@ -55,7 +55,7 @@ struct ContactWithStatusIdentifiedContact
     : Test::LibFred::Contact::ContactWithStatus
 {
     ContactWithStatusIdentifiedContact(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             const std::string& _registrar_handle)
         : ContactWithStatus(_ctx, _registrar_handle, "identifiedContact")
     {
@@ -68,7 +68,7 @@ struct HasIdentifiedContactWithoutOrganization
     ContactWithStatusIdentifiedContact identified_contact;
     Test::LibFred::Contact::Registrar dedicated_registrar;
 
-    HasIdentifiedContactWithoutOrganization(::LibFred::OperationContext& _ctx)
+    HasIdentifiedContactWithoutOrganization(const ::LibFred::OperationContext& _ctx)
         : registrar(_ctx),
           identified_contact(_ctx, registrar.data.handle),
           dedicated_registrar(_ctx, "REG-DEDICATED")

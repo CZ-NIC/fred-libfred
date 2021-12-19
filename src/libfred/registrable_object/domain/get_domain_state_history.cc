@@ -30,7 +30,7 @@ namespace {
 
 template <typename T>
 DomainStateHistory get_domain_state_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -193,7 +193,7 @@ GetDomainStateHistoryById::GetDomainStateHistoryById(unsigned long long domain_i
 }
 
 GetDomainStateHistoryById::Result GetDomainStateHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -218,7 +218,7 @@ GetDomainStateHistoryByFqdn::GetDomainStateHistoryByFqdn(const std::string& _fqd
 }
 
 GetDomainStateHistoryByFqdn::Result GetDomainStateHistoryByFqdn::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -250,7 +250,7 @@ GetDomainStateHistoryByUuid::GetDomainStateHistoryByUuid(const DomainUuid& domai
 }
 
 GetDomainStateHistoryByUuid::Result GetDomainStateHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

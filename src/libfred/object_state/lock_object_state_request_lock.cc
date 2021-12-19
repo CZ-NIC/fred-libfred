@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@ namespace LibFred
     : object_id_(object_id)
     {}
 
-    void LockObjectStateRequestLock::exec(OperationContext &ctx)
+    void LockObjectStateRequestLock::exec(const OperationContext& ctx)
     {
         ctx.get_conn().exec_params("SELECT lock_object_state_request_lock($1::bigint)",
             Database::query_param_list(object_id_));

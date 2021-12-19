@@ -128,7 +128,7 @@ struct has_updated_nsset_followed_by_future_changes
         const std::string& _handle,
         const std::string& _registrar_handle,
         Tnssetoperation& _update,
-        ::LibFred::OperationContext& _ctx)
+        const ::LibFred::OperationContext& _ctx)
     {
         const unsigned long long to_be_notified_hid = _update.exec(_ctx);
 

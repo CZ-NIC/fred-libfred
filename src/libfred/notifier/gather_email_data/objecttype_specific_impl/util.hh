@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@
 namespace Notification {
 
     inline boost::posix_time::ptime get_utc_time_of_event(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         notified_event _event,
         unsigned long long _last_history_id
     ) {

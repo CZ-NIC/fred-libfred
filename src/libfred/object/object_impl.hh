@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -39,7 +39,7 @@ namespace LibFred
     * , or throw InternalError or some other exception in case of failure.
     */
 
-    unsigned long long get_object_type_id(OperationContext& ctx, const std::string& obj_type);
+    unsigned long long get_object_type_id(const OperationContext& ctx, const std::string& obj_type);
 
     /**
     * Gets object id by handle or fqdn and object type name and locks object_registry row for update or for share.
@@ -57,7 +57,7 @@ namespace LibFred
     * , or throw InternalError or some other exception in case of failure.
     */
     template <class EXCEPTION, typename EXCEPTION_OBJECT_HANDLE_SETTER>
-    unsigned long long get_object_id_by_handle_and_type_with_lock(OperationContext& ctx
+    unsigned long long get_object_id_by_handle_and_type_with_lock(const OperationContext& ctx
             , const bool lock_for_update
             , const std::string& object_handle, const std::string& object_type
             , EXCEPTION* ex_ptr, EXCEPTION_OBJECT_HANDLE_SETTER ex_handle_setter)
@@ -108,7 +108,7 @@ namespace LibFred
     */
     template <class EXCEPTION, typename EXCEPTION_HANDLE_SETTER>
         unsigned long long get_object_id_by_object_id_with_lock(
-            OperationContext& ctx,
+            const OperationContext& ctx,
             unsigned long long object_id,
             EXCEPTION* ex_ptr, EXCEPTION_HANDLE_SETTER ex_handle_setter
     ) {

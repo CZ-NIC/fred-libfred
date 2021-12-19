@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -45,7 +45,7 @@ ClearAdminObjectStateRequestId& ClearAdminObjectStateRequestId::set_reason(const
     return *this;
 }
 
-void ClearAdminObjectStateRequestId::exec(OperationContext &_ctx)
+void ClearAdminObjectStateRequestId::exec(const OperationContext& _ctx)
 {
     try
     {

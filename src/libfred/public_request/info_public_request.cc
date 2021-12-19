@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -60,7 +60,7 @@ IsNull set(Nullable< DST > &_dst, const Database::Value &_src, DST(*convert)(con
 
 } // namespace LibFred::{anonymous}
 
-PublicRequestInfo::PublicRequestInfo(OperationContext &_ctx, const LockedPublicRequest &_locked)
+PublicRequestInfo::PublicRequestInfo(const OperationContext& _ctx, const LockedPublicRequest &_locked)
 :   id_(_locked.get_id())
 {
     try {

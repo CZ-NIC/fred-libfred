@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@ namespace Zone {
         return fqdn;
     }
 
-    Data get_zone(OperationContext& ctx, const std::string& zone_name)
+    Data get_zone(const OperationContext& ctx, const std::string& zone_name)
     {
         const Database::Result zone_res = ctx.get_conn().exec_params(
             "SELECT id, enum_zone, fqdn, dots_max, ex_period_min, ex_period_max, val_period"
@@ -56,7 +56,7 @@ namespace Zone {
     }
 
     ///zone name in db have to be in lower case
-    Data find_zone_in_fqdn(OperationContext& ctx, const std::string& no_root_dot_fqdn)
+    Data find_zone_in_fqdn(const OperationContext& ctx, const std::string& no_root_dot_fqdn)
     {
         try
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@ public:
         ObjectState object_state_at_begin;
         ObjectState object_state_at_end;
     };
-    Result exec(OperationContext& _ctx);
+    Result exec(const OperationContext& _ctx);
 private:
     const unsigned long long history_id_;
 };

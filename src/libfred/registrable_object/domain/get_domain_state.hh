@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -35,7 +35,7 @@ public:
     static constexpr auto object_type = Object_Type::domain;
     using Result = DomainState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx)const;
+    Result exec(const OperationContext& ctx)const;
 private:
     unsigned long long domain_id_;
 };
@@ -47,7 +47,7 @@ public:
     static constexpr auto object_type = Object_Type::domain;
     using Result = DomainState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx)const;
+    Result exec(const OperationContext& ctx)const;
 private:
     std::string fqdn_;
 };
@@ -59,7 +59,7 @@ public:
     static constexpr auto object_type = Object_Type::domain;
     using Result = DomainState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx)const;
+    Result exec(const OperationContext& ctx)const;
 private:
     DomainUuid uuid_;
 };

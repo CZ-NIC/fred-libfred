@@ -66,11 +66,11 @@ CreateObjectStateRequestId& CreateObjectStateRequestId::set_valid_to(const Time 
 
 namespace {
 
-void check_valid_status(OperationContext& _ctx, ObjectId _object_id, const StatusList& _status_list);
+void check_valid_status(const OperationContext& _ctx, ObjectId _object_id, const StatusList& _status_list);
 
 }//namespace LibFred::{anonymous}
 
-std::pair<std::string, unsigned long long> CreateObjectStateRequestId::exec(OperationContext& _ctx)
+std::pair<std::string, unsigned long long> CreateObjectStateRequestId::exec(const OperationContext& _ctx)
 {
     std::string object_state_names;
 
@@ -276,7 +276,7 @@ std::pair<std::string, unsigned long long> CreateObjectStateRequestId::exec(Oper
 
 namespace {
 
-void check_valid_status(OperationContext &_ctx, ObjectId _object_id, const StatusList &_status_list)
+void check_valid_status(const OperationContext& _ctx, ObjectId _object_id, const StatusList &_status_list)
 {
     if (_status_list.empty())
     {

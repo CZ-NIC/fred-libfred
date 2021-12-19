@@ -1,18 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
 
-# project details
-
-include("cmake/package.cmake")
-
-package(fred-libfred FULL_VERSION "5.0.0")
-
-project(LibFred
-    VERSION ${PACKAGE_VERSION}
-    LANGUAGES CXX)
+get_directory_property(HAS_PARENT "PARENT_DIRECTORY")
+if(NOT HAS_PARENT)
+    set(IS_TOP_LEVEL TRUE)
+else()
+    set(IS_TOP_LEVEL FALSE)
+endif()
 
 # build options
 
-option(LIBFRED_BUILD_TESTS "Build ${PACKAGE_NAME} tests" ON)
+option(LIBFRED_BUILD_TESTS "Build ${PACKAGE_NAME} tests" ${IS_TOP_LEVEL})
 
 # compile options
 
@@ -22,6 +19,16 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 option(THREADS_PREFER_PTHREAD_FLAG "The -pthread compiler and linker flag preference." TRUE)
 option(CMAKE_EXPORT_COMPILE_COMMANDS "If enabled, generates a compile_commands.json file containing the exact compiler calls." ON)
 option(USE_LIBLOG "Library uses LibLog for application logging." TRUE)
+
+# project details
+
+include("cmake/package.cmake")
+
+package(fred-libfred FULL_VERSION "5.0.0")
+
+project(LibFred
+    VERSION ${PACKAGE_VERSION}
+    LANGUAGES CXX)
 
 # externals
 
@@ -40,9 +47,6 @@ set(Mpdec_LIBRARY mpdec)
 
 find_package(Threads REQUIRED)
 set(Threads_LIBRARIES Threads::Threads)
-set(PostgreSQL_ADDITIONAL_VERSIONS "13")
-set(PostgreSQL_TYPE_INCLUDE_DIR /usr/include/postgresql)
-find_package(PostgreSQL ${PostgreSQL_ADDITIONAL_VERSIONS} REQUIRED)
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 find_package(Boost 1.53.0
     COMPONENTS
@@ -85,8 +89,7 @@ function(set_common_properties_on_targets)
                 ${CMAKE_CURRENT_SOURCE_DIR}/src
             PRIVATE
                 ${CMAKE_CURRENT_SOURCE_DIR}
-                ${CMAKE_CURRENT_BINARY_DIR}
-                ${PostgreSQL_INCLUDE_DIRS})
+                ${CMAKE_CURRENT_BINARY_DIR})
         target_compile_options(${target_name}
             PUBLIC
                 $<$<CXX_COMPILER_ID:GNU>:-Wno-deprecated-copy>
@@ -322,10 +325,10 @@ PUBLIC
     Boost::random
     Boost::regex
     LibLog::library
+    LibPg::library
     ${Mpdec_LIBRARY}
     ${LIBIDN_LIBRARIES}
-    ${LIBCRYPTO_LIBRARIES}
-    ${PostgreSQL_LIBRARIES})
+    ${LIBCRYPTO_LIBRARIES})
 
 set_common_properties_on_targets(
     fred)
@@ -343,8 +346,7 @@ include(GNUInstallDirs)
 install(TARGETS fred
     DESTINATION ${CMAKE_INSTALL_SLIBDIR})
 
-get_directory_property(HAS_PARENT "PARENT_DIRECTORY")
-if(NOT HAS_PARENT)
+if(IS_TOP_LEVEL)
     add_custom_target(uninstall
         COMMAND xargs -L10 rm -v < ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt
         COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/install_manifest.txt | xargs -L1 dirname | sort | uniq | xargs -L10 rmdir -p --ignore-fail-on-non-empty)
@@ -353,7 +355,8 @@ endif()
 # dist
 
 include("cmake/package_dist.cmake")
-package_dist(PACKAGE_NAME "${PACKAGE_NAME}"
+package_dist(PACKAGE_NAME "${PROJECT_NAME}"
+             PACKAGE_PREFIX "${LIBFRED_PREFIX}"
              PACKAGE_TARNAME "${PACKAGE_TARNAME}")
 
 list_package_dependencies_recursive("${PACKAGE_NAME}")

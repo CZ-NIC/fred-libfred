@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@ public:
     GetHandleHistory(const std::string& handle);
     static constexpr Object_Type::Enum object_type = o;
     using Result = HandleHistory<object_type>;
-    Result exec(OperationContext& ctx)const;
+    Result exec(const OperationContext& ctx)const;
 private:
     std::string handle_;
 };

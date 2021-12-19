@@ -20,7 +20,7 @@
 
 namespace Test {
 
-unsigned long long get_zone_access_id(::LibFred::OperationContext& _ctx,
+unsigned long long get_zone_access_id(const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar,
         const std::string& _zone,
         const boost::gregorian::date& _from_date,

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -95,7 +95,7 @@ CreateNsset& CreateNsset::set_logd_request_id(unsigned long long logd_request_id
     return *this;
 }
 
-CreateNsset::Result CreateNsset::exec(OperationContext& ctx, const std::string& returned_timestamp_pg_time_zone_name)
+CreateNsset::Result CreateNsset::exec(const OperationContext& ctx, const std::string& returned_timestamp_pg_time_zone_name)
 {
     Result result;
 

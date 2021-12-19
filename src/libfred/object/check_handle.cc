@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -33,7 +33,7 @@ TestHandleOf<TYPE_OF_OBJECT>::TestHandleOf(const std::string &_handle)
 { }
 
 template <Object_Type::Enum TYPE_OF_OBJECT>
-bool TestHandleOf< TYPE_OF_OBJECT >::is_invalid_handle(OperationContext& _ctx)const
+bool TestHandleOf< TYPE_OF_OBJECT >::is_invalid_handle(const OperationContext& _ctx)const
 {
     const std::string object_type_name = Conversion::Enums::to_db_handle(TYPE_OF_OBJECT);
     const Database::Result db_res = _ctx.get_conn().exec_params(
@@ -72,7 +72,7 @@ bool TestHandleOf< TYPE_OF_OBJECT >::is_invalid_handle(OperationContext& _ctx)co
 
 
 template <Object_Type::Enum TYPE_OF_OBJECT>
-bool TestHandleOf<TYPE_OF_OBJECT>::is_protected(OperationContext& _ctx)const
+bool TestHandleOf<TYPE_OF_OBJECT>::is_protected(const OperationContext& _ctx)const
 {
     static const char *const parameter_name = "handle_registration_protection_period";
     const std::string object_type_name = Conversion::Enums::to_db_handle(TYPE_OF_OBJECT);
@@ -97,7 +97,7 @@ bool TestHandleOf<TYPE_OF_OBJECT>::is_protected(OperationContext& _ctx)const
 
 
 template <Object_Type::Enum TYPE_OF_OBJECT>
-bool TestHandleOf<TYPE_OF_OBJECT>::is_registered(OperationContext& _ctx)const
+bool TestHandleOf<TYPE_OF_OBJECT>::is_registered(const OperationContext& _ctx)const
 {
     const std::string object_type_name = Conversion::Enums::to_db_handle(TYPE_OF_OBJECT);
     const Database::Result db_res = _ctx.get_conn().exec_params(

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -40,7 +40,7 @@ public:
 
     CreateZone& set_sending_warning_letter(boost::optional<bool> _sending_warning_letter);
 
-    unsigned long long exec(OperationContext& _ctx) const;
+    unsigned long long exec(const OperationContext& _ctx) const;
 
 private:
     std::string fqdn_;

@@ -245,14 +245,14 @@ namespace {
 class PublicRequestLockGuardFake:public ::LibFred::LockedPublicRequestForUpdate
 {
 public:
-    PublicRequestLockGuardFake(::LibFred::OperationContext &_ctx, ::LibFred::PublicRequestId _public_request_id)
+    PublicRequestLockGuardFake(const ::LibFred::OperationContext& _ctx, ::LibFred::PublicRequestId _public_request_id)
         : ctx_(_ctx),
           public_request_id_(_public_request_id) { }
     virtual ~PublicRequestLockGuardFake() { }
 private:
     virtual ::LibFred::PublicRequestId get_id()const { return public_request_id_; }
-    virtual ::LibFred::OperationContext& get_ctx()const { return ctx_; }
-    ::LibFred::OperationContext &ctx_;
+    virtual const ::LibFred::OperationContext& get_ctx()const { return ctx_; }
+    const ::LibFred::OperationContext& ctx_;
     const ::LibFred::PublicRequestId public_request_id_;
 };
 

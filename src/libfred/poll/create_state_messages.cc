@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@ namespace Poll {
 {
 }
 
-unsigned long long CreateStateMessages::exec(OperationContext& _ctx) const
+unsigned long long CreateStateMessages::exec(const OperationContext& _ctx) const
 {
     std::ostringstream argument_list_query_part;
     std::ostringstream limit_query_part;

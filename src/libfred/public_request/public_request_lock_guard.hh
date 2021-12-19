@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -55,7 +55,7 @@ public:
      * Returns operation context which has been used for the public request locking.
      * @return reference to the operation context
      */
-    virtual OperationContext& get_ctx()const = 0;
+    virtual const OperationContext& get_ctx()const = 0;
 protected:
     virtual ~LockedPublicRequestForUpdate() { }
 };
@@ -77,7 +77,7 @@ public:
      * @param _ctx use database connection from this operation context
      * @param _identification unique string identification of public request with authentication
      */
-    PublicRequestLockGuardByIdentification(OperationContext &_ctx, const std::string &_identification);
+    PublicRequestLockGuardByIdentification(const OperationContext& _ctx, const std::string &_identification);
     /**
      * @warning It doesn't release lock contrary to expectations. The one will release by finishing of
      *          transaction wherein it was created.
@@ -85,8 +85,8 @@ public:
     virtual ~PublicRequestLockGuardByIdentification() { }
 private:
     virtual PublicRequestId get_id()const { return public_request_id_; }
-    virtual OperationContext& get_ctx()const { return ctx_; }
-    OperationContext &ctx_;
+    virtual const OperationContext& get_ctx()const { return ctx_; }
+    const OperationContext& ctx_;
     const PublicRequestId public_request_id_;
 };
 
@@ -107,7 +107,7 @@ public:
      * @param _ctx use database connection from this operation context
      * @param _id unique numeric identification of public request
      */
-    PublicRequestLockGuardById(OperationContext &_ctx, PublicRequestId _id);
+    PublicRequestLockGuardById(const OperationContext& _ctx, PublicRequestId _id);
     /**
      * @warning It doesn't release lock contrary to expectations. The one will release by finishing of
      *          transaction wherein it was created.
@@ -115,8 +115,8 @@ public:
     virtual ~PublicRequestLockGuardById() { }
 private:
     virtual PublicRequestId get_id()const { return public_request_id_; }
-    virtual OperationContext& get_ctx()const { return ctx_; }
-    OperationContext &ctx_;
+    virtual const OperationContext& get_ctx()const { return ctx_; }
+    const OperationContext& ctx_;
     const PublicRequestId public_request_id_;
 };
 

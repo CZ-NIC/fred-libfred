@@ -23,7 +23,7 @@
 namespace LibFred {
 namespace Registrar {
 
-void CancelRegistrarGroup::exec(OperationContext& _ctx)
+void CancelRegistrarGroup::exec(const OperationContext& _ctx)
 {
     try
     {

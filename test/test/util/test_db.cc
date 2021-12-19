@@ -111,7 +111,7 @@ void print_result(const Database::Result& result)
 }
 
 
-std::string get_non_existent_tablename(LibFred::OperationContext& ctx, const std::string& prefix)
+std::string get_non_existent_tablename(const LibFred::OperationContext& ctx, const std::string& prefix)
 {
     std::string nonexistent_tablename;
     int counter = 0;

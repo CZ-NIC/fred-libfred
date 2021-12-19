@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -59,7 +59,7 @@ struct Registrar
 
 
     Registrar(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             const std::string& _registrar_handle = "REG-TEST")
     {
         ::LibFred::CreateRegistrar(_registrar_handle).exec(_ctx);
@@ -95,7 +95,7 @@ struct Contact
 
 
     Contact(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             const std::string& _registrar_handle,
             const std::string& _contact_handle = "CONTACT")
     {
@@ -111,7 +111,7 @@ struct ObjectWithStatus
 {
 
     ObjectWithStatus(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             unsigned long long _object_id,
             const std::string& _status)
     {
@@ -154,7 +154,7 @@ struct ContactWithStatusRequest
 
 
     ContactWithStatusRequest(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             const std::string& _registrar_handle,
             const std::string& _status)
         : Contact(_ctx, _registrar_handle, "CONTACTWITH" + boost::algorithm::to_upper_copy(_status)),
@@ -172,7 +172,7 @@ struct ContactWithStatus
 
 
     ContactWithStatus(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             const std::string& _registrar_handle,
             const std::string& _status)
         : ContactWithStatusRequest(
@@ -192,7 +192,7 @@ struct ContactWithContactPassedManualVerification
 
 
     ContactWithContactPassedManualVerification(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             const std::string& _registrar_handle)
         : ContactWithStatus(_ctx, _registrar_handle, "contactPassedManualVerification")
     {
@@ -211,7 +211,7 @@ struct HasRegistrarWithContact
 
 
     HasRegistrarWithContact(
-            ::LibFred::OperationContext& _ctx)
+            const ::LibFred::OperationContext& _ctx)
         : registrar(_ctx),
           contact(_ctx, registrar.data.handle)
     {
@@ -228,7 +228,7 @@ struct HasRegistrarWithContactWithPassedManualVerification
 
 
     HasRegistrarWithContactWithPassedManualVerification(
-            ::LibFred::OperationContext& _ctx)
+            const ::LibFred::OperationContext& _ctx)
         : registrar(_ctx),
           contact_with_contact_passed_manual_verification(_ctx, registrar.data.handle)
     {

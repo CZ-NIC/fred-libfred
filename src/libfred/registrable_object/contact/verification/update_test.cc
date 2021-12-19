@@ -66,7 +66,7 @@ UpdateContactTest& UpdateContactTest::set_error_msg (const std::string& _error_m
     return *this;
 }
 
-void UpdateContactTest::exec (OperationContext& _ctx)
+void UpdateContactTest::exec (const OperationContext& _ctx)
 {
     FREDLOG_DEBUG("UpdateContactTest exec() started");
     FREDLOG_INFO(to_string());

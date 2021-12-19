@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -244,7 +244,7 @@ public:
      * Executes create
      * @param ctx contains reference to database and logging interface
      */
-    unsigned long long exec(OperationContext& ctx);
+    unsigned long long exec(const OperationContext& ctx);
 
     /**
      * Dumps state of the instance into the string

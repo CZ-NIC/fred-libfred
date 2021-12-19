@@ -35,7 +35,7 @@ namespace Test {
 
 struct CreateZoneNsFixture
 {
-    explicit CreateZoneNsFixture(::LibFred::OperationContext&)
+    explicit CreateZoneNsFixture(const ::LibFred::OperationContext& )
         : zone(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           nameserver_fqdn("a.ns.nic." + zone)
     { }
@@ -47,7 +47,7 @@ struct CreateZoneNsFixture
 
 BOOST_FIXTURE_TEST_SUITE(TestCreateZoneNs, SupplyFixtureCtx<CreateZoneNsFixture>)
 
-std::size_t exists_new_zone_ns(const std::string& _zone, ::LibFred::OperationContext& _ctx)
+std::size_t exists_new_zone_ns(const std::string& _zone, const ::LibFred::OperationContext& _ctx)
 {
     const Database::Result db_result = _ctx.get_conn().exec_params(
             "SELECT 1 FROM zone_ns AS zn "

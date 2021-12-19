@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -35,7 +35,7 @@ public:
             const std::string& _certificate_fingerprint,
             const std::string& _plain_password);
 
-    unsigned long long exec(OperationContext& _ctx) const;
+    unsigned long long exec(const OperationContext& _ctx) const;
 
 private:
     std::string registrar_handle_;

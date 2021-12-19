@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -47,7 +47,7 @@ InfoContactByHandle& InfoContactByHandle::set_lock()
     return *this;
 }
 
-InfoContactOutput InfoContactByHandle::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+InfoContactOutput InfoContactByHandle::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
 {
 
     try
@@ -103,7 +103,7 @@ InfoContactById& InfoContactById::set_lock()
     return *this;
 }
 
-InfoContactOutput InfoContactById::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+InfoContactOutput InfoContactById::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
 {
     try
     {
@@ -258,7 +258,7 @@ InfoContactHistoryByRoid& InfoContactHistoryByRoid::set_lock()
 }
 
 std::vector<InfoContactOutput> InfoContactHistoryByRoid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     try
@@ -309,7 +309,7 @@ InfoContactHistoryById& InfoContactHistoryById::set_lock()
 }
 
 std::vector<InfoContactOutput> InfoContactHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     try
@@ -360,7 +360,7 @@ InfoContactHistoryByHistoryid& InfoContactHistoryByHistoryid::set_lock()
 }
 
 InfoContactOutput InfoContactHistoryByHistoryid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     try

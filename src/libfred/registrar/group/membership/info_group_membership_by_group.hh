@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -39,7 +39,7 @@ public:
     : group_id_(_group_id)
     {}
 
-    std::vector<GroupMembershipByGroup> exec(OperationContext& _ctx);
+    std::vector<GroupMembershipByGroup> exec(const OperationContext& _ctx);
 
 private:
     unsigned long long group_id_;

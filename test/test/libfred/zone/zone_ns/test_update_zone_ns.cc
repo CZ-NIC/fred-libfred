@@ -41,7 +41,7 @@ namespace Test {
 
 struct UpdateZoneNsFixture
 {
-    explicit UpdateZoneNsFixture(::LibFred::OperationContext& _ctx)
+    explicit UpdateZoneNsFixture(const ::LibFred::OperationContext& _ctx)
         : zone(Random::Generator().get_seq(Random::CharSet::letters(), 3))
     {
         info_zone_ns.zone_id = ::LibFred::Zone::CreateZone(zone, 6, 12).exec(_ctx);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -50,7 +50,7 @@ inline bool operator==(const boost::optional<period_to_with_tz_t>& optional, boo
 #endif
 
 RequestFeeInfoEvent get_request_fee_info_message_impl(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long registrar_id,
         const boost::optional<period_to_with_tz_t>& period_to_with_tz)
 {
@@ -128,7 +128,7 @@ RequestFeeInfoEvent get_request_fee_info_message_impl(
 } // namespace LibFred::Poll::{anonymous}
 
 RequestFeeInfoEvent get_request_fee_info_message(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long registrar_id,
         const boost::posix_time::ptime& period_to,
         const std::string& time_zone)
@@ -138,7 +138,7 @@ RequestFeeInfoEvent get_request_fee_info_message(
 }
 
 RequestFeeInfoEvent get_last_request_fee_info_message(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long registrar_id)
 {
     return get_request_fee_info_message_impl(ctx, registrar_id, boost::none);

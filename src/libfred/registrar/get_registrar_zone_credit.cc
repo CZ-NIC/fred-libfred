@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -25,7 +25,7 @@ namespace LibFred {
 
 namespace {
 
-unsigned long long get_registrar_id_by_handle(OperationContext& ctx, const std::string& registrar_handle)
+unsigned long long get_registrar_id_by_handle(const OperationContext& ctx, const std::string& registrar_handle)
 {
     try
     {
@@ -53,7 +53,7 @@ unsigned long long get_registrar_id_by_handle(OperationContext& ctx, const std::
 
 } // namespace LibFred::{anonymous}
 
-RegistrarZoneCredit GetRegistrarZoneCredit::exec(OperationContext& _ctx, const std::string& _registrar_handle)const
+RegistrarZoneCredit GetRegistrarZoneCredit::exec(const OperationContext& _ctx, const std::string& _registrar_handle)const
 {
     const unsigned long long registrar_id = get_registrar_id_by_handle(_ctx, _registrar_handle);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -51,7 +51,7 @@ public:
     * @param ctx contains reference to database and logging interface
     * @return true if object exists and have the state set, false if not
     */
-    bool exec(OperationContext& ctx);
+    bool exec(const OperationContext& ctx);
 private:
     const unsigned long long object_id_;/**< database id of the object */
     const Object_State::Enum state_;/**< the state */

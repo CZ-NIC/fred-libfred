@@ -83,7 +83,7 @@ ListContactChecks& ListContactChecks::set_status_handle(const std::string& _stat
 }
 
 // exec and serialization
-std::vector<ListChecksItem> ListContactChecks::exec(OperationContext& _ctx, const std::string& _output_timezone)
+std::vector<ListChecksItem> ListContactChecks::exec(const OperationContext& _ctx, const std::string& _output_timezone)
 {
     FREDLOG_DEBUG("ListContactChecks exec() started");
     FREDLOG_INFO(this->to_string());

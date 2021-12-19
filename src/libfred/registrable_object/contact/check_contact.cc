@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -24,7 +24,7 @@ namespace LibFred {
 namespace Contact {
 
 ContactHandleState::SyntaxValidity::Enum get_handle_syntax_validity(
-        OperationContext& _ctx,
+        const OperationContext& _ctx,
         const std::string& _contact_handle)
 {
     if (TestHandleOf<Object_Type::contact>(_contact_handle).is_invalid_handle(_ctx))
@@ -35,7 +35,7 @@ ContactHandleState::SyntaxValidity::Enum get_handle_syntax_validity(
 }
 
 ContactHandleState::Registrability::Enum get_handle_registrability(
-        OperationContext& _ctx,
+        const OperationContext& _ctx,
         const std::string& _contact_handle)
 {
     if (TestHandleOf<Object_Type::contact>(_contact_handle).is_registered(_ctx))

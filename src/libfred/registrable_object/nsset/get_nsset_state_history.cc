@@ -30,7 +30,7 @@ namespace {
 
 template <typename T>
 NssetStateHistory get_nsset_state_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -193,7 +193,7 @@ GetNssetStateHistoryById::GetNssetStateHistoryById(unsigned long long nsset_id)
 }
 
 GetNssetStateHistoryById::Result GetNssetStateHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -218,7 +218,7 @@ GetNssetStateHistoryByHandle::GetNssetStateHistoryByHandle(const std::string& _n
 }
 
 GetNssetStateHistoryByHandle::Result GetNssetStateHistoryByHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -250,7 +250,7 @@ GetNssetStateHistoryByUuid::GetNssetStateHistoryByUuid(const NssetUuid& _nsset_u
 }
 
 GetNssetStateHistoryByUuid::Result GetNssetStateHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

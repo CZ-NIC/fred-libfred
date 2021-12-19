@@ -29,7 +29,7 @@ namespace LibFred {
 namespace Contact {
 
 void undisclose_address(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         unsigned long long _contact_id,
         const std::string& _registrar_handle)
 {
@@ -41,7 +41,7 @@ void undisclose_address(
 namespace {
 
 bool are_preconditions_met_for_async_undisclose_address(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         unsigned long long _contact_id)
 {
     {

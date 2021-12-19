@@ -40,7 +40,7 @@ namespace Test {
 
 struct UpdateZoneSoaFixture
 {
-    explicit UpdateZoneSoaFixture(::LibFred::OperationContext& _ctx)
+    explicit UpdateZoneSoaFixture(const ::LibFred::OperationContext& _ctx)
         : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           hostmaster("hostmaster@nic.cz"),
           ns_fqdn("t.ns.nic." + fqdn)

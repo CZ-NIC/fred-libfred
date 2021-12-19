@@ -37,7 +37,7 @@ namespace LibFred
     : fqdn_(fqdn), is_system_registrar_(_is_system_registrar)
     {}
 
-    bool CheckDomain::is_invalid_syntax(OperationContext& ctx) const
+    bool CheckDomain::is_invalid_syntax(const OperationContext& ctx) const
     {
         try
         {
@@ -85,7 +85,7 @@ namespace LibFred
         return false;//meaning ok
     }
 
-    bool CheckDomain::is_bad_zone(OperationContext& ctx) const
+    bool CheckDomain::is_bad_zone(const OperationContext& ctx) const
     {
         try
         {
@@ -119,7 +119,7 @@ namespace LibFred
         return false;//meaning ok
     }
 
-    bool CheckDomain::is_bad_length(OperationContext& ctx) const
+    bool CheckDomain::is_bad_length(const OperationContext& ctx) const
     {
         try
         {
@@ -159,7 +159,7 @@ namespace LibFred
         return false;//meaning ok
     }
 
-    bool CheckDomain::is_blacklisted(OperationContext& ctx) const
+    bool CheckDomain::is_blacklisted(const OperationContext& ctx) const
     {
         try
         {
@@ -185,7 +185,7 @@ namespace LibFred
         return false;//meaning ok
     }
 
-    bool CheckDomain::is_registered(OperationContext& ctx, std::string& conflicting_fqdn_out) const
+    bool CheckDomain::is_registered(const OperationContext& ctx, std::string& conflicting_fqdn_out) const
     {
         try
         {
@@ -252,14 +252,14 @@ namespace LibFred
         return false;//meaning ok
     }
 
-    bool CheckDomain::is_registered(OperationContext& ctx) const
+    bool CheckDomain::is_registered(const OperationContext& ctx) const
     {
         std::string conflicting_fqdn_out;
         return is_registered(ctx, conflicting_fqdn_out);
     }
 
 
-    bool CheckDomain::is_available(OperationContext& ctx) const
+    bool CheckDomain::is_available(const OperationContext& ctx) const
     {
         try
         {

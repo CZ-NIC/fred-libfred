@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -35,7 +35,7 @@ public:
     static constexpr auto object_type = Object_Type::contact;
     using Result = ContactState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx)const;
+    Result exec(const OperationContext& ctx)const;
 private:
     unsigned long long contact_id_;
 };
@@ -47,7 +47,7 @@ public:
     static constexpr auto object_type = Object_Type::contact;
     using Result = ContactState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx)const;
+    Result exec(const OperationContext& ctx)const;
 private:
     std::string handle_;
 };
@@ -59,7 +59,7 @@ public:
     static constexpr auto object_type = Object_Type::contact;
     using Result = ContactState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx)const;
+    Result exec(const OperationContext& ctx)const;
 private:
     ContactUuid uuid_;
 };

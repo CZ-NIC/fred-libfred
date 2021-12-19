@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -182,7 +182,7 @@ Database::ParamQuery InfoContact::make_query(const std::string& local_timestamp_
 }
 
 std::vector<InfoContactOutput> InfoContact::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoContactOutput> result;

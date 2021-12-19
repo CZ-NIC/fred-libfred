@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -28,7 +28,7 @@ InfoZone::InfoZone(const std::string& _fqdn)
 {
 }
 
-InfoZoneData InfoZone::exec(OperationContext& _ctx) const
+InfoZoneData InfoZone::exec(const OperationContext& _ctx) const
 {
     Database::Result result;
     try

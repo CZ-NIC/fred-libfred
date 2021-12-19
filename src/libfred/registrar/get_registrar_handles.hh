@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -67,7 +67,7 @@ namespace Registrar
         * @param ctx contains reference to database and logging interface
         * @return list of registrar handles except excluded, throws if excluded registrar handle doesn't exist
         */
-        std::vector<std::string> exec(OperationContext& ctx);
+        std::vector<std::string> exec(const OperationContext& ctx);
 
         /**
         * Executes getting list of registrar handles using it's own db connection.

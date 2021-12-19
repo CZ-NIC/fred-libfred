@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -112,7 +112,7 @@ public:
      * @throws LibFred::ExceptionUnknownCheckHandle
      * @return Data of existing check in InfoContactCheckOutput structure.
      */
-    InfoContactCheckOutput exec(OperationContext& _ctx, const std::string& _output_timezone = "Europe/Prague");
+    InfoContactCheckOutput exec(const OperationContext& _ctx, const std::string& _output_timezone = "Europe/Prague");
 
     std::string to_string()const;
 private:
@@ -121,7 +121,7 @@ private:
      * @param _check_id     specifies check which tests data should be retrieved
      */
     static std::vector<InfoContactCheckOutput::ContactTestResultData> get_test_data(
-            OperationContext& _ctx,
+            const OperationContext& _ctx,
             unsigned long long _check_id,
             const std::string& _output_timezone = "Europe/Prague");
     /**
@@ -129,7 +129,7 @@ private:
      * @param _check_id     specifies check which history should be retrieved
      */
     static std::vector<InfoContactCheckOutput::ContactCheckState> get_check_historical_states(
-            OperationContext& _ctx,
+            const OperationContext& _ctx,
             unsigned long long _check_id,
             const std::string& _output_timezone = "Europe/Prague");
 

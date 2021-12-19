@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -76,7 +76,7 @@ public:
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      * @throws InternalError otherwise
      */
-    InfoContactOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoContactOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -124,7 +124,7 @@ public:
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      * @throws InternalError otherwise
      */
-    InfoContactOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoContactOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -252,7 +252,7 @@ private:
          * @return history info data about the contact in descending order by historyid
          * @throws Exception in case of wrong input data or other predictable and superable failure.
          */
-        std::vector<InfoContactOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+        std::vector<InfoContactOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
         /**
          * Dumps state of the instance into the string
@@ -301,7 +301,7 @@ public:
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      * @throws InternalError otherwise
      */
-    std::vector<InfoContactOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoContactOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -349,7 +349,7 @@ public:
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      * @throws InternalError otherwise
      */
-    InfoContactOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoContactOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string

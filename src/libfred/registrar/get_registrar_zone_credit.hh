@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -27,7 +27,7 @@ namespace LibFred {
 class GetRegistrarZoneCredit
 {
 public:
-    RegistrarZoneCredit exec(OperationContext& _ctx, const std::string& _registrar_handle)const;
+    RegistrarZoneCredit exec(const OperationContext& _ctx, const std::string& _registrar_handle)const;
 };
 
 } // namespace LibFred

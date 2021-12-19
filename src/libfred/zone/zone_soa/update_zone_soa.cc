@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -74,7 +74,7 @@ UpdateZoneSoa& UpdateZoneSoa::set_ns_fqdn(const boost::optional<std::string>& _n
     return *this;
 }
 
-unsigned long long UpdateZoneSoa::exec(OperationContext& _ctx) const
+unsigned long long UpdateZoneSoa::exec(const OperationContext& _ctx) const
 {
     const bool values_for_update_are_set =
             (ttl_ != boost::none) ||

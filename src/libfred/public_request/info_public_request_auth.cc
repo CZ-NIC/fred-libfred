@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -20,7 +20,7 @@
 
 namespace LibFred {
 
-PublicRequestAuthInfo::PublicRequestAuthInfo(OperationContext &_ctx, const LockedPublicRequest &_locked)
+PublicRequestAuthInfo::PublicRequestAuthInfo(const OperationContext& _ctx, const LockedPublicRequest &_locked)
 :   PublicRequestInfo(_ctx, _locked)
 {
     try {

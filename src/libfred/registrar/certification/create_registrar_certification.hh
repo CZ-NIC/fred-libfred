@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -42,7 +42,7 @@ public:
 
     CreateRegistrarCertification& set_valid_until(boost::gregorian::date _valid_until);
 
-    unsigned long long exec(OperationContext& _ctx) const;
+    unsigned long long exec(const OperationContext& _ctx) const;
 
 private:
     unsigned long long registrar_id_;

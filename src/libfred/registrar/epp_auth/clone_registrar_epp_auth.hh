@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@ class CloneRegistrarEppAuth
 public:
     CloneRegistrarEppAuth(unsigned long long _id, const std::string& _certificate_fingerprint);
 
-    unsigned long long exec(OperationContext& _ctx) const;
+    unsigned long long exec(const OperationContext& _ctx) const;
 
 private:
     unsigned long long id_;

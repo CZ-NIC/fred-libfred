@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -24,13 +24,13 @@ namespace LibFred
 namespace
 {
 
-PublicRequestId lock_by_identification(OperationContext &_ctx, const std::string &_identification);
-PublicRequestId lock_by_id(OperationContext &_ctx, PublicRequestId _id);
+PublicRequestId lock_by_identification(const OperationContext& _ctx, const std::string &_identification);
+PublicRequestId lock_by_id(const OperationContext& _ctx, PublicRequestId _id);
 
 }
 
 PublicRequestLockGuardByIdentification::PublicRequestLockGuardByIdentification(
-    OperationContext &_ctx,
+    const OperationContext& _ctx,
     const std::string &_identification)
 :   ctx_(_ctx),
     public_request_id_(lock_by_identification(_ctx, _identification))
@@ -38,7 +38,7 @@ PublicRequestLockGuardByIdentification::PublicRequestLockGuardByIdentification(
 }
 
 PublicRequestLockGuardById::PublicRequestLockGuardById(
-    OperationContext &_ctx,
+    const OperationContext& _ctx,
     PublicRequestId _id)
 :   ctx_(_ctx),
     public_request_id_(lock_by_id(_ctx, _id))
@@ -48,7 +48,7 @@ PublicRequestLockGuardById::PublicRequestLockGuardById(
 namespace
 {
 
-PublicRequestId lock_by_identification(OperationContext &_ctx, const std::string &_identification)
+PublicRequestId lock_by_identification(const OperationContext& _ctx, const std::string &_identification)
 {
     //get lock to the end of transaction for given object
     const Database::Result res = _ctx.get_conn().exec_params(
@@ -65,7 +65,7 @@ PublicRequestId lock_by_identification(OperationContext &_ctx, const std::string
                               set_public_request_doesnt_exist(_identification));
 }
 
-PublicRequestId lock_by_id(OperationContext &_ctx, PublicRequestId _id)
+PublicRequestId lock_by_id(const OperationContext& _ctx, PublicRequestId _id)
 {
     //get lock to the end of transaction for given object
     const Database::Result res = _ctx.get_conn().exec_params(

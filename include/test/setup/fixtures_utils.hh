@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -484,21 +484,21 @@ unsigned long long generate_random_bigserial();
 std::string generate_random_handle();
 
 /** @returns a value not used in object_registry.id. No other qualities (e.g. being constant, non-repeating, ...) are guaranteed. */
-unsigned long long get_nonexistent_object_id(::LibFred::OperationContext& ctx);
+unsigned long long get_nonexistent_object_id(const ::LibFred::OperationContext& ctx);
 /** @returns a value not used in object_history.historyid. No other qualities (e.g. being constant, non-repeating, ...) are guaranteed. */
-unsigned long long get_nonexistent_object_historyid(::LibFred::OperationContext& ctx);
+unsigned long long get_nonexistent_object_historyid(const ::LibFred::OperationContext& ctx);
 /** @returns a value not used in message.id. No other qualities (e.g. being constant, non-repeating, ...) are guaranteed. */
-unsigned long long get_nonexistent_message_id(::LibFred::OperationContext& ctx);
+unsigned long long get_nonexistent_message_id(const ::LibFred::OperationContext& ctx);
 /** @returns a value not used in object_registry.handle. No other qualities (e.g. being constant, non-repeating, ...) are guaranteed. */
-std::string get_nonexistent_object_handle(::LibFred::OperationContext& ctx);
+std::string get_nonexistent_object_handle(const ::LibFred::OperationContext& ctx);
 /** @returns a value not used in registrar.id. No other qualities (e.g. being constant, non-repeating, ...) are guaranteed. */
-unsigned long long get_nonexistent_registrar_id(::LibFred::OperationContext& ctx);
+unsigned long long get_nonexistent_registrar_id(const ::LibFred::OperationContext& ctx);
 /** @returns a value not used in zone.id. No other qualities (e.g. being constant, non-repeating, ...) are guaranteed. */
-unsigned long long get_nonexistent_zone_id(::LibFred::OperationContext& ctx);
+unsigned long long get_nonexistent_zone_id(const ::LibFred::OperationContext& ctx);
 
 template <typename T>
 T get_nonexistent_value(
-        ::LibFred::OperationContext& ctx,
+        const ::LibFred::OperationContext& ctx,
         const std::string& table,
         const std::string& column,
         const std::string& postgres_type,
@@ -518,13 +518,13 @@ T get_nonexistent_value(
 }
 
 // TODO XXX - hopefully one day we break the dependency on cz zone creation before running tests
-unsigned long long  get_cz_zone_id(::LibFred::OperationContext& ctx);
+unsigned long long  get_cz_zone_id(const ::LibFred::OperationContext& ctx);
 
 // for use with temporary object - copying arguments - suboptimal but hopefully adequate enough
 template <typename TCreateOper>
 typename util::InfoXData_type<TCreateOper>::type exec(
         TCreateOper create,
-        ::LibFred::OperationContext& ctx,
+        const ::LibFred::OperationContext& ctx,
          const std::string& timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
 {
     create.exec(ctx);
@@ -541,7 +541,7 @@ typename util::InfoXData_type<TCreateOper>::type exec(
 template <typename TCreateOper>
 std::vector<typename util::InfoXData_type<TCreateOper>::type> exec(
         boost::ptr_vector<TCreateOper> objects,
-        ::LibFred::OperationContext& ctx,
+        const ::LibFred::OperationContext& ctx,
          const std::string& timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
 {
     std::vector<typename util::InfoXData_type<TCreateOper>::type> result;
@@ -559,7 +559,7 @@ public:
             const std::string& _domain_handle,
             const std::string& _registrar_handle);
 
-    std::pair<std::string, std::vector<std::string>> exec(::LibFred::OperationContext& ctx);
+    std::pair<std::string, std::vector<std::string>> exec(const ::LibFred::OperationContext& ctx);
 private:
     std::string domain_handle_;
     std::string registrar_handle_;
@@ -572,7 +572,7 @@ public:
             const std::string& _contact_handle,
             const std::string& _registrar_handle);
 
-    std::pair<std::string, std::vector<std::string>> exec(::LibFred::OperationContext& ctx);
+    std::pair<std::string, std::vector<std::string>> exec(const ::LibFred::OperationContext& ctx);
 private:
     std::string contact_handle_;
     std::string registrar_handle_;
@@ -585,7 +585,7 @@ struct registrar
     ::LibFred::InfoRegistrarData info_data;
 
     static ::LibFred::InfoRegistrarData make(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
              Optional<std::string> _handle = Optional<std::string>(),
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
     {
@@ -595,7 +595,7 @@ struct registrar
                 _timezone);
     }
 
-    explicit registrar(::LibFred::OperationContext& _ctx,
+    explicit registrar(const ::LibFred::OperationContext& _ctx,
               Optional<std::string> _handle = Optional<std::string>(),
               const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
     {
@@ -616,7 +616,7 @@ struct contact
     ::LibFred::InfoContactData info_data;
 
     static ::LibFred::InfoContactData make(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
              Optional<std::string> _handle = Optional<std::string>(),
              Optional<std::string> _registrar_handle = Optional<std::string>(),
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
@@ -639,7 +639,7 @@ struct contact
     }
 
     explicit contact(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
             Optional<std::string> _handle = Optional<std::string>(),
             Optional<std::string> _registrar_handle = Optional<std::string>(),
             const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
@@ -656,6 +656,21 @@ struct contact
         info_data = make(ctx, _handle, _registrar_handle, _timezone);
         ctx.commit_transaction();
     }
+
+    void update(const ::LibFred::OperationContext& ctx)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateContactByHandle{info_data.handle, registrar};
+        op.set_name("Kontaktice Změněná");
+        op.exec(ctx);
+        info_data = ::LibFred::InfoContactByHandle{info_data.handle}.exec(ctx).info_contact_data;
+    }
 };
 
 struct domain
@@ -663,7 +678,7 @@ struct domain
     ::LibFred::InfoDomainData info_data;
 
     static ::LibFred::InfoDomainData make(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
     {
         return exec(
@@ -674,7 +689,7 @@ struct domain
                 _timezone);
     }
 
-    explicit domain(::LibFred::OperationContext& _ctx,
+    explicit domain(const ::LibFred::OperationContext& _ctx,
                     const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
     {
         info_data = make(_ctx, _timezone);
@@ -686,6 +701,22 @@ struct domain
         info_data = make(ctx, _timezone);
         ctx.commit_transaction();
     }
+
+    void update(const ::LibFred::OperationContext& ctx,
+                const std::string& admin_contact)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateDomain{info_data.fqdn, registrar};
+        op.add_admin_contact(admin_contact);
+        op.exec(ctx);
+        info_data = ::LibFred::InfoDomainByFqdn{info_data.fqdn}.exec(ctx).info_domain_data;
+    }
 };
 
 struct nsset
@@ -693,7 +724,7 @@ struct nsset
     ::LibFred::InfoNssetData info_data;
 
     static ::LibFred::InfoNssetData make(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
              const Optional<std::string>& _handle = Optional<std::string>(),
              const Optional<std::string>& _registrar_handle = Optional<std::string>(),
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
@@ -716,7 +747,7 @@ struct nsset
     }
 
     explicit nsset(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
              const Optional<std::string>& _handle = Optional<std::string>(),
              const Optional<std::string>& _registrar_handle = Optional<std::string>(),
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
@@ -733,6 +764,22 @@ struct nsset
         info_data = make(ctx, _handle, _registrar_handle, _timezone);
         ctx.commit_transaction();
     }
+
+    void update(const ::LibFred::OperationContext& ctx,
+                const std::string& tech_contact)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateNsset{info_data.handle, registrar};
+        op.add_tech_contact(tech_contact);
+        op.exec(ctx);
+        info_data = ::LibFred::InfoNssetByHandle{info_data.handle}.exec(ctx).info_nsset_data;
+    }
 };
 
 struct keyset
@@ -740,7 +787,7 @@ struct keyset
     ::LibFred::InfoKeysetData info_data;
 
     static ::LibFred::InfoKeysetData make(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
              const Optional<std::string>& _handle = Optional<std::string>(),
              const Optional<std::string>& _registrar_handle = Optional<std::string>(),
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
@@ -763,7 +810,7 @@ struct keyset
     }
 
     explicit keyset(
-            ::LibFred::OperationContext& _ctx,
+            const ::LibFred::OperationContext& _ctx,
              const Optional<std::string>& _handle = Optional<std::string>(), \
              const Optional<std::string>& _registrar_handle = Optional<std::string>(),
              const std::string& _timezone = Tz::get_psql_handle_of<Tz::Europe::Prague>())
@@ -779,6 +826,22 @@ struct keyset
         ::LibFred::OperationContextCreator ctx;
         info_data = make(ctx, _handle, _registrar_handle, _timezone);
         ctx.commit_transaction();
+    }
+
+    void update(const ::LibFred::OperationContext& ctx,
+                const std::string& tech_contact)
+    {
+        const auto registrar = static_cast<std::string>(ctx.get_conn().exec_params(
+                "SELECT handle "
+                "FROM registrar "
+                "WHERE NOT system AND "
+                      "UPPER(handle) != UPPER($1::TEXT) "
+                      "LIMIT 1",
+                Database::query_param_list(info_data.sponsoring_registrar_handle))[0][0]);
+        auto op = ::LibFred::UpdateKeyset{info_data.handle, registrar};
+        op.add_tech_contact(tech_contact);
+        op.exec(ctx);
+        info_data = ::LibFred::InfoKeysetByHandle{info_data.handle}.exec(ctx).info_keyset_data;
     }
 };
 

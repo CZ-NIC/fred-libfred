@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -75,7 +75,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    InfoNssetOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoNssetOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -123,7 +123,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    InfoNssetOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoNssetOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -253,7 +253,7 @@ public:
     * @return info data about the nssets
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     */
-    std::vector<InfoNssetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoNssetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -303,7 +303,7 @@ public:
     * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
     * @return info data about the nssets
     */
-    std::vector<InfoNssetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoNssetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -345,7 +345,7 @@ public:
     * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
     * @return history info data about the nsset in descending order by historyid
     */
-    std::vector<InfoNssetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoNssetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -386,7 +386,7 @@ public:
     * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
     * @return history info data about the nsset in descending order by historyid
     */
-    std::vector<InfoNssetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoNssetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -434,7 +434,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    InfoNssetOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoNssetOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string

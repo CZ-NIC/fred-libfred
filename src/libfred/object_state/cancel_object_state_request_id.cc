@@ -39,7 +39,7 @@ CancelObjectStateRequestId::CancelObjectStateRequestId(ObjectId _object_id,
     status_list_(_status_list)
 {}
 
-void CancelObjectStateRequestId::exec(OperationContext &_ctx)
+void CancelObjectStateRequestId::exec(const OperationContext& _ctx)
 {
     std::string object_state_names;
 

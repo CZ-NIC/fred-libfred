@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -28,7 +28,7 @@ GetOpenedPublicRequest::GetOpenedPublicRequest(const PublicRequestTypeIface& _ty
 { }
 
 PublicRequestId GetOpenedPublicRequest::exec(
-    OperationContext& _ctx,
+    const OperationContext& _ctx,
     const LockedPublicRequestsOfObject& _locked_object,
     const Optional<LogRequestId>&)const
 {

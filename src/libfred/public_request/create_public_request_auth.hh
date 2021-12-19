@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -93,7 +93,7 @@ public:
      * @param _registrar_handle sets registrar id of registrar with this handle
      * @return operation instance reference to allow method chaining
      */
-    CreatePublicRequestAuth& set_registrar_id(OperationContext &_ctx, const std::string &_registrar_handle);
+    CreatePublicRequestAuth& set_registrar_id(const OperationContext& _ctx, const std::string &_registrar_handle);
 
     /**
      * Result of creation operation.

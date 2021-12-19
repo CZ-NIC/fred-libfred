@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -22,7 +22,7 @@
 namespace LibFred {
 namespace DnsSec {
 
-Algorithm::Usability get_algorithm_usability(OperationContext &ctx, int algorithm_number)
+Algorithm::Usability get_algorithm_usability(const OperationContext& ctx, int algorithm_number)
 {
     const Database::Result result = ctx.get_conn().exec_params(
             "SELECT EXISTS(SELECT 1 FROM dnssec_algorithm_blacklist WHERE alg_number=id) "

@@ -30,7 +30,7 @@ GetZoneAccessHistory::GetZoneAccessHistory(const std::string& _registrar_handle)
 {
 }
 
-RegistrarZoneAccessHistory GetZoneAccessHistory::exec(OperationContext& _ctx)const
+RegistrarZoneAccessHistory GetZoneAccessHistory::exec(const OperationContext& _ctx)const
 {
     try
     {

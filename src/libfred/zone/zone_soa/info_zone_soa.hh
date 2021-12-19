@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@ class InfoZoneSoa
 public:
     explicit InfoZoneSoa(const std::string& _fqdn);
 
-    InfoZoneSoaData exec(OperationContext& _ctx) const;
+    InfoZoneSoaData exec(const OperationContext& _ctx) const;
 
 private:
     std::string fqdn_;

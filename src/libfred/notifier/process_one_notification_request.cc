@@ -111,12 +111,12 @@ void send_email(std::shared_ptr<LibFred::Mailer::Manager> mailer, const EmailDat
 
 } // namespace Notification::{anonymous}
 
-bool process_one_notification_request(LibFred::OperationContext& _ctx, std::shared_ptr<LibFred::Mailer::Manager> _mailer) {
+bool process_one_notification_request(const LibFred::OperationContext& _ctx, std::shared_ptr<LibFred::Mailer::Manager> _mailer) {
 
     std::string log_prefix = "process_one_notification_request() ";
 
     struct process_postgres_locking_exception {
-        static Database::Result get_notification_to_send(LibFred::OperationContext& _ctx) {
+        static Database::Result get_notification_to_send(const LibFred::OperationContext& _ctx) {
 
             /* There is no hard guarantee that records in notification_queue are unique. It is no problem though. */
             try {

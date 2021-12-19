@@ -85,7 +85,7 @@ MergeContact& MergeContact::set_logd_request_id(unsigned long long logd_request_
     return *this;
 }
 
-MergeContactLockedContactId MergeContact::lock_object_registry_row_for_update(OperationContext& ctx, bool dry_run)
+MergeContactLockedContactId MergeContact::lock_object_registry_row_for_update(const OperationContext& ctx, bool dry_run)
 {
     MergeContactLockedContactId ret;
     {
@@ -156,7 +156,7 @@ MergeContactLockedContactId MergeContact::lock_object_registry_row_for_update(Op
     return ret;
 }
 
-void MergeContact::diff_contacts(OperationContext& ctx)
+void MergeContact::diff_contacts(const OperationContext& ctx)
 {
     if (diff_contacts_impl_)
     {
@@ -175,7 +175,7 @@ void MergeContact::diff_contacts(OperationContext& ctx)
     }
 }
 
-MergeContactOutput MergeContact::merge_contact_impl(OperationContext& ctx, bool dry_run)
+MergeContactOutput MergeContact::merge_contact_impl(const OperationContext& ctx, bool dry_run)
 {
     MergeContactOutput output;
 
@@ -500,7 +500,7 @@ MergeContactOutput MergeContact::merge_contact_impl(OperationContext& ctx, bool 
     return output;
 }
 
-MergeContactOutput MergeContact::exec_dry_run(OperationContext& ctx)
+MergeContactOutput MergeContact::exec_dry_run(const OperationContext& ctx)
 {
     try
     {
@@ -516,7 +516,7 @@ MergeContactOutput MergeContact::exec_dry_run(OperationContext& ctx)
     return MergeContactOutput();
 }
 
-MergeContactOutput MergeContact::exec(OperationContext& ctx)
+MergeContactOutput MergeContact::exec(const OperationContext& ctx)
 {
     try
     {
@@ -545,7 +545,7 @@ std::string MergeContact::to_string() const
 }
 
 bool MergeContact::DefaultDiffContacts::operator()(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& src_contact_handle,
         const std::string& dst_contact_handle)const
 {
@@ -662,7 +662,7 @@ bool MergeContact::DefaultDiffContacts::operator()(
     return contact_differs;
 }
 
-void create_poll_messages(const MergeContactOutput &_merge_data, OperationContext &_ctx)
+void create_poll_messages(const MergeContactOutput &_merge_data, const OperationContext& _ctx)
 {
     for (const auto& item : _merge_data.update_domain_registrant)
     {

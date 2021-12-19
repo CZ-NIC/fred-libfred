@@ -29,7 +29,7 @@ namespace {
 
 template <typename T>
 ContactStateHistory get_contact_state_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -191,7 +191,7 @@ GetContactStateHistoryById::GetContactStateHistoryById(unsigned long long contac
 { }
 
 GetContactStateHistoryById::Result GetContactStateHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -215,7 +215,7 @@ GetContactStateHistoryByHandle::GetContactStateHistoryByHandle(const std::string
 { }
 
 GetContactStateHistoryByHandle::Result GetContactStateHistoryByHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -246,7 +246,7 @@ GetContactStateHistoryByUuid::GetContactStateHistoryByUuid(const ContactUuid& co
 { }
 
 GetContactStateHistoryByUuid::Result GetContactStateHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

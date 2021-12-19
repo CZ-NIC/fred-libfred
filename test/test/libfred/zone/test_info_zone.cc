@@ -38,7 +38,7 @@ struct info_zone_fixture
     ::LibFred::Zone::NonEnumZone non_enum_zone;
     ::LibFred::Zone::EnumZone enum_zone;
 
-    info_zone_fixture(::LibFred::OperationContext& _ctx)
+    info_zone_fixture(const ::LibFred::OperationContext& _ctx)
     {
         non_enum_zone.fqdn = "zoo";
         non_enum_zone.expiration_period_max_in_months = 6;

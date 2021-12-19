@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@ class InfoZoneNs
 public:
     explicit InfoZoneNs(unsigned long long _id);
 
-    InfoZoneNsData exec(OperationContext& _ctx) const;
+    InfoZoneNsData exec(const OperationContext& _ctx) const;
 
 private:
     unsigned long long id_;

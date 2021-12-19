@@ -54,7 +54,7 @@ MergeContactSelection::MergeContactSelection(const std::vector<std::string>& con
     }
 }
 
-MergeContactSelectionOutput MergeContactSelection::exec(OperationContext& ctx)
+MergeContactSelectionOutput MergeContactSelection::exec(const OperationContext& ctx)
 {
     try
     {
@@ -108,7 +108,7 @@ class FilterIdentifiedContact
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterIdentifiedContact>
 {
 public:
-    std::vector<std::string> operator()(OperationContext& ctx
+    std::vector<std::string> operator()(const OperationContext& ctx
             , const std::vector<std::string>& contact_handle)
     {
 
@@ -141,7 +141,7 @@ class FilterIdentityAttached
 {
 public:
     std::vector<std::string> operator()(
-            OperationContext& ctx,
+            const OperationContext& ctx,
             const std::vector<std::string>& contacts) override
     {
         std::vector<std::string> filtered;
@@ -175,7 +175,7 @@ class FilterConditionallyIdentifiedContact
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterConditionallyIdentifiedContact>
 {
 public:
-    std::vector<std::string> operator()(OperationContext& ctx
+    std::vector<std::string> operator()(const OperationContext& ctx
             , const std::vector<std::string>& contact_handle)
     {
         std::vector<std::string> filtered;
@@ -209,7 +209,7 @@ class FilterHandleMojeIDSyntax
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterHandleMojeIDSyntax>
 {
 public:
-    std::vector<std::string> operator()(OperationContext&
+    std::vector<std::string> operator()(const OperationContext& 
             , const std::vector<std::string>& contact_handle)
     {
         boost::regex mojeid_handle_syntax("^[a-z0-9](-?[a-z0-9])*$");
@@ -236,7 +236,7 @@ class FilterMaxDomainsBound
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterMaxDomainsBound>
 {
 public:
-    std::vector<std::string> operator()(OperationContext& ctx
+    std::vector<std::string> operator()(const OperationContext& ctx
             , const std::vector<std::string>& contact_handle)
     {
         std::vector<std::string> filtered;
@@ -295,7 +295,7 @@ class FilterMaxObjectsBound
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterMaxObjectsBound>
 {
 public:
-    std::vector<std::string> operator()(OperationContext& ctx
+    std::vector<std::string> operator()(const OperationContext& ctx
             , const std::vector<std::string>& contact_handle)
     {
         std::vector<std::string> filtered;
@@ -359,7 +359,7 @@ class FilterRecentlyUpdated
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterRecentlyUpdated>
 {
 public:
-    std::vector<std::string> operator()(OperationContext& ctx
+    std::vector<std::string> operator()(const OperationContext& ctx
             , const std::vector<std::string>& contact_handle)
     {
         std::vector<std::string> filtered;
@@ -413,7 +413,7 @@ class FilterNotRegCzNic
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterNotRegCzNic>
 {
 public:
-    std::vector<std::string> operator()(OperationContext& ctx
+    std::vector<std::string> operator()(const OperationContext& ctx
             , const std::vector<std::string>& contact_handle)
     {
         std::vector<std::string> filtered;
@@ -456,7 +456,7 @@ class FilterRecentlyCreated
 , public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterRecentlyCreated>
 {
 public:
-    std::vector<std::string> operator()(OperationContext& ctx
+    std::vector<std::string> operator()(const OperationContext& ctx
             , const std::vector<std::string>& contact_handle)
     {
         std::vector<std::string> filtered;

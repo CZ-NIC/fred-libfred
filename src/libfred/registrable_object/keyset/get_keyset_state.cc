@@ -30,7 +30,7 @@ GetKeysetStateById::GetKeysetStateById(unsigned long long keyset_id)
 {
 }
 
-GetKeysetStateById::Result GetKeysetStateById::exec(OperationContext& ctx) const
+GetKeysetStateById::Result GetKeysetStateById::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
     const std::string sql =
@@ -69,7 +69,7 @@ GetKeysetStateByHandle::GetKeysetStateByHandle(const std::string& fqdn)
 {
 }
 
-GetKeysetStateByHandle::Result GetKeysetStateByHandle::exec(OperationContext& ctx) const
+GetKeysetStateByHandle::Result GetKeysetStateByHandle::exec(const OperationContext& ctx) const
 {
     static const std::string sql_handle_case_normalize_function =
             object_type == Object_Type::domain ? "LOWER"
@@ -112,7 +112,7 @@ GetKeysetStateByUuid::GetKeysetStateByUuid(const KeysetUuid& keyset_uuid)
 {
 }
 
-GetKeysetStateByUuid::Result GetKeysetStateByUuid::exec(OperationContext& ctx) const
+GetKeysetStateByUuid::Result GetKeysetStateByUuid::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params;
     const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -47,7 +47,7 @@ namespace Registrar
     * , or throw InternalError or some other exception in case of failure.
     */
     template <class EXCEPTION, typename EXCEPTION_SETTER>
-    unsigned long long get_registrar_id_by_handle(OperationContext& ctx, const std::string& registrar_handle
+    unsigned long long get_registrar_id_by_handle(const OperationContext& ctx, const std::string& registrar_handle
             , EXCEPTION* ex_ptr, EXCEPTION_SETTER ex_setter)
     {//check registrar
         const Database::Result registrar_res = ctx.get_conn().exec_params(

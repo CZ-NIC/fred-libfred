@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -33,7 +33,7 @@ class GetRegistrarEppAuth
 public:
     explicit GetRegistrarEppAuth(const std::string& _registrar_handle);
 
-    RegistrarEppAuthData exec(OperationContext& _ctx) const;
+    RegistrarEppAuthData exec(const OperationContext& _ctx) const;
 
 private:
     std::string registrar_handle_;

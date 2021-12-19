@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_SUITE(TestCreateStateMessages)
 
 namespace {
 
-unsigned long long get_number_of_poll_messages(::LibFred::OperationContext& _ctx)
+unsigned long long get_number_of_poll_messages(const ::LibFred::OperationContext& _ctx)
 {
     const Database::Result sql_query_result = _ctx.get_conn().exec("SELECT COUNT(*) FROM message");
     BOOST_REQUIRE_EQUAL(sql_query_result.size(), 1);

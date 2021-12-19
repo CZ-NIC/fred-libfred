@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -134,7 +134,7 @@ public:
      * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
      * @return info data about the domain descendingly ordered by domain historyid
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC")const;
+    std::vector<InfoDomainOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC")const;
 private:
     Database::ParamQuery make_domain_query(const std::string& local_timestamp_pg_time_zone_name)const;
     Database::ParamQuery make_admin_query(unsigned long long id, unsigned long long historyid)const;

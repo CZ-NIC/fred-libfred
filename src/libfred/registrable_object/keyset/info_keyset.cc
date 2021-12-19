@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -51,7 +51,7 @@ namespace LibFred
         return *this;
     }
 
-    InfoKeysetOutput InfoKeysetByHandle::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    InfoKeysetOutput InfoKeysetByHandle::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoKeysetOutput> keyset_res;
 
@@ -106,7 +106,7 @@ namespace LibFred
         return *this;
     }
 
-    InfoKeysetOutput InfoKeysetById::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    InfoKeysetOutput InfoKeysetById::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoKeysetOutput> keyset_res;
 
@@ -264,7 +264,7 @@ std::string InfoKeysetByHistoryUuid::to_string() const
         return *this;
     }
 
-    std::vector<InfoKeysetOutput> InfoKeysetHistoryByRoid::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    std::vector<InfoKeysetOutput> InfoKeysetHistoryByRoid::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoKeysetOutput> keyset_res;
 
@@ -309,7 +309,7 @@ std::string InfoKeysetByHistoryUuid::to_string() const
         return *this;
     }
 
-    std::vector<InfoKeysetOutput> InfoKeysetHistoryById::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    std::vector<InfoKeysetOutput> InfoKeysetHistoryById::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoKeysetOutput> keyset_history_res;
 
@@ -353,7 +353,7 @@ std::string InfoKeysetByHistoryUuid::to_string() const
         return *this;
     }
 
-    InfoKeysetOutput InfoKeysetHistoryByHistoryid::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    InfoKeysetOutput InfoKeysetHistoryByHistoryid::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoKeysetOutput> keyset_history_res;
 
@@ -415,7 +415,7 @@ std::string InfoKeysetByHistoryUuid::to_string() const
         return *this;
     }
 
-    std::vector<InfoKeysetOutput> InfoKeysetByTechContactHandle::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+    std::vector<InfoKeysetOutput> InfoKeysetByTechContactHandle::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
     {
         std::vector<InfoKeysetOutput> keyset_res;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -36,7 +36,7 @@ namespace Verification {
 /* OperationContext versions */
 
 bool conditionally_cancel_final_states(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long contact_id,
         bool name_changed,
         bool organization_changed,
@@ -57,15 +57,15 @@ bool conditionally_cancel_final_states(
 
 /** @returns true if contact has changed data related to verification false otherwise */
 bool conditionally_cancel_final_states(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long contact_id);
 
 void cancel_all_states(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long contact_id);
 
 void cancel_final_states(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long contact_id);
 
 }//namespace LibFred::Contact::Verification

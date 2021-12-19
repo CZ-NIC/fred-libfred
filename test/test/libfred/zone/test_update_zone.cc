@@ -38,7 +38,7 @@ struct update_zone_fixture
     ::LibFred::Zone::NonEnumZone non_enum_zone;
     ::LibFred::Zone::EnumZone enum_zone;
 
-    update_zone_fixture(::LibFred::OperationContext& _ctx)
+    update_zone_fixture(const ::LibFred::OperationContext& _ctx)
     {
         non_enum_zone.fqdn = Random::Generator().get_seq(Random::CharSet::letters(), 3);
         non_enum_zone.expiration_period_min_in_months = 1;
@@ -65,7 +65,7 @@ struct update_zone_fixture
 
 BOOST_FIXTURE_TEST_SUITE(TestUpdateZone, SupplyFixtureCtx<update_zone_fixture>)
 
-::LibFred::Zone::InfoZoneData get_info_zone_data(::LibFred::OperationContext& _ctx, const std::string& _fqdn)
+::LibFred::Zone::InfoZoneData get_info_zone_data(const ::LibFred::OperationContext& _ctx, const std::string& _fqdn)
 {
     return ::LibFred::Zone::InfoZone(_fqdn).exec(_ctx);
 }

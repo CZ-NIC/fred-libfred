@@ -91,7 +91,7 @@ inline void check_maps_are_equal(const std::map<std::string, std::string>& _lhs,
 
 /** make object in registry look older */
 inline void make_history_version_begin_older(
-    ::LibFred::OperationContext& _ctx,
+    const ::LibFred::OperationContext& _ctx,
     unsigned long long _historyid,
     unsigned _move_years_to_history,
     bool _move_crdate
@@ -116,7 +116,7 @@ inline void make_history_version_begin_older(
 
 /** make object in registry look older */
 inline void make_history_version_end_older(
-    ::LibFred::OperationContext& _ctx,
+    const ::LibFred::OperationContext& _ctx,
     unsigned long long _historyid,
     unsigned _move_years_to_history
 ) {

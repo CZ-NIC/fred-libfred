@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -139,7 +139,7 @@ std::string fqdn_to_regexp(const std::string& _fqdn)
 
 }//namespace LibFred::{anonymous}
 
-void CreateDomainNameBlacklistId::exec(OperationContext& _ctx)
+void CreateDomainNameBlacklistId::exec(const OperationContext& _ctx)
 {
     //check time
     if (valid_to_.isset())

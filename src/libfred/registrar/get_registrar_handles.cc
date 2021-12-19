@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -53,7 +53,7 @@ namespace Registrar
         return *this;
     }
 
-    std::vector<std::string> GetRegistrarHandles::exec(OperationContext& ctx)
+    std::vector<std::string> GetRegistrarHandles::exec(const OperationContext& ctx)
     {
         //check if excluded registrar handles exists
         {

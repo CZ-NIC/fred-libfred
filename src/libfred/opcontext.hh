@@ -28,6 +28,15 @@
 
 #include <string>
 
+//Forward declarations of LibPg transaction classes
+namespace LibPg {
+
+class PgTransaction;
+class PgRoTransaction;
+class PgRwTransaction;
+
+}//namespace LibPg
+
 namespace LibFred {
 
 class OperationContextCreator;
@@ -44,8 +53,20 @@ class OperationContextTwoPhaseCommitCreator;
 class OperationContext
 {
 public:
+    // Implicitly constructible from LibPg transaction classes
+    OperationContext(const LibPg::PgTransaction& tx);
+    OperationContext(const LibPg::PgRoTransaction& ro_tx);
+    OperationContext(const LibPg::PgRwTransaction& rw_tx);
+
+    OperationContext(OperationContext&& src);
+
     OperationContext(const OperationContext&) = delete;
+
+    ~OperationContext();
+
     OperationContext& operator=(const OperationContext&) = delete;
+    OperationContext& operator=(OperationContext&&) = delete;
+
     using DbConn = Database::StandaloneConnection;
     /**
      * Obtain database connection with running transaction.
@@ -55,7 +76,7 @@ public:
     DbConn& get_conn()const;
 private:
     OperationContext();
-    ~OperationContext();
+    OperationContext(std::unique_ptr<DbConn> conn);
     std::unique_ptr<DbConn> conn_;
     friend class OperationContextCreator;
     friend class OperationContextTwoPhaseCommit;

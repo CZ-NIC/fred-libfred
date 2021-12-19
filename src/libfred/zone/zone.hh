@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -66,9 +66,9 @@ namespace Zone {
     {};
 
     ///look for zone in domain name and return zone data
-    Data find_zone_in_fqdn(OperationContext& ctx, const std::string& fqdn);
+    Data find_zone_in_fqdn(const OperationContext& ctx, const std::string& fqdn);
     ///lock zone for share and get zone data
-    Data get_zone(OperationContext& ctx, const std::string& zone_name);
+    Data get_zone(const OperationContext& ctx, const std::string& zone_name);
 
     /**
      * Remove optional root dot from fqdn. Domain names are considered fully qualified without trailing dot internally.

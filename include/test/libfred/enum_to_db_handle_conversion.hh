@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -29,7 +29,7 @@
 #include <boost/test/unit_test.hpp>
 
 template < typename ENUM_HOST_TYPE, ::size_t EXPECTED_NUMBER_OF_DB_HANDLES >
-void enum_to_db_handle_conversion_test(::LibFred::OperationContext &ctx, const char *sql_get_all_items)
+void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, const char *sql_get_all_items)
 {
     typedef typename ENUM_HOST_TYPE::Enum Enum;
     typedef std::set< std::string > DbHandles;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -117,7 +117,7 @@ public:
     {};
 
     MergeContactEmailNotificationData(const std::vector<MergeContactEmailNotificationInput>& merge_contact_data_);
-    std::vector<MergeContactNotificationEmail> exec(OperationContext& ctx);
+    std::vector<MergeContactNotificationEmail> exec(const OperationContext& ctx);
 
     /**
     * Dumps state of the instance into the string
@@ -147,7 +147,7 @@ public:
     {};
 
     MergeContactNotificationEmailAddr(const std::vector<MergeContactNotificationEmail>& email_data);
-    std::vector<MergeContactNotificationEmailWithAddr> exec(OperationContext& ctx);
+    std::vector<MergeContactNotificationEmailWithAddr> exec(const OperationContext& ctx);
 
     /**
     * Dumps state of the instance into the string

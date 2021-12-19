@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -47,7 +47,7 @@ namespace LibFred
              * @throws IncorrectAuthInfoPw
              * @throws NewRegistrarIsAlreadySponsoring
              */
-            unsigned long long exec(OperationContext& _ctx);
+            unsigned long long exec(const OperationContext& _ctx);
 
         private:
             const unsigned long long domain_id_;

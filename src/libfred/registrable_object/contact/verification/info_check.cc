@@ -102,7 +102,7 @@ namespace LibFred
     {}
 
     // exec and serialization
-    InfoContactCheckOutput InfoContactCheck::exec(OperationContext& _ctx, const std::string& _output_timezone) {
+    InfoContactCheckOutput InfoContactCheck::exec(const OperationContext& _ctx, const std::string& _output_timezone) {
         FREDLOG_DEBUG("InfoContactCheck exec() started");
         FREDLOG_INFO(to_string());
 
@@ -186,7 +186,7 @@ namespace LibFred
     }
 
     std::vector<InfoContactCheckOutput::ContactTestResultData> InfoContactCheck::get_test_data(
-        OperationContext& _ctx,
+        const OperationContext& _ctx,
         unsigned long long _check_id,
         const std::string& _output_timezone
     ) {
@@ -297,7 +297,7 @@ namespace LibFred
     }
 
     std::vector<InfoContactCheckOutput::ContactCheckState> InfoContactCheck::get_check_historical_states(
-        OperationContext& _ctx,
+        const OperationContext& _ctx,
         unsigned long long _check_id,
         const std::string& _output_timezone
     ) {

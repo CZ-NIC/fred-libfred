@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -44,7 +44,7 @@ public:
             int _classification,
             unsigned long long _eval_file_id);
 
-    void exec(OperationContext& _ctx) const;
+    void exec(const OperationContext& _ctx) const;
 
 private:
     unsigned long long certification_id_;

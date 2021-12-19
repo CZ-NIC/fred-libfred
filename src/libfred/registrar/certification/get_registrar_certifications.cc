@@ -31,7 +31,7 @@ GetRegistrarCertifications::GetRegistrarCertifications(unsigned long long _regis
 {
 }
 
-std::vector<RegistrarCertification> GetRegistrarCertifications::exec(OperationContext& _ctx) const
+std::vector<RegistrarCertification> GetRegistrarCertifications::exec(const OperationContext& _ctx) const
 {
     try
     {

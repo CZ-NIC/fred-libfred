@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -30,7 +30,7 @@ class DeleteRegistrarEppAuth
 public:
     explicit DeleteRegistrarEppAuth(unsigned long long _id);
 
-    void exec(OperationContext& _ctx) const;
+    void exec(const OperationContext& _ctx) const;
 
 private:
     unsigned long long id_;

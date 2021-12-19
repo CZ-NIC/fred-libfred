@@ -293,7 +293,7 @@ struct has_updated_domain_followed_by_future_changes {
         const std::string _fqdn,
         const std::string _registrar_handle,
         ::LibFred::UpdateDomain& _update,
-        ::LibFred::OperationContext& _ctx
+        const ::LibFred::OperationContext& _ctx
     ) {
 
         const unsigned long long to_be_notified_hid = _update.exec(_ctx);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -75,7 +75,7 @@ public:
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      * @throws InternalError otherwise
      */
-    InfoDomainOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoDomainOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -123,7 +123,7 @@ public:
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      * @throws InternalError otherwise
      */
-    InfoDomainOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoDomainOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -245,7 +245,7 @@ public:
      * @return history info data about the domain in descending order by historyid
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoDomainOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -287,7 +287,7 @@ public:
      * @return history info data about the domain in descending order by historyid
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoDomainOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -335,7 +335,7 @@ public:
      * @throws Exception in case of wrong input data or other predictable and superable failure.
      * @throws InternalError otherwise
      */
-    InfoDomainOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoDomainOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -384,7 +384,7 @@ public:
      * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
      * @return info data about domains
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoDomainOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -434,7 +434,7 @@ public:
      * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
      * @return info data about domains
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoDomainOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -484,7 +484,7 @@ public:
      * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
      * @return info data about domains
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoDomainOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string
@@ -534,7 +534,7 @@ public:
      * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
      * @return info data about domains
      */
-    std::vector<InfoDomainOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoDomainOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
      * Dumps state of the instance into the string

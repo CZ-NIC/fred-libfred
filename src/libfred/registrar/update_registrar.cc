@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -44,7 +44,7 @@ constexpr const char * psql_type(const unsigned long long)
     return "::bigint";
 }
 
-bool is_country_code_valid(LibFred::OperationContext& _ctx, const std::string& _country) {
+bool is_country_code_valid(const LibFred::OperationContext& _ctx, const std::string& _country) {
     const Database::Result db_result = _ctx.get_conn().exec_params(
                 "SELECT 1 FROM enum_country WHERE id = $1::text FOR SHARE ",
                 Database::query_param_list(_country));
@@ -180,7 +180,7 @@ UpdateRegistrarById& UpdateRegistrarById::set_payment_memo_regex(
     return *this;
 }
 
-void UpdateRegistrarById::exec(OperationContext& _ctx) const
+void UpdateRegistrarById::exec(const OperationContext& _ctx) const
 {
     const bool values_for_update_are_set = (handle_ != boost::none ||
             ico_ != boost::none ||
