@@ -24,7 +24,7 @@ option(USE_LIBLOG "Library uses LibLog for application logging." TRUE)
 
 include("cmake/package.cmake")
 
-package(fred-libfred FULL_VERSION "5.0.0")
+package(fred-libfred FULL_VERSION "6.0.0")
 
 project(LibFred
     VERSION ${PACKAGE_VERSION}
