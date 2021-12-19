@@ -1,6 +1,15 @@
 ChangeLog
 =========
 
+6.0.0 (2021-12-19)
+------------------
+
+* Update CI
+* Update CMake build
+* Use ``liblog`` for logging
+* Add support to use ``libfred`` operations with ``libpg`` driven source code
+  (allow to create ``libfred::OperationContext`` from ``libpg::*Transaction`` classes)
+
 5.0.0 (2021-11-05)
 ------------------
 
