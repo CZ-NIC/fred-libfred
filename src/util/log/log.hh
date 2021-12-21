@@ -20,6 +20,8 @@
 #ifndef LOG_HH_122CBA13F35A4A728F0E7A261062A564
 #define LOG_HH_122CBA13F35A4A728F0E7A261062A564
 
+#if defined(HAVE_LOGGER) && HAVE_LOGGER
+
 #include "liblog/liblog.hh"
 
 #include <boost/format.hpp>
@@ -46,5 +48,23 @@ struct fmt::formatter<boost::format>: formatter<std::string>
 #define FREDLOG_EMERG(msg) LIBLOG_CRITICAL("{}", (msg))
 
 #define FREDLOG_SET_CONTEXT(cls, var, ...) LIBLOG_SET_CONTEXT(cls, var, ## __VA_ARGS__)
+
+#else
+
+inline void compile_time_warning(int logging_is_switched_off_because_of_have_logger_is_not_set) {}
+
+#define FREDLOG_TRACE(msg)
+#define FREDLOG_DEBUG(msg)
+#define FREDLOG_INFO(msg)
+#define FREDLOG_NOTICE(msg)
+#define FREDLOG_WARNING(msg)
+#define FREDLOG_ERROR(msg)
+#define FREDLOG_CRITICAL(msg)
+#define FREDLOG_ALERT(msg)
+#define FREDLOG_EMERG(msg)
+
+#define FREDLOG_SET_CONTEXT(cls, var, ...)
+
+#endif//HAVE_LOGGER
 
 #endif//LOG_HH_122CBA13F35A4A728F0E7A261062A564
