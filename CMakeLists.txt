@@ -66,7 +66,7 @@ pkg_search_module(LIBIDN REQUIRED libidn>=0.5.18)
 pkg_search_module(LIBCRYPTO REQUIRED libcrypto)
 
 # configuration files
-if(${USE_LIBLOG})
+if(USE_LIBLOG)
     set(HAVE_LOGGER "1")
 endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
@@ -95,6 +95,9 @@ function(set_common_properties_on_targets)
                 $<$<CXX_COMPILER_ID:GNU>:-Wno-deprecated-copy>
             PRIVATE
                 $<$<CXX_COMPILER_ID:GNU>:-Wall -Wextra -ggdb -grecord-gcc-switches>)
+        if(USE_LIBLOG)
+            target_compile_definitions(${target_name} PUBLIC HAVE_LOGGER=1)
+        endif()
     endforeach()
 endfunction()
 

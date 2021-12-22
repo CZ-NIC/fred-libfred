@@ -26,9 +26,7 @@
 
 #include "config.h"
 
-#ifdef HAVE_LOGGER
 #include "util/log/log.hh"
-#endif
 
 #include "util/db/db_exceptions.hh"
 #include "util/db/query_param.hh"
