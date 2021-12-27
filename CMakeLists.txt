@@ -11,6 +11,9 @@ endif()
 
 option(LIBFRED_BUILD_TESTS "Build ${PACKAGE_NAME} tests" ${IS_TOP_LEVEL})
 
+# Set CMake policies to support later version behaviour
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW) # option() honors variables already set
+
 # compile options
 
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Specifies the build type. Possible values are empty, Debug, Release, RelWithDebInfo, MinSizeRel, ...")
@@ -19,6 +22,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 option(THREADS_PREFER_PTHREAD_FLAG "The -pthread compiler and linker flag preference." TRUE)
 option(CMAKE_EXPORT_COMPILE_COMMANDS "If enabled, generates a compile_commands.json file containing the exact compiler calls." ON)
 option(USE_LIBLOG "Library uses LibLog for application logging." TRUE)
+option(FMT_HEADER_ONLY "Use fmt library in header-only manner." OFF) # significantly reduce build time
 
 # project details
 
