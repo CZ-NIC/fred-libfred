@@ -237,13 +237,12 @@ set_target_properties(fred PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
     OUTPUT_NAME "fred")
 
-target_compile_options(fred
-    PUBLIC "-ggdb"
-    PUBLIC "-grecord-gcc-switches"
-    PUBLIC "-Wall"
-    PUBLIC "-Wextra"
-    PUBLIC "-fdiagnostics-color=auto"
-    PUBLIC "-Wno-deprecated-copy")
+target_compile_options(fred PUBLIC
+    "-ggdb"
+    "-grecord-gcc-switches"
+    "-Wall"
+    "-Wextra"
+    "-fdiagnostics-color=auto")
 
 target_include_directories(fred PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
