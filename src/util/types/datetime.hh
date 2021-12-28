@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -56,6 +56,7 @@ class DateTime {
 public:
   /* constructors */
   DateTime();
+  DateTime(const DateTime&) = default; 
   DateTime(const Date& _v); 
   DateTime(DateTimeSpecial _s);
   DateTime(const std::string& _v);

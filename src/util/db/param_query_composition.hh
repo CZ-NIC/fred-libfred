@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -73,39 +73,6 @@ namespace Database
      */
     class ParamQuery
     {
-        class Element
-        {
-        public:
-            enum TypeTag {PQE_NONE, PQE_STRING, PQE_PARAM, PQE_PARAM_REPETABLE};
-        private:
-            TypeTag tag_;
-            std::shared_ptr<int> lid_;
-            std::string query_string_element_;
-            Database::QueryParam query_param_element_;
-        public:
-            Element();
-
-            Element& set_string(const std::string& val);
-
-            Element& set_param(
-                const Database::QueryParam& val,
-                const std::string& pg_typname);
-
-            Element& set_param(
-                const Database::QueryParam& val,
-                const std::string& pg_typname,
-                const std::shared_ptr<int>& lid);
-
-            TypeTag get_tag() const;
-
-            std::shared_ptr<int> get_lid() const;
-
-            std::string get_string() const;
-
-            Database::QueryParam get_param() const;
-        };
-
-        std::vector<Element> param_query_;
     public:
 
         /**
@@ -117,6 +84,10 @@ namespace Database
          * Makes copy.
          */
         ParamQuery(const ParamQuery& val);
+        ParamQuery& operator=(const ParamQuery& val) = default;
+
+        ParamQuery(ParamQuery&&) = default;
+        ParamQuery& operator=(ParamQuery&&) = default;
 
         /**
          * Makes query from text string, no parameters.
@@ -185,7 +156,40 @@ namespace Database
          * @return pair of SQL string with parameter numbers (first) and list of query parameter values (second).
          */
         std::pair<std::string, query_param_list> get_query() const;
+    private:
+        class Element
+        {
+        public:
+            enum TypeTag {PQE_NONE, PQE_STRING, PQE_PARAM, PQE_PARAM_REPETABLE};
+            Element();
+
+            Element& set_string(const std::string& val);
+
+            Element& set_param(
+                const Database::QueryParam& val,
+                const std::string& pg_typname);
+
+            Element& set_param(
+                const Database::QueryParam& val,
+                const std::string& pg_typname,
+                const std::shared_ptr<int>& lid);
+
+            TypeTag get_tag() const;
+
+            std::shared_ptr<int> get_lid() const;
+
+            std::string get_string() const;
+
+            Database::QueryParam get_param() const;
+        private:
+            TypeTag tag_;
+            std::shared_ptr<int> lid_;
+            std::string query_string_element_;
+            Database::QueryParam query_param_element_;
+        };
+
+        std::vector<Element> param_query_;
     };
-};
+}//namespace Database
 
 #endif

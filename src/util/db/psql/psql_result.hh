@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -54,6 +54,8 @@ public:
     PSQLResult(const PSQLResult&);
 
     ~PSQLResult();
+
+    PSQLResult& operator=(const PSQLResult&) = default;
 
     void clear();
 
