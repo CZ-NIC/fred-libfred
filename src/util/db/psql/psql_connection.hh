@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@
 
 namespace Database {
 
-class TerribleHack;
+class EncapsulationBreachHack;
 
 /**
  * \class PSQLConnection
@@ -80,9 +80,9 @@ public:
 
     bool is_in_valid_transaction()const;
 private:
-    explicit PSQLConnection(PGconn* conn);// used by the TerribleHack class
+    explicit PSQLConnection(PGconn* conn);// used by the EncapsulationBreachHack class
     PGconn* psql_conn_; ///< wrapped connection structure from libpq library
-    friend class TerribleHack;
+    friend class EncapsulationBreachHack;
 };
 
 }//namespace Database
