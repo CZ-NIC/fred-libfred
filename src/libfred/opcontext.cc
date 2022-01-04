@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,15 +34,20 @@
 
 namespace Database {
 
-class TerribleHack : public PSQLConnection
+class EncapsulationBreachHack : public PSQLConnection
 {
 public:
     template <typename Tx>
-    explicit TerribleHack(const Tx& tx)
+    explicit EncapsulationBreachHack(const Tx& tx)
         : PSQLConnection{pg_conn_from_transaction(tx)} // do not transfer the PGconn* ownership
     {}
-    ~TerribleHack() override
+    ~EncapsulationBreachHack() override
     {
+        try
+        {
+            FREDLOG_INFO("prevent connection deletion");
+        }
+        catch (...) { }
         psql_conn_ = nullptr;// prevent PGconn* deletion
     }
 private:
@@ -53,7 +58,7 @@ private:
     }
 };
 
-using PSQLConnectionWithoutOwnership = TerribleHack;
+using PSQLConnectionWithoutOwnership = EncapsulationBreachHack;
 
 }//namespace Database
 
