@@ -10,7 +10,7 @@ RUN apt-get -y update \
     && apt-get -y install --no-install-recommends \
         ssh-client                   \
         cmake                        \
-        postgresql-server-dev-9.6    \
+        postgresql-server-dev-13     \
         pkg-config                   \
         build-essential              \
         bash-completion              \
