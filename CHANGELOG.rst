@@ -1,6 +1,12 @@
 ChangeLog
 =========
 
+5.0.1 (2022-01-10)
+------------------
+
+* Change minimal version for PostgreSQL to 13 (CI image, build)
+
+
 5.0.0 (2021-11-05)
 ------------------
 
