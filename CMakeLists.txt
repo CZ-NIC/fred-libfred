@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(LIBFRED_VERSION "5.0.0")
+set(LIBFRED_VERSION "5.0.1")
 project(LibFred
     VERSION ${LIBFRED_VERSION}
     LANGUAGES CXX)
