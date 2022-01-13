@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -30,7 +30,7 @@ namespace {
 
 template <typename T>
 DomainStateHistory get_domain_state_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -106,7 +106,7 @@ DomainStateHistory get_domain_state_history(
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw ObjectDoesNotExist<object_type>();
     }
     const bool limit_is_invalid = static_cast<bool>(dbres[0][0]);
@@ -193,7 +193,7 @@ GetDomainStateHistoryById::GetDomainStateHistoryById(unsigned long long domain_i
 }
 
 GetDomainStateHistoryById::Result GetDomainStateHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -218,7 +218,7 @@ GetDomainStateHistoryByFqdn::GetDomainStateHistoryByFqdn(const std::string& _fqd
 }
 
 GetDomainStateHistoryByFqdn::Result GetDomainStateHistoryByFqdn::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -250,7 +250,7 @@ GetDomainStateHistoryByUuid::GetDomainStateHistoryByUuid(const DomainUuid& domai
 }
 
 GetDomainStateHistoryByUuid::Result GetDomainStateHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -236,7 +236,7 @@ Database::ParamQuery InfoNsset::make_dns_ip_query(unsigned long long hostid, uns
 }
 
 std::vector<InfoNssetOutput> InfoNsset::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)const
 {
     std::vector<InfoNssetOutput> result;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -22,7 +22,7 @@
 namespace LibFred {
 namespace Registrar {
 
-std::vector<GroupMembershipByGroup> InfoGroupMembershipByGroup::exec(OperationContext& _ctx)
+std::vector<GroupMembershipByGroup> InfoGroupMembershipByGroup::exec(const OperationContext& _ctx)
 {
     try
     {
@@ -54,7 +54,7 @@ std::vector<GroupMembershipByGroup> InfoGroupMembershipByGroup::exec(OperationCo
     }
     catch (...)
     {
-        LOGGER.info("Failed to get info group membership by group due to an unknown exception");
+        FREDLOG_INFO("Failed to get info group membership by group due to an unknown exception");
         throw;
     }
 }

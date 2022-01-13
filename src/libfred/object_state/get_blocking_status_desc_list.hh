@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -61,7 +61,7 @@ public:
     };
     typedef std::vector<StatusDesc> StatusDescList;
 
-    StatusDescList& exec(OperationContext& _ctx);
+    StatusDescList& exec(const OperationContext& _ctx);
 
     DECLARE_EXCEPTION_DATA(lang_not_found, std::string);
 

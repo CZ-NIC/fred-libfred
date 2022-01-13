@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -30,7 +30,7 @@ ClearObjectStateRequestId::ClearObjectStateRequestId(ObjectId _object_id)
     : object_id_(_object_id)
 {}
 
-ClearObjectStateRequestId::Requests ClearObjectStateRequestId::exec(OperationContext &_ctx)
+ClearObjectStateRequestId::Requests ClearObjectStateRequestId::exec(const OperationContext& _ctx)
 {
     LockObjectStateRequestLock(object_id_).exec(_ctx);
 
@@ -58,7 +58,7 @@ ClearObjectStateRequestId::Requests ClearObjectStateRequestId::exec(OperationCon
             rid += " " + static_cast<std::string>(cmd_result[idx][0]);
             result.push_back(static_cast<LibFred::ObjectId>(cmd_result[idx][0]));
         }
-        _ctx.get_log().debug(rid);
+        FREDLOG_DEBUG(rid);
     }
     return result;
 }

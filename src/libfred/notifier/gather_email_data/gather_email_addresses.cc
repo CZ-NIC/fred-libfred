@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -45,7 +45,7 @@ namespace Notification {
  * @return unique non-empty notifyemail addresses of given _contact_ids
  */
 static std::set<std::string> get_email_addresses(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     const std::set<unsigned long long>& _contact_ids,
     const boost::posix_time::ptime& _time_of_validity
 ) {
@@ -82,7 +82,7 @@ static std::set<std::string> get_email_addresses(
 }
 
 std::set<std::string> gather_email_addresses(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     const EventOnObject& _event_on_object,
     unsigned long long _last_history_id /* XXX always post change but delete ... */
 ) {

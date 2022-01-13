@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -38,7 +38,7 @@ struct Algorithm
     };
 };
 
-Algorithm::Usability get_algorithm_usability(OperationContext &ctx, int algorithm_number);
+Algorithm::Usability get_algorithm_usability(const OperationContext& ctx, int algorithm_number);
 
 } // namespace LibFred::DnsSec
 } // namespace LibFred

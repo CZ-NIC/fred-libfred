@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,7 +72,7 @@ UpdatePublicRequest& UpdatePublicRequest::set_on_status_action(PublicRequest::On
     return *this;
 }
 
-UpdatePublicRequest& UpdatePublicRequest::set_registrar_id(OperationContext &_ctx,
+UpdatePublicRequest& UpdatePublicRequest::set_registrar_id(const OperationContext& _ctx,
                                                            const std::string &_registrar_handle)
 {
     const Database::Result res = _ctx.get_conn().exec_params(
@@ -86,7 +86,7 @@ UpdatePublicRequest& UpdatePublicRequest::set_registrar_id(OperationContext &_ct
 
 namespace {
 
-::size_t stop_letter_sending(OperationContext &_ctx,
+::size_t stop_letter_sending(const OperationContext& _ctx,
                              PublicRequestId _public_request_id)
 {
     Database::query_param_list params(_public_request_id);                    //$1::BIGINT
@@ -151,7 +151,7 @@ UpdatePublicRequest::Result UpdatePublicRequest::exec(const LockedPublicRequests
     }
 }
 
-UpdatePublicRequest::Result UpdatePublicRequest::update(OperationContext &_ctx,
+UpdatePublicRequest::Result UpdatePublicRequest::update(const OperationContext& _ctx,
                                                         PublicRequestId _public_request_id,
                                                         const PublicRequestTypeIface &_public_request_type,
                                                         const Optional< LogRequestId > &_resolve_log_request_id)const

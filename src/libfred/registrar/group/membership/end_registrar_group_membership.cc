@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -24,7 +24,7 @@
 namespace LibFred {
 namespace Registrar {
 
-void EndRegistrarGroupMembership::exec(OperationContext& _ctx)
+void EndRegistrarGroupMembership::exec(const OperationContext& _ctx)
 {
     try
     {
@@ -40,7 +40,7 @@ void EndRegistrarGroupMembership::exec(OperationContext& _ctx)
         }
         else if (membership.size() > 1)
         {
-            LOGGER.info("Failed to end registrar group membership because too many duplicate records were found.");
+            FREDLOG_INFO("Failed to end registrar group membership because too many duplicate records were found.");
             throw;
         }
 
@@ -50,12 +50,12 @@ void EndRegistrarGroupMembership::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER.error(e.what());
+        FREDLOG_ERROR(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to end registrar group membership due to an unknown exception");
+        FREDLOG_INFO("Failed to end registrar group membership due to an unknown exception");
         throw;
     }
 }

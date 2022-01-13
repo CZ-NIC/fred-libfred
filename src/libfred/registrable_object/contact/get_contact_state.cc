@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -28,7 +28,7 @@ GetContactStateById::GetContactStateById(unsigned long long contact_id)
     : contact_id_(contact_id)
 { }
 
-GetContactStateById::Result GetContactStateById::exec(OperationContext& ctx)const
+GetContactStateById::Result GetContactStateById::exec(const OperationContext& ctx)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
     const std::string sql =
@@ -46,7 +46,7 @@ GetContactStateById::Result GetContactStateById::exec(OperationContext& ctx)cons
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -66,7 +66,7 @@ GetContactStateByHandle::GetContactStateByHandle(const std::string& contact_hand
     : handle_(contact_handle)
 { }
 
-GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& ctx)const
+GetContactStateByHandle::Result GetContactStateByHandle::exec(const OperationContext& ctx)const
 {
     static const std::string sql_handle_case_normalize_function =
             object_type == Object_Type::domain ? "LOWER"
@@ -88,7 +88,7 @@ GetContactStateByHandle::Result GetContactStateByHandle::exec(OperationContext& 
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -108,7 +108,7 @@ GetContactStateByUuid::GetContactStateByUuid(const ContactUuid& contact_uuid)
     : uuid_(contact_uuid)
 { }
 
-GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)const
+GetContactStateByUuid::Result GetContactStateByUuid::exec(const OperationContext& ctx)const
 {
     Database::query_param_list params;
     const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
@@ -127,7 +127,7 @@ GetContactStateByUuid::Result GetContactStateByUuid::exec(OperationContext& ctx)
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;

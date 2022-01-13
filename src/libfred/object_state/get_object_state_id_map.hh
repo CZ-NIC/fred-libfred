@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -46,7 +46,7 @@ namespace LibFred
         GetObjectStateIdMap(const StatusList &_status_list, ObjectType _object_type);
 
         typedef std::map< std::string, ObjectStateId > StateIdMap;
-        StateIdMap& exec(OperationContext &_ctx);
+        StateIdMap& exec(const OperationContext& _ctx);
 
     //exception impl
         DECLARE_EXCEPTION_DATA(state_not_found, std::string);
@@ -56,7 +56,7 @@ namespace LibFred
             ExceptionData_state_not_found<Exception>
         {};
 
-        static StateIdMap& get_result(OperationContext &_ctx, const StatusList &_status_list, ObjectType _object_type,
+        static StateIdMap& get_result(const OperationContext& _ctx, const StatusList &_status_list, ObjectType _object_type,
                                       StateIdMap &_result);
     private:
         const StatusList status_list_;

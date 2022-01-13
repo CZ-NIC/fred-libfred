@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -62,7 +62,7 @@ UpdateRegistrarEppAuth& UpdateRegistrarEppAuth::set_plain_password(
     return *this;
 }
 
-void UpdateRegistrarEppAuth::exec(OperationContext& _ctx) const
+void UpdateRegistrarEppAuth::exec(const OperationContext& _ctx) const
 {
     const bool values_for_update_are_set = (certificate_fingerprint_ != boost::none ||
                                             plain_password_ != boost::none);

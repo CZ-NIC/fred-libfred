@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -40,7 +40,7 @@ CreateZoneNs& CreateZoneNs::set_nameserver_ip_addresses(
     return *this;
 }
 
-unsigned long long CreateZoneNs::exec(OperationContext& _ctx) const
+unsigned long long CreateZoneNs::exec(const OperationContext& _ctx) const
 {
     const InfoZoneData zone_info = InfoZone(zone_fqdn_).exec(_ctx);
     const unsigned long long zone_id = get_zone_id(zone_info);

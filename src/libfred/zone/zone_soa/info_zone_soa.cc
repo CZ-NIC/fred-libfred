@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -28,7 +28,7 @@ InfoZoneSoa::InfoZoneSoa(const std::string& _fqdn)
 {
 }
 
-InfoZoneSoaData InfoZoneSoa::exec(OperationContext& _ctx) const
+InfoZoneSoaData InfoZoneSoa::exec(const OperationContext& _ctx) const
 {
     const LibFred::Zone::InfoZoneData zone_info = LibFred::Zone::InfoZone(fqdn_).exec(_ctx);
 

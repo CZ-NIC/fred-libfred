@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -70,7 +70,7 @@ namespace LibFred
          * @param ctx contains reference to database and logging interface
          * @return list of object state data sorted by importance
          */
-        std::vector<ObjectStateData> exec(OperationContext& ctx);
+        std::vector<ObjectStateData> exec(const OperationContext& ctx);
     };
 
 } // namespace LibFred

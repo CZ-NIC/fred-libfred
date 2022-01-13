@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@ class CreateStateMessages
 {
 public:
     CreateStateMessages(const std::set<LibFred::Poll::MessageType::Enum>& _except_list, const boost::optional<int>& _limit);
-    unsigned long long exec(OperationContext& _ctx) const;
+    unsigned long long exec(const OperationContext& _ctx) const;
 private:
     std::set<LibFred::Poll::MessageType::Enum> except_list_;
     boost::optional<int> limit_;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -33,7 +33,7 @@ namespace Registrar {
 class GetRegistrarGroups
 {
 public:
-    std::vector<RegistrarGroup> exec(OperationContext& _ctx);
+    std::vector<RegistrarGroup> exec(const OperationContext& _ctx);
 };
 
 } // namespace Registrar

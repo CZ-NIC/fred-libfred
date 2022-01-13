@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -141,7 +141,7 @@ std::map<std::string, std::string> gather_nsset_update_data_change(
 }//namespace Notification::{anonymous}
 
 std::map<std::string, std::string> gather_nsset_data_change(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     notified_event _event,
     unsigned long long _history_id_post_change)
 {
@@ -173,7 +173,7 @@ std::set<unsigned long long> get_ids_of_nssets_accepting_notifications(const Lib
 }//namespace Notification::{anonymous}
 
 std::set<unsigned long long> gather_contact_ids_to_notify_nsset_event(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     notified_event _event,
     unsigned long long _history_id_after_change)
 {

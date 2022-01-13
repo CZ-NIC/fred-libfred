@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -32,7 +32,7 @@
 namespace LibFred
 {
 
-    unsigned long long get_object_type_id(OperationContext& ctx, const std::string& obj_type)
+    unsigned long long get_object_type_id(const OperationContext& ctx, const std::string& obj_type)
     {
         const Database::Result object_type_res = ctx.get_conn().exec_params(
             "SELECT id FROM enum_object_type WHERE name = $1::text FOR SHARE"

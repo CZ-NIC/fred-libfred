@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -24,10 +24,18 @@
 #ifndef OPCONTEXT_HH_313D7DA5889A4FCAA339EF8F775103C4
 #define OPCONTEXT_HH_313D7DA5889A4FCAA339EF8F775103C4
 
-#include "util/log/log.hh"
 #include "libfred/db_settings.hh"
 
 #include <string>
+
+//Forward declarations of LibPg transaction classes
+namespace LibPg {
+
+class PgTransaction;
+class PgRoTransaction;
+class PgRwTransaction;
+
+}//namespace LibPg
 
 namespace LibFred {
 
@@ -36,7 +44,7 @@ class OperationContextTwoPhaseCommit;
 class OperationContextTwoPhaseCommitCreator;
 
 /**
- * Common objects needed in Fred operations. It consists of two parts, database and logging.
+ * Common objects needed in Fred operations. It consists of one part, database.
  *
  * Is non-copyable.
  * Is not directly instantiable (implemented by private ctor and destructor).
@@ -45,8 +53,20 @@ class OperationContextTwoPhaseCommitCreator;
 class OperationContext
 {
 public:
+    // Implicitly constructible from LibPg transaction classes
+    OperationContext(const LibPg::PgTransaction& tx);
+    OperationContext(const LibPg::PgRoTransaction& ro_tx);
+    OperationContext(const LibPg::PgRwTransaction& rw_tx);
+
+    OperationContext(OperationContext&& src);
+
     OperationContext(const OperationContext&) = delete;
+
+    ~OperationContext();
+
     OperationContext& operator=(const OperationContext&) = delete;
+    OperationContext& operator=(OperationContext&&) = delete;
+
     using DbConn = Database::StandaloneConnection;
     /**
      * Obtain database connection with running transaction.
@@ -54,16 +74,10 @@ public:
      * @throw std::runtime_error if no transaction in progress
      */
     DbConn& get_conn()const;
-    /**
-     * Obtain logging object.
-     * @return logging object reference
-     */
-    Logging::Log& get_log() { return log_; }
 private:
     OperationContext();
-    ~OperationContext();
+    OperationContext(std::unique_ptr<DbConn> conn);
     std::unique_ptr<DbConn> conn_;
-    Logging::Log& log_;
     friend class OperationContextCreator;
     friend class OperationContextTwoPhaseCommit;
     friend class OperationContextTwoPhaseCommitCreator;

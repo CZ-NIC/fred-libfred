@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -40,7 +40,7 @@ public:
       group_name_(_group_name)
     {}
 
-    void exec(OperationContext& _ctx);
+    void exec(const OperationContext& _ctx);
 
 private:
     const unsigned long long group_id_;

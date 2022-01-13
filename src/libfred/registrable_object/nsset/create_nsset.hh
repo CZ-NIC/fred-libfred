@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -140,7 +140,7 @@ public:
     * @param returned_timestamp_pg_time_zone_name is postgresql time zone name of the returned timestamp
     * @return object id, history id and creation timestamp
     */
-    Result exec(OperationContext& ctx, const std::string& returned_timestamp_pg_time_zone_name = "Europe/Prague");
+    Result exec(const OperationContext& ctx, const std::string& returned_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string

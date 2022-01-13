@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -59,10 +59,10 @@ CreateContactCheck& CreateContactCheck::set_logd_request_id(unsigned long long _
     return *this;
 }
 
-std::string CreateContactCheck::exec(OperationContext& _ctx)
+std::string CreateContactCheck::exec(const OperationContext& _ctx)
 {
-    _ctx.get_log().debug("CreateContactCheck exec() started");
-    _ctx.get_log().info(to_string());
+    FREDLOG_DEBUG("CreateContactCheck exec() started");
+    FREDLOG_INFO(to_string());
 
     LibFred::OperationContextCreator ctx_unique;
     const std::string unique_test_query =
@@ -145,7 +145,7 @@ std::string CreateContactCheck::exec(OperationContext& _ctx)
         throw;
     }
 
-    _ctx.get_log().debug("CreateContactCheck executed successfully");
+    FREDLOG_DEBUG("CreateContactCheck executed successfully");
 
     return handle;
 }

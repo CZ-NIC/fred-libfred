@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -34,7 +34,7 @@ namespace LibFred
      * @param _historyid MUST be existing id in table 'history'
      */
     void copy_contact_data_to_contact_history_impl(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         unsigned long long _contact_id,
         unsigned long long _historyid
     );

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -76,7 +76,7 @@ CreateKeyset& CreateKeyset::set_tech_contacts(const std::vector<std::string>& te
     return *this;
 }
 
-CreateKeyset::Result CreateKeyset::exec(OperationContext& _ctx,
+CreateKeyset::Result CreateKeyset::exec(const OperationContext& _ctx,
                                         const Optional<unsigned long long>& _logd_request_id,
                                         const std::string& _returned_timestamp_pg_time_zone_name)
 {

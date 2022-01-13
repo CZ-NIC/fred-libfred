@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -23,7 +23,44 @@
 
 #include "libfred/opcontext.hh"
 
+#include "src/util/log/log.hh"
+
+#include "libpg/pg_ro_transaction.hh"
+#include "libpg/pg_rw_transaction.hh"
+#include "libpg/pg_transaction.hh"
+
 #include <stdexcept>
+#include <utility>
+
+namespace Database {
+
+class EncapsulationBreachHack : public PSQLConnection
+{
+public:
+    template <typename Tx>
+    explicit EncapsulationBreachHack(const Tx& tx)
+        : PSQLConnection{pg_conn_from_transaction(tx)} // do not transfer the PGconn* ownership
+    {}
+    ~EncapsulationBreachHack() override
+    {
+        try
+        {
+            FREDLOG_INFO("prevent connection deletion");
+        }
+        catch (...) { }
+        psql_conn_ = nullptr;// prevent PGconn* deletion
+    }
+private:
+    template <typename Tx>
+    static PGconn* pg_conn_from_transaction(const Tx& tx)
+    {
+        return reinterpret_cast<PGconn*>(LibPg::Unsafe::Dirty::Hack::get_raw_pointer(tx));
+    }
+};
+
+using PSQLConnectionWithoutOwnership = EncapsulationBreachHack;
+
+}//namespace Database
 
 namespace LibFred {
 
@@ -54,14 +91,44 @@ std::unique_ptr<Database::StandaloneConnection> get_database_conn()
     return Database::get_default_manager<Database::StandaloneConnectionFactory>().acquire();
 }
 
+template <typename Tx>
+auto make_psql_connection_without_ownership(const Tx& tx)
+{
+    return static_cast<std::unique_ptr<Database::PSQLConnection>>(
+            std::make_unique<Database::PSQLConnectionWithoutOwnership>(tx));
+}
+
+template <typename Tx>
+auto make_standalone_connection_without_ownership(const Tx& tx)
+{
+    return std::make_unique<Database::StandaloneConnection>(
+            make_psql_connection_without_ownership(tx).release());
+}
+
 }//namespace LibFred::{anonymous}
 
 OperationContext::OperationContext()
-    : conn_(get_database_conn()),
-      log_(LOGGER)
+    : conn_(get_database_conn())
 {
     conn_->exec("START TRANSACTION ISOLATION LEVEL READ COMMITTED");
 }
+
+OperationContext::OperationContext(OperationContext&& src)
+    : conn_{std::move(src.conn_)}
+{}
+
+OperationContext::OperationContext(const LibPg::PgTransaction& tx)
+    : conn_{make_standalone_connection_without_ownership(tx)}
+{}
+
+OperationContext::OperationContext(const LibPg::PgRoTransaction& ro_tx)
+    : conn_{make_standalone_connection_without_ownership(ro_tx)}
+{}
+
+OperationContext::OperationContext(const LibPg::PgRwTransaction& rw_tx)
+    : conn_{make_standalone_connection_without_ownership(rw_tx)}
+{}
+
 
 Database::StandaloneConnection& OperationContext::get_conn()const
 {
@@ -79,22 +146,28 @@ Database::StandaloneConnection& OperationContext::get_conn()const
 
 OperationContext::~OperationContext()
 {
+    // Database::StandaloneConnection = Connection_<Database::PSQLConnection, ...>
     Database::StandaloneConnection *const conn_ptr = conn_.get();
     if (conn_ptr == nullptr)
     {
         return;
     }
-    try
-    {
-        conn_ptr->exec("ROLLBACK");
-    }
-    catch (...)
+    const bool skip_rollback =
+            conn_ptr->is_derived_from<Database::PSQLConnectionWithoutOwnership>();
+    if (!skip_rollback)
     {
         try
         {
-            log_.error("OperationContext::~OperationContext: rollback failed");
+            conn_ptr->exec("ROLLBACK");
         }
-        catch (...) { }
+        catch (...)
+        {
+            try
+            {
+                FREDLOG_ERROR("rollback failed");
+            }
+            catch (...) { }
+        }
     }
     try
     {
@@ -104,7 +177,7 @@ OperationContext::~OperationContext()
     {
         try
         {
-            log_.error("OperationContext::~OperationContext: database connection destroying failed");
+            FREDLOG_ERROR("database connection destroying failed");
         }
         catch (...) { }
     }

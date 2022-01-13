@@ -27,7 +27,7 @@ namespace {
 
 template <MessageType::Enum message_type>
 unsigned long long create_poll_eppaction_message(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long action_history_id,
         unsigned long long recipient_registrar_id)
 {
@@ -65,7 +65,7 @@ struct SponsoringRegistrar
 };
 
 typedef unsigned long long (*CreatePollMessageFunction)(
-        LibFred::OperationContext&,
+        const LibFred::OperationContext& ,
         unsigned long long,
         unsigned long long);
 
@@ -227,7 +227,7 @@ constexpr char GetPrimaryRecipientImpl<SponsoringRegistrar::at_action_start>::sq
 template<MessageType::Enum message_type>
 struct GetPrimaryRecipient
 {
-    unsigned long long exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
+    unsigned long long exec(const LibFred::OperationContext& _ctx, unsigned long long _history_id) const
     {
         using MessageTraits = MessageTypeTraits<message_type>;
         const std::string requested_object_type_handle = Conversion::Enums::to_db_handle(MessageTraits::object_type);
@@ -279,7 +279,7 @@ struct GetPrimaryRecipient
 
 template <MessageType::Enum message_type>
 unsigned long long CreatePollMessage<message_type>::exec(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         unsigned long long _history_id) const
 {
     using MessageTraits = MessageTypeTraits<message_type>;
@@ -311,7 +311,7 @@ struct GetAdditionalRecipients;
 template<>
 struct GetAdditionalRecipients<MessageType::update_contact>
 {
-    auto exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const
+    auto exec(const LibFred::OperationContext& _ctx, unsigned long long _history_id) const
     {
         const Database::Result result = _ctx.get_conn().exec_params(
             "WITH contact_ AS ( "
@@ -375,7 +375,7 @@ struct UpdateOperationMessageTypeTraits<Object_Type::keyset>
 };
 
 
-bool was_update_done_by_sponsoring_registrar(LibFred::OperationContext& _ctx, unsigned long long _history_id)
+bool was_update_done_by_sponsoring_registrar(const LibFred::OperationContext& _ctx, unsigned long long _history_id)
 {
     const Database::Result result = _ctx.get_conn().exec_params(
         "SELECT oh_act.clid = oh_act.upid "
@@ -415,7 +415,7 @@ bool was_update_done_by_sponsoring_registrar(LibFred::OperationContext& _ctx, un
 
 template <Object_Type::Enum object_type>
 typename CreateUpdateOperationPollMessage<object_type>::Result CreateUpdateOperationPollMessage<object_type>::exec(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         unsigned long long _history_id) const
 {
     using MessageTraits = typename UpdateOperationMessageTypeTraits<object_type>::Traits;

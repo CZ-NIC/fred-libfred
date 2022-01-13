@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -46,7 +46,7 @@ namespace Contact {
 template <class EXCEPTION, typename EXCEPTION_SETTER>
 unsigned long long get_ssntype_id(
         const Optional<std::string>& ssntype,
-        OperationContext& ctx,
+        const OperationContext& ctx,
         EXCEPTION* ex_ptr,
         EXCEPTION_SETTER ex_setter)
 {
@@ -87,7 +87,7 @@ unsigned long long get_ssntype_id(
 template <class EXCEPTION, typename EXCEPTION_SETTER>
 std::string get_country_code(
         const Optional<std::string>& country,
-        OperationContext& ctx,
+        const OperationContext& ctx,
         EXCEPTION* ex_ptr,
         EXCEPTION_SETTER ex_setter)
 {

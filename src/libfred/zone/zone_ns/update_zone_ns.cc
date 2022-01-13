@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -52,7 +52,7 @@ UpdateZoneNs& UpdateZoneNs::set_nameserver_ip_addresses(
     return *this;
 }
 
-unsigned long long UpdateZoneNs::exec(OperationContext& _ctx) const
+unsigned long long UpdateZoneNs::exec(const OperationContext& _ctx) const
 {
     const bool values_for_update_are_set =
             (zone_fqdn_ != boost::none) ||

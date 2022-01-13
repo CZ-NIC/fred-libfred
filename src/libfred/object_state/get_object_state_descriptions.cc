@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -42,7 +42,7 @@ GetObjectStateDescriptions& GetObjectStateDescriptions::set_object_type(const st
     return *this;
 }
 
-std::vector<ObjectStateDescription> GetObjectStateDescriptions::exec(OperationContext& ctx)
+std::vector<ObjectStateDescription> GetObjectStateDescriptions::exec(const OperationContext& ctx)
 {
     Database::ParamQuery query(
         "SELECT eosd.state_id,"

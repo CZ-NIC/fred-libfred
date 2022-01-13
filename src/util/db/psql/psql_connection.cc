@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -23,7 +23,7 @@
 
 #include "util/db/db_exceptions.hh"
 #include "util/db/psql/psql_connection.hh"
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -50,13 +50,17 @@ PSQLConnection::PSQLConnection(const OpenType& need_to_open)
             // replace new line symbols
             std::string msg(message);
             std::replace(msg.begin(), msg.end(), '\n', ' ');
-            LOGGER.debug(msg);
+            FREDLOG_DEBUG(msg);
         }
     };
     // set notice processor
     PQsetNoticeProcessor(psql_conn_, Logger::notice_processor, NULL);
 #endif
 }
+
+PSQLConnection::PSQLConnection(PGconn* conn)
+    : psql_conn_{conn}
+{}
 
 PSQLConnection::~PSQLConnection()
 {
@@ -224,7 +228,7 @@ PSQLConnection::ResultType PSQLConnection::copy_from(std::istream& input_data, c
     };
     const auto copy_query = std::string{"COPY "} + table_name + " FROM STDIN";
 #ifdef HAVE_LOGGER
-    LOGGER.debug(copy_query);
+    FREDLOG_DEBUG(copy_query);
 #endif
     const auto copy_result = std::shared_ptr<PGresult>{PQexec(psql_conn_, copy_query.c_str()), PQclear};
     if (PQresultStatus(copy_result.get()) != PGRES_COPY_IN)
@@ -294,7 +298,7 @@ std::string PSQLConnection::escape(const std::string& from)const
     }
     const std::string msg = boost::str(boost::format("error in escape function: %1%") % PQerrorMessage(psql_conn_));
 #ifdef HAVE_LOGGER
-    LOGGER.error(msg);
+    FREDLOG_ERROR(msg);
 #endif
     throw std::runtime_error(msg);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -38,7 +38,7 @@ public:
     CreateZoneSoa& set_expiry(const boost::optional<unsigned long>& expiry);
     CreateZoneSoa& set_minimum(const boost::optional<unsigned long>& minimum);
 
-    unsigned long long exec(OperationContext& ctx) const;
+    unsigned long long exec(const OperationContext& ctx) const;
 private:
     std::string fqdn_;
     std::string hostmaster_;

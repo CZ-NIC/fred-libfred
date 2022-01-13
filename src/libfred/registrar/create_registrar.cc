@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -188,7 +188,7 @@ CreateRegistrar& CreateRegistrar::set_vat_payer(bool vat_payer)
     return *this;
 }
 
-unsigned long long CreateRegistrar::exec(OperationContext& ctx)
+unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
 {
     try
     {

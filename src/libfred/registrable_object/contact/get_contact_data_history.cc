@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -28,7 +28,7 @@ namespace {
 
 template <Object_Type::Enum object_type, typename T>
 bool does_object_exist(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         T get_object_id_rule)
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -42,7 +42,7 @@ bool does_object_exist(
 
 template <typename T>
 ContactDataHistory get_contact_data_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -113,10 +113,10 @@ ContactDataHistory get_contact_data_history(
     {
         if (!does_object_exist<object_type>(ctx, get_object_id_rule))
         {
-            ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+            FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
             throw ObjectDoesNotExist<object_type>();
         }
-        ctx.get_log().debug("invalid " + Conversion::Enums::to_db_handle(object_type) + " history interval");
+        FREDLOG_DEBUG("invalid " + Conversion::Enums::to_db_handle(object_type) + " history interval");
         throw InvalidHistoryIntervalSpecification<object_type>();
     }
     ContactDataHistory history;
@@ -153,7 +153,7 @@ GetContactDataHistoryById::GetContactDataHistoryById(unsigned long long contact_
 { }
 
 GetContactDataHistoryById::Result GetContactDataHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -177,7 +177,7 @@ GetContactDataHistoryByHandle::GetContactDataHistoryByHandle(const std::string& 
 { }
 
 GetContactDataHistoryByHandle::Result GetContactDataHistoryByHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -208,7 +208,7 @@ GetContactDataHistoryByUuid::GetContactDataHistoryByUuid(const ContactUuid& cont
 { }
 
 GetContactDataHistoryByUuid::Result GetContactDataHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range)const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

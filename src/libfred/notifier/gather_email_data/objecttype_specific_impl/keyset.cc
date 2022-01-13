@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #include "libfred/notifier/gather_email_data/objecttype_specific_impl/keyset.hh"
 
 #include "libfred/notifier/util/add_old_new_suffix_pair.hh"
@@ -130,7 +129,7 @@ std::map<std::string, std::string> gather_keyset_update_data_change(
 }//namespace Notification::{anonymous}
 
 std::map<std::string, std::string> gather_keyset_data_change(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     const notified_event& _event,
     unsigned long long _history_id_post_change)
 {
@@ -162,7 +161,7 @@ std::set<unsigned long long> get_ids_of_keysets_accepting_notifications(const Li
 }//namespace Notification::{anonymous}
 
 std::set<unsigned long long> gather_contact_ids_to_notify_keyset_event(
-    LibFred::OperationContext& _ctx,
+    const LibFred::OperationContext& _ctx,
     notified_event _event,
     unsigned long long _history_id_after_change)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -83,10 +83,10 @@ ListContactChecks& ListContactChecks::set_status_handle(const std::string& _stat
 }
 
 // exec and serialization
-std::vector<ListChecksItem> ListContactChecks::exec(OperationContext& _ctx, const std::string& _output_timezone)
+std::vector<ListChecksItem> ListContactChecks::exec(const OperationContext& _ctx, const std::string& _output_timezone)
 {
-    _ctx.get_log().debug("ListContactChecks exec() started");
-    _ctx.get_log().info(this->to_string());
+    FREDLOG_DEBUG("ListContactChecks exec() started");
+    FREDLOG_INFO(this->to_string());
 
     try
     {
@@ -238,7 +238,7 @@ std::vector<ListChecksItem> ListContactChecks::exec(OperationContext& _ctx, cons
             result.push_back(it.second);
         }
 
-        _ctx.get_log().debug("ListContactChecks executed successfully");
+        FREDLOG_DEBUG("ListContactChecks executed successfully");
 
         return result;
     }

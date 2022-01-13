@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -33,7 +33,7 @@ GetObjectStateIdMap::GetObjectStateIdMap(const StatusList& _status_list, ObjectT
       object_type_(_object_type)
 {}
 
-GetObjectStateIdMap::StateIdMap& GetObjectStateIdMap::exec(OperationContext& _ctx)
+GetObjectStateIdMap::StateIdMap& GetObjectStateIdMap::exec(const OperationContext& _ctx)
 {
     GetObjectStateIdMap::get_result(_ctx, status_list_, object_type_, state_id_map_);
     if (state_id_map_.size() < status_list_.size())
@@ -55,7 +55,7 @@ GetObjectStateIdMap::StateIdMap& GetObjectStateIdMap::exec(OperationContext& _ct
 }
 
 GetObjectStateIdMap::StateIdMap& GetObjectStateIdMap::get_result(
-        OperationContext& _ctx,
+        const OperationContext& _ctx,
         const StatusList& _status_list,
         ObjectType _object_type,
         StateIdMap& _result)

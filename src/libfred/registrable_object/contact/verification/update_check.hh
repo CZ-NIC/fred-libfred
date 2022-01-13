@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -69,7 +69,7 @@ public:
      * @throws LibFred::ExceptionUnknownCheckHandle
      * @throws LibFred::ExceptionUnknownCheckStatusHandle
      */
-    void exec(OperationContext& _ctx);
+    void exec(const OperationContext& _ctx);
 
     std::string to_string()const;
 private:

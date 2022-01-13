@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -25,7 +25,7 @@
 namespace LibFred {
 namespace Registrar {
 
-unsigned long long CreateRegistrarGroup::exec(OperationContext& _ctx)
+unsigned long long CreateRegistrarGroup::exec(const OperationContext& _ctx)
 {
     try
     {
@@ -53,12 +53,12 @@ unsigned long long CreateRegistrarGroup::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER.error(e.what());
+        FREDLOG_ERROR(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to create a registrar group due to an unknown exception");
+        FREDLOG_INFO("Failed to create a registrar group due to an unknown exception");
         throw;
     }
 }

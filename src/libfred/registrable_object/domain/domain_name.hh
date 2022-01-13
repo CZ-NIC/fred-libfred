@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -108,7 +108,7 @@ public:
     ///set zone name if checker implementaion need one
     DomainNameValidator& set_zone_name(const DomainName& _zone_name);
     ///set operation context if checker implementaion need one
-    DomainNameValidator& set_ctx(OperationContext& _ctx);
+    DomainNameValidator& set_ctx(const OperationContext& _ctx);
     ///add checker name, checker names should be unique in instance of the validator
     DomainNameValidator& add(const std::string& checker_name);
     ///set checker names, forget previous set of names
@@ -120,7 +120,7 @@ public:
     bool exec(const DomainName& _fqdn, int _top_labels_to_skip = 0);
 private:
     std::unique_ptr<DomainName> zone_name_;
-    Optional<OperationContext*> ctx_;
+    Optional<const OperationContext*> ctx_;
     const bool is_system_registrar_;
     std::vector<std::string> checker_name_vector_;//TODO: std::set might be better here
 };
@@ -137,19 +137,19 @@ static const std::string DNCHECK_NOT_EMPTY_DOMAIN_NAME = "dncheck_not_empty_doma
 
 ///insert checker name into database
 void insert_domain_name_checker_name_into_database(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& checker_name,
         const std::string& checker_description);
 
 ///set domain name checkers for given zone
 void set_domain_name_validation_config_into_database(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& zone_name,
         const std::vector<std::string>& checker_names);
 
 ///get domain name checkers for given zone
 std::vector<std::string> get_domain_name_validation_config_for_zone(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& zone_name);
 
 }//namespace LibFred::Domain

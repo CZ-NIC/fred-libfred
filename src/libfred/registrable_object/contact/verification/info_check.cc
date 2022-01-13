@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -102,9 +102,9 @@ namespace LibFred
     {}
 
     // exec and serialization
-    InfoContactCheckOutput InfoContactCheck::exec(OperationContext& _ctx, const std::string& _output_timezone) {
-        _ctx.get_log().debug("InfoContactCheck exec() started");
-        _ctx.get_log().info(to_string());
+    InfoContactCheckOutput InfoContactCheck::exec(const OperationContext& _ctx, const std::string& _output_timezone) {
+        FREDLOG_DEBUG("InfoContactCheck exec() started");
+        FREDLOG_INFO(to_string());
 
         try {
             InfoContactCheckOutput result;
@@ -165,7 +165,7 @@ namespace LibFred
             temp_check_history_state.local_update_time = boost::posix_time::time_from_string(static_cast<std::string>( contact_check_data[0]["update_time_"]));
             result.check_state_history.push_back(temp_check_history_state);
 
-            _ctx.get_log().debug("InfoContactCheck executed successfully");
+            FREDLOG_DEBUG("InfoContactCheck executed successfully");
 
             return result;
 
@@ -186,7 +186,7 @@ namespace LibFred
     }
 
     std::vector<InfoContactCheckOutput::ContactTestResultData> InfoContactCheck::get_test_data(
-        OperationContext& _ctx,
+        const OperationContext& _ctx,
         unsigned long long _check_id,
         const std::string& _output_timezone
     ) {
@@ -297,7 +297,7 @@ namespace LibFred
     }
 
     std::vector<InfoContactCheckOutput::ContactCheckState> InfoContactCheck::get_check_historical_states(
-        OperationContext& _ctx,
+        const OperationContext& _ctx,
         unsigned long long _check_id,
         const std::string& _output_timezone
     ) {

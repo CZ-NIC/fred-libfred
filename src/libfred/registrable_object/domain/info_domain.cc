@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -53,7 +53,7 @@ InfoDomainByFqdn& InfoDomainByFqdn::set_lock()
     return *this;
 }
 
-InfoDomainOutput InfoDomainByFqdn::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+InfoDomainOutput InfoDomainByFqdn::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_res;
 
@@ -111,7 +111,7 @@ InfoDomainById& InfoDomainById::set_lock()
     return *this;
 }
 
-InfoDomainOutput InfoDomainById::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+InfoDomainOutput InfoDomainById::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_res;
 
@@ -269,7 +269,7 @@ InfoDomainHistoryByRoid& InfoDomainHistoryByRoid::set_lock()
 }
 
 std::vector<InfoDomainOutput> InfoDomainHistoryByRoid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_res;
@@ -315,7 +315,7 @@ InfoDomainHistoryById& InfoDomainHistoryById::set_lock()
 }
 
 std::vector<InfoDomainOutput> InfoDomainHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_history_res;
@@ -362,7 +362,7 @@ InfoDomainHistoryByHistoryid& InfoDomainHistoryByHistoryid::set_lock()
 }
 
 InfoDomainOutput InfoDomainHistoryByHistoryid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_history_res;
@@ -425,7 +425,7 @@ InfoDomainByRegistrantHandle& InfoDomainByRegistrantHandle::set_limit(unsigned l
 }
 
 std::vector<InfoDomainOutput> InfoDomainByRegistrantHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_res;
@@ -512,7 +512,7 @@ InfoDomainByAdminContactHandle& InfoDomainByAdminContactHandle::set_limit(unsign
     return *this;
 }
 
-std::vector<InfoDomainOutput> InfoDomainByAdminContactHandle::exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
+std::vector<InfoDomainOutput> InfoDomainByAdminContactHandle::exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_res;
 
@@ -597,7 +597,7 @@ InfoDomainByNssetHandle& InfoDomainByNssetHandle::set_limit(unsigned long long l
 }
 
 std::vector<InfoDomainOutput> InfoDomainByNssetHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_res;
@@ -683,7 +683,7 @@ InfoDomainByKeysetHandle& InfoDomainByKeysetHandle::set_limit(unsigned long long
 }
 
 std::vector<InfoDomainOutput> InfoDomainByKeysetHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const std::string& local_timestamp_pg_time_zone_name)
 {
     std::vector<InfoDomainOutput> domain_res;

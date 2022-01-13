@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -39,7 +39,7 @@ CancelObjectStateRequestId::CancelObjectStateRequestId(ObjectId _object_id,
     status_list_(_status_list)
 {}
 
-void CancelObjectStateRequestId::exec(OperationContext &_ctx)
+void CancelObjectStateRequestId::exec(const OperationContext& _ctx)
 {
     std::string object_state_names;
 
@@ -48,7 +48,7 @@ void CancelObjectStateRequestId::exec(OperationContext &_ctx)
         object_state_names += (*pState) + " ";
     }
 
-    _ctx.get_log().debug(std::string(
+    FREDLOG_DEBUG(std::string(
         "CancelObjectStateRequest::exec object id: ") + boost::lexical_cast< std::string >(object_id_)
         + " object state name: " + object_state_names);
 
@@ -126,7 +126,7 @@ void CancelObjectStateRequestId::exec(OperationContext &_ctx)
         for (Database::Result::Iterator pRow = cmd_result.begin(); pRow != cmd_result.end(); ++pRow) {
             rid += " " + std::string((*pRow)[REQUEST_ID_IDX]);
         }
-        _ctx.get_log().debug(rid);
+        FREDLOG_DEBUG(rid);
         return;
     }
     for (Database::Result::Iterator pRow = cmd_result.begin(); pRow != cmd_result.end(); ++pRow) {

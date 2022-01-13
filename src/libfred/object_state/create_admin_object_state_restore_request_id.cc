@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -63,7 +63,7 @@ CreateAdminObjectStateRestoreRequestId& CreateAdminObjectStateRestoreRequestId::
     return *this;
 }
 
-void CreateAdminObjectStateRestoreRequestId::exec(OperationContext& _ctx)
+void CreateAdminObjectStateRestoreRequestId::exec(const OperationContext& _ctx)
 {
     const ObjectStateId server_blocked_id = this->check_server_blocked_status_present(_ctx);
     enum ResultColumnIndex
@@ -143,7 +143,7 @@ void CreateAdminObjectStateRestoreRequestId::exec(OperationContext& _ctx)
 }
 
 ObjectStateId CreateAdminObjectStateRestoreRequestId::check_server_blocked_status_present(
-        OperationContext& _ctx)const
+        const OperationContext& _ctx)const
 {
     static ObjectStateId server_blocked_id = 0;
     if (server_blocked_id == 0)
@@ -158,11 +158,11 @@ ObjectStateId CreateAdminObjectStateRestoreRequestId::check_server_blocked_statu
             BOOST_THROW_EXCEPTION(Exception().set_state_not_found("serverBlocked"));
         }
         server_blocked_id = static_cast<ObjectStateId>(obj_state_res[0][0]);
-        _ctx.get_log().debug("serverBlockedId = " + boost::lexical_cast< std::string >(server_blocked_id));
+        FREDLOG_DEBUG("serverBlockedId = " + boost::lexical_cast< std::string >(server_blocked_id));
     }
-    _ctx.get_log().debug("LockObjectStateRequestLock call");
+    FREDLOG_DEBUG("LockObjectStateRequestLock call");
     LockObjectStateRequestLock(object_id_).exec(_ctx);
-    _ctx.get_log().debug("LockObjectStateRequestLock success");
+    FREDLOG_DEBUG("LockObjectStateRequestLock success");
     const Database::Result rcheck = _ctx.get_conn().exec_params(
         "SELECT 1 "
         "FROM object_state "

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -30,7 +30,7 @@ GetKeysetStateById::GetKeysetStateById(unsigned long long keyset_id)
 {
 }
 
-GetKeysetStateById::Result GetKeysetStateById::exec(OperationContext& ctx) const
+GetKeysetStateById::Result GetKeysetStateById::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
     const std::string sql =
@@ -48,7 +48,7 @@ GetKeysetStateById::Result GetKeysetStateById::exec(OperationContext& ctx) const
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -69,7 +69,7 @@ GetKeysetStateByHandle::GetKeysetStateByHandle(const std::string& fqdn)
 {
 }
 
-GetKeysetStateByHandle::Result GetKeysetStateByHandle::exec(OperationContext& ctx) const
+GetKeysetStateByHandle::Result GetKeysetStateByHandle::exec(const OperationContext& ctx) const
 {
     static const std::string sql_handle_case_normalize_function =
             object_type == Object_Type::domain ? "LOWER"
@@ -91,7 +91,7 @@ GetKeysetStateByHandle::Result GetKeysetStateByHandle::exec(OperationContext& ct
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;
@@ -112,7 +112,7 @@ GetKeysetStateByUuid::GetKeysetStateByUuid(const KeysetUuid& keyset_uuid)
 {
 }
 
-GetKeysetStateByUuid::Result GetKeysetStateByUuid::exec(OperationContext& ctx) const
+GetKeysetStateByUuid::Result GetKeysetStateByUuid::exec(const OperationContext& ctx) const
 {
     Database::query_param_list params;
     const auto object_type_param_text = "$" + params.add(Conversion::Enums::to_db_handle(object_type)) + "::TEXT";
@@ -131,7 +131,7 @@ GetKeysetStateByUuid::Result GetKeysetStateByUuid::exec(OperationContext& ctx) c
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw DoesNotExist();
     }
     Result state;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -79,7 +79,7 @@ CreateAdminObjectBlockRequestId& CreateAdminObjectBlockRequestId::set_logd_reque
     return *this;
 }
 
-std::string CreateAdminObjectBlockRequestId::exec(OperationContext& _ctx)
+std::string CreateAdminObjectBlockRequestId::exec(const OperationContext& _ctx)
 {
     this->check_administrative_block_status_only(_ctx);
     this->check_server_blocked_status_absent(_ctx);
@@ -128,7 +128,7 @@ std::string CreateAdminObjectBlockRequestId::exec(OperationContext& _ctx)
     return handle_name;
 }
 
-void CreateAdminObjectBlockRequestId::check_administrative_block_status_only(OperationContext& _ctx)const
+void CreateAdminObjectBlockRequestId::check_administrative_block_status_only(const OperationContext& _ctx)const
 {
     if (status_list_.empty())
     {
@@ -160,7 +160,7 @@ void CreateAdminObjectBlockRequestId::check_administrative_block_status_only(Ope
     }
 }
 
-void CreateAdminObjectBlockRequestId::check_server_blocked_status_absent(OperationContext& _ctx)const
+void CreateAdminObjectBlockRequestId::check_server_blocked_status_absent(const OperationContext& _ctx)const
 {
     static unsigned long long serverBlockedId = 0;
     if (serverBlockedId == 0)
@@ -175,11 +175,11 @@ void CreateAdminObjectBlockRequestId::check_server_blocked_status_absent(Operati
             BOOST_THROW_EXCEPTION(Exception().add_state_not_found("serverBlocked"));
         }
         serverBlockedId = static_cast<unsigned long long>(obj_state_res[0][0]);
-        _ctx.get_log().debug("serverBlockedId = " + boost::lexical_cast<std::string>(serverBlockedId));
+        FREDLOG_DEBUG("serverBlockedId = " + boost::lexical_cast<std::string>(serverBlockedId));
     }
-    _ctx.get_log().debug("LockObjectStateRequestLock call");
+    FREDLOG_DEBUG("LockObjectStateRequestLock call");
     LockObjectStateRequestLock(object_id_).exec(_ctx);
-    _ctx.get_log().debug("LockObjectStateRequestLock success");
+    FREDLOG_DEBUG("LockObjectStateRequestLock success");
     const Database::Result rcheck = _ctx.get_conn().exec_params(
         "SELECT 1 "
         "FROM object_state "

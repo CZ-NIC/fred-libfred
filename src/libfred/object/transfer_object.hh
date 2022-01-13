@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -33,7 +33,7 @@ namespace LibFred
      * @throws NewRegistrarIsAlreadySponsoring
      */
     unsigned long long transfer_object(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         const unsigned long long _object_id,
         const std::string& _new_registrar_handle,
         const GeneratedAuthInfoPassword& _new_authinfopw,

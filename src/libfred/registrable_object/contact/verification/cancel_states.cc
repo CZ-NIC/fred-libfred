@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -27,7 +27,7 @@ namespace Contact {
 namespace Verification {
 
 bool conditionally_cancel_final_states(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long contact_id,
         bool name_changed,
         bool organization_changed,
@@ -85,7 +85,7 @@ std::set<Object_State::Enum> get_final()
 }
 
 void cancel_states(
-        LibFred::OperationContext& _ctx,
+        const LibFred::OperationContext& _ctx,
         unsigned long long _contact_id,
         const std::set<Object_State::Enum>& _states)
 {
@@ -116,18 +116,18 @@ void cancel_states(
 
 }//namspace LibFred::Contact::Verification::{anonymous}
 
-void cancel_all_states(LibFred::OperationContext& _ctx, unsigned long long _contact_id)
+void cancel_all_states(const LibFred::OperationContext& _ctx, unsigned long long _contact_id)
 {
     cancel_states(_ctx, _contact_id, get_all());
 }
 
-void cancel_final_states(LibFred::OperationContext& _ctx, unsigned long long _contact_id)
+void cancel_final_states(const LibFred::OperationContext& _ctx, unsigned long long _contact_id)
 {
     cancel_states(_ctx, _contact_id, get_final());
 }
 
 bool conditionally_cancel_final_states(
-        LibFred::OperationContext& ctx,
+        const LibFred::OperationContext& ctx,
         unsigned long long contact_id)
 {
     // is there any change?

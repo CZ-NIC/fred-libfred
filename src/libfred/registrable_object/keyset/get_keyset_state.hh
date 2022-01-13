@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef GET_KEYSET_STATE_HH_05E9C3876C654FCE8B038ECEF050E807
 #define GET_KEYSET_STATE_HH_05E9C3876C654FCE8B038ECEF050E807
 
@@ -36,7 +35,7 @@ public:
     static constexpr auto object_type = Object_Type::keyset;
     using Result = KeysetState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx) const;
+    Result exec(const OperationContext& ctx) const;
 private:
     unsigned long long keyset_id_;
 };
@@ -48,7 +47,7 @@ public:
     static constexpr auto object_type = Object_Type::keyset;
     using Result = KeysetState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx) const;
+    Result exec(const OperationContext& ctx) const;
 private:
     std::string fqdn_;
 };
@@ -60,7 +59,7 @@ public:
     static constexpr auto object_type = Object_Type::keyset;
     using Result = KeysetState;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
-    Result exec(OperationContext& ctx) const;
+    Result exec(const OperationContext& ctx) const;
 private:
     KeysetUuid uuid_;
 };

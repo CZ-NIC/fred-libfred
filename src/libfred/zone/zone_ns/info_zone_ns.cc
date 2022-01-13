@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -29,7 +29,7 @@ InfoZoneNs::InfoZoneNs(unsigned long long _id)
 {
 }
 
-InfoZoneNsData InfoZoneNs::exec(OperationContext& _ctx) const
+InfoZoneNsData InfoZoneNs::exec(const OperationContext& _ctx) const
 {
     Database::Result result;
     try
@@ -37,9 +37,7 @@ InfoZoneNsData InfoZoneNs::exec(OperationContext& _ctx) const
         result = _ctx.get_conn().exec_params(
                 // clang-format off
                 "SELECT id, zone, fqdn, "
-                "CASE WHEN array_length(addrs, 1) IS NULL THEN NULL "
-                "ELSE unnest(addrs) "
-                "END AS addr "
+                       "UNNEST(CASE WHEN addrs <> '{}' THEN addrs ELSE '{NULL}' END) AS addr "
                 "FROM zone_ns "
                 "WHERE id = $1::bigint",
                 // clang-format on

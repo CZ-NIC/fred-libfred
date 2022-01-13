@@ -1,0 +1,3 @@
+# <repository> <commitish> <clone-path>
+fred/liblog 1.4.1 external/lib/liblog
+fred/libpg 2.2.0 external/lib/libpg

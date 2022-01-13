@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -66,10 +66,10 @@ UpdateContactTest& UpdateContactTest::set_error_msg (const std::string& _error_m
     return *this;
 }
 
-void UpdateContactTest::exec (OperationContext& _ctx)
+void UpdateContactTest::exec (const OperationContext& _ctx)
 {
-    _ctx.get_log().debug("UpdateContactTest exec() started");
-    _ctx.get_log().info(to_string());
+    FREDLOG_DEBUG("UpdateContactTest exec() started");
+    FREDLOG_INFO(to_string());
 
     // using solo select for easy checking of existence (subselect would be strange)
     const Database::Result status_res = _ctx.get_conn().exec_params(
@@ -160,7 +160,7 @@ void UpdateContactTest::exec (OperationContext& _ctx)
         throw;
     }
 
-    _ctx.get_log().debug("UpdateContactTest executed successfully");
+    FREDLOG_DEBUG("UpdateContactTest executed successfully");
 }
 
 std::string UpdateContactTest::to_string() const

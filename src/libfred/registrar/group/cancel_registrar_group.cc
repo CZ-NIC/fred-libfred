@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -23,7 +23,7 @@
 namespace LibFred {
 namespace Registrar {
 
-void CancelRegistrarGroup::exec(OperationContext& _ctx)
+void CancelRegistrarGroup::exec(const OperationContext& _ctx)
 {
     try
     {
@@ -59,12 +59,12 @@ void CancelRegistrarGroup::exec(OperationContext& _ctx)
     }
     catch (const std::exception& e)
     {
-        LOGGER.error(e.what());
+        FREDLOG_ERROR(e.what());
         throw;
     }
     catch (...)
     {
-        LOGGER.info("Failed to cancel registrar group due to an unknown exception");
+        FREDLOG_INFO("Failed to cancel registrar group due to an unknown exception");
         throw;
     }
 }

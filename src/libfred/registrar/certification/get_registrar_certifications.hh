@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -37,7 +37,7 @@ class GetRegistrarCertifications
 public:
     explicit GetRegistrarCertifications(unsigned long long _registrar_id);
 
-    std::vector<RegistrarCertification> exec(OperationContext& _ctx) const;
+    std::vector<RegistrarCertification> exec(const OperationContext& _ctx) const;
 
 private:
     unsigned long long registrar_id_;

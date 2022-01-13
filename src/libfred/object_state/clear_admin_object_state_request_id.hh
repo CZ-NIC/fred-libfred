@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -46,7 +46,7 @@ public:
     ClearAdminObjectStateRequestId(ObjectId _object_id);
     ClearAdminObjectStateRequestId(ObjectId _object_id, const std::string &_reason);
     ClearAdminObjectStateRequestId& set_reason(const std::string &_reason);
-    void exec(OperationContext &_ctx);
+    void exec(const OperationContext& _ctx);
 
     DECLARE_EXCEPTION_DATA(object_id_not_found, ObjectId);
     DECLARE_EXCEPTION_DATA(server_blocked_absent, ObjectId);

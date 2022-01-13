@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -116,7 +116,7 @@ namespace LibFred
         * @param local_timestamp_pg_time_zone_name is postgresql time zone name of the returned data
         * @return info data about the registrar
         */
-        std::vector<InfoRegistrarOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC");
+        std::vector<InfoRegistrarOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "UTC");
 
     };//classInfoRegistrar
 } // namespace LibFred

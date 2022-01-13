@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -30,7 +30,7 @@ namespace {
 
 template <typename T>
 KeysetStateHistory get_keyset_state_history(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range,
         T get_object_id_rule)
 {
@@ -106,7 +106,7 @@ KeysetStateHistory get_keyset_state_history(
     const auto dbres = ctx.get_conn().exec_params(sql, params);
     if (dbres.size() == 0)
     {
-        ctx.get_log().debug(Conversion::Enums::to_db_handle(object_type) + " does not exist");
+        FREDLOG_DEBUG(Conversion::Enums::to_db_handle(object_type) + " does not exist");
         throw ObjectDoesNotExist<object_type>();
     }
     const bool limit_is_invalid = static_cast<bool>(dbres[0][0]);
@@ -193,7 +193,7 @@ GetKeysetStateHistoryById::GetKeysetStateHistoryById(unsigned long long keyset_i
 }
 
 GetKeysetStateHistoryById::Result GetKeysetStateHistoryById::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -218,7 +218,7 @@ GetKeysetStateHistoryByHandle::GetKeysetStateHistoryByHandle(const std::string& 
 }
 
 GetKeysetStateHistoryByHandle::Result GetKeysetStateHistoryByHandle::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));
@@ -250,7 +250,7 @@ GetKeysetStateHistoryByUuid::GetKeysetStateHistoryByUuid(const KeysetUuid& _keys
 }
 
 GetKeysetStateHistoryByUuid::Result GetKeysetStateHistoryByUuid::exec(
-        OperationContext& ctx,
+        const OperationContext& ctx,
         const HistoryInterval& range) const
 {
     Database::query_param_list params(Conversion::Enums::to_db_handle(object_type));

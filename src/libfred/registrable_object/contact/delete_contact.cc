@@ -65,7 +65,7 @@ DeleteContactByHandle::DeleteContactByHandle(const std::string& handle)
 : handle_(handle)
 {}
 
-void DeleteContactByHandle::exec(OperationContext& _ctx)
+void DeleteContactByHandle::exec(const OperationContext& _ctx)
 {
     try
     {
@@ -107,7 +107,7 @@ DeleteContactById::DeleteContactById(unsigned long long _id)
     : id_(_id)
 { }
 
-void DeleteContactById::exec(OperationContext& _ctx)
+void DeleteContactById::exec(const OperationContext& _ctx)
 {
     try
     {

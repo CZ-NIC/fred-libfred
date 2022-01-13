@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -452,7 +452,7 @@ private:
      * @param idtag is number to make object different
      * @return handle of created object
      */
-    std::string create_non_mergeable_contact(::LibFred::OperationContext& ctx
+    std::string create_non_mergeable_contact(const ::LibFred::OperationContext& ctx
         , const std::string& registrar_handle
         , unsigned idtag //to make object unique
         )
@@ -536,7 +536,7 @@ private:
      * @return handle of created object
      */
     std::string create_mergeable_contact(//except the contact states that shall block merge
-        ::LibFred::OperationContext& ctx
+        const ::LibFred::OperationContext& ctx
         , const std::string& registrar_handle
         , unsigned grpidtag //to make group of mergeable objects unique
         , unsigned state_case
@@ -629,7 +629,7 @@ private:
      * @return handle of created object
      */
     std::string create_nsset_with_tech_contact(
-        ::LibFred::OperationContext& ctx
+        const ::LibFred::OperationContext& ctx
         , const std::string& registrar_handle
         , unsigned linked_object_state_case
         , unsigned quantity_case
@@ -673,7 +673,7 @@ private:
      * @return handle of created object
      */
     std::string create_keyset_with_tech_contact(
-        ::LibFred::OperationContext& ctx
+        const ::LibFred::OperationContext& ctx
         , const std::string& registrar_handle
         , unsigned linked_object_state_case
         , unsigned quantity_case
@@ -717,7 +717,7 @@ private:
      * @return fqdn
      */
     std::string create_domain_with_owner_contact(
-        ::LibFred::OperationContext& ctx
+        const ::LibFred::OperationContext& ctx
         , const std::string& registrar_handle
         , unsigned linked_object_state_case
         , unsigned quantity_case
@@ -761,7 +761,7 @@ private:
      * @return fqdn
      */
     std::string create_domain_with_admin_contact(
-        ::LibFred::OperationContext& ctx
+        const ::LibFred::OperationContext& ctx
         , const std::string& registrar_handle
         , unsigned linked_object_state_case
         , unsigned quantity_case
@@ -805,7 +805,7 @@ private:
      * @param state_set is set of required states from enum_object_states.name
      */
     void insert_state_requests(
-            ::LibFred::OperationContext& ctx,
+            const ::LibFred::OperationContext& ctx,
             unsigned long long id,
             const std::set<::LibFred::Object_State::Enum>& state_set)
     {
@@ -831,7 +831,7 @@ private:
      * @return id of primary object created according to linked objects case or 0, id is meant to be used for setting object states configurations
      */
     unsigned long long create_linked_object(
-        ::LibFred::OperationContext& ctx
+        const ::LibFred::OperationContext& ctx
         , const std::string& contact_handle
         , const std::string& registrar_handle
         , unsigned grpidtag

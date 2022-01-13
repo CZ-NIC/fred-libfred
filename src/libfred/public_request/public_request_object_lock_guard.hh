@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -55,7 +55,7 @@ public:
      * Returns operation context which has been used for the public requests locking.
      * @return reference to the operation context
      */
-    virtual OperationContext& get_ctx()const = 0;
+    virtual const OperationContext& get_ctx()const = 0;
 protected:
     virtual ~LockedPublicRequestsOfObjectForUpdate() { }
 };
@@ -79,7 +79,7 @@ public:
      * @param _ctx use database connection from this operation context
      * @param _object_id unique numeric identification of object
      */
-    PublicRequestsOfObjectLockGuardByObjectId(OperationContext &_ctx, ObjectId _object_id);
+    PublicRequestsOfObjectLockGuardByObjectId(const OperationContext& _ctx, ObjectId _object_id);
     /**
      * @warning It doesn't release lock contrary to expectations. The one will release by finishing of
      *          transaction wherein it was created.
@@ -87,8 +87,8 @@ public:
     virtual ~PublicRequestsOfObjectLockGuardByObjectId() { }
 private:
     virtual ObjectId get_id()const { return object_id_; }
-    virtual OperationContext& get_ctx()const { return ctx_; }
-    OperationContext &ctx_;
+    virtual const OperationContext& get_ctx()const { return ctx_; }
+    const OperationContext& ctx_;
     const ObjectId object_id_;
 };
 

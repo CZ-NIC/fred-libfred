@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -38,7 +38,7 @@ public:
      * @throws LibFred::OperationException an operation specific exception
      * @throws LibFred::InternalError an unexpected exception
      */
-    void exec(LibFred::OperationContext& _ctx, unsigned long long _history_id)const;
+    void exec(const LibFred::OperationContext& _ctx, unsigned long long _history_id)const;
 };
 
 } // namespace LibFred::Poll

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -61,7 +61,7 @@ UpdateRegistrarZoneAccess& UpdateRegistrarZoneAccess::set_to_date(
     return *this;
 }
 
-unsigned long long UpdateRegistrarZoneAccess::exec(OperationContext& _ctx) const
+unsigned long long UpdateRegistrarZoneAccess::exec(const OperationContext& _ctx) const
 {
     const bool values_for_update_are_set = (from_date_ != boost::none || to_date_ != boost::none);
     if (!values_for_update_are_set)

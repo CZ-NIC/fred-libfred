@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -26,7 +26,7 @@ GetObjectStatesByHistoryId::GetObjectStatesByHistoryId(unsigned long long _histo
     : history_id_(_history_id)
 { }
 
-GetObjectStatesByHistoryId::Result GetObjectStatesByHistoryId::exec(OperationContext& _ctx)
+GetObjectStatesByHistoryId::Result GetObjectStatesByHistoryId::exec(const OperationContext& _ctx)
 {
     const Database::Result dbres = _ctx.get_conn().exec_params(
             "WITH h AS ("

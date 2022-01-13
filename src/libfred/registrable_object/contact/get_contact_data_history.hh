@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -37,7 +37,7 @@ public:
     using Result = ContactDataHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
-    Result exec(OperationContext& ctx, const HistoryInterval& range)const;
+    Result exec(const OperationContext& ctx, const HistoryInterval& range)const;
 private:
     unsigned long long contact_id_;
 };
@@ -50,7 +50,7 @@ public:
     using Result = ContactDataHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
-    Result exec(OperationContext& ctx, const HistoryInterval& range)const;
+    Result exec(const OperationContext& ctx, const HistoryInterval& range)const;
 private:
     std::string handle_;
 };
@@ -63,7 +63,7 @@ public:
     using Result = ContactDataHistory;
     using DoesNotExist = ObjectDoesNotExist<object_type>;
     using InvalidHistoryIntervalSpecification = RegistrableObject::InvalidHistoryIntervalSpecification<object_type>;
-    Result exec(OperationContext& ctx, const HistoryInterval& range)const;
+    Result exec(const OperationContext& ctx, const HistoryInterval& range)const;
 private:
     ContactUuid uuid_;
 };

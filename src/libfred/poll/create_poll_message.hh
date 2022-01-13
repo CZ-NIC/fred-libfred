@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -45,7 +45,7 @@ struct CreatePollMessage
      * @throws LibFred::OperationException an operation specific exception
      * @throws LibFred::InternalError an unexpected exception
      */
-    unsigned long long exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const;
+    unsigned long long exec(const LibFred::OperationContext& _ctx, unsigned long long _history_id) const;
 };
 
 
@@ -53,7 +53,7 @@ template<Object_Type::Enum object_type>
 struct CreateUpdateOperationPollMessage
 {
     using Result = std::set<unsigned long long>;
-    Result exec(LibFred::OperationContext& _ctx, unsigned long long _history_id) const;
+    Result exec(const LibFred::OperationContext& _ctx, unsigned long long _history_id) const;
 };
 
 } // namespace LibFred::Poll

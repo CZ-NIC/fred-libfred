@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -23,7 +23,7 @@
 namespace LibFred {
 namespace Keyset {
 
-HandleState::SyntaxValidity get_handle_syntax_validity(OperationContext &_ctx, const std::string &_keyset_handle)
+HandleState::SyntaxValidity get_handle_syntax_validity(const OperationContext& _ctx, const std::string &_keyset_handle)
 {
     if (TestHandleOf< Object_Type::keyset >(_keyset_handle).is_invalid_handle(_ctx)) {
         return HandleState::invalid;
@@ -31,7 +31,7 @@ HandleState::SyntaxValidity get_handle_syntax_validity(OperationContext &_ctx, c
     return HandleState::valid;
 }
 
-HandleState::Registrability get_handle_registrability(OperationContext &_ctx,
+HandleState::Registrability get_handle_registrability(const OperationContext& _ctx,
                                                       const std::string &_keyset_handle)
 {
     if (TestHandleOf< Object_Type::keyset >(_keyset_handle).is_registered(_ctx)) {

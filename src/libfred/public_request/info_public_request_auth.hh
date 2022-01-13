@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -41,7 +41,7 @@ public:
      * @param _ctx    operation context
      * @param _locked locked public request
      */
-    PublicRequestAuthInfo(OperationContext &_ctx, const LockedPublicRequest &_locked);
+    PublicRequestAuthInfo(const OperationContext& _ctx, const LockedPublicRequest &_locked);
 
     /**
      * Copy constructor.
@@ -75,7 +75,7 @@ public:
      * @param _ctx    operation context
      * @param _locked locked public request
      */
-    Result exec(OperationContext &_ctx, const LockedPublicRequest &_locked)const
+    Result exec(const OperationContext& _ctx, const LockedPublicRequest &_locked)const
     {
         return Result(_ctx, _locked);
     }

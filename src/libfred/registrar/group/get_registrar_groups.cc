@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -23,7 +23,7 @@
 namespace LibFred {
 namespace Registrar {
 
-std::vector<RegistrarGroup> GetRegistrarGroups::exec(OperationContext& _ctx)
+std::vector<RegistrarGroup> GetRegistrarGroups::exec(const OperationContext& _ctx)
 {
     try
     {
@@ -45,7 +45,7 @@ std::vector<RegistrarGroup> GetRegistrarGroups::exec(OperationContext& _ctx)
     }
     catch (...)
     {
-        LOGGER.info("Failed to get registrar group due to an unknown exception");
+        FREDLOG_INFO("Failed to get registrar group due to an unknown exception");
         throw;
     }
 }

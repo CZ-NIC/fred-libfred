@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -21,7 +21,7 @@
 namespace LibFred {
 
 PublicRequestsOfObjectLockGuardByObjectId::PublicRequestsOfObjectLockGuardByObjectId(
-        OperationContext &_ctx,
+        const OperationContext& _ctx,
         ObjectId _object_id)
 :   ctx_(_ctx),
     object_id_(_object_id)

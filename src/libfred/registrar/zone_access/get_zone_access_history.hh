@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef GET_ZONE_ACCESS_HISTORY_HH_D244602CE4E742B08CA40AE73028E1EF
 #define GET_ZONE_ACCESS_HISTORY_HH_D244602CE4E742B08CA40AE73028E1EF
 
@@ -34,7 +33,7 @@ class GetZoneAccessHistory
 {
 public:
     explicit GetZoneAccessHistory(const std::string& _registrar_handle);
-    RegistrarZoneAccessHistory exec(OperationContext& _ctx) const;
+    RegistrarZoneAccessHistory exec(const OperationContext& _ctx) const;
     struct Exception : virtual std::exception { };
 private:
     std::string registrar_handle_;

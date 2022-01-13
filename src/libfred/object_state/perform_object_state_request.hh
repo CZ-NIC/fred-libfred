@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -62,7 +62,7 @@ namespace LibFred
         * Executes object state change requests processing.
         * @param ctx contains reference to database and logging interface
         */
-        void exec(OperationContext &_ctx);
+        void exec(const OperationContext& _ctx);
 
     private:
         Optional< unsigned long long > object_id_;/**< database id of the object */

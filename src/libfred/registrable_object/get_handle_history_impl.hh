@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -55,7 +55,7 @@ constexpr char sql_get_handle_history<Object_Type::domain>[] =
 }//namespace LibFred::RegistrableObject::{anonymous}
 
 template <Object_Type::Enum o>
-typename GetHandleHistory<o>::Result GetHandleHistory<o>::exec(OperationContext& ctx)const
+typename GetHandleHistory<o>::Result GetHandleHistory<o>::exec(const OperationContext& ctx)const
 {
     static const std::string sql = sql_get_handle_history<object_type>;
     const Database::QueryParams params =

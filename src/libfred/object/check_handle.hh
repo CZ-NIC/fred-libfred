@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -38,13 +38,13 @@ public:
     TestHandleOf(const std::string& _handle);
 
     //check handle syntax
-    bool is_invalid_handle(OperationContext& _ctx)const;
+    bool is_invalid_handle(const OperationContext& _ctx)const;
 
     //check if handle is in protected period
-    bool is_protected(OperationContext& _ctx)const;
+    bool is_protected(const OperationContext& _ctx)const;
 
     //check if handle is already registered
-    bool is_registered(OperationContext& _ctx)const;
+    bool is_registered(const OperationContext& _ctx)const;
 private:
     const std::string handle_;
     BOOST_MPL_ASSERT_MSG((TYPE_OF_OBJECT != Object_Type::domain) && //domain handle is called "fqdn" => no handle operations for domains

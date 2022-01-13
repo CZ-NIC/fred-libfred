@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -71,7 +71,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    InfoKeysetOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoKeysetOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -119,7 +119,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    InfoKeysetOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoKeysetOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -242,7 +242,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    std::vector<InfoKeysetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoKeysetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -285,7 +285,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    std::vector<InfoKeysetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoKeysetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -333,7 +333,7 @@ public:
     * @throws Exception in case of wrong input data or other predictable and superable failure.
     * @throws InternalError otherwise
     */
-    InfoKeysetOutput exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    InfoKeysetOutput exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string
@@ -384,7 +384,7 @@ public:
     * @return info data about the keysets
     * @throws InternalError
     */
-    std::vector<InfoKeysetOutput> exec(OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
+    std::vector<InfoKeysetOutput> exec(const OperationContext& ctx, const std::string& local_timestamp_pg_time_zone_name = "Europe/Prague");
 
     /**
     * Dumps state of the instance into the string

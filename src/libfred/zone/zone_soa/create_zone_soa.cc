@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -64,7 +64,7 @@ CreateZoneSoa& CreateZoneSoa::set_minimum(const boost::optional<unsigned long>& 
     return *this;
 }
 
-unsigned long long CreateZoneSoa::exec(OperationContext& _ctx) const
+unsigned long long CreateZoneSoa::exec(const OperationContext& _ctx) const
 {
     const LibFred::Zone::InfoZoneData zone_info = LibFred::Zone::InfoZone(fqdn_).exec(_ctx);
 

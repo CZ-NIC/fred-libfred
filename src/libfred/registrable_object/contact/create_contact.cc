@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -239,7 +239,7 @@ CreateContact& CreateContact::set_logd_request_id(unsigned long long logd_reques
     return *this;
 }
 
-CreateContact::Result CreateContact::exec(OperationContext &ctx, const std::string &returned_timestamp_pg_time_zone_name)const
+CreateContact::Result CreateContact::exec(const OperationContext& ctx, const std::string &returned_timestamp_pg_time_zone_name)const
 {
     Result result;
 

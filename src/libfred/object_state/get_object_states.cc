@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -33,7 +33,7 @@ namespace LibFred
     : object_id_(object_id)
     {}
 
-    std::vector<ObjectStateData> GetObjectStates::exec(OperationContext& ctx)
+    std::vector<ObjectStateData> GetObjectStates::exec(const OperationContext& ctx)
     {
         const Database::Result domain_states_result = ctx.get_conn().exec_params(
         "SELECT eos.id, eos.name, os.valid_from, os.valid_to , os.ohid_from, os.ohid_to"
