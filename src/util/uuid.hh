@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  UUID type
- */
 
 #ifndef UUID_HH_EF6BA55F5AD74813BC76C6832E552E2A
 #define UUID_HH_EF6BA55F5AD74813BC76C6832E552E2A
@@ -28,66 +24,78 @@
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+
+#include <cstring>
 #include <string>
 
-class uuid {
-    public:
-        struct ExceptionInvalidUuid {
-            const char* what() const noexcept {return "invalid input UUID";}
-        };
+class uuid
+{
+public:
+    // intentionally not providing default constructor - empty uuid is not valid
+    uuid() = delete;
+    uuid(uuid&&) = default;
+    uuid(const uuid&) = default;
+    uuid& operator=(uuid&&) = default;
 
-        enum { CANNONICAL_FORM_LENGTH = 36 };
-    private:
-        boost::uuids::uuid value_;
+    /**
+     * named constructor
+     *
+     * @throws ExceptionInvalidUuid
+     */
+    static uuid from_string(const std::string& _in)
+    {
+        return uuid{_in};
+    }
 
-        // the weird syntax is Function Try Block
-        explicit uuid(const std::string& _in)
-        try
-            : value_(boost::uuids::string_generator()(_in))
+    explicit uuid(const boost::uuids::uuid& _in)
+        : value_{_in}
+    { }
+
+    uuid& operator=(const uuid& _rhs)
+    {
+        value_ = _rhs.value_;
+        return *this;
+    }
+
+    uuid& operator=(const boost::uuids::uuid& _rhs)
+    {
+        value_ = _rhs;
+        return *this;
+    }
+
+    operator std::string() const
+    {
+        return boost::lexical_cast<std::string>(value_);
+    }
+
+    std::string to_string() const
+    {
+        return static_cast<std::string>(*this);
+    }
+
+    struct ExceptionInvalidUuid
+    {
+        const char* what() const noexcept { return "invalid input UUID"; }
+    };
+private:
+    // the weird syntax is Function Try Block
+    explicit uuid(const std::string& _in)
+    try
+        : value_{boost::uuids::string_generator{}(_in)}
+    {
+        // cannonical form e. g. 550e8400-e29b-41d4-a716-446655440000
+        static constexpr std::string::size_type cannonical_form_length = std::strlen("550e8400-e29b-41d4-a716-446655440000");
+        static_assert(cannonical_form_length == 36, "uuid string representation should be 36 characters long");
+        if (_in.length() != cannonical_form_length)
         {
-            // cannonical form e. g. 550e8400-e29b-41d4-a716-446655440000
-            if (_in.length() != CANNONICAL_FORM_LENGTH) {
-                throw ExceptionInvalidUuid();
-            }
+            throw ExceptionInvalidUuid{};
         }
-        catch (const std::runtime_error&) {
-            throw ExceptionInvalidUuid();
-        }
-    public:
-        // intentionally not providing default constructor - empty uuid is not valid
-
-        /**
-         * named constructor
-         *
-         * @throws ExceptionInvalidUuid
-         */
-        static uuid from_string(const std::string& _in) {
-            return uuid(_in);
-        }
-
-        explicit uuid(const boost::uuids::uuid& _in)
-        : value_(_in)
-        { }
-
-        uuid& operator=(const uuid& _rhs) {
-            value_ = _rhs.value_;
-
-            return *this;
-        }
-
-        uuid& operator=(const boost::uuids::uuid& _rhs) {
-            value_ = _rhs;
-
-            return *this;
-        }
-
-        operator std::string() const {
-            return boost::lexical_cast<std::string>(value_);
-        }
-
-        std::string to_string() const {
-            return static_cast<std::string>(*this);
-        }
+    }
+    catch (const std::runtime_error&)
+    {
+        throw ExceptionInvalidUuid{};
+    }
+    boost::uuids::uuid value_;
 };
 
 #endif
