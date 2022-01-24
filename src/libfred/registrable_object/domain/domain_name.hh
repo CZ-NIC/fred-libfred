@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -71,9 +71,6 @@ private:
     void init(const char* _fqdn);
 };
 
-//domain name validator
-FACTORY_MODULE_INIT_DECL(domain_name_validator)
-
 class DomainNameChecker
 {
 public:
@@ -84,7 +81,7 @@ public:
 class DomainNameCheckerNeedZoneName
 {
 public:
-    virtual void set_zone_name(const DomainName& zone_name) = 0;
+    virtual void set_zone_name(DomainName zone_name) = 0;
 protected:
    virtual ~DomainNameCheckerNeedZoneName() {}
 };
@@ -106,13 +103,13 @@ public:
     explicit DomainNameValidator(bool _is_system_registrar = false);
 
     ///set zone name if checker implementaion need one
-    DomainNameValidator& set_zone_name(const DomainName& _zone_name);
+    DomainNameValidator& set_zone_name(DomainName _zone_name);
     ///set operation context if checker implementaion need one
     DomainNameValidator& set_ctx(OperationContext& _ctx);
     ///add checker name, checker names should be unique in instance of the validator
-    DomainNameValidator& add(const std::string& checker_name);
+    DomainNameValidator& add(std::string checker_name);
     ///set checker names, forget previous set of names
-    DomainNameValidator& set_checker_names(const std::vector<std::string>& checker_names);
+    DomainNameValidator& set_checker_names(std::vector<std::string> checker_names);
     /*! \brief Returns true if domain name is valid otherwise it returns false.
      * @throw ZoneNameNotSet in case Zone name have not been set and checker which needs it was added.
      * @throw CtxNotSet in case OperationContext have not been set and checker which needs it was added.
@@ -125,7 +122,9 @@ private:
     std::vector<std::string> checker_name_vector_;//TODO: std::set might be better here
 };
 
-typedef Util::Factory<DomainNameChecker, Util::ClassCreator<DomainNameChecker>> DomainNameCheckerFactory;
+using DomainNameCheckerFactory = Util::Factory<DomainNameChecker>;
+
+const DomainNameCheckerFactory& get_default_domain_name_checker_factory();
 
 static const std::string DNCHECK_NO_CONSECUTIVE_HYPHENS = "dncheck_no_consecutive_hyphens";
 static const std::string DNCHECK_RFC1035_PREFERRED_SYNTAX = "dncheck_rfc1035_preferred_syntax";
