@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,6 +72,7 @@ namespace LibFred
         (std::make_pair("payment_memo_regex", payment_memo_regex.print_quoted()))
         (std::make_pair("vat_payer", boost::lexical_cast<std::string>(vat_payer)))
         (std::make_pair("id", boost::lexical_cast<std::string>(id)))
+        (std::make_pair("is_internal", boost::lexical_cast<std::string>(is_internal)))
         );
     }
 

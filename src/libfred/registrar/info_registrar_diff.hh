@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -80,6 +80,7 @@ struct InfoRegistrarDiff : Util::Printable<InfoRegistrarDiff>
     DiffMemeber<Nullable<std::string> >::Type payment_memo_regex;/**< registrar payments coupling alternative to variable symbol, if payment_memo_regex is set, payment_memo have to match case insesitive with payment_memo_regex to couple payment with registrar*/
     DiffMemeber<bool>::Type vat_payer;/**< VAT payer flag */
     DiffMemeber<unsigned long long >::Type id; /**< registrar db id */
+    DiffMemeber<bool>::Type is_internal;/**< internal registrar flag */
 };
 
 /**

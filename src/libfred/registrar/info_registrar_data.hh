@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  registrar info data
  */
 
 #ifndef INFO_REGISTRAR_DATA_HH_67CF94612B164604860B5B69A86A93AF
@@ -82,6 +78,7 @@ struct InfoRegistrarData : Util::Printable<InfoRegistrarData>
     Nullable<std::string> payment_memo_regex;/**< registrar payments coupling alternative to variable symbol, if payment_memo_regex is set, payment_memo have to match case insesitive with payment_memo_regex to couple payment with registrar*/
     bool                  vat_payer;/**< VAT payer flag */
     unsigned long long id; /**< registrar db id */
+    bool is_internal;/**< internal registrar flag */
 };
 
 }//namespace LibFred

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -82,6 +82,7 @@ public:
      * @param variable_symbol sets payments coupling tag into @ref variable_symbol_ attribute
      * @param payment_memo_regex sets alternative payment coupling expression into @ref payment_memo_regex_ attribute
      * @param vat_payer sets VAT payer flag into @ref vat_payer_ attribute
+     * @param is_internal sets internal registrar flag
      */
     CreateRegistrar(
             const std::string& handle,
@@ -103,7 +104,8 @@ public:
             const Optional<std::string>& dic,
             const Optional<std::string>& variable_symbol,
             const Optional<std::string>& payment_memo_regex,
-            const Optional<bool>& vat_payer);
+            const Optional<bool>& vat_payer,
+            bool is_internal);
 
     ~CreateRegistrar() { }
 
@@ -241,6 +243,13 @@ public:
     CreateRegistrar& set_vat_payer(bool vat_payer);
 
     /**
+     * Sets internal registrar flag.
+     * @param system sets internal registrar flag
+     * @return operation instance reference to allow method chaining
+     */
+    CreateRegistrar& set_internal(bool value);
+
+    /**
      * Executes create
      * @param ctx contains reference to database and logging interface
      */
@@ -274,6 +283,7 @@ private:
     Optional<std::string> variable_symbol_;/**< registrar payments coupling tag, have to match with payment variable symbol to couple payment with registrar*/
     Optional<std::string> payment_memo_regex_;/**< registrar payments coupling alternative to variable symbol, if payment_memo_regex is set, payment_memo have to match case insesitive with payment_memo_regex to couple payment with registrar*/
     Optional<bool> vat_payer_;/**< VAT payer flag */
+    bool is_internal_;/**< internal registrar flag */
 };
 
 }//namespace LibFred

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,6 +72,8 @@ public:
 
     UpdateRegistrarById& set_payment_memo_regex(const boost::optional<std::string>& _payment_memo_regex);
 
+    UpdateRegistrarById& set_internal(const boost::optional<bool>& value);
+
     void exec(OperationContext& _ctx) const;
 
 private:
@@ -96,6 +98,7 @@ private:
     boost::optional<std::string> url_;
     boost::optional<bool> system_;
     boost::optional<std::string> payment_memo_regex_;
+    boost::optional<bool> is_internal_;
 };
 
 } // namespace LibFred::Registrar

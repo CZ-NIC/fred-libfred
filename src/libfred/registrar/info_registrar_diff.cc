@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -60,6 +60,7 @@ namespace LibFred
         (std::make_pair("variable_symbol", variable_symbol.print_quoted()))
         (std::make_pair("payment_memo_regex", payment_memo_regex.print_quoted()))
         (std::make_pair("vat_payer", vat_payer.print_quoted()))
+        (std::make_pair("is_internal", is_internal.print_quoted()))
         (std::make_pair("id", id.print_quoted()))
         );//format_data_structure InfoRegistrarDiff
     }
@@ -87,6 +88,7 @@ namespace LibFred
             || variable_symbol.isset()
             || payment_memo_regex.isset()
             || vat_payer.isset()
+            || is_internal.isset()
             || id.isset()
             );
     }
@@ -185,6 +187,10 @@ namespace LibFred
         if (!Util::is_equal(first.payment_memo_regex, second.payment_memo_regex))
         {
             diff.payment_memo_regex = std::make_pair(first.payment_memo_regex, second.payment_memo_regex);
+        }
+        if (first.is_internal != second.is_internal)
+        {
+            diff.is_internal = std::make_pair(first.is_internal, second.is_internal);
         }
         if (first.vat_payer != second.vat_payer)
         {

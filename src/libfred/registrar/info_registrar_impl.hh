@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -88,6 +88,7 @@ namespace LibFred
             static const char* memo_regex(){return "info_registrar_memo_regex";}
             static const char* utc_timestamp(){return "info_registrar_utc_timestamp";}
             static const char* local_timestamp(){return "info_registrar_local_timestamp";}
+            static const char* is_internal(){return "info_registrar_is_internal";}
         };
 
         /**
