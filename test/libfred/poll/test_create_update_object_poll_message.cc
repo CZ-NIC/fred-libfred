@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -116,8 +116,8 @@ BOOST_AUTO_TEST_CASE( test_correct_generic_data )
  */
 BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
 {
-
-    for (int i=0; i<3; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         ::LibFred::OperationContextCreator ctx;
 
         const Database::Result ids_res = ctx.get_conn().exec(
@@ -141,18 +141,23 @@ BOOST_AUTO_TEST_CASE( test_correct_type_specific_data)
 
         switch(i) {
             case 0:
+                contact.update(ctx);
                 ::LibFred::Poll::CreateUpdateObjectPollMessage().exec(ctx, contact.info_data.historyid);
                 break;
             case 1:
+                domain.update(ctx, contact.info_data.handle);
                 ::LibFred::Poll::CreateUpdateObjectPollMessage().exec(ctx, domain.info_data.historyid);
                 break;
             case 2:
+                keyset.update(ctx, contact.info_data.handle);
                 ::LibFred::Poll::CreateUpdateObjectPollMessage().exec(ctx, keyset.info_data.historyid);
                 break;
             case 3:
+                nsset.update(ctx, contact.info_data.handle);
                 ::LibFred::Poll::CreateUpdateObjectPollMessage().exec(ctx, nsset.info_data.historyid);
                 break;
         }
+
         const Database::Result ids2_res = ctx.get_conn().exec(
             "SELECT id AS count_ "
             "   FROM message "

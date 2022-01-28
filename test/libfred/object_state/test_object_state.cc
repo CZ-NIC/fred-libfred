@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE(fred_object_state_conversions)
 {
     ::LibFred::OperationContextCreator ctx;
     static const char *const sql = "SELECT name FROM enum_object_states";
-    enum_to_db_handle_conversion_test< ::LibFred::Object_State, 28 >(ctx, sql);
+    enum_to_db_handle_conversion_test<::LibFred::Object_State, 32>(ctx, sql);
 }
 
 BOOST_FIXTURE_TEST_CASE(get_object_state_descriptions, object_state_description_fixture)
