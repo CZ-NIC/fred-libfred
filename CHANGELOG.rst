@@ -6,6 +6,8 @@ ChangeLog
 
 * Fix build warnings
 
+* Fix tests
+
 
 5.0.1 (2022-01-10)
 ------------------
