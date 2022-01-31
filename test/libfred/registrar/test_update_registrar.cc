@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2020-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -101,6 +101,7 @@ BOOST_AUTO_TEST_CASE(set_registrar_update_all)
     registrar.url = Nullable<std::string>("http://test.nic.cz");
     registrar.variable_symbol = Nullable<std::string>("1234567890");
     registrar.vat_payer = true;
+    registrar.is_internal = true;
 
     ::LibFred::Registrar::UpdateRegistrarById(registrar.id)
             .set_handle(registrar.handle)
@@ -123,12 +124,13 @@ BOOST_AUTO_TEST_CASE(set_registrar_update_all)
             .set_url(registrar.url.get_value())
             .set_variable_symbol(registrar.variable_symbol.get_value())
             .set_vat_payer(registrar.vat_payer)
+            .set_internal(registrar.is_internal)
             .exec(ctx);
 
     ::LibFred::InfoRegistrarOutput registrar_info = ::LibFred::InfoRegistrarByHandle(registrar.handle).exec(ctx);
     BOOST_CHECK(registrar == registrar_info.info_registrar_data);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestUpdateRegistrar
 
 } // namespace Test

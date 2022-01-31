@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  registrar info
  */
 
 #ifndef INFO_REGISTRAR_HH_16ED9D26811B4BA49031C101C68DBD48
@@ -130,9 +126,9 @@ private:
 };
 
 /**
-* All registrars info, except system registrars.
+* All registrars info, except system and internal registrars.
 * It's executed by @ref exec method with database connection supplied in @ref OperationContext parameter.
-* In case of other unsuperable failures and inconstistencies, the instance of @ref InternalError or other exception is thrown.
+* In case of other insuperable failures and inconsistencies, the instance of @ref InternalError or other exception is thrown.
 */
 class InfoRegistrarAllExceptSystem : public Util::Printable<InfoRegistrarAllExceptSystem>
 {
