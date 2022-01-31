@@ -4,6 +4,8 @@ ChangeLog
 5.1.0 (2022-01-25)
 ------------------
 
+* Add possibility to mark registrar as internal
+
 * Fix build warnings
 
 * Fix tests
