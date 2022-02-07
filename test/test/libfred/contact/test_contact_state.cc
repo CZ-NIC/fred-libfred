@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #include "libfred/registrable_object/contact/contact_state.hh"
 #include "libfred/registrable_object/contact/get_contact_state.hh"
 #include "libfred/registrable_object/contact/get_contact_state_history.hh"

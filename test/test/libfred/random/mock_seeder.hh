@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef MOCK_SEEDER_HH_F2A2FA6A2E034222B3B2B48FC2613C8A
 #define MOCK_SEEDER_HH_F2A2FA6A2E034222B3B2B48FC2613C8A
 
