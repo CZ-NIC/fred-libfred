@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -89,6 +89,7 @@ namespace LibFred
         " , r.url AS ")(GetAlias::url())(
         " , r.system AS ")(GetAlias::system())(
         " , r.regex AS ")(GetAlias::memo_regex())(
+        " , r.is_internal AS ")(GetAlias::is_internal())(
         " , (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::timestamp AS ")(GetAlias::utc_timestamp())(
         /* CURRENT_TIMESTAMP is of type TIMESTAMP WITH TIME ZONE Ticket #15178 */
         " , (CURRENT_TIMESTAMP AT TIME ZONE ").param_text(local_timestamp_pg_time_zone_name)(")::timestamp AS ")(GetAlias::local_timestamp())(
@@ -174,6 +175,7 @@ namespace LibFred
                 : Nullable<bool> (static_cast<bool>(registrar_query_result[i][GetAlias::system()]));
             info_registrar_output.info_registrar_data.payment_memo_regex = registrar_query_result[i][GetAlias::memo_regex()].isnull() ? Nullable<std::string>()
                 : Nullable<std::string> (static_cast<std::string>(registrar_query_result[i][GetAlias::memo_regex()]));
+            info_registrar_output.info_registrar_data.is_internal = static_cast<bool>(registrar_query_result[i][GetAlias::is_internal()]);
             info_registrar_output.utc_timestamp = registrar_query_result[i][GetAlias::utc_timestamp()].isnull() ? boost::posix_time::ptime(boost::date_time::not_a_date_time)
                 : boost::posix_time::time_from_string(static_cast<std::string>(registrar_query_result[i][GetAlias::utc_timestamp()]));// utc timestamp
 
@@ -184,4 +186,3 @@ namespace LibFred
     }
 
 } // namespace LibFred
-

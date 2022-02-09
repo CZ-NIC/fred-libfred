@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -97,6 +97,8 @@ public:
           quoted_output_(false),
           escaped_output_(false)
     { }
+
+    Value(const Value&) = default;
 
     /**
      * constructor for database result object

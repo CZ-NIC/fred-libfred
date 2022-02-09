@@ -11,6 +11,15 @@ ChangeLog
   (allow to create ``libfred::OperationContext`` from ``libpg::*Transaction`` classes)
 
 
+5.1.0 (2022-01-25)
+------------------
+
+* Add possibility to mark registrar as internal
+* Update CMake build
+* Fix build warnings
+* Fix tests
+
+
 5.0.1 (2022-01-10)
 ------------------
 

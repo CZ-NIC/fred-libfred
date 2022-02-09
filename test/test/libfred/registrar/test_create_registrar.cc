@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 /**
  *  @file
  *  test create registrar
@@ -67,6 +68,7 @@ struct test_registrar_fixture : virtual public Test::instantiate_db_template
         test_info.url = Nullable<std::string>("http://test.nic.cz");
         test_info.variable_symbol = test_info.ico;
         test_info.vat_payer = true;
+        test_info.is_internal = false;
     }
 
     ~test_registrar_fixture()
@@ -105,6 +107,52 @@ BOOST_AUTO_TEST_CASE(create_registrar)
         .set_url(test_info.url.get_value())
         .set_variable_symbol(test_info.variable_symbol.get_value())
         .set_vat_payer(test_info.vat_payer)
+        .set_internal(test_info.is_internal)
+        .exec(ctx);
+
+    ::LibFred::InfoRegistrarOutput registrar_info = ::LibFred::InfoRegistrarByHandle(test_registrar_handle).exec(ctx);
+
+    test_info.id = registrar_info.info_registrar_data.id;
+
+    if (test_info != registrar_info.info_registrar_data)
+    {
+        BOOST_TEST_MESSAGE(::LibFred::diff_registrar_data(test_info, registrar_info.info_registrar_data).to_string());
+    }
+
+    BOOST_CHECK(!test_info.stateorprovince.isnull() && test_info.stateorprovince.get_value().empty());
+    BOOST_CHECK(!test_info.payment_memo_regex.isnull() && test_info.payment_memo_regex.get_value().empty());
+    BOOST_CHECK(registrar_info.info_registrar_data.stateorprovince.isnull());
+    BOOST_CHECK(registrar_info.info_registrar_data.payment_memo_regex.isnull());
+    registrar_info.info_registrar_data.stateorprovince = std::string();
+    registrar_info.info_registrar_data.payment_memo_regex = std::string();
+    BOOST_CHECK_EQUAL(test_info, registrar_info.info_registrar_data);
+}
+
+BOOST_AUTO_TEST_CASE(create_internal_registrar)
+{
+    ::LibFred::OperationContextCreator ctx;
+    test_info.is_internal = true;
+
+    ::LibFred::CreateRegistrar(test_info.handle)
+        .set_name(test_info.name.get_value())
+        .set_street1(test_info.street1.get_value())
+        .set_street2(test_info.street2.get_value())
+        .set_street3(test_info.street3.get_value())
+        .set_stateorprovince(test_info.stateorprovince.get_value())
+        .set_city(test_info.city.get_value()).set_postalcode(test_info.postalcode.get_value())
+        .set_country(test_info.country.get_value())
+        .set_dic(test_info.dic.get_value())
+        .set_email(test_info.email.get_value())
+        .set_fax(test_info.fax.get_value())
+        .set_ico(test_info.ico.get_value())
+        .set_organization(test_info.organization.get_value())
+        .set_payment_memo_regex(test_info.payment_memo_regex.get_value())
+        .set_system(test_info.system.get_value())
+        .set_telephone(test_info.telephone.get_value())
+        .set_url(test_info.url.get_value())
+        .set_variable_symbol(test_info.variable_symbol.get_value())
+        .set_vat_payer(test_info.vat_payer)
+        .set_internal(test_info.is_internal)
         .exec(ctx);
 
     ::LibFred::InfoRegistrarOutput registrar_info = ::LibFred::InfoRegistrarByHandle(test_registrar_handle).exec(ctx);
