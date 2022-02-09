@@ -5,9 +5,8 @@ ChangeLog
 ------------------
 
 * Add possibility to mark registrar as internal
-
+* Update CMake build
 * Fix build warnings
-
 * Fix tests
 
 
