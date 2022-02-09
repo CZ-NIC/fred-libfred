@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -28,7 +28,8 @@
 namespace LibFred {
 
 CreateRegistrar::CreateRegistrar(const std::string& handle)
-    : handle_(handle)
+    : handle_(handle),
+      is_internal_{false}
 {}
 
 CreateRegistrar::CreateRegistrar(
@@ -51,7 +52,8 @@ CreateRegistrar::CreateRegistrar(
         const Optional<std::string>& dic,
         const Optional<std::string>& variable_symbol,
         const Optional<std::string>& payment_memo_regex,
-        const Optional<bool>& vat_payer)
+        const Optional<bool>& vat_payer,
+        bool is_internal)
     : handle_(handle),
       name_(name),
       organization_(organization),
@@ -71,7 +73,8 @@ CreateRegistrar::CreateRegistrar(
       dic_(dic),
       variable_symbol_(variable_symbol),
       payment_memo_regex_(payment_memo_regex),
-      vat_payer_(vat_payer)
+      vat_payer_(vat_payer),
+      is_internal_(is_internal)
 {}
 
 CreateRegistrar& CreateRegistrar::set_name(const std::string& name)
@@ -185,6 +188,12 @@ CreateRegistrar& CreateRegistrar::set_payment_memo_regex(const std::string& paym
 CreateRegistrar& CreateRegistrar::set_vat_payer(bool vat_payer)
 {
     vat_payer_ = vat_payer;
+    return *this;
+}
+
+CreateRegistrar& CreateRegistrar::set_internal(bool value)
+{
+    is_internal_ = value;
     return *this;
 }
 
@@ -339,6 +348,10 @@ unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
             val_sql << val_separator.get() << "$" << params.size() << "::boolean";
         }
 
+        params.push_back(is_internal_);
+        col_sql << col_separator.get() << "is_internal";
+        val_sql << val_separator.get() << "$" << params.size() << "::boolean";
+
         col_sql <<")";
         val_sql << ") RETURNING id";
 
@@ -399,7 +412,8 @@ std::string CreateRegistrar::to_string() const
             (std::make_pair("dic",dic_.print_quoted()))
             (std::make_pair("variable_symbol",variable_symbol_.print_quoted()))
             (std::make_pair("payment_memo_regex",payment_memo_regex_.print_quoted()))
-            (std::make_pair("vat_payer",vat_payer_.print_quoted())));
+            (std::make_pair("vat_payer",vat_payer_.print_quoted()))
+            (std::make_pair("is_internal",std::to_string(is_internal_))));
 }
 
 const std::string& CreateRegistrar::get_handle()const

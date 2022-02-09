@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -72,6 +72,8 @@ public:
     , alg_(0)
     {}
 
+    DnsKey(const DnsKey&) = default;
+
     /**
      * Flags field getter.
      * @return flags field viz @ref flags_
@@ -126,7 +128,7 @@ public:
     */
     bool operator!=(const DnsKey& rhs) const
     {
-        return !this->operator ==(rhs);
+        return !this->operator==(rhs);
     }
     /**
      * Exchanges the data of the instance by the data of instance given in parameter.
@@ -145,12 +147,7 @@ public:
      * @param dk is reference to instance whose content is assigned into this instance
      * @return reference to self
      */
-    DnsKey& operator=(const DnsKey& dk)
-    {
-        if (this != &dk)
-            DnsKey(dk).swap (*this); //copy and swap
-        return *this;
-    }
+    DnsKey& operator=(const DnsKey&) = default;
 
     /**
      * Comparison of instances converted to std::string

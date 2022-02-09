@@ -16,9 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/poll/create_poll_message.hh"
 #include "libfred/object/object_type.hh"
-
 
 namespace LibFred {
 namespace Poll {
@@ -378,14 +378,13 @@ struct UpdateOperationMessageTypeTraits<Object_Type::keyset>
 bool was_update_done_by_sponsoring_registrar(const LibFred::OperationContext& _ctx, unsigned long long _history_id)
 {
     const Database::Result result = _ctx.get_conn().exec_params(
-        "SELECT oh_act.clid = oh_act.upid "
+        "SELECT oh_prev.clid = oh_act.upid "
         "FROM object_history oh_act "
-        "JOIN history h ON h.next = oh_act.historyid "
-        "JOIN object_history oh_prev ON oh_prev.historyid = h.id "
-        "WHERE oh_act.clid = oh_prev.clid "
-        "AND oh_act.historyid = $1::BIGINT",
-        Database::query_param_list(_history_id)
-    );
+        "LEFT JOIN history h_prev ON h_prev.next = oh_act.historyid "
+        "LEFT JOIN object_history oh_prev ON oh_prev.historyid = h_prev.id AND "
+                                            "oh_prev.clid = oh_act.clid "
+        "WHERE oh_act.historyid = $1::BIGINT",
+        Database::query_param_list(_history_id));
 
     switch (result.size())
     {
@@ -407,6 +406,17 @@ bool was_update_done_by_sponsoring_registrar(const LibFred::OperationContext& _c
             };
             throw TooManyRows();
     }
+    if (result[0][0].isnull())
+    {
+        struct NotUpdated : OperationException
+        {
+            const char* what() const noexcept override
+            {
+                return "object has not been updated";
+            }
+        };
+        throw NotUpdated{};
+    }
     return static_cast<bool>(result[0][0]);
 }
 
@@ -418,6 +428,7 @@ typename CreateUpdateOperationPollMessage<object_type>::Result CreateUpdateOpera
         const LibFred::OperationContext& _ctx,
         unsigned long long _history_id) const
 {
+    CreateUpdateOperationPollMessage<object_type>::Result poll_messages;
     using MessageTraits = typename UpdateOperationMessageTypeTraits<object_type>::Traits;
 
     auto recipients = GetAdditionalRecipients<MessageTraits::message_type>().exec(_ctx, _history_id);
@@ -428,7 +439,6 @@ typename CreateUpdateOperationPollMessage<object_type>::Result CreateUpdateOpera
         recipients.insert(GetPrimaryRecipient<MessageTraits::message_type>().exec(_ctx, _history_id));
     }
 
-    CreateUpdateOperationPollMessage<object_type>::Result poll_messages;
     for (const auto& registrar_id : recipients)
     {
         poll_messages.insert(MessageTraits::create_poll_message(_ctx, _history_id, registrar_id));

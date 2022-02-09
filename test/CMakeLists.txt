@@ -13,7 +13,8 @@ target_include_directories(fred-test-common-static PUBLIC
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/..)
+    ${CMAKE_CURRENT_BINARY_DIR}/..
+    ${PostgreSQL_INCLUDE_DIRS})
 
 target_link_libraries(fred-test-common-static PUBLIC
     Boost::unit_test_framework
@@ -182,12 +183,13 @@ target_include_directories(test-libfred PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/..
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/..)
+    ${CMAKE_CURRENT_BINARY_DIR}/..
+    ${PostgreSQL_INCLUDE_DIRS})
 
 target_link_libraries(test-libfred PUBLIC
     Fred::library
 PRIVATE
-    fred-test-common-static::library
+    fred-test-common-static
     Boost::unit_test_framework
     Boost::program_options)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -48,6 +48,7 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
     std::string xmark;
     ::LibFred::InfoRegistrarData test_registrar_data_1;
     ::LibFred::InfoRegistrarData test_registrar_data_2;
+    ::LibFred::InfoRegistrarData test_internal_registrar_data;
 
     test_info_registrar_fixture()
     :xmark(Random::Generator().get_seq(Random::CharSet::digits(), 6))
@@ -72,6 +73,7 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
         test_registrar_data_1.variable_symbol = "123456789";
         test_registrar_data_1.payment_memo_regex = "test-registrar1*";
         test_registrar_data_1.vat_payer = true;
+        test_registrar_data_1.is_internal = false;
 
         test_registrar_data_2.handle = std::string("TEST-REGISTRAR2-HANDLE")+xmark;
         test_registrar_data_2.name = std::string("TEST-REGISTRAR NAME2")+xmark;
@@ -93,7 +95,26 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
         test_registrar_data_2.variable_symbol = "223456789";
         test_registrar_data_2.payment_memo_regex = "test-registrar2*";
         test_registrar_data_2.vat_payer = false;
+        test_registrar_data_2.is_internal = true;
 
+        test_internal_registrar_data.handle = std::string("TEST-INTERNAL-REGISTRAR-HANDLE")+xmark;
+        test_internal_registrar_data.name = std::string("TEST-INTERNAL-REGISTRAR NAME2")+xmark;
+        test_internal_registrar_data.organization = std::string("TEST-INTERNAL-REGISTRAR ORG2")+xmark;
+        test_internal_registrar_data.street1 = std::string("STR123")+xmark;
+        test_internal_registrar_data.city = "Praha 3";
+        test_internal_registrar_data.stateorprovince = "State3";
+        test_internal_registrar_data.postalcode = "31150";
+        test_internal_registrar_data.country = "AT";
+        test_internal_registrar_data.telephone = "+420.728123459";
+        test_internal_registrar_data.email = "test3@nic.cz";
+        test_internal_registrar_data.url = "www.test3.com";
+        test_internal_registrar_data.system = false;
+        test_internal_registrar_data.ico = "3023456789";
+        test_internal_registrar_data.dic = "3123456789";
+        test_internal_registrar_data.variable_symbol = "323456789";
+        test_internal_registrar_data.payment_memo_regex = "test-internal-registrar*";
+        test_internal_registrar_data.vat_payer = false;
+        test_internal_registrar_data.is_internal = true;
 
         ::LibFred::OperationContextCreator ctx;
 
@@ -119,6 +140,7 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
             .set_variable_symbol(test_registrar_data_1.variable_symbol.get_value())
             .set_payment_memo_regex(test_registrar_data_1.payment_memo_regex.get_value())
             .set_vat_payer(test_registrar_data_1.vat_payer)
+            .set_internal(test_registrar_data_1.is_internal)
             .exec(ctx);
 
         test_registrar_data_1.id = static_cast<unsigned long long>(
@@ -146,6 +168,7 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
             .set_variable_symbol(test_registrar_data_2.variable_symbol.get_value())
             .set_payment_memo_regex(test_registrar_data_2.payment_memo_regex.get_value())
             .set_vat_payer(test_registrar_data_2.vat_payer)
+            .set_internal(test_registrar_data_2.is_internal)
             .exec(ctx);
 
         test_registrar_data_2.id = static_cast<unsigned long long>(
@@ -153,6 +176,30 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
                 "SELECT id FROM registrar WHERE handle = ")
                     .param_text(test_registrar_data_2.handle))[0]["id"]);
 
+        ::LibFred::CreateRegistrar(test_internal_registrar_data.handle)
+            .set_name(test_internal_registrar_data.name.get_value())
+            .set_organization(test_internal_registrar_data.organization.get_value())
+            .set_street1(test_internal_registrar_data.street1.get_value())
+            .set_city(test_internal_registrar_data.city.get_value())
+            .set_stateorprovince(test_internal_registrar_data.stateorprovince.get_value())
+            .set_postalcode(test_internal_registrar_data.postalcode.get_value())
+            .set_country(test_internal_registrar_data.country.get_value())
+            .set_telephone(test_internal_registrar_data.telephone.get_value())
+            .set_email(test_internal_registrar_data.email.get_value())
+            .set_url(test_internal_registrar_data.url.get_value())
+            .set_system(test_internal_registrar_data.system.get_value())
+            .set_ico(test_internal_registrar_data.ico.get_value())
+            .set_dic(test_internal_registrar_data.dic.get_value())
+            .set_variable_symbol(test_internal_registrar_data.variable_symbol.get_value())
+            .set_payment_memo_regex(test_internal_registrar_data.payment_memo_regex.get_value())
+            .set_vat_payer(test_internal_registrar_data.vat_payer)
+            .set_internal(test_internal_registrar_data.is_internal)
+            .exec(ctx);
+
+        test_internal_registrar_data.id = static_cast<unsigned long long>(
+            ctx.get_conn().exec_params(Database::ParamQuery(
+                "SELECT id FROM registrar WHERE handle = ")
+                    .param_text(test_internal_registrar_data.handle))[0]["id"]);
 
         ctx.commit_transaction();//commit fixture
     }
@@ -250,7 +297,6 @@ BOOST_AUTO_TEST_CASE(info_registrar_wrong_id)
     }
 }
 
-
 /**
  * test call InfoRegistrarDiff
 */
@@ -284,6 +330,7 @@ BOOST_AUTO_TEST_CASE(info_registrar_diff)
     test_diff.variable_symbol = std::make_pair(test_registrar_data_1.variable_symbol, test_registrar_data_2.variable_symbol);
     test_diff.payment_memo_regex = std::make_pair(test_registrar_data_1.payment_memo_regex, test_registrar_data_2.payment_memo_regex);
     test_diff.vat_payer= std::make_pair(test_registrar_data_1.vat_payer, test_registrar_data_2.vat_payer);
+    test_diff.is_internal = std::make_pair(test_registrar_data_1.is_internal, test_registrar_data_2.is_internal);
 
     BOOST_CHECK(!test_diff.is_empty());
     BOOST_CHECK(test_empty_diff.is_empty());
@@ -294,4 +341,4 @@ BOOST_AUTO_TEST_CASE(info_registrar_diff)
     BOOST_CHECK(::LibFred::diff_registrar_data(registrar_info1.info_registrar_data, registrar_info2.info_registrar_data).to_string() == test_diff.to_string());
 }
 
-BOOST_AUTO_TEST_SUITE_END();//TestInfoRegistrar
+BOOST_AUTO_TEST_SUITE_END()//TestInfoRegistrar

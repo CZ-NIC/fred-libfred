@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -180,6 +180,12 @@ UpdateRegistrarById& UpdateRegistrarById::set_payment_memo_regex(
     return *this;
 }
 
+UpdateRegistrarById& UpdateRegistrarById::set_internal(const boost::optional<bool>& value)
+{
+    is_internal_ = value;
+    return *this;
+}
+
 void UpdateRegistrarById::exec(const OperationContext& _ctx) const
 {
     const bool values_for_update_are_set = (handle_ != boost::none ||
@@ -201,7 +207,8 @@ void UpdateRegistrarById::exec(const OperationContext& _ctx) const
             email_ != boost::none ||
             url_ != boost::none ||
             system_ != boost::none ||
-            payment_memo_regex_ != boost::none);
+            payment_memo_regex_ != boost::none ||
+            is_internal_ != boost::none);
 
     if (!values_for_update_are_set)
     {
@@ -316,6 +323,11 @@ void UpdateRegistrarById::exec(const OperationContext& _ctx) const
     {
         params.push_back(*payment_memo_regex_);
         object_sql << set_separator.get() << "regex = $" << params.size() << psql_type(*payment_memo_regex_);
+    }
+    if (is_internal_ != boost::none)
+    {
+        params.push_back(*is_internal_);
+        object_sql << set_separator.get() << "is_internal = $" << params.size() << psql_type(*is_internal_);
     }
 
     params.push_back(id_);

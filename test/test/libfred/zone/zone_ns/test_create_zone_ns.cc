@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -35,7 +35,7 @@ namespace Test {
 
 struct CreateZoneNsFixture
 {
-    explicit CreateZoneNsFixture(const ::LibFred::OperationContext& )
+    explicit CreateZoneNsFixture(const ::LibFred::OperationContext&)
         : zone(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           nameserver_fqdn("a.ns.nic." + zone)
     { }

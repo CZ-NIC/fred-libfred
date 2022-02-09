@@ -65,21 +65,29 @@ function(package_dist)
                     COMMENT "make"
                     DEPENDS distcheck_configure
                     WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
-                add_custom_target(distcheck_install
-                    COMMAND ${DISTCHECK_BUILD_CMD} install
-                    COMMENT "make install"
-                    DEPENDS distcheck_make
-                    WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
-                add_custom_target(distcheck_uninstall
-                    COMMAND ${DISTCHECK_BUILD_CMD} uninstall
-                    COMMENT "make uninstall"
-                    DEPENDS distcheck_install
-                    WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
-                add_custom_target(distcheck_clean
-                    COMMAND ${DISTCHECK_BUILD_CMD} clean
-                    COMMENT "make clean"
-                    DEPENDS distcheck_uninstall
-                    WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+                if (TARGET install)
+                    add_custom_target(distcheck_install
+                        COMMAND ${DISTCHECK_BUILD_CMD} install
+                        COMMENT "make install"
+                        DEPENDS distcheck_make
+                        WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+                    add_custom_target(distcheck_uninstall
+                        COMMAND ${DISTCHECK_BUILD_CMD} uninstall
+                        COMMENT "make uninstall"
+                        DEPENDS distcheck_install
+                        WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+                    add_custom_target(distcheck_clean
+                        COMMAND ${DISTCHECK_BUILD_CMD} clean
+                        COMMENT "make clean"
+                        DEPENDS distcheck_uninstall
+                        WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+                else()
+                    add_custom_target(distcheck_clean
+                        COMMAND ${DISTCHECK_BUILD_CMD} clean
+                        COMMENT "make clean"
+                        DEPENDS distcheck_make
+                        WORKING_DIRECTORY ${DISTCHECK_BUILD_DIR})
+                endif()
                 add_custom_target(distcheck
                     COMMAND rm -rf ${DISTCHECK_BUILD_DIR} ${DISTCHECK_INSTALL_DIR} ${__PACKAGE_TARNAME}
                     COMMENT "PASS: '${__PACKAGE_TARNAME}.tar.gz' is ready for distribution."

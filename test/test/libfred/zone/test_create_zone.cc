@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -37,7 +37,7 @@ struct create_zone_fixture
     int ex_period_min;
     int ex_period_max;
 
-    create_zone_fixture(const ::LibFred::OperationContext& )
+    create_zone_fixture(const ::LibFred::OperationContext&)
         : fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           ex_period_min(6),
           ex_period_max(12)
