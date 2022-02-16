@@ -16,24 +16,26 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  merge contact tests with separated fixture
- */
-#include "util/util.hh"
-#include "util/printable.hh"
-#include "util/map_at.hh"
-#include "libfred/opcontext.hh"
+
 #include "test/setup/fixtures.hh"
 
 #include "test/libfred/contact/test_merge_contact_fixture.hh"
 
+#include "libfred/opcontext.hh"
+#include "libfred/registrable_object/contact/find_contact_duplicates.hh"
+#include "libfred/registrable_object/contact/merge_contact.hh"
+
+#include "util/map_at.hh"
+#include "util/printable.hh"
+#include "util/util.hh"
+
 #include <boost/test/unit_test.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
+
 
 namespace Test {
 namespace LibFred {
@@ -45,6 +47,7 @@ namespace MergeContact {
  * tests using MergeContactAutoProc for linked object configurations
  */
 BOOST_AUTO_TEST_SUITE(ObjectCombinations)
+
 /**
  * Setup merge contact test data.
  * With mergeable contacts having data from one mergeable group,
@@ -2118,6 +2121,59 @@ BOOST_FIXTURE_TEST_CASE(test_src_domain_owner_with_admin_to_different_admin, mer
 
     //no registrar changes
     BOOST_CHECK(diff_registrars().empty());
+}
+
+BOOST_FIXTURE_TEST_CASE(test_find_contact_duplicates, merge_fixture)
+{
+    ::LibFred::OperationContextCreator ctx;
+    BOOST_CHECK_EQUAL(this->merge_fixture::contact_info.size(), 276);
+    {
+        auto duplicate_searcher = ::LibFred::Contact::FindContactDuplicates{};
+        const auto merge_candidates = duplicate_searcher.exec(ctx);
+        BOOST_TEST_MESSAGE(merge_candidates.size() << " merge candidates found");
+        BOOST_CHECK_EQUAL(merge_candidates.size(), 136);
+    }
+    {
+        auto duplicate_searcher = ::LibFred::Contact::FindContactDuplicates{};
+        duplicate_searcher.set_registrar(this->merge_fixture::registrar_mc_1_handle);
+        const auto merge_candidates = duplicate_searcher.exec(ctx);
+        BOOST_TEST_MESSAGE(merge_candidates.size() << " merge candidates found");
+        BOOST_CHECK_EQUAL(merge_candidates.size(), 136);
+    }
+    {
+        auto duplicate_searcher = ::LibFred::Contact::FindContactDuplicates{};
+        duplicate_searcher.set_registrar(this->merge_fixture::registrar_mc_2_handle);
+        const auto merge_candidates = duplicate_searcher.exec(ctx);
+        BOOST_TEST_MESSAGE(merge_candidates.size() << " merge candidates found");
+        BOOST_CHECK_EQUAL(merge_candidates.size(), 136);
+    }
+    {
+        auto duplicate_searcher = ::LibFred::Contact::FindContactDuplicates{};
+        duplicate_searcher.set_exclude_contacts({this->merge_fixture::contact_info.begin()->first});
+        const auto merge_candidates = duplicate_searcher.exec(ctx);
+        BOOST_TEST_MESSAGE(merge_candidates.size() << " merge candidates found");
+        BOOST_CHECK_EQUAL(merge_candidates.size(), 136);
+    }
+    {
+        auto duplicate_searcher = ::LibFred::Contact::FindContactDuplicates{};
+        duplicate_searcher.set_registrar(this->merge_fixture::registrar_mc_1_handle);
+        duplicate_searcher.set_exclude_contacts({this->merge_fixture::contact_info.begin()->first});
+        const auto merge_candidates = duplicate_searcher.exec(ctx);
+        BOOST_TEST_MESSAGE(merge_candidates.size() << " merge candidates found");
+        BOOST_CHECK_EQUAL(merge_candidates.size(), 136);
+    }
+    {
+        auto duplicate_searcher = ::LibFred::Contact::FindContactDuplicates{};
+        const auto merge_candidates = duplicate_searcher.exec(ctx);
+        BOOST_TEST_MESSAGE(merge_candidates.size() << " merge candidates found");
+        BOOST_CHECK_EQUAL(merge_candidates.size(), 136);
+        BOOST_REQUIRE_LT(1, merge_candidates.size());
+        auto merge_candidate_iter = begin(merge_candidates);
+        const auto first_candidate = *merge_candidate_iter;
+        ++merge_candidate_iter;
+        const auto second_candidate = *merge_candidate_iter;
+        BOOST_CHECK(!::LibFred::MergeContact::DefaultDiffContacts{}(ctx, first_candidate, second_candidate));
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()//ObjectCombinations
