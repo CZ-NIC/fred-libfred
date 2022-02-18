@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "util/optional_value.hh"
 #include "libfred/registrable_object/contact/find_contact_duplicates.hh"
 
@@ -60,23 +61,22 @@ std::set<std::string> FindContactDuplicates::exec(LibFred::OperationContext& _ct
             contact_address_type != contact_address_types.end();
             ++contact_address_type)
         {
-            dup_sql << \
+            dup_sql <<
             " (SELECT row("
-               " trim(BOTH ' ' FROM ca.company_name),"
-               " trim(BOTH ' ' FROM ca.street1),"
-               " trim(BOTH ' ' FROM ca.street2),"
-               " trim(BOTH ' ' FROM ca.street3),"
-               " trim(BOTH ' ' FROM ca.city),"
-               " trim(BOTH ' ' FROM ca.stateorprovince),"
-               " trim(BOTH ' ' FROM ca.postalcode),"
-               " trim(BOTH ' ' FROM ca.country)"
-               " )"
-              " FROM contact_address ca"
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.company_name, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.street1, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.street2, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.street3, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.city, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.stateorprovince, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.postalcode, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+               "COALESCE(LOWER(REGEXP_REPLACE(ca.country, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) "
+              "FROM contact_address ca"
              " WHERE ca.type = '" << *contact_address_type << "'"
                " AND ca.contactid = c.id"
             " ) AS " << *contact_address_type << "_addr" << (contact_address_type != contact_address_types.end() - 1 ? "," : "");
         }
-    dup_sql << \
+    dup_sql <<
         " FROM object_registry oreg"
         " JOIN contact c ON c.id = oreg.id"
         " JOIN object o ON o.id = c.id"
@@ -87,39 +87,39 @@ std::set<std::string> FindContactDuplicates::exec(LibFred::OperationContext& _ct
         dup_sql << " WHERE r.handle = $" << dup_params.size() << "::text";
     }
 
-    dup_sql << " GROUP BY"
-        " trim(BOTH ' ' FROM c.name),"
-        " trim(BOTH ' ' FROM c.organization),"
-        " c.ssntype,"
-        " trim(BOTH ' ' FROM c.ssn),"
-        " trim(BOTH ' ' FROM c.vat),"
-        " trim(BOTH ' ' FROM c.telephone),"
-        " trim(BOTH ' ' FROM c.fax),"
-        " trim(BOTH ' ' FROM c.email),"
-        " trim(BOTH ' ' FROM c.notifyemail),"
-        " trim(BOTH ' ' FROM c.street1),"
-        " trim(BOTH ' ' FROM c.street2),"
-        " trim(BOTH ' ' FROM c.street3),"
-        " trim(BOTH ' ' FROM c.city),"
-        " trim(BOTH ' ' FROM c.stateorprovince),"
-        " trim(BOTH ' ' FROM c.postalcode),"
-        " trim(BOTH ' ' FROM c.country),"
-        " o.clid,"
-        " c.disclosename,"
-        " c.discloseorganization,"
-        " c.discloseaddress,"
-        " c.disclosetelephone,"
-        " c.disclosefax,"
-        " c.discloseemail,"
-        " c.disclosevat,"
-        " c.discloseident,"
-        " c.disclosenotifyemail,"
-        " c.warning_letter,";
+    dup_sql << " GROUP BY "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.name, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.organization, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(CAST(c.ssntype AS TEXT), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.ssn, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.vat, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.telephone, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.fax, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.email, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.notifyemail, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.street1, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.street2, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.street3, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.city, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.stateorprovince, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.postalcode, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "COALESCE(LOWER(REGEXP_REPLACE(c.country, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''), "
+        "o.clid, "
+        "c.disclosename, "
+        "c.discloseorganization, "
+        "c.discloseaddress, "
+        "c.disclosetelephone, "
+        "c.disclosefax, "
+        "c.discloseemail, "
+        "c.disclosevat, "
+        "c.discloseident, "
+        "c.disclosenotifyemail, "
+        "COALESCE(CAST(c.warning_letter AS TEXT), ''),";
     for (std::vector<std::string>::const_iterator contact_address_type = contact_address_types.begin();
         contact_address_type != contact_address_types.end();
         ++contact_address_type)
     {
-        dup_sql << \
+        dup_sql <<
         " " << *contact_address_type << "_addr" << (contact_address_type != contact_address_types.end() - 1 ? "," : "");
     }
     dup_sql << \
