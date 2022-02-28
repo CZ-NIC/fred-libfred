@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  contact merge
  */
 
 #include "libfred/registrable_object/contact/merge_contact.hh"
@@ -563,21 +559,21 @@ bool MergeContact::DefaultDiffContacts::operator()(
     std::ostringstream dup_sql;
     dup_sql <<
     "SELECT "//c1.name, oreg1.name,o1.clid,c2.name,oreg2.name,o2.clid,
-            "(trim(BOTH ' ' FROM COALESCE(c1.name,''))!=trim(BOTH ' ' FROM COALESCE(c2.name,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.organization,''))!=trim(BOTH ' ' FROM COALESCE(c2.organization,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.street1,''))!=trim(BOTH ' ' FROM COALESCE(c2.street1,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.street2,''))!=trim(BOTH ' ' FROM COALESCE(c2.street2,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.street3,''))!=trim(BOTH ' ' FROM COALESCE(c2.street3,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.city,''))!=trim(BOTH ' ' FROM COALESCE(c2.city,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.postalcode,''))!=trim(BOTH ' ' FROM COALESCE(c2.postalcode,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.stateorprovince,''))!=trim(BOTH ' ' FROM COALESCE(c2.stateorprovince,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.country,''))!=trim(BOTH ' ' FROM COALESCE(c2.country,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.telephone,''))!=trim(BOTH ' ' FROM COALESCE(c2.telephone,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.fax,''))!=trim(BOTH ' ' FROM COALESCE(c2.fax,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.email,''))!=trim(BOTH ' ' FROM COALESCE(c2.email,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.notifyemail,''))!=trim(BOTH ' ' FROM COALESCE(c2.notifyemail,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.vat,''))!=trim(BOTH ' ' FROM COALESCE(c2.vat,''))) OR "
-            "(trim(BOTH ' ' FROM COALESCE(c1.ssn,''))!=trim(BOTH ' ' FROM COALESCE(c2.ssn,''))) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.name, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.name, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.organization, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.organization, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.street1, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.street1, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.street2, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.street2, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.street3, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.street3, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.city, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.city, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.postalcode, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.postalcode, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.stateorprovince, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.stateorprovince, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.country, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.country, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.telephone, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.telephone, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.fax, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.fax, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.email, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.email, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.notifyemail, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.notifyemail, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.vat, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.vat, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
+            "(COALESCE(LOWER(REGEXP_REPLACE(c1.ssn, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')!=COALESCE(LOWER(REGEXP_REPLACE(c2.ssn, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) OR "
             "(COALESCE(c1.ssntype,0)!=COALESCE(c2.ssntype,0)) OR "
             "(c1.disclosename!=c2.disclosename) OR "
             "(c1.discloseorganization!=c2.discloseorganization) OR "
@@ -588,28 +584,28 @@ bool MergeContact::DefaultDiffContacts::operator()(
             "(c1.disclosevat!=c2.disclosevat) OR "
             "(c1.discloseident!=c2.discloseident) OR "
             "(c1.disclosenotifyemail!=c2.disclosenotifyemail) OR "
-            "(c1.warning_letter!=c2.warning_letter) OR ";
+            "(COALESCE(CAST(c1.warning_letter AS TEXT), '')!=COALESCE(CAST(c2.warning_letter AS TEXT), '')) OR ";
     for (const auto& contact_address_type : contact_address_types)
     {
         dup_sql <<
-        "(SELECT row(trim(BOTH ' ' FROM c1a.company_name),"
-                    "trim(BOTH ' ' FROM c1a.street1),"
-                    "trim(BOTH ' ' FROM c1a.street2),"
-                    "trim(BOTH ' ' FROM c1a.street3),"
-                    "trim(BOTH ' ' FROM c1a.city),"
-                    "trim(BOTH ' ' FROM c1a.stateorprovince),"
-                    "trim(BOTH ' ' FROM c1a.postalcode),"
-                    "trim(BOTH ' ' FROM c1a.country)) "
+        "(SELECT row(COALESCE(LOWER(REGEXP_REPLACE(c1a.company_name, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                    "COALESCE(LOWER(REGEXP_REPLACE(c1a.street1, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                    "COALESCE(LOWER(REGEXP_REPLACE(c1a.street2, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                    "COALESCE(LOWER(REGEXP_REPLACE(c1a.street3, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                    "COALESCE(LOWER(REGEXP_REPLACE(c1a.city, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                    "COALESCE(LOWER(REGEXP_REPLACE(c1a.stateorprovince, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                    "COALESCE(LOWER(REGEXP_REPLACE(c1a.postalcode, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                    "COALESCE(LOWER(REGEXP_REPLACE(c1a.country, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) "
          "FROM contact_address c1a "
          "WHERE c1a.type='" << contact_address_type << "' AND "
-               "c1a.contactid=c1.id)!=(SELECT row(trim(BOTH ' ' FROM c2a.company_name),"
-                                                 "trim(BOTH ' ' FROM c2a.street1),"
-                                                 "trim(BOTH ' ' FROM c2a.street2),"
-                                                 "trim(BOTH ' ' FROM c2a.street3),"
-                                                 "trim(BOTH ' ' FROM c2a.city),"
-                                                 "trim(BOTH ' ' FROM c2a.stateorprovince),"
-                                                 "trim(BOTH ' ' FROM c2a.postalcode),"
-                                                 "trim(BOTH ' ' FROM c2a.country)) "
+               "c1a.contactid=c1.id)!=(SELECT row(COALESCE(LOWER(REGEXP_REPLACE(c2a.company_name, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                                                 "COALESCE(LOWER(REGEXP_REPLACE(c2a.street1, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                                                 "COALESCE(LOWER(REGEXP_REPLACE(c2a.street2, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                                                 "COALESCE(LOWER(REGEXP_REPLACE(c2a.street3, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                                                 "COALESCE(LOWER(REGEXP_REPLACE(c2a.city, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                                                 "COALESCE(LOWER(REGEXP_REPLACE(c2a.stateorprovince, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                                                 "COALESCE(LOWER(REGEXP_REPLACE(c2a.postalcode, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), ''),"
+                                                 "COALESCE(LOWER(REGEXP_REPLACE(c2a.country, '^\\s+|\\s+$|(\\s)\\s+', '\\1', 'g')), '')) "
                                       "FROM contact_address c2a "
                                       "WHERE c2a.type='" << contact_address_type << "' AND "
                                             "c2a.contactid=c2.id) OR ";

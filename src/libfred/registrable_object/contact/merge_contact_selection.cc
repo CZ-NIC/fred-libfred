@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -36,52 +36,61 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace LibFred {
 
-FACTORY_MODULE_INIT_DEFI(merge_contact_selection)
+MergeContactSelectionOutput::MergeContactSelectionOutput(std::string _handle, std::string _filter)
+    : handle{std::move(_handle)},
+      filter{std::move(_filter)}
+{}
 
-MergeContactSelection::MergeContactSelection(const std::vector<std::string>& contact_handle
-    , const std::vector<ContactSelectionFilterType>& filter)
-: contact_handle_(contact_handle)
+std::string MergeContactSelectionOutput::to_string() const
 {
-    for (std::vector<ContactSelectionFilterType>::const_iterator ci = filter.begin()
-            ; ci !=  filter.end(); ++ci)
-    {
-        std::shared_ptr<ContactSelectionFilterBase> filter = ContactSelectionFilterFactory::instance_ref().create_sh_ptr(*ci);
-        ff_.push_back(std::make_pair(*ci, filter));
-    }
+    return Util::format_data_structure(
+            "MergeContactSelectionOutput",
+            { std::make_pair(std::string{"handle"}, handle),
+              std::make_pair(std::string{"filter"}, filter) });
 }
+
+MergeContactSelection::MergeContactSelection(
+        std::vector<std::string> contact_handles,
+        std::vector<std::string> filters)
+    : contact_handles_{std::move(contact_handles)},
+      filters_{std::move(filters)}
+{ }
 
 MergeContactSelectionOutput MergeContactSelection::exec(const OperationContext& ctx)
 {
     try
     {
-        if (contact_handle_.empty())
+        if (contact_handles_.empty())
         {
             BOOST_THROW_EXCEPTION(NoContactHandles());
         }
-        for (std::vector<std::pair<std::string, std::shared_ptr<ContactSelectionFilterBase> > >::iterator f = ff_.begin(); f != ff_.end(); ++f)
+        const auto& filter = get_default_contact_selection_filter_factory();
+        for (auto&& filter_name : filters_)
         {
-            std::vector<std::string> current_filter_result;
-            if ((f->second).get() != 0) current_filter_result = (f->second).get()->operator()(ctx, contact_handle_);
-            if (current_filter_result.size() > 1) contact_handle_ = current_filter_result;
-            if (current_filter_result.size() == 1) {
-                return MergeContactSelectionOutput(current_filter_result[0], f->first);
+            if (filter.has_key(filter_name))
+            {
+                auto current_filter_result = filter[filter_name](ctx, contact_handles_);
+                if (current_filter_result.size() == 1)
+                {
+                    return MergeContactSelectionOutput{current_filter_result[0], filter_name};
+                }
+                if (1 < current_filter_result.size())
+                {
+                    contact_handles_ = std::move(current_filter_result);
+                }
             }
-            //if(current_filter_result.empty()) continue;//try next filter
         }
 
-        if (contact_handle_.empty())
+        if (contact_handles_.empty())
         {
-            BOOST_THROW_EXCEPTION(NoContactHandlesLeft());
+            BOOST_THROW_EXCEPTION(NoContactHandlesLeft{});
         }
-        else
-        {
-            BOOST_THROW_EXCEPTION(TooManyContactHandlesLeft());
-        }
-
+        BOOST_THROW_EXCEPTION(TooManyContactHandlesLeft{});
     }
     catch (ExceptionStack& ex)
     {
@@ -92,26 +101,25 @@ MergeContactSelectionOutput MergeContactSelection::exec(const OperationContext& 
 
 std::string MergeContactSelection::to_string() const
 {
-    std::vector<std::pair<std::string, std::string> > data;
-
-    data.push_back((std::make_pair("contact_handle", Util::format_container(contact_handle_))));
+    std::vector<std::pair<std::string, std::string>> data;
+    data.push_back((std::make_pair("contact_handle", Util::format_container(contact_handles_))));
     std::ostringstream os;
-    for (std::vector<std::pair<std::string, std::shared_ptr<ContactSelectionFilterBase> > >::const_iterator ci = ff_.begin()
-            ; ci != ff_.end() ; ++ci) os << " " << ci->first;
+    std::for_each(begin(filters_), end(filters_), [&](auto&& filter_name) { os << " " << filter_name; });
     data.push_back((std::make_pair("selection filters", os.str())));
     return Util::format_operation_state("MergeContactSelection", data);
 }
 
+const char* MergeContactSelection::NoContactHandles::what() const noexcept { return "no contact handles, nothing to process"; }
+const char* MergeContactSelection::NoContactHandlesLeft::what() const noexcept { return "no contact handles left, selection of contact with given rules failed"; }
+const char* MergeContactSelection::TooManyContactHandlesLeft::what() const noexcept { return "too many contact handles left, selection of contact with given rules failed"; }
 
-class FilterIdentifiedContact
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterIdentifiedContact>
+namespace {
+
+class FilterIdentifiedContact : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& ctx
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(const OperationContext& ctx, const std::vector<std::string>& contact_handle) override
     {
-
         std::vector<std::string> filtered;
         for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
         {
@@ -128,18 +136,11 @@ public:
         }
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_IDENTIFIED_CONTACT;
-    }
 };
 
-class FilterIdentityAttached
-    : public ContactSelectionFilterBase,
-      public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterIdentityAttached>
+class FilterIdentityAttached : public ContactSelectionFilter
 {
-public:
+private:
     std::vector<std::string> operator()(
             const OperationContext& ctx,
             const std::vector<std::string>& contacts) override
@@ -163,20 +164,14 @@ public:
                 });
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_IDENTITY_ATTACHED;
-    }
 };
 
-class FilterConditionallyIdentifiedContact
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterConditionallyIdentifiedContact>
+class FilterConditionallyIdentifiedContact : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& ctx
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(
+            const OperationContext& ctx,
+            const std::vector<std::string>& contact_handle) override
     {
         std::vector<std::string> filtered;
         for (std::vector<std::string>::const_iterator i = contact_handle.begin(); i != contact_handle.end() ; ++i)
@@ -197,20 +192,14 @@ public:
         }
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_CONDITIONALLY_IDENTIFIED_CONTACT;
-    }
 };
 
-class FilterHandleMojeIDSyntax
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterHandleMojeIDSyntax>
+class FilterHandleMojeIDSyntax : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& 
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(
+            const OperationContext&,
+            const std::vector<std::string>& contact_handle) override
     {
         boost::regex mojeid_handle_syntax("^[a-z0-9](-?[a-z0-9])*$");
         std::vector<std::string> filtered;
@@ -224,20 +213,14 @@ public:
         }
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_HANDLE_MOJEID_SYNTAX;
-    }
 };
 
-class FilterMaxDomainsBound
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterMaxDomainsBound>
+class FilterMaxDomainsBound : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& ctx
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(
+            const OperationContext& ctx,
+            const std::vector<std::string>& contact_handle) override
     {
         std::vector<std::string> filtered;
 
@@ -280,23 +263,16 @@ public:
                 break;
             }
         }
-
         return filtered;
-    }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_MAX_DOMAINS_BOUND;
     }
 };
 
-class FilterMaxObjectsBound
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterMaxObjectsBound>
+class FilterMaxObjectsBound : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& ctx
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(
+            const OperationContext& ctx,
+            const std::vector<std::string>& contact_handle) override
     {
         std::vector<std::string> filtered;
 
@@ -347,20 +323,14 @@ public:
 
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_MAX_OBJECTS_BOUND;
-    }
 };
 
-class FilterRecentlyUpdated
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterRecentlyUpdated>
+class FilterRecentlyUpdated : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& ctx
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(
+            const OperationContext& ctx,
+            const std::vector<std::string>& contact_handle) override
     {
         std::vector<std::string> filtered;
 
@@ -401,20 +371,14 @@ public:
 
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_RECENTLY_UPDATED;
-    }
 };
 
-class FilterNotRegCzNic
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterNotRegCzNic>
+class FilterNotRegCzNic : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& ctx
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(
+            const OperationContext& ctx,
+            const std::vector<std::string>& contact_handle) override
     {
         std::vector<std::string> filtered;
 
@@ -444,20 +408,14 @@ public:
 
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_NOT_REGCZNIC;
-    }
 };
 
-class FilterRecentlyCreated
-: public ContactSelectionFilterBase
-, public Util::FactoryAutoRegister<ContactSelectionFilterBase, FilterRecentlyCreated>
+class FilterRecentlyCreated : public ContactSelectionFilter
 {
-public:
-    std::vector<std::string> operator()(const OperationContext& ctx
-            , const std::vector<std::string>& contact_handle)
+private:
+    std::vector<std::string> operator()(
+            const OperationContext& ctx,
+            const std::vector<std::string>& contact_handle) override
     {
         std::vector<std::string> filtered;
 
@@ -490,11 +448,27 @@ public:
 
         return filtered;
     }
-
-    static ContactSelectionFilterType registration_name()
-    {
-        return MCS_FILTER_RECENTLY_CREATED;
-    }
 };
 
+}//namespace LibFred::{anonymous}
+
 }//namespace LibFred
+
+const LibFred::ContactSelectionFilterFactory& LibFred::get_default_contact_selection_filter_factory()
+{
+    static const auto factory = []()
+    {
+        ContactSelectionFilterFactory factory{};
+        factory.add_producer({MCS_FILTER_IDENTIFIED_CONTACT, std::make_unique<FilterIdentifiedContact>()})
+               .add_producer({MCS_FILTER_IDENTITY_ATTACHED, std::unique_ptr<FilterIdentityAttached>()})
+               .add_producer({MCS_FILTER_CONDITIONALLY_IDENTIFIED_CONTACT, std::unique_ptr<FilterConditionallyIdentifiedContact>()})
+               .add_producer({MCS_FILTER_HANDLE_MOJEID_SYNTAX, std::unique_ptr<FilterHandleMojeIDSyntax>()})
+               .add_producer({MCS_FILTER_MAX_DOMAINS_BOUND, std::unique_ptr<FilterMaxDomainsBound>()})
+               .add_producer({MCS_FILTER_MAX_OBJECTS_BOUND, std::unique_ptr<FilterMaxObjectsBound>()})
+               .add_producer({MCS_FILTER_RECENTLY_UPDATED, std::unique_ptr<FilterRecentlyUpdated>()})
+               .add_producer({MCS_FILTER_NOT_REGCZNIC, std::unique_ptr<FilterNotRegCzNic>()})
+               .add_producer({MCS_FILTER_RECENTLY_CREATED, std::unique_ptr<FilterRecentlyCreated>()});
+        return factory;
+    }();
+    return factory;
+}

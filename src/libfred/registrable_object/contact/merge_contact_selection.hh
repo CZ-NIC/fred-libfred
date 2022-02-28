@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -39,75 +39,59 @@
 
 namespace LibFred {
 
-FACTORY_MODULE_INIT_DECL(merge_contact_selection)
+static const std::string MCS_FILTER_IDENTIFIED_CONTACT = "mcs_filter_identified_contact";
+static const std::string MCS_FILTER_IDENTITY_ATTACHED = "mcs_filter_identity_attached";
+static const std::string MCS_FILTER_CONDITIONALLY_IDENTIFIED_CONTACT = "mcs_filter_conditionally_identified_contact";
+static const std::string MCS_FILTER_HANDLE_MOJEID_SYNTAX = "mcs_filter_handle_mojeid_syntax";
+static const std::string MCS_FILTER_MAX_DOMAINS_BOUND = "mcs_filter_max_domains_bound";
+static const std::string MCS_FILTER_MAX_OBJECTS_BOUND = "mcs_filter_max_objects_bound";
+static const std::string MCS_FILTER_RECENTLY_UPDATED = "mcs_filter_recently_updated";
+static const std::string MCS_FILTER_NOT_REGCZNIC  = "mcs_filter_not_regcznic";
+static const std::string MCS_FILTER_RECENTLY_CREATED = "mcs_filter_recently_created";
 
-typedef std::string ContactSelectionFilterType;
-
-static const ContactSelectionFilterType MCS_FILTER_IDENTIFIED_CONTACT = "mcs_filter_identified_contact";
-static const ContactSelectionFilterType MCS_FILTER_IDENTITY_ATTACHED = "mcs_filter_identity_attached";
-static const ContactSelectionFilterType MCS_FILTER_CONDITIONALLY_IDENTIFIED_CONTACT = "mcs_filter_conditionally_identified_contact";
-static const ContactSelectionFilterType MCS_FILTER_HANDLE_MOJEID_SYNTAX = "mcs_filter_handle_mojeid_syntax";
-static const ContactSelectionFilterType MCS_FILTER_MAX_DOMAINS_BOUND = "mcs_filter_max_domains_bound";
-static const ContactSelectionFilterType MCS_FILTER_MAX_OBJECTS_BOUND = "mcs_filter_max_objects_bound";
-static const ContactSelectionFilterType MCS_FILTER_RECENTLY_UPDATED = "mcs_filter_recently_updated";
-static const ContactSelectionFilterType MCS_FILTER_NOT_REGCZNIC  = "mcs_filter_not_regcznic";
-static const ContactSelectionFilterType MCS_FILTER_RECENTLY_CREATED = "mcs_filter_recently_created";
-
-struct ContactSelectionFilterBase
+struct ContactSelectionFilter
 {
-  virtual ~ContactSelectionFilterBase() {}
-  virtual std::vector<std::string> operator()(const OperationContext& ctx, const std::vector<std::string>& contact_handle) = 0;
+    virtual ~ContactSelectionFilter() {}
+    virtual std::vector<std::string> operator()(const OperationContext& ctx, const std::vector<std::string>& contact_handle) = 0;
 };
 
 struct MergeContactSelectionOutput : Util::Printable<MergeContactSelectionOutput>
 {
-    MergeContactSelectionOutput(
-            const std::string &_handle,
-            const ContactSelectionFilterType &_filter)
-        : handle(_handle),
-          filter(_filter)
-    {}
-
-    std::string to_string() const
-    {
-        return Util::format_data_structure(
-                "MergeContactSelectionOutput",
-                Util::vector_of<std::pair<std::string, std::string>>
-                    (std::make_pair("handle", handle))
-                    (std::make_pair("filter", filter)));
-    }
+    explicit MergeContactSelectionOutput(std::string _handle, std::string _filter);
+    std::string to_string() const;
 
     std::string handle;
-    ContactSelectionFilterType filter;
+    std::string filter;
 };
 
 class MergeContactSelection : public Util::Printable<MergeContactSelection>
 {
 public:
+    explicit MergeContactSelection(
+            std::vector<std::string> contact_handles,
+            std::vector<std::string> filters);
+    MergeContactSelectionOutput exec(const OperationContext& ctx);
+    std::string to_string()const;
     struct NoContactHandles : LibFred::OperationException
     {
-        const char* what() const noexcept { return "no contact handles, nothing to process"; }
+        const char* what() const noexcept override;
     };
     struct NoContactHandlesLeft : LibFred::OperationException
     {
-        const char* what() const noexcept { return "no contact handles left, selection of contact with given rules failed"; }
+        const char* what() const noexcept override;
     };
     struct TooManyContactHandlesLeft : LibFred::OperationException
     {
-        const char* what() const noexcept { return "too many contact handles left, selection of contact with given rules failed"; }
+        const char* what() const noexcept override;
     };
-
-    MergeContactSelection(const std::vector<std::string>& contact_handle,
-                          const std::vector<ContactSelectionFilterType>& filter);
-    MergeContactSelectionOutput exec(const OperationContext& ctx);
-
-    std::string to_string()const;
 private:
-    std::vector<std::string> contact_handle_;//contact handle vector
-    std::vector<std::pair<std::string, std::shared_ptr<ContactSelectionFilterBase>>> ff_;//filter functor ptr vector
+    std::vector<std::string> contact_handles_;
+    std::vector<std::string> filters_;
 };
 
-typedef Util::Factory<ContactSelectionFilterBase, Util::ClassCreator<ContactSelectionFilterBase> > ContactSelectionFilterFactory;
+using ContactSelectionFilterFactory = Util::Factory<ContactSelectionFilter, std::string>;
+
+const ContactSelectionFilterFactory& get_default_contact_selection_filter_factory();
 
 }//namespace LibFred
 
