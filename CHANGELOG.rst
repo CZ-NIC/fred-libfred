@@ -1,6 +1,13 @@
 ChangeLog
 =========
 
+5.2.0 (2022-02-28)
+------------------
+
+* Normalize string data of contact (empty string / null values / whitespace) when finding duplicates and in merge operation
+* Rework object factories to manual registration instead of auto-registration which was not working properly
+
+
 5.1.0 (2022-01-25)
 ------------------
 
