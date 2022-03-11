@@ -460,14 +460,14 @@ const LibFred::ContactSelectionFilterFactory& LibFred::get_default_contact_selec
     {
         ContactSelectionFilterFactory factory{};
         factory.add_producer({MCS_FILTER_IDENTIFIED_CONTACT, std::make_unique<FilterIdentifiedContact>()})
-               .add_producer({MCS_FILTER_IDENTITY_ATTACHED, std::unique_ptr<FilterIdentityAttached>()})
-               .add_producer({MCS_FILTER_CONDITIONALLY_IDENTIFIED_CONTACT, std::unique_ptr<FilterConditionallyIdentifiedContact>()})
-               .add_producer({MCS_FILTER_HANDLE_MOJEID_SYNTAX, std::unique_ptr<FilterHandleMojeIDSyntax>()})
-               .add_producer({MCS_FILTER_MAX_DOMAINS_BOUND, std::unique_ptr<FilterMaxDomainsBound>()})
-               .add_producer({MCS_FILTER_MAX_OBJECTS_BOUND, std::unique_ptr<FilterMaxObjectsBound>()})
-               .add_producer({MCS_FILTER_RECENTLY_UPDATED, std::unique_ptr<FilterRecentlyUpdated>()})
-               .add_producer({MCS_FILTER_NOT_REGCZNIC, std::unique_ptr<FilterNotRegCzNic>()})
-               .add_producer({MCS_FILTER_RECENTLY_CREATED, std::unique_ptr<FilterRecentlyCreated>()});
+               .add_producer({MCS_FILTER_IDENTITY_ATTACHED, std::make_unique<FilterIdentityAttached>()})
+               .add_producer({MCS_FILTER_CONDITIONALLY_IDENTIFIED_CONTACT, std::make_unique<FilterConditionallyIdentifiedContact>()})
+               .add_producer({MCS_FILTER_HANDLE_MOJEID_SYNTAX, std::make_unique<FilterHandleMojeIDSyntax>()})
+               .add_producer({MCS_FILTER_MAX_DOMAINS_BOUND, std::make_unique<FilterMaxDomainsBound>()})
+               .add_producer({MCS_FILTER_MAX_OBJECTS_BOUND, std::make_unique<FilterMaxObjectsBound>()})
+               .add_producer({MCS_FILTER_RECENTLY_UPDATED, std::make_unique<FilterRecentlyUpdated>()})
+               .add_producer({MCS_FILTER_NOT_REGCZNIC, std::make_unique<FilterNotRegCzNic>()})
+               .add_producer({MCS_FILTER_RECENTLY_CREATED, std::make_unique<FilterRecentlyCreated>()});
         return factory;
     }();
     return factory;
