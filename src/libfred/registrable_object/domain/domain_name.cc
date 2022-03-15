@@ -290,7 +290,7 @@ using namespace LibFred::Domain;
 
 const LibFred::Domain::DomainNameCheckerFactory& LibFred::Domain::get_default_domain_name_checker_factory()
 {
-    static const auto factory = []()
+    static thread_local const auto factory = []()
     {
         DomainNameCheckerFactory factory{};
         factory.add_producer({DNCHECK_NOT_EMPTY_DOMAIN_NAME, std::make_unique<DomainNameCheckerNotEmptyDomainName>()})
