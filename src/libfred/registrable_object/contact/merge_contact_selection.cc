@@ -456,7 +456,7 @@ private:
 
 const LibFred::ContactSelectionFilterFactory& LibFred::get_default_contact_selection_filter_factory()
 {
-    static const auto factory = []()
+    static thread_local const auto factory = []()
     {
         ContactSelectionFilterFactory factory{};
         factory.add_producer({MCS_FILTER_IDENTIFIED_CONTACT, std::make_unique<FilterIdentifiedContact>()})
