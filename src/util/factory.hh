@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,151 +16,74 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef FACTORY_HH_8EED84798BF84FCCB6953709F67F7BF2
 #define FACTORY_HH_8EED84798BF84FCCB6953709F67F7BF2
 
-#include "util/singleton.hh"
-#include "util/map_get.hh"
-
 #include <map>
+#include <memory>
 #include <string>
 #include <stdexcept>
-#include <memory>
+#include <utility>
+
 
 namespace Util {
 
 /*
- * Abstract factory template
+ * Abstract factory template class
  *
- * \param Base      base class type of concrete implementation which should be returned
- * \param Key       key type for registration in internal map
+ * \tparam Producer  the base class from which a particular implementation class is derived
+ * \tparam Key       the type of key used to register a particular implementation class in the factory
  */
-template <typename Base, typename Creator, typename Key = std::string>
+template <typename Producer, typename Key = std::string>
 class Factory
 {
 public:
-    static Factory* instance_ptr()
-    {
-        return Singleton<Factory>::instance_ptr();
-    }
+    using ProducerInterface = Producer;
+    using KeyType = Key;
+    using KeyProducerMap = std::map<KeyType, std::unique_ptr<ProducerInterface>>;
+    using KeyProducerPair = std::pair<KeyType, std::unique_ptr<ProducerInterface>>;
 
-    static Factory& instance_ref()
-    {
-        return Singleton<Factory>::instance_ref();
-    }
+    Factory() = default;
+    Factory(Factory&&) = default;
+    Factory& operator=(Factory&&) = default;
 
-    typedef Key key_type;
-    void register_class(const Key &_key, Creator *_class_creator)
+    Factory(const Factory&) = delete;
+    Factory& operator=(const Factory&) = delete;
+
+    Factory& add_producer(KeyProducerPair key_producer_pair)
     {
-        // reregistration is not allowed
-        if (!class_creators_.insert(std::make_pair(_key, _class_creator)).second)
+        const bool is_unique = key_producer_map_.insert(std::move(key_producer_pair)).second;
+        if (!is_unique)
         {
-            throw std::runtime_error(std::string("key '") + _key + "' already registered");
+            throw std::runtime_error{"uniqueness constraint violation"};
         }
+        return *this;
     }
-
-    /*
-     * Creates instance of class using registered class creator
-     *
-     * \param _key      name of registered class to instance
-     * \return          instance of concrete type through naked Base pointer
-     */
-    Base* create(const Key &_key) const
+    bool has_key(const KeyType& key) const noexcept
     {
-        typename FunctionMap::const_iterator it = class_creators_.find(_key);
-        if (it != class_creators_.end())
+        return key_producer_map_.find(key) != std::end(key_producer_map_);
+    }
+    ProducerInterface& operator[](const KeyType& key) const
+    {
+        const auto key_producer_iter = key_producer_map_.find(key);
+        if (key_producer_iter != std::end(key_producer_map_))
         {
-            return (it->second)->create();
+            return *(key_producer_iter->second);
         }
-        throw std::out_of_range("factory: key not found");
-    }
-
-    /*
-     * Creates instance of class using registered class creator
-     *
-     * \param _key      name of registered class to instance
-     * \return          instance of concrete type through shared Base pointer
-     */
-    std::shared_ptr<Base> create_sh_ptr(const Key &_key) const
-    {
-        typename FunctionMap::const_iterator it = class_creators_.find(_key);
-        if (it != class_creators_.end())
-        {
-            return (it->second)->create_sh_ptr();
-        }
-        throw std::out_of_range("factory: key not found");
-    }
-
-    /*
-     * \return          all registered keys
-     */
-    std::vector<Key> get_keys() const
-    {
-        return map_get_keys(class_creators_);
+        throw std::out_of_range{"producer not registered"};
     }
 private:
-    typedef std::map<Key, Creator*> FunctionMap;
-    FunctionMap class_creators_;
-};
-
-template <typename Base>
-struct ClassCreator
-{
-    virtual ~ClassCreator() {}
-    virtual Base* create()const = 0;
-    virtual std::shared_ptr<Base> create_sh_ptr()const = 0;
-};
-
-template <typename Base, typename Derived>
-struct DerivedClassCreator : public ClassCreator<Base>
-{
-    Base* create() const
+    KeyProducerMap key_producer_map_;
+    friend auto begin(const Factory<Producer, Key>& factory)
     {
-        return new Derived();
+        return std::begin(factory.key_producer_map_);
     }
-
-    std::shared_ptr<Base> create_sh_ptr() const
+    friend auto end(const Factory<Producer, Key>& factory)
     {
-        return std::shared_ptr<Base>(dynamic_cast<Base*>(new Derived()));
+        return std::end(factory.key_producer_map_);
     }
 };
-
-/*
- * Inherit from this class to autoregister Derived class in factory
- * (type of Factory<Base, Derived, Key>)
- */
-template <typename Base, typename Derived, typename Key = std::string>
-class FactoryAutoRegister
-{
-private:
-    struct ExecRegistration
-    {
-        ExecRegistration()
-        {
-            Factory<Base, ClassCreator<Base>, Key>::instance_ref().register_class(
-                    Derived::registration_name(),
-                    new DerivedClassCreator<Base, Derived>());
-        }
-    };
-
-    template<ExecRegistration&> struct ref_it { };
-
-    static ExecRegistration register_object;
-    static ref_it<register_object> referrer;
-};
-
-template <typename Base, typename Derived, typename Key>
-typename FactoryAutoRegister<Base, Derived, Key>::ExecRegistration FactoryAutoRegister<Base, Derived, Key>::register_object;
-
-/*
- * helper for pre main factory object registration take place
- * even if concrete implementations are statically linked
- */
-#define FACTORY_MODULE_INIT_DECL(name) \
-    bool name##_init(); static bool name [[gnu::unused]] = name##_init();
-
-#define FACTORY_MODULE_INIT_DEFI(name) \
-    bool name##_init() { return true; }
 
 }//namespace Util
 

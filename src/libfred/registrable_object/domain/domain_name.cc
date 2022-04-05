@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file domain_name.cc
- *  domain name check
- */
 
 #include "libfred/registrable_object/domain/domain_name.hh"
 
@@ -35,8 +31,6 @@
 
 namespace LibFred {
 namespace Domain {
-
-FACTORY_MODULE_INIT_DEFI(domain_name_validator)
 
 bool is_rfc1123_compliant_host_name(const std::string& _fqdn)
 {
@@ -82,18 +76,25 @@ DomainNameValidator::DomainNameValidator(const bool _is_system_registrar)
 { }
 
 //domain name validator
-DomainNameValidator& DomainNameValidator::set_zone_name(const DomainName& _zone_name)
+DomainNameValidator& DomainNameValidator::set_zone_name(DomainName _zone_name)
 {
-    zone_name_.reset(new DomainName(_zone_name));
-
+    zone_name_ = std::make_unique<DomainName>(std::move(_zone_name));
     return *this;
 }
 
 DomainNameValidator& DomainNameValidator::set_ctx(const OperationContext& _ctx)
 {
-    ctx_= &_ctx;
-
+    ctx_ = &_ctx;
     return *this;
+}
+
+DomainName::DomainName(const std::string& _fqdn)
+    : DomainName{_fqdn.c_str()}
+{ }
+
+DomainName::DomainName(const char* const _fqdn)
+{
+    init(_fqdn);
 }
 
 void DomainName::init(const char* const _fqdn)
@@ -111,17 +112,6 @@ void DomainName::init(const char* const _fqdn)
 
     temp_fqdn = LibFred::Zone::rem_trailing_dot(temp_fqdn);
     boost::split(labels_, temp_fqdn, boost::is_any_of("."));
-}
-
-
-DomainName::DomainName(const std::string& _fqdn)
-{
-    init(_fqdn.c_str());
-}
-
-DomainName::DomainName(const char* const _fqdn)
-{
-    init(_fqdn);
 }
 
 std::string DomainName::get_string() const
@@ -143,67 +133,59 @@ DomainName DomainName::get_subdomains(int _top_labels_to_skip)const
     return DomainName(boost::join(selected_labels, "."));
 }
 
-DomainNameValidator& DomainNameValidator::add(const std::string& checker_name)
+DomainNameValidator& DomainNameValidator::add(std::string checker_name)
 {
-    FactoryHaveSupersetOfKeysChecker<LibFred::Domain::DomainNameCheckerFactory>
-        ::KeyVector required_keys = boost::assign::list_of(checker_name);
-    FactoryHaveSupersetOfKeysChecker<LibFred::Domain::DomainNameCheckerFactory>
-        (required_keys).check();
-    checker_name_vector_.push_back(checker_name);
+    Util::FactoryHaveSupersetOfKeys::require(get_default_domain_name_checker_factory(), {checker_name});
+    checker_name_vector_.push_back(std::move(checker_name));
     return *this;
 }
 
-DomainNameValidator& DomainNameValidator::set_checker_names(const std::vector<std::string>& checker_names)
+DomainNameValidator& DomainNameValidator::set_checker_names(std::vector<std::string> checker_names)
 {
     if (is_system_registrar_)
     {
         return *this;
     }
 
-    for (std::vector<std::string>::const_iterator i = checker_names.begin(); i != checker_names.end() ; ++i) {}
-    FactoryHaveSupersetOfKeysChecker<LibFred::Domain::DomainNameCheckerFactory>
-        ::KeyVector required_keys = checker_names;
-    FactoryHaveSupersetOfKeysChecker<LibFred::Domain::DomainNameCheckerFactory>
-        (required_keys).check();
-    checker_name_vector_ = checker_names;
+    Util::FactoryHaveSupersetOfKeys::require(get_default_domain_name_checker_factory(), checker_names);
+    checker_name_vector_ = std::move(checker_names);
     return *this;
 }
 
 bool DomainNameValidator::exec(const DomainName& _fqdn, int top_labels_to_skip)
 {
-    DomainName labels_to_check = _fqdn.get_subdomains(top_labels_to_skip);
+    const auto labels_to_check = _fqdn.get_subdomains(top_labels_to_skip);
 
     if (is_system_registrar_)
     {
         return true; // validation ok
     }
 
-    for (std::vector<std::string>::const_iterator ci = checker_name_vector_.begin(); ci != checker_name_vector_.end(); ++ci)
+    for (const auto& checker_name : checker_name_vector_)
     {
-        std::shared_ptr<DomainNameChecker> checker = DomainNameCheckerFactory::instance_ref().create_sh_ptr(*ci);
+        DomainNameChecker& checker = get_default_domain_name_checker_factory()[checker_name];
 
-        DomainNameCheckerNeedZoneName* const need_zone_checker =
-                dynamic_cast<DomainNameCheckerNeedZoneName*>(checker.get());
+        auto* const need_zone_checker = dynamic_cast<DomainNameCheckerNeedZoneName*>(&checker);
         if (need_zone_checker != nullptr)
         {
             if (zone_name_ == nullptr)
             {
-                throw ExceptionZoneNameNotSet();
+                throw ExceptionZoneNameNotSet{};
             }
             need_zone_checker->set_zone_name(*zone_name_);
         }
 
-        DomainNameCheckerNeedOperationContext* const need_ctx_checker =
-                dynamic_cast<DomainNameCheckerNeedOperationContext*>(checker.get());
+        auto* const need_ctx_checker = dynamic_cast<DomainNameCheckerNeedOperationContext*>(&checker);
         if (need_ctx_checker != nullptr)
         {
             if (!ctx_.isset())
             {
-                throw ExceptionCtxNotSet();
+                throw ExceptionCtxNotSet{};
             }
             need_ctx_checker->set_ctx(*ctx_.get_value());
         }
-        if (!checker->validate(labels_to_check))
+
+        if (!checker.validate(labels_to_check))
         {
             return false; //validation failed
         }
@@ -217,136 +199,110 @@ namespace {
 class DomainNameCheckerNotEmptyDomainName
     : public DomainNameChecker,
       public DomainNameCheckerNeedZoneName,
-      public DomainNameCheckerNeedOperationContext,
-      public Util::FactoryAutoRegister<DomainNameChecker, DomainNameCheckerNotEmptyDomainName>
+      public DomainNameCheckerNeedOperationContext
 {
 public:
     DomainNameCheckerNotEmptyDomainName()
-    : ctx_ptr_(0)
+        : ctx_ptr_{nullptr}
     {}
-
-    bool validate(const DomainName& relative_domain_name)
+private:
+    bool validate(const DomainName& relative_domain_name) override
     {
         return !zone_name_->get_string().empty() && !relative_domain_name.get_string().empty() && ctx_ptr_;
     }
 
-    void set_zone_name(const DomainName& _zone_name)
+    void set_zone_name(DomainName _zone_name) override
     {
-        zone_name_.reset(new DomainName(_zone_name) );
+        zone_name_ = std::make_unique<DomainName>(std::move(_zone_name));
     }
 
-    void set_ctx(const OperationContext& _ctx)
+    void set_ctx(const OperationContext& _ctx) override
     {
         ctx_ptr_ = &_ctx;
     }
 
-    static std::string registration_name()
-    {
-        return DNCHECK_NOT_EMPTY_DOMAIN_NAME;
-    }
-private:
     std::unique_ptr<DomainName> zone_name_;
     const OperationContext* ctx_ptr_;
 };
 
 ///check domain name according to RFC1035 section 2.3.1. Preferred name syntax
-class CheckRFC1035PreferredNameSyntax
-    : public DomainNameChecker,
-      public Util::FactoryAutoRegister<DomainNameChecker, CheckRFC1035PreferredNameSyntax>
+class CheckRFC1035PreferredNameSyntax : public DomainNameChecker
 {
 public:
-    CheckRFC1035PreferredNameSyntax()
-    {}
-
     bool validate(const DomainName& relative_domain_name)
     {
-        const boost::regex RFC1035_NAME_SYNTAX(
+        const auto rfc1035_name_syntax = boost::regex{
             "(([A-Za-z]|[A-Za-z][-A-Za-z0-9]{0,61}[A-Za-z0-9])[.])*"//optional non-highest-level labels
-            "([A-Za-z]|[A-Za-z][-A-Za-z0-9]{0,61}[A-Za-z0-9])"//mandatory highest-level label
-        );
-        return boost::regex_match(relative_domain_name.get_string(), RFC1035_NAME_SYNTAX);
-    }
-
-    static std::string registration_name()
-    {
-        return DNCHECK_RFC1035_PREFERRED_SYNTAX;
+            "([A-Za-z]|[A-Za-z][-A-Za-z0-9]{0,61}[A-Za-z0-9])"};//mandatory highest-level label
+        return boost::regex_match(relative_domain_name.get_string(), rfc1035_name_syntax);
     }
 };
 
 ///prohibit consecutive hyphens '--'
-class CheckNoConsecutiveHyphens
-    : public DomainNameChecker,
-      public Util::FactoryAutoRegister<DomainNameChecker, CheckNoConsecutiveHyphens>
+class CheckNoConsecutiveHyphens : public DomainNameChecker
 {
-public:
-    CheckNoConsecutiveHyphens(){}
-
-    bool validate(const DomainName& relative_domain_name)
+private:
+    bool validate(const DomainName& relative_domain_name) override
     {
-        const boost::regex CONSECUTIVE_HYPHENS_SYNTAX("[-][-]");
-        return !boost::regex_search(relative_domain_name.get_string(), CONSECUTIVE_HYPHENS_SYNTAX);
-    }
-
-    static std::string registration_name()
-    {
-        return DNCHECK_NO_CONSECUTIVE_HYPHENS;
+        const auto consecutive_hyphens_syntax = boost::regex{"[-][-]"};
+        return !boost::regex_search(relative_domain_name.get_string(), consecutive_hyphens_syntax);
     }
 };
 
 ///check domain name for single digit labels
-class CheckSingleDigitLabelsOnly
-    : public DomainNameChecker,
-      public Util::FactoryAutoRegister<DomainNameChecker, CheckSingleDigitLabelsOnly>
+class CheckSingleDigitLabelsOnly : public DomainNameChecker
 {
-public:
-    CheckSingleDigitLabelsOnly(){}
-
-    bool validate(const DomainName& relative_domain_name)
+private:
+    bool validate(const DomainName& relative_domain_name) override
     {
-        const boost::regex SINGLE_DIGIT_LABELS_SYNTAX(
+        const auto single_digit_labels_syntax = boost::regex{
             "([0-9][.])*"//optional non-highest-level single digit labels labels
-            "[0-9]"//mandatory highest-level single digit label
-        );
-        return boost::regex_match(relative_domain_name.get_string(), SINGLE_DIGIT_LABELS_SYNTAX);
-    }
-
-    static std::string registration_name()
-    {
-        return DNCHECK_SINGLE_DIGIT_LABELS_ONLY;
+            "[0-9]"};//mandatory highest-level single digit label
+        return boost::regex_match(relative_domain_name.get_string(), single_digit_labels_syntax);
     }
 };
 
 ///prohibit idn punycode ('xn--{punycode}')
-class CheckNoIdnPunycode
-    : public DomainNameChecker,
-      public Util::FactoryAutoRegister<DomainNameChecker, CheckNoIdnPunycode>
+class CheckNoIdnPunycode : public DomainNameChecker
 {
-public:
-    CheckNoIdnPunycode(){}
-
-    bool validate(const DomainName& relative_domain_name)
+private:
+    bool validate(const DomainName& relative_domain_name) override
     {
-        const std::string IDN_PUNYCODE_PREFIX("xn--");
+        const auto idn_punycode_prefix = std::string{"xn--"};
         const std::vector<std::string> labels = relative_domain_name.get_labels(); // get labels (without zone labels)
         for (std::vector<std::string>::const_iterator label = labels.begin(); label != labels.end(); ++label)
         {
-            if (boost::starts_with(*label, IDN_PUNYCODE_PREFIX))
+            if (boost::starts_with(*label, idn_punycode_prefix))
             {
                 return false;
             }
         }
         return true;
     }
-
-    static std::string registration_name()
-    {
-        return DNCHECK_NO_IDN_PUNYCODE;
-    }
 };
 
 }//namespace LibFred::Domain::{anonymous}
+}//namespace LibFred::Domain
+}//namespace LibFred
 
-void insert_domain_name_checker_name_into_database(
+using namespace LibFred::Domain;
+
+const LibFred::Domain::DomainNameCheckerFactory& LibFred::Domain::get_default_domain_name_checker_factory()
+{
+    static thread_local const auto factory = []()
+    {
+        DomainNameCheckerFactory factory{};
+        factory.add_producer({DNCHECK_NOT_EMPTY_DOMAIN_NAME, std::make_unique<DomainNameCheckerNotEmptyDomainName>()})
+               .add_producer({DNCHECK_RFC1035_PREFERRED_SYNTAX, std::make_unique<CheckRFC1035PreferredNameSyntax>()})
+               .add_producer({DNCHECK_NO_CONSECUTIVE_HYPHENS, std::make_unique<CheckNoConsecutiveHyphens>()})
+               .add_producer({DNCHECK_SINGLE_DIGIT_LABELS_ONLY, std::make_unique<CheckSingleDigitLabelsOnly>()})
+               .add_producer({DNCHECK_NO_IDN_PUNYCODE, std::make_unique<CheckNoIdnPunycode>()});
+        return factory;
+    }();
+    return factory;
+}
+
+void LibFred::Domain::insert_domain_name_checker_name_into_database(
         const OperationContext& ctx,
         const std::string& checker_name,
         const std::string& checker_description)
@@ -356,7 +312,7 @@ void insert_domain_name_checker_name_into_database(
                                Database::query_param_list(checker_name)(checker_description));
 }
 
-void set_domain_name_validation_config_into_database(
+void LibFred::Domain::set_domain_name_validation_config_into_database(
         const OperationContext& ctx,
         const std::string& zone_name,
         const std::vector<std::string>& checker_names)
@@ -374,7 +330,7 @@ void set_domain_name_validation_config_into_database(
     }//for checker_names
 }
 
-std::vector<std::string> get_domain_name_validation_config_for_zone(
+std::vector<std::string> LibFred::Domain::get_domain_name_validation_config_for_zone(
         const OperationContext& ctx,
         const std::string& zone_name)
 {
@@ -393,6 +349,3 @@ std::vector<std::string> get_domain_name_validation_config_for_zone(
     }
     return checker_names;
 }
-
-}//namespace LibFred::Domain
-}//namespace LibFred

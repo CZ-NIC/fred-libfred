@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "src/libfred/opcontext.hh"
 
 #include "test/setup/fixtures.hh"
@@ -26,15 +27,15 @@
 #include <string>
 #include <sstream>
 
+
 namespace {
 
 template <typename T, std::size_t R, std::size_t C>
 using Table = std::array<std::array<T, C>, R>;
 
-
 struct PgCopyParams
 {
-    PgCopyParams(const char column_delimiter, std::string null_value)
+    explicit PgCopyParams(const char column_delimiter, std::string null_value)
         : column_delimiter(column_delimiter),
           null_value(std::move(null_value)) {}
 
@@ -42,11 +43,9 @@ struct PgCopyParams
     std::string null_value;
 };
 
+static const auto pg_copy_textmode_defaults = PgCopyParams{'\t', "\\N"};
 
-static const auto pg_copy_textmode_defaults = PgCopyParams('\t', "\\N");
-
-
-std::string to_string(const std::string& in)
+const std::string& to_string(const std::string& in)
 {
     return in;
 }
@@ -89,27 +88,11 @@ void check_result(const Database::Result& result, const Table<T, R, C>& table, c
             }
             else
             {
-                BOOST_CHECK_EQUAL(static_cast<std::string>(value), table[r_idx][c_idx]);
+                BOOST_CHECK_EQUAL(static_cast<T>(value), table[r_idx][c_idx]);
             }
         }
     }
 }
-
-
-void print_result(const Database::Result& result)
-{
-    for (auto r_idx = 0u; r_idx < result.size(); ++r_idx)
-    {
-        for (auto c_idx = 0u; c_idx < result[r_idx].size(); ++c_idx)
-        {
-            const auto value = result[r_idx][c_idx];
-            std::cout << (value.isnull() ? "[null]" : static_cast<std::string>(value)) << "\t";
-        }
-        std::cout << "\n";
-    }
-
-}
-
 
 std::string get_non_existent_tablename(const LibFred::OperationContext& ctx, const std::string& prefix)
 {
@@ -128,8 +111,7 @@ std::string get_non_existent_tablename(const LibFred::OperationContext& ctx, con
     return nonexistent_tablename;
 }
 
-}
-
+}//namespace {anonymous}
 
 BOOST_AUTO_TEST_SUITE(Tests)
 BOOST_AUTO_TEST_SUITE(Util)
