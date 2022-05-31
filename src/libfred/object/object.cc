@@ -21,7 +21,6 @@
 
 #include "libfred/db_settings.hh"
 #include "libfred/object/object_impl.hh"
-#include "libfred/object/generate_authinfo_password.hh"
 #include "libfred/object/store_authinfo.hh"
 #include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"
@@ -49,20 +48,12 @@ CreateObject::CreateObject(const std::string& object_type
 CreateObject::CreateObject(const std::string& object_type
     , const std::string& handle
     , const std::string& registrar
-    , const Optional<std::string>& authinfo
     , const Nullable<unsigned long long>& logd_request_id)
 : object_type_(object_type)
 , handle_(handle)
 , registrar_(registrar)
-, authinfo_(authinfo)
 , logd_request_id_(logd_request_id)
 {}
-
-CreateObject& CreateObject::set_authinfo(const std::string& authinfo)
-{
-    authinfo_ = authinfo;
-    return *this;
-}
 
 CreateObject& CreateObject::set_logd_request_id(const Nullable<unsigned long long>& logd_request_id)
 {
@@ -101,14 +92,9 @@ CreateObject::Result  CreateObject::exec(OperationContext& ctx)
             BOOST_THROW_EXCEPTION(Exception().set_invalid_object_handle(handle_));
         }
 
-        if (authinfo_.get_value_or_default().empty())
-        {
-            authinfo_ = generate_authinfo_pw().password_;
-        }
-
-        ctx.get_conn().exec_params("INSERT INTO object(id, clid, authinfopw) VALUES ($1::bigint "//object id from create_object
-                " , $2::integer, $3::text)"
-                , Database::query_param_list(result.object_id)(registrar_id)(authinfo_.get_value()));
+        ctx.get_conn().exec_params("INSERT INTO object(id, clid) VALUES ($1::bigint, "//object id from create_object
+                "$2::integer)",
+                Database::query_param_list(result.object_id)(registrar_id));
 
         result.history_id = LibFred::InsertHistory(logd_request_id_, result.object_id).exec(ctx);
 
@@ -145,7 +131,6 @@ std::string CreateObject::to_string() const
                 (std::make_pair("object_type", object_type_))
                 (std::make_pair("handle", handle_))
                 (std::make_pair("registrar", registrar_))
-                (std::make_pair("authinfo", authinfo_.print_quoted()))
                 (std::make_pair("logd_request_id", logd_request_id_.print_quoted())));
 }
 

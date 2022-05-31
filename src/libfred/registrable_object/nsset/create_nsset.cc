@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  create nsset
  */
 
 #include "libfred/registrable_object/nsset/create_nsset.hh"
@@ -48,7 +44,7 @@ CreateNsset::CreateNsset(const std::string& handle
 
 CreateNsset::CreateNsset(const std::string& handle
         , const std::string& registrar
-        , const Optional<std::string>& authinfo
+        , const Optional<std::string>&
         , const Optional<short>& tech_check_level
         , const std::vector<DnsHost>& dns_hosts
         , const std::vector<std::string>& tech_contacts
@@ -56,7 +52,6 @@ CreateNsset::CreateNsset(const std::string& handle
         )
 : handle_(handle)
 , registrar_(registrar)
-, authinfo_(authinfo)
 , tech_check_level_(tech_check_level)
 , dns_hosts_(dns_hosts)
 , tech_contacts_(tech_contacts)
@@ -65,9 +60,8 @@ CreateNsset::CreateNsset(const std::string& handle
         : Nullable<unsigned long long>())//is NULL if not set
 {}
 
-CreateNsset& CreateNsset::set_authinfo(const std::string& authinfo)
+CreateNsset& CreateNsset::set_authinfo(const std::string&)
 {
-    authinfo_ = authinfo;
     return *this;
 }
 
@@ -105,7 +99,7 @@ CreateNsset::Result CreateNsset::exec(OperationContext& ctx, const std::string& 
         try
         {
             result.create_object_result = CreateObject(
-                "nsset", handle_, registrar_, authinfo_, logd_request_id_)
+                "nsset", handle_, registrar_, logd_request_id_)
                 .exec(ctx);
         }
         catch (const CreateObject::Exception& create_object_exception)
@@ -299,7 +293,6 @@ std::string CreateNsset::to_string() const
             Util::vector_of<std::pair<std::string, std::string>>
                 (std::make_pair("handle", handle_))
                 (std::make_pair("registrar", registrar_))
-                (std::make_pair("authinfo", authinfo_.print_quoted()))
                 (std::make_pair("dns_hosts", Util::format_container(dns_hosts_)))
                 (std::make_pair("tech_contacts", Util::format_container(tech_contacts_)))
                 (std::make_pair("logd_request_id", logd_request_id_.print_quoted())));

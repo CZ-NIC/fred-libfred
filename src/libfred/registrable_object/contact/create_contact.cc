@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  create contact
  */
 
 #include "libfred/registrable_object/contact/create_contact.hh"
@@ -48,7 +44,7 @@ CreateContact::CreateContact(const std::string& handle
 
 CreateContact::CreateContact(const std::string& handle
         , const std::string& registrar
-        , const Optional<std::string>& authinfo
+        , const Optional<std::string>&
         , const Optional<std::string>& name
         , const Optional<std::string>& organization
         , const Optional< LibFred::Contact::PlaceAddress > &place
@@ -74,7 +70,6 @@ CreateContact::CreateContact(const std::string& handle
         )
 : handle_(handle)
 , registrar_(registrar)
-, authinfo_(authinfo)
 , name_(name)
 , organization_(organization)
 , place_(place)
@@ -101,9 +96,8 @@ CreateContact::CreateContact(const std::string& handle
         : Nullable<unsigned long long>())//is NULL if not set
 {}
 
-CreateContact& CreateContact::set_authinfo(const std::string& authinfo)
+CreateContact& CreateContact::set_authinfo(const std::string&)
 {
-    authinfo_ = authinfo;
     return *this;
 }
 
@@ -249,7 +243,7 @@ CreateContact::Result CreateContact::exec(OperationContext &ctx, const std::stri
         try
         {
             result.create_object_result = CreateObject(
-                    "contact", handle_, registrar_, authinfo_, logd_request_id_)
+                    "contact", handle_, registrar_, logd_request_id_)
                     .exec(ctx);
         }
         catch (const CreateObject::Exception& create_object_exception)
@@ -601,7 +595,6 @@ std::string CreateContact::to_string() const
             Util::vector_of<std::pair<std::string, std::string>>
                 (std::make_pair("handle", handle_))
                 (std::make_pair("registrar", registrar_))
-                (std::make_pair("authinfo", authinfo_.print_quoted()))
                 (std::make_pair("name", name_.print_quoted()))
                 (std::make_pair("organization", organization_.print_quoted()))
                 (std::make_pair("place", place_.print_quoted()))

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  test fixture utils
  */
 
 #ifndef FIXTURES_UTILS_HH_AFF603B566B44E78A5A215F9112A2040
@@ -419,7 +415,6 @@ inline ::LibFred::CreateContact generate_test_data<>(::LibFred::CreateContact ob
     static const std::string country("CZ");
     place.country = country;
 
-    obj.set_authinfo(rnd.get_seq(Random::CharSet::letters_and_digits(), 10));
     obj.set_name("Jan " + rnd.get_seq(Random::CharSet::letters_and_digits(), 7) + " Novak");
     obj.set_organization("Zakoupil a Zboril a " + rnd.get_seq(Random::CharSet::letters_and_digits(), 7) + " s. r. o.");
     obj.set_place(place);
@@ -448,17 +443,12 @@ inline ::LibFred::CreateContact generate_test_data<>(::LibFred::CreateContact ob
 template<>
 inline ::LibFred::CreateDomain generate_test_data<>(::LibFred::CreateDomain obj)
 {
-    Random::Generator rnd;
-    obj.set_authinfo(rnd.get_seq(Random::CharSet::letters_and_digits(), 15));
     return obj;
 }
 
 template<>
 inline ::LibFred::CreateNsset generate_test_data<>(::LibFred::CreateNsset obj)
 {
-    Random::Generator rnd;
-
-    obj.set_authinfo(rnd.get_seq(Random::CharSet::letters_and_digits(), 15));
     obj.set_dns_hosts(
             boost::assign::list_of(
                     ::LibFred::DnsHost(
@@ -472,9 +462,6 @@ inline ::LibFred::CreateNsset generate_test_data<>(::LibFred::CreateNsset obj)
 template<>
 inline ::LibFred::CreateKeyset generate_test_data<>(::LibFred::CreateKeyset obj)
 {
-    Random::Generator rnd;
-
-    obj.set_authinfo(rnd.get_seq(Random::CharSet::letters_and_digits(), 15));
     obj.set_dns_keys(
             boost::assign::list_of(::LibFred::DnsKey(1, 1, 3, "abcde")));
     return obj;

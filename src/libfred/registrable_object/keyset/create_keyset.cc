@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  create keyset
  */
 
 #include "libfred/registrable_object/keyset/create_keyset.hh"
@@ -48,19 +44,17 @@ CreateKeyset::CreateKeyset(const std::string& handle, const std::string& registr
 
 CreateKeyset::CreateKeyset(const std::string& handle
         , const std::string& registrar
-        , const Optional<std::string>& authinfo
+        , const Optional<std::string>&
         , const std::vector<DnsKey>& dns_keys
         , const std::vector<std::string>& tech_contacts)
 : handle_(handle)
 , registrar_(registrar)
-, authinfo_(authinfo)
 , dns_keys_(dns_keys)
 , tech_contacts_(tech_contacts)
 {}
 
-CreateKeyset& CreateKeyset::set_authinfo(const std::string& authinfo)
+CreateKeyset& CreateKeyset::set_authinfo(const std::string&)
 {
-    authinfo_ = authinfo;
     return *this;
 }
 
@@ -92,7 +86,6 @@ CreateKeyset::Result CreateKeyset::exec(OperationContext& _ctx,
             CreateObject(Conversion::Enums::to_db_handle(Object_Type::keyset),
                          handle_,
                          registrar_,
-                         authinfo_,
                          _logd_request_id.isset() ? _logd_request_id.get_value()
                                                   : Nullable< unsigned long long >()).exec(_ctx);
 
@@ -229,7 +222,6 @@ std::string CreateKeyset::to_string()const
             Util::vector_of<std::pair<std::string, std::string>>
                 (std::make_pair("handle", handle_))
                 (std::make_pair("registrar", registrar_))
-                (std::make_pair("authinfo", authinfo_.print_quoted()))
                 (std::make_pair("dns_keys", Util::format_container(dns_keys_)))
                 (std::make_pair("tech_contacts", Util::format_container(tech_contacts_))));
 }
