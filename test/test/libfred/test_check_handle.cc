@@ -49,6 +49,38 @@
 
 #include <string>
 
+namespace LibFred {
+namespace ContactHandleState {
+
+std::ostream& operator<<(std::ostream& out, SyntaxValidity::Enum value)
+{
+    switch (value)
+    {
+        case SyntaxValidity::invalid:
+            return out << "invalid";
+        case SyntaxValidity::valid:
+            return out << "valid";
+    }
+    return out << static_cast<int>(value);
+}
+
+std::ostream& operator<<(std::ostream& out, Registrability::Enum value)
+{
+    switch (value)
+    {
+        case Registrability::available:
+            return out << "available";
+        case Registrability::in_protection_period:
+            return out << "in_protection_period";
+        case Registrability::registered:
+            return out << "registered";
+    }
+    return out << static_cast<int>(value);
+}
+
+} // namespace LibFred::ContactHandleState
+} // namespace LibFred
+
 BOOST_FIXTURE_TEST_SUITE(TestCheckHandle, Test::instantiate_db_template)
 
 const std::string server_name = "test-check-handle";
@@ -140,29 +172,18 @@ BOOST_FIXTURE_TEST_CASE(check_contact_handle_true, check_handle_fixture)
 {
     ::LibFred::OperationContextCreator ctx;
 
-    BOOST_CHECK(
-        ::LibFred::Contact::get_handle_syntax_validity(ctx, admin_contact_handle + "@")
-        ==
-        ::LibFred::ContactHandleState::SyntaxValidity::invalid
-    );
-
-    BOOST_CHECK(
-        ::LibFred::Contact::get_handle_registrability(ctx, admin_contact_handle)
-        ==
-        ::LibFred::ContactHandleState::Registrability::registered
-    );
-
-    BOOST_CHECK(
-        ::LibFred::Contact::get_handle_registrability(ctx, admin_contact_handle_rem)
-        ==
-        ::LibFred::ContactHandleState::Registrability::in_protection_period
-    );
-
-    BOOST_CHECK(
-        ::LibFred::Contact::get_handle_registrability(ctx, admin_contact_handle + xmark)
-        ==
-        ::LibFred::ContactHandleState::Registrability::available
-    );
+    BOOST_CHECK_EQUAL(
+        ::LibFred::Contact::get_handle_syntax_validity(ctx, admin_contact_handle + "@"),
+        ::LibFred::ContactHandleState::SyntaxValidity::invalid);
+    BOOST_CHECK_EQUAL(
+        ::LibFred::Contact::get_handle_registrability(ctx, admin_contact_handle),
+        ::LibFred::ContactHandleState::Registrability::registered);
+    BOOST_CHECK_EQUAL(
+        ::LibFred::Contact::get_handle_registrability(ctx, admin_contact_handle_rem),
+        ::LibFred::ContactHandleState::Registrability::in_protection_period);
+    BOOST_CHECK_EQUAL(
+        ::LibFred::Contact::get_handle_registrability(ctx, admin_contact_handle + xmark),
+        ::LibFred::ContactHandleState::Registrability::available);
 }
 
 /**
