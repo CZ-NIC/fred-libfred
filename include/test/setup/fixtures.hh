@@ -16,10 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  test fixtures
- */
 
 #ifndef FIXTURES_HH_327B2D873D064624803561323E8E3BF3
 #define FIXTURES_HH_327B2D873D064624803561323E8E3BF3
@@ -61,6 +57,43 @@ private:
     std::string testcase_db_name();
 };
 
+struct HasOperationContext
+{
+    ~HasOperationContext();
+    LibFred::OperationContextCreator ctx;
+};
+
+struct HasRegistrar
+{
+    HasRegistrar(LibFred::OperationContext& ctx, std::string handle, bool is_system, bool is_internal);
+    unsigned long long id;
+    std::string handle;
+};
+
+struct HasZone
+{
+    HasZone(LibFred::OperationContext& ctx, std::string fqdn);
+    unsigned long long id;
+    std::string fqdn;
+};
+
+struct HasContact
+{
+    HasContact(LibFred::OperationContext& ctx, std::string handle, const HasRegistrar& registrar);
+    unsigned long long id;
+    std::string handle;
+};
+
+struct HasDomain
+{
+    HasDomain(
+            LibFred::OperationContext& ctx,
+            std::string fqdn,
+            const HasRegistrar& registrar,
+            const HasContact& registrant);
+    unsigned long long id;
+    std::string fqdn;
+};
 
 /***
  * config handlers for admin connection to db used by fixtures related to db data
