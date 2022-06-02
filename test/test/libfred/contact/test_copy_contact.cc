@@ -16,7 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
+#include "libfred/object/check_authinfo.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
 #include "libfred/registrable_object/contact/create_contact.hh"
@@ -67,7 +69,7 @@ struct copy_contact_fixture : public Test::instantiate_db_template
             .set_place(place)
             .set_discloseaddress(true)
             .exec(ctx);
-
+        
         ctx.commit_transaction();
     }
     ~copy_contact_fixture()
@@ -87,17 +89,32 @@ BOOST_AUTO_TEST_CASE(copy_contact)
 
     const ::LibFred::InfoContactData src_contact_info = ::LibFred::InfoContactByHandle(src_contact_handle).exec(ctx).info_contact_data;
     BOOST_CHECK(src_contact_info.delete_time.isnull());
+    static constexpr const char password[] = "CopyContactTestPassword";
+    ::LibFred::UpdateContactByHandle{src_contact_handle, registrar_handle}
+            .set_authinfo(password)
+            .exec(ctx);
+    BOOST_REQUIRE_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{src_contact_info.id}}
+                    .exec(ctx, password, ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
 
     ::LibFred::CopyContact(src_contact_handle, dst_contact_handle, sys_registrar_handle, 0).exec(ctx);
 
     const ::LibFred::InfoContactData dst_contact_info = ::LibFred::InfoContactByHandle(dst_contact_handle).exec(ctx).info_contact_data;
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{src_contact_info.id}}
+                    .exec(ctx, password, ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{dst_contact_info.id}}
+                    .exec(ctx, password, ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
     ctx.commit_transaction();
 
     BOOST_CHECK(src_contact_info.roid != dst_contact_info.roid);
     BOOST_CHECK(boost::algorithm::to_upper_copy(src_contact_info.handle).compare(boost::algorithm::to_upper_copy(dst_contact_info.handle)) != 0);
     BOOST_CHECK(boost::algorithm::to_upper_copy(src_contact_info.sponsoring_registrar_handle).compare(boost::algorithm::to_upper_copy(dst_contact_info.sponsoring_registrar_handle)) != 0);
     BOOST_CHECK(boost::algorithm::to_upper_copy(src_contact_info.create_registrar_handle).compare(boost::algorithm::to_upper_copy(dst_contact_info.create_registrar_handle)) != 0);
-    BOOST_CHECK(src_contact_info.authinfopw == dst_contact_info.authinfopw);
     BOOST_CHECK((src_contact_info.name.isnull() == dst_contact_info.name.isnull()) &&
                 (src_contact_info.name.isnull() || (src_contact_info.name.get_value().compare(
                                                     dst_contact_info.name.get_value()) == 0)));
@@ -182,4 +199,4 @@ BOOST_AUTO_TEST_CASE(copy_contact_bad)
     }
 }
 
-BOOST_AUTO_TEST_SUITE_END();//TestCopyContact
+BOOST_AUTO_TEST_SUITE_END()//TestCopyContact
