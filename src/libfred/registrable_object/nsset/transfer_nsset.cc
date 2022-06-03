@@ -88,7 +88,7 @@ unsigned long long TransferNsset::exec(OperationContext& _ctx) const
         }
         catch (const UnknownObjectId&)
         {
-            throw UnknownKeysetId();
+            throw UnknownNssetId();
         }
     }();
     copy_nsset_data_to_nsset_history_impl(_ctx, nsset_id_, new_history_id);

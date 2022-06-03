@@ -16,7 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
+#include "libfred/object/check_authinfo.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
 #include "libfred/registrable_object/contact/create_contact.hh"
@@ -37,8 +39,10 @@
 #include "libfred/registrable_object/nsset/info_nsset.hh"
 #include "libfred/registrable_object/nsset/info_nsset_diff.hh"
 #include "libfred/registrable_object/nsset/update_nsset.hh"
+
 #include "util/random/char_set/char_set.hh"
 #include "util/random/random.hh"
+
 #include "test/setup/fixtures.hh"
 
 #include <boost/test/unit_test.hpp>
@@ -231,10 +235,11 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
     new_address.company_name = Optional<std::string>();
     new_address.street1 = "Změněná 1";
     addresses_to_update.update<::LibFred::ContactAddressType::MAILING>(new_address);
+    static constexpr const char* password_1 = "password 1";
     ::LibFred::UpdateContactByHandle(
             test_contact_handle,//handle
             registrar_handle,//registrar
-            Optional<std::string>("passwd"),//authinfo
+            Optional<std::string>(password_1),//authinfo
             Optional<Nullable<std::string>>("Test Name"),//name
             Optional<Nullable<std::string>>("Test o.r.g."),//organization
             place,//place
@@ -259,6 +264,10 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
         .exec(ctx);
 
     ::LibFred::InfoContactOutput info_data_4 = ::LibFred::InfoContactByHandle(test_contact_handle).exec(ctx);
+    BOOST_CHECK_LT(
+            0,
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_4.info_contact_data.id}}
+                    .exec(ctx, password_1, ::LibFred::Object::CheckAuthinfo::increment_usage));
     const std::vector<::LibFred::InfoContactOutput> history_info_data_4 = ::LibFred::InfoContactHistoryByRoid(info_data_1.info_contact_data.roid).exec(ctx);
 
     ::LibFred::InfoContactOutput info_data_3_with_changes = info_data_3;
@@ -287,10 +296,6 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
     //updated update_time
     info_data_3_with_changes.info_contact_data.update_time = info_data_4.info_contact_data.update_time;
 
-    //updated authinfopw
-    BOOST_CHECK_NE(info_data_3.info_contact_data.authinfopw, info_data_4.info_contact_data.authinfopw);
-    BOOST_CHECK_EQUAL(info_data_4.info_contact_data.authinfopw, "passwd");
-    info_data_3_with_changes.info_contact_data.authinfopw = "passwd";
     info_data_3_with_changes.info_contact_data.name = "Test Name";
     info_data_3_with_changes.info_contact_data.organization = "Test o.r.g.";
     place.country = "CZ";
@@ -334,8 +339,9 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
 
     place.street3 = "";
     new_address.street1 = "Vrácená 1";
+    static constexpr const char* password_2 = "password 2";
     ::LibFred::UpdateContactByHandle(test_contact_handle, registrar_handle)
-        .set_authinfo("passw")
+        .set_authinfo(password_2)
         .set_name("Test Name")
         .set_organization("Test o.r.g.")
         .set_place(place)
@@ -361,6 +367,14 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
         .exec(ctx);
 
     ::LibFred::InfoContactOutput info_data_5 = ::LibFred::InfoContactByHandle(test_contact_handle).exec(ctx);
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_4.info_contact_data.id}}
+                    .exec(ctx, password_1, ::LibFred::Object::CheckAuthinfo::increment_usage),
+                    0);
+    BOOST_CHECK_LT(
+            0,
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_5.info_contact_data.id}}
+                    .exec(ctx, password_2, ::LibFred::Object::CheckAuthinfo::increment_usage));
     const std::vector<::LibFred::InfoContactOutput> history_info_data_5 = ::LibFred::InfoContactHistoryByRoid(info_data_1.info_contact_data.roid).exec(ctx);
 
     ::LibFred::InfoContactOutput info_data_4_with_changes = info_data_4;
@@ -388,11 +402,6 @@ BOOST_AUTO_TEST_CASE(update_contact_by_handle)
 
     //updated update_time
     info_data_4_with_changes.info_contact_data.update_time = info_data_5.info_contact_data.update_time;
-
-    //updated authinfopw
-    BOOST_CHECK_NE(info_data_4.info_contact_data.authinfopw, info_data_5.info_contact_data.authinfopw);
-    BOOST_CHECK_EQUAL(info_data_5.info_contact_data.authinfopw, "passw");
-    info_data_4_with_changes.info_contact_data.authinfopw = "passw";
 
     //empty string in street3 and fax
     place = info_data_4_with_changes.info_contact_data.place.get_value();

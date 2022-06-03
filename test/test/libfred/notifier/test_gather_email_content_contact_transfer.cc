@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -29,28 +27,27 @@
 #include "libfred/notifier/gather_email_data/gather_email_content.hh"
 #include "libfred/registrable_object/contact/transfer_contact.hh"
 
-
 BOOST_AUTO_TEST_SUITE(TestNotifier)
 BOOST_AUTO_TEST_SUITE(GatherEmailContent)
 BOOST_AUTO_TEST_SUITE(Contact)
 BOOST_AUTO_TEST_SUITE(Transfer)
 
-template<typename T_has_contact>struct has_contact_transferred : T_has_contact {
-
-    const unsigned long long logd_request_id;
-    const ::LibFred::InfoRegistrarData new_registrar;
-    const unsigned long long new_historyid;
-
+template <typename HasContact>
+struct has_contact_transferred : HasContact
+{
     has_contact_transferred()
-    :   logd_request_id(12345),
-        new_registrar( Test::registrar(T_has_contact::ctx).info_data ),
-        new_historyid(
-            ::LibFred::TransferContact(T_has_contact::contact.id, new_registrar.handle, T_has_contact::contact.authinfopw).exec(T_has_contact::ctx)
-        )
+        : logd_request_id{12345},
+          new_registrar{Test::registrar{HasContact::ctx}.info_data},
+          new_historyid{
+                ::LibFred::TransferContact{HasContact::contact.id, new_registrar.handle, HasContact::authinfopw}
+                        .exec(HasContact::ctx)}
     { }
+    unsigned long long logd_request_id;
+    ::LibFred::InfoRegistrarData new_registrar;
+    unsigned long long new_historyid;
 };
 
-BOOST_FIXTURE_TEST_CASE(test_transfer_empty, has_contact_transferred<has_empty_contact>)
+BOOST_FIXTURE_TEST_CASE(test_transfer_empty, has_contact_transferred<HasEmptyContactWithAuthinfo>)
 {
     const std::string input_svtrid = "abc-123";
 
@@ -74,7 +71,7 @@ BOOST_FIXTURE_TEST_CASE(test_transfer_empty, has_contact_transferred<has_empty_c
     );
 }
 
-BOOST_FIXTURE_TEST_CASE(test_transfer_full, has_contact_transferred<has_full_contact>)
+BOOST_FIXTURE_TEST_CASE(test_transfer_full, has_contact_transferred<HasFullContactWithAuthinfo>)
 {
     const std::string input_svtrid = "abc-123";
 
@@ -98,7 +95,7 @@ BOOST_FIXTURE_TEST_CASE(test_transfer_full, has_contact_transferred<has_full_con
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Contact/Transfer
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Contact
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier

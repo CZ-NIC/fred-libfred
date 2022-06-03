@@ -2686,7 +2686,7 @@ BOOST_FIXTURE_TEST_CASE(test_src_updproh_domain_owner_and_admin_to_other_admin, 
 
     //contact changes
     const std::map<std::string, ::LibFred::InfoContactDiff> changed_contacts = diff_contacts();
-    BOOST_CHECK_EQUAL(changed_contacts.size(), 1); //deleted src contact
+    BOOST_CHECK_EQUAL(changed_contacts.size(), 2); //deleted src contact
 
     //src contact
     BOOST_TEST_MESSAGE("changed src contact fields: (\"" +

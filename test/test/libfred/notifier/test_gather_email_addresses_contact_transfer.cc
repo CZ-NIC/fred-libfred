@@ -16,18 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
 
 #include "libfred/notifier/gather_email_data/gather_email_addresses.hh"
 #include "libfred/registrable_object/contact/transfer_contact.hh"
-
+#include "libfred/registrable_object/contact/update_contact.hh"
 
 BOOST_AUTO_TEST_SUITE(TestNotifier)
 BOOST_AUTO_TEST_SUITE(GatherEmailAddresses)
@@ -74,10 +72,13 @@ struct has_transferred_contact : public has_contact {
     ::LibFred::InfoRegistrarData new_registrar;
     ::LibFred::InfoContactData post_transfer_contact_data;
 
-    has_transferred_contact() {
+    has_transferred_contact()
+    {
         new_registrar = Test::registrar(ctx).info_data;
 
-        const unsigned long long post_transfer_hid = ::LibFred::TransferContact(cont.id, new_registrar.handle, cont.authinfopw).exec(ctx);
+        static constexpr const char* password = "password";
+        ::LibFred::UpdateContactByHandle{has_contact::cont.handle, registrar.handle}.set_authinfo(password).exec(ctx);
+        const unsigned long long post_transfer_hid = ::LibFred::TransferContact(cont.id, new_registrar.handle, password).exec(ctx);
         const unsigned long long future_begin_hid =
             ::LibFred::UpdateContactByHandle(cont.handle, registrar.handle)
                 .set_email("future.contact.1%nic.cz")
@@ -88,7 +89,6 @@ struct has_transferred_contact : public has_contact {
         make_history_version_begin_older( ctx, future_begin_hid, future_starts_years_ago, false);
 
         post_transfer_contact_data = ::LibFred::InfoContactHistoryByHistoryid( post_transfer_hid ).exec(ctx).info_contact_data;
-
     }
 };
 
@@ -107,7 +107,7 @@ BOOST_FIXTURE_TEST_CASE(test_transferred_contact, has_transferred_contact)
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailAddresses/Contact/Transfer
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailAddresses/Contact
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailAddresses
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier

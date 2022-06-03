@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -45,7 +43,6 @@ BOOST_FIXTURE_TEST_CASE(test_empty_create, has_empty_contact)
     etalon["ticket"]    = input_svtrid;
     etalon["registrar"] = registrar.name.get_value() + " (" + registrar.url.get_value() + ")";
 
-    etalon["fresh.object.authinfo"]     = contact.authinfopw;
     etalon["fresh.contact.name"]        = "";
     etalon["fresh.contact.org"]         = "";
     etalon["fresh.contact.address.billing"]    = "";
@@ -95,7 +92,6 @@ BOOST_FIXTURE_TEST_CASE(test_full_create, has_full_contact)
     etalon["ticket"] = input_svtrid;
     etalon["registrar"] = registrar.name.get_value() + " (" + registrar.url.get_value() + ")";
 
-    etalon["fresh.object.authinfo"]           = contact.authinfopw;
     etalon["fresh.contact.name"]              = contact.name.get_value();
     etalon["fresh.contact.org"]               = contact.organization.get_value();
     etalon["fresh.contact.address.billing"] = "";
@@ -154,7 +150,7 @@ BOOST_FIXTURE_TEST_CASE(test_full_create, has_full_contact)
         )
     );
 }
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Contact/Create
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Contact
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier
