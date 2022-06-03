@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  domain info implementation
  */
 
 #ifndef INFO_DOMAIN_IMPL_HH_79C22AA95B8C49119F0ED08FBB5158F5
@@ -89,7 +85,6 @@ public:
         static const char* transfer_time() { return "info_domain_transfer_time"; }
         static const char* update_time() { return "info_domain_update_time"; }
         static const char* expiration_date() { return "info_domain_expiration_date"; }
-        static const char* authinfopw() { return "info_domain_authinfopw"; }
         static const char* enum_validation_expiration() { return "info_domain_enum_validation_expiration"; }
         static const char* enum_publish() { return "info_domain_enum_publish"; }
         static const char* first_historyid() { return "info_domain_first_historyid"; }

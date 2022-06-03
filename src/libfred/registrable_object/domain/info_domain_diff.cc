@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- * domain info data diff
  */
 
 #include "libfred/registrable_object/domain/info_domain_diff.hh"
@@ -66,7 +62,6 @@ std::set<std::string> InfoDomainDiff::changed_fields() const
     insert_if_presents(creation_time, "creation_time", fields);
     insert_if_presents(update_time, "update_time", fields);
     insert_if_presents(transfer_time, "transfer_time", fields);
-    insert_if_presents(authinfopw, "authinfopw", fields);
 
     insert_if_presents(registrant, "registrant", fields);
     insert_if_presents(nsset, "nsset", fields);
@@ -109,7 +104,6 @@ std::string InfoDomainDiff::to_string() const
                 make_named_quoted_data("creation_time", creation_time),
                 make_named_quoted_data("update_time", update_time),
                 make_named_quoted_data("transfer_time", transfer_time),
-                make_named_quoted_data("authinfopw", authinfopw),
 
                 make_named_quoted_data("registrant", registrant),
                 make_named_quoted_data("nsset", nsset),
@@ -154,7 +148,6 @@ bool InfoDomainDiff::is_empty() const
             creation_time,
             update_time,
             transfer_time,
-            authinfopw,
 
             registrant,
             nsset,
@@ -235,11 +228,6 @@ InfoDomainDiff diff_domain_data(const InfoDomainData& first, const InfoDomainDat
     if (!Util::is_equal(first.transfer_time, second.transfer_time))
     {
         diff.transfer_time = std::make_pair(first.transfer_time, second.transfer_time);
-    }
-
-    if (first.authinfopw != second.authinfopw)
-    {
-        diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
     }
 
     if (first.registrant != second.registrant)

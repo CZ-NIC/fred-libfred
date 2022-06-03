@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -135,7 +136,7 @@ struct test_domain_fixture : Test::instantiate_db_template
                 test_fqdn,//const std::string& fqdn
                 registrar_handle,//const std::string& registrar
                 registrant_contact_handle,//const std::string& registrant
-                Optional<std::string>("testauthinfo1"),//const Optional<std::string>& authinfo
+                Optional<std::string>(),//const Optional<std::string>& authinfo
                 Nullable<std::string>(test_nsset_handle),//const Optional<Nullable<std::string> >& nsset
                 Nullable<std::string>(test_keyset_handle),//const Optional<Nullable<std::string> >& keyset
                 Util::vector_of<std::string>(admin_contact1_handle),//const std::vector<std::string>& admin_contacts
@@ -194,7 +195,6 @@ struct test_domain_fixture : Test::instantiate_db_template
         test_info_domain_output.info_domain_data.creation_time = boost::posix_time::time_from_string("2011-07-01 01:59:59");
         test_info_domain_output.info_domain_data.transfer_time = Nullable<boost::posix_time::ptime>();
         test_info_domain_output.info_domain_data.expiration_date = boost::gregorian::from_simple_string("2012-06-30");
-        test_info_domain_output.info_domain_data.authinfopw = "testauthinfo1";
         test_info_domain_output.info_domain_data.admin_contacts =
                 {
                     ::LibFred::RegistrableObject::Contact::ContactReference(
@@ -414,7 +414,6 @@ BOOST_FIXTURE_TEST_CASE(info_domain_diff, test_domain_fixture)
                                            Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>(),
                                              Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.authinfopw = std::make_pair(std::string("testpass1"), std::string("testpass2"));
 
     BOOST_TEST_MESSAGE(test_diff.to_string());
     BOOST_TEST_MESSAGE(test_empty_diff.to_string());

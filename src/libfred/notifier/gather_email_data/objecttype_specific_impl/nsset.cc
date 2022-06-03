@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.hh"
 
 #include "libfred/notifier/util/add_old_new_suffix_pair.hh"
@@ -77,15 +78,6 @@ std::map<std::string, std::string> gather_nsset_update_data_change(
     std::map<std::string, std::string> result;
 
     const LibFred::InfoNssetDiff diff = diff_nsset_data(_before, _after);
-
-    if (diff.authinfopw.isset())
-    {
-        add_old_new_changes_pair_if_different(
-            result,
-            "object.authinfo",
-            diff.authinfopw.get_value().first,
-            diff.authinfopw.get_value().second);
-    }
 
     if (diff.tech_check_level.isset())
     {

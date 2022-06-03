@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,18 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  contact info implementation
- */
 
 #ifndef INFO_CONTACT_IMPL_HH_5E8548AD1FB04583864D47C716CE05F9
 #define INFO_CONTACT_IMPL_HH_5E8548AD1FB04583864D47C716CE05F9
-
-#include <string>
-#include <vector>
-
-#include <boost/date_time/posix_time/ptime.hpp>
 
 #include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"
@@ -35,6 +26,11 @@
 #include "util/printable.hh"
 #include "util/db/param_query_composition.hh"
 #include "libfred/registrable_object/contact/info_contact_output.hh"
+
+#include <boost/date_time/posix_time/ptime.hpp>
+
+#include <string>
+#include <vector>
 
 namespace LibFred {
 
@@ -76,7 +72,6 @@ public:
         static const char* creation_time() { return "info_contact_creation_time"; }
         static const char* transfer_time() { return "info_contact_transfer_time"; }
         static const char* update_time() { return "info_contact_update_time"; }
-        static const char* authinfopw() { return "info_contact_authinfopw"; }
         static const char* first_historyid() { return "info_contact_first_historyid"; }
         static const char* logd_request_id() { return "info_contact_logd_request_id"; }
         static const char* name() { return "info_contact_name"; }

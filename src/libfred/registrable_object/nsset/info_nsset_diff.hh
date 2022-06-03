@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  nsset info data diff
- */
 
 #ifndef INFO_NSSET_DIFF_HH_90CCBE2D77FA4C68BEBE583D68FD17E5
 #define INFO_NSSET_DIFF_HH_90CCBE2D77FA4C68BEBE583D68FD17E5
@@ -33,10 +29,10 @@
 
 #include <boost/date_time/posix_time/ptime.hpp>
 
-#include <string>
-#include <vector>
 #include <set>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace LibFred {
 
@@ -83,7 +79,6 @@ struct InfoNssetDiff : Util::Printable<InfoNssetDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the nsset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > update_time; /**< last update time of the nsset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > transfer_time; /**<last transfer time in set local zone*/
-    DiffMember<std::string> authinfopw;/**< password for transfer */
 
     DiffMember<Nullable<short> > tech_check_level; /**< nsset level of technical checks */
     DiffMember<std::vector<DnsHost> > dns_hosts;/**< DNS hosts */
