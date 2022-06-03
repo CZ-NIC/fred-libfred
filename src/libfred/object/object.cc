@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,20 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file object.cc
- *  common object
- */
 
+#include "libfred/object/object.hh"
+
+#include "libfred/db_settings.hh"
 #include "libfred/object/object_impl.hh"
-#include "libfred/registrar/registrar_impl.hh"
 #include "libfred/object/generate_authinfo_password.hh"
+#include "libfred/object/store_authinfo.hh"
 #include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"
-#include "libfred/db_settings.hh"
+#include "libfred/registrar/registrar_impl.hh"
+
 #include "util/optional_value.hh"
 #include "util/log/log.hh"
-#include "libfred/object/object.hh"
 
 #include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
@@ -182,6 +181,21 @@ UpdateObject& UpdateObject::set_logd_request_id(const Nullable<unsigned long lon
     return *this;
 }
 
+namespace {
+
+auto get_authinfo_ttl()
+{
+    static constexpr auto seconds_per_hour = 3600;
+    static constexpr auto hours_per_day = 24;
+    static constexpr auto seconds_per_day = hours_per_day * seconds_per_hour;
+    using Days = std::chrono::duration<std::chrono::seconds::rep, std::ratio<seconds_per_day>>;
+    static constexpr auto ttl = std::chrono::duration_cast<std::chrono::seconds>(Days{14});
+    static_assert(ttl.count() == 14 * 24 * 3600);
+    return ttl;
+}
+
+}//namespace LibFred::{anonymous}
+
 unsigned long long UpdateObject::exec(OperationContext& ctx)
 {
     unsigned long long history_id = 0;
@@ -208,8 +222,8 @@ unsigned long long UpdateObject::exec(OperationContext& ctx)
 
         if (authinfo_.isset())
         {
-            params.push_back(authinfo_);
-            sql << " , authinfopw = $" << params.size() << "::text ";//set authinfo
+            Object::StoreAuthinfo{Object::ObjectId{object_id}, registrar_id, get_authinfo_ttl()}
+                    .exec(ctx, authinfo_.get_value());
         }
 
         params.push_back(object_id);
@@ -286,8 +300,8 @@ unsigned long long InsertHistory::exec(OperationContext& ctx)
 
         //object_history
         ctx.get_conn().exec_params(
-                "INSERT INTO object_history(historyid,id,clid,upid,trdate,update,authinfopw) "
-                "SELECT $1::bigint,id,clid,upid,trdate,update,authinfopw FROM object "
+                "INSERT INTO object_history(historyid,id,clid,upid,trdate,update) "
+                "SELECT $1::bigint,id,clid,upid,trdate,update FROM object "
                 "WHERE id=$2::integer",
                 Database::query_param_list(history_id)(object_id_));
     }
