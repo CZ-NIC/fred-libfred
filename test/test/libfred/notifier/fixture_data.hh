@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #ifndef FIXTURE_DATA_HH_C6D7DDED73CB410498DED2CDFCACBB5E
 #define FIXTURE_DATA_HH_C6D7DDED73CB410498DED2CDFCACBB5E
@@ -75,7 +72,6 @@ struct has_full_contact : has_autocomitting_ctx {
         contact(
             Test::exec(
                 ::LibFred::CreateContact("CONTACT1", registrar.handle)
-                    .set_authinfo("AUTH656")
                     .set_name("John Doe")
                     .set_place(
                         ::LibFred::Contact::PlaceAddress(
@@ -231,7 +227,6 @@ struct has_full_keyset : has_autocomitting_ctx {
         keyset(
             Test::exec(
                 ::LibFred::CreateKeyset("MY_BIG_NSSET_1", registrar.handle)
-                    .set_authinfo("AUT_H_I_NFO")
                     .set_dns_keys(
                         boost::assign::list_of
                             ( ::LibFred::DnsKey(1, 1, 3, "da_key!!!") )
@@ -302,7 +297,6 @@ struct has_full_nsset : has_autocomitting_ctx {
         nsset(
             Test::exec(
                 ::LibFred::CreateNsset("MY_BIG_NSSET_1", registrar.handle)
-                    .set_authinfo("AUT_H_I_NFO")
                     .set_tech_check_level(3)
                     .set_dns_hosts(
                         boost::assign::list_of

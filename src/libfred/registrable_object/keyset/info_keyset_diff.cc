@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  keyset info data diff
  */
 
 #include "libfred/registrable_object/contact/contact_reference.hh"
@@ -69,7 +65,6 @@ std::set<std::string> InfoKeysetDiff::changed_fields() const
     insert_if_presents(creation_time, "creation_time", fields);
     insert_if_presents(update_time, "update_time", fields);
     insert_if_presents(transfer_time, "transfer_time", fields);
-    insert_if_presents(authinfopw, "authinfopw", fields);
 
     insert_if_presents(dns_keys, "dns_keys", fields);
     insert_if_presents(tech_contacts, "tech_contacts", fields);
@@ -106,7 +101,6 @@ std::string InfoKeysetDiff::to_string() const
                 make_named_quoted_data("creation_time", creation_time),
                 make_named_quoted_data("update_time", update_time),
                 make_named_quoted_data("transfer_time", transfer_time),
-                make_named_quoted_data("authinfopw", authinfopw),
 
                 make_named_quoted_data("dns_keys", dns_keys),
                 make_named_quoted_data("tech_contacts", tech_contacts),
@@ -146,7 +140,6 @@ bool InfoKeysetDiff::is_empty() const
             creation_time,
             update_time,
             transfer_time,
-            authinfopw,
 
             dns_keys,
             tech_contacts,
@@ -219,11 +212,6 @@ InfoKeysetDiff diff_keyset_data(const InfoKeysetData& first, const InfoKeysetDat
     if (!Util::is_equal(first.transfer_time, second.transfer_time))
     {
         diff.transfer_time = std::make_pair(first.transfer_time, second.transfer_time);
-    }
-
-    if (first.authinfopw != second.authinfopw)
-    {
-        diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
     }
 
     const std::set<DnsKey> lhs_dns_keys(first.dns_keys.begin(), first.dns_keys.end());

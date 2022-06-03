@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -79,15 +79,6 @@ std::map<std::string, std::string> gather_keyset_update_data_change(
     std::map<std::string, std::string> result;
 
     const LibFred::InfoKeysetDiff diff = diff_keyset_data(_before, _after);
-
-    if (diff.authinfopw.isset())
-    {
-        add_old_new_changes_pair_if_different(
-            result,
-            "object.authinfo",
-            diff.authinfopw.get_value().first,
-            diff.authinfopw.get_value().second);
-    }
 
     if (diff.tech_contacts.isset())
     {

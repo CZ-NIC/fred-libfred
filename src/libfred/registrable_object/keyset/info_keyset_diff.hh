@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  keyset info data diff
  */
 
 #ifndef INFO_KEYSET_DIFF_HH_5166F7638312403697651744C3726161
@@ -83,7 +79,6 @@ struct InfoKeysetDiff : Util::Printable<InfoKeysetDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the keyset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > update_time; /**< last update time of the keyset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > transfer_time; /**<last transfer time in set local zone*/
-    DiffMember<std::string> authinfopw;/**< password for transfer */
 
     DiffMember<std::vector<DnsKey> > dns_keys;/**< DNS keys */
     DiffMember<std::vector<RegistrableObject::Contact::ContactReference>> tech_contacts;/**< list of technical contacts*/

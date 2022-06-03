@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  keyset info implementation
  */
 
 #include "libfred/registrable_object/keyset/info_keyset_impl.hh"
@@ -100,7 +96,6 @@ Database::ParamQuery InfoKeyset::make_info_keyset_projection_query(const std::st
                    "(kobr.crdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::creation_time())(","
                    "(obj.trdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::transfer_time())(","
                    "(obj.update AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::update_time())(","
-                   "obj.authinfopw AS ")(GetAlias::authinfopw())(","
                    "kobr.crhistoryid AS ")(GetAlias::first_historyid())(","
                    "h.request_id AS ")(GetAlias::logd_request_id())(","
                    "(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::timestamp AS ")(GetAlias::utc_timestamp())(","
@@ -239,7 +234,6 @@ std::vector<InfoKeysetOutput> InfoKeyset::exec(OperationContext& ctx, const std:
             : Nullable<boost::posix_time::ptime>(boost::posix_time::time_from_string(static_cast<std::string>(query_result[i][GetAlias::transfer_time()])));
         info_keyset_output.info_keyset_data.update_time = query_result[i][GetAlias::update_time()].isnull() ? Nullable<boost::posix_time::ptime>()
             : Nullable<boost::posix_time::ptime>(boost::posix_time::time_from_string(static_cast<std::string>(query_result[i][GetAlias::update_time()])));
-        info_keyset_output.info_keyset_data.authinfopw = static_cast<std::string>(query_result[i][GetAlias::authinfopw()]);
         info_keyset_output.info_keyset_data.crhistoryid = static_cast<unsigned long long>(query_result[i][GetAlias::first_historyid()]);
         info_keyset_output.logd_request_id = query_result[i][GetAlias::logd_request_id()].isnull() ? Nullable<unsigned long long>()
             : Nullable<unsigned long long>(static_cast<unsigned long long>(query_result[i][GetAlias::logd_request_id()]));

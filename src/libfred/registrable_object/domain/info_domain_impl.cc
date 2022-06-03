@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  domain info implementation
  */
 
 #include "libfred/registrable_object/domain/info_domain_impl.hh"
@@ -116,7 +112,6 @@ Database::ParamQuery InfoDomain::make_domain_query(const std::string& local_time
                     "(obj.trdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::transfer_time())(","
                     "(obj.update AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::update_time())(","
                     "dt.exdate AS ")(GetAlias::expiration_date())(","
-                    "obj.authinfopw AS ")(GetAlias::authinfopw())(","
                     "ev.exdate AS ")(GetAlias::enum_validation_expiration())(","
                     "ev.publish AS ")(GetAlias::enum_publish())(","
                     "dobr.crhistoryid AS ")(GetAlias::first_historyid())(","
@@ -327,8 +322,6 @@ std::vector<InfoDomainOutput> InfoDomain::exec(OperationContext& ctx, const std:
         info_domain_output.info_domain_data.expiration_date = query_result[idx][GetAlias::expiration_date()].isnull()
                 ? boost::gregorian::date()
                 : boost::gregorian::from_string(static_cast<std::string>(query_result[idx][GetAlias::expiration_date()]));
-
-        info_domain_output.info_domain_data.authinfopw = static_cast<std::string>(query_result[idx][GetAlias::authinfopw()]);
 
         info_domain_output.info_domain_data.enum_domain_validation = !static_cast<bool>(query_result[idx][GetAlias::is_enum()])//if not ENUM
                 ? Nullable<ENUMValidationExtension>()

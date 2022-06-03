@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/notifier/gather_email_data/objecttype_specific_impl/contact.hh"
 
 #include "libfred/notifier/util/add_old_new_suffix_pair.hh"
@@ -124,7 +125,6 @@ std::map<std::string, std::string> gather_contact_create_data_change(const LibFr
 {
     std::map<std::string, std::string> result;
 
-    add_contact_data_pair(result, "object.authinfo", _fresh.authinfopw);
     add_contact_data_pair(result, "contact.name", _fresh.name.get_value_or_default());
     add_contact_data_pair(result, "contact.org", _fresh.organization.get_value_or_default());
     add_contact_data_pair(result, "contact.address.permanent", Convert::to_string(_fresh.place.get_value_or_default()));
@@ -172,15 +172,6 @@ std::map<std::string, std::string> gather_contact_update_data_change(
     std::map<std::string, std::string> result;
 
     const LibFred::InfoContactDiff diff = diff_contact_data(_before, _after);
-
-    if (diff.authinfopw.isset())
-    {
-        add_old_new_changes_pair_if_different(
-                result,
-                "object.authinfo",
-                diff.authinfopw.get_value().first,
-                diff.authinfopw.get_value().second);
-    }
 
     if (diff.name.isset())
     {
