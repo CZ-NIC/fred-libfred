@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/object_state/create_admin_object_block_request_id.hh"
 #include "libfred/object_state/perform_object_state_request.hh"
 #include "libfred/opcontext.hh"
@@ -34,8 +35,10 @@
 #include "libfred/registrable_object/domain/info_domain_diff.hh"
 #include "libfred/registrable_object/domain/renew_domain.hh"
 #include "libfred/registrable_object/domain/update_domain.hh"
+
 #include "util/random/char_set/char_set.hh"
 #include "util/random/random.hh"
+
 #include "test/setup/fixtures.hh"
 
 #include <boost/test/unit_test.hpp>
@@ -154,25 +157,30 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id)
 BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id_bad)
 {
     ::LibFred::StatusList bad_status_list = status_list;
-    try {
-        ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
-        const Database::Result status_result = ctx.get_conn().exec(
-                "SELECT name "
-                "FROM enum_object_states "
-                "WHERE NOT (manual AND 3=ANY(types)) AND "
-                      "name NOT LIKE 'server%'");
-        for (::size_t idx = 0; idx < status_result.size(); ++idx) {
-            bad_status_list.insert(status_result[idx][0]);
-        }
-        bad_status_list.insert(std::string("BadStatus") + xmark);
-        ::LibFred::CreateAdminObjectBlockRequestId(test_domain_id, bad_status_list).exec(ctx);
-        ctx.commit_transaction();
-        BOOST_CHECK(false);
-    }
-    catch (const ::LibFred::CreateAdminObjectBlockRequestId::Exception &ex) {
-        BOOST_CHECK(ex.is_set_vector_of_state_not_found());
-        BOOST_CHECK_EQUAL(ex.get_vector_of_state_not_found().size(), (bad_status_list.size() - status_list.size()));
-    }
+    BOOST_CHECK_EXCEPTION(
+            [&]()
+            {
+                ::LibFred::OperationContextCreator ctx;//new connection to rollback on error
+                const auto status_result = ctx.get_conn().exec(
+                        "SELECT name "
+                        "FROM enum_object_states "
+                        "WHERE NOT (manual AND 3 = ANY(types)) AND "
+                              "name NOT LIKE 'server%'");
+                for (::size_t idx = 0; idx < status_result.size(); ++idx)
+                {
+                    bad_status_list.insert(status_result[idx][0]);
+                }
+                bad_status_list.insert("BadStatus" + xmark);
+                ::LibFred::CreateAdminObjectBlockRequestId(test_domain_id, bad_status_list).exec(ctx);
+            }(),
+            ::LibFred::CreateAdminObjectBlockRequestId::Exception,
+            [&](auto&& e)
+            {
+                BOOST_CHECK(e.is_set_vector_of_state_not_found());
+                BOOST_CHECK_EQUAL(e.get_vector_of_state_not_found().size(), bad_status_list.size() - status_list.size());
+                return e.is_set_vector_of_state_not_found() &&
+                       (e.get_vector_of_state_not_found().size() == (bad_status_list.size() - status_list.size()));
+            });
 
     ::LibFred::StatusList status_list_a;
     ::LibFred::StatusList status_list_b = status_list;
@@ -194,7 +202,6 @@ BOOST_AUTO_TEST_CASE(create_administrative_object_block_request_id_bad)
         BOOST_CHECK(ex.is_set_server_blocked_present());
         BOOST_CHECK(ex.get_server_blocked_present() == test_domain_id);
     }
-
 }
 
-BOOST_AUTO_TEST_SUITE_END();//TestCreateAdminObjectBlockRequestId
+BOOST_AUTO_TEST_SUITE_END()//TestCreateAdminObjectBlockRequestId

@@ -57,7 +57,7 @@
 
 BOOST_AUTO_TEST_SUITE(TestInfoDomain)
 
-struct test_domain_fixture : public Test::instantiate_db_template
+struct test_domain_fixture : Test::instantiate_db_template
 {
     std::string registrar_handle;
     std::string xmark;
@@ -169,6 +169,7 @@ struct test_domain_fixture : public Test::instantiate_db_template
                                    Database::query_param_list("2011-06-30T23:59:59")
                                                              (static_cast<unsigned long long>(id_res[0]["test_fqdn_id"])));
 
+        const auto cz_zone = Test::CzZone{ctx};
         ctx.commit_transaction();//commit fixture
 
         //expected output data
@@ -208,7 +209,7 @@ struct test_domain_fixture : public Test::instantiate_db_template
         test_info_domain_output.info_domain_data.history_uuid = id_res[0]["test_fqdn_history_uuid"].as<::LibFred::RegistrableObject::Domain::DomainHistoryUuid>();
         test_info_domain_output.info_domain_data.id = static_cast<unsigned long long>(id_res[0]["test_fqdn_id"]);
         test_info_domain_output.info_domain_data.uuid = id_res[0]["test_fqdn_uuid"].as<::LibFred::RegistrableObject::Domain::DomainUuid>();
-        test_info_domain_output.info_domain_data.zone = ::LibFred::ObjectIdHandlePair(2, "cz");
+        test_info_domain_output.info_domain_data.zone = ::LibFred::ObjectIdHandlePair(cz_zone.data.id, cz_zone.data.fqdn);
     }
     ~test_domain_fixture()
     {}
@@ -222,7 +223,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain, test_domain_fixture)
     ::LibFred::OperationContextCreator ctx;
 
     ::LibFred::InfoDomainOutput info_data_1 = ::LibFred::InfoDomainByFqdn(test_fqdn).exec(ctx);
-    BOOST_CHECK(test_info_domain_output == info_data_1);
+    BOOST_CHECK_EQUAL(test_info_domain_output, info_data_1);
     ::LibFred::InfoDomainOutput info_data_2 = ::LibFred::InfoDomainById(test_info_domain_output.info_domain_data.id).exec(ctx);
     BOOST_CHECK(test_info_domain_output == info_data_2);
     ::LibFred::InfoDomainOutput info_data_3 = ::LibFred::InfoDomainHistoryByRoid(test_info_domain_output.info_domain_data.roid).exec(ctx).at(0);

@@ -21,14 +21,16 @@
 
 #include "config.h"
 
+#include "test/setup/cfg.hh"
 #include "test/setup/fixtures.hh"
 
-#include "test/fake-src/util/cfg/config_handler_decl.hh"
 #include "test/fake-src/util/cfg/config_handler.hh"
 
 #include "test/fake-src/util/cfg/handle_tests_args.hh"
 #include "test/fake-src/util/cfg/handle_logging_args.hh"
 #include "test/fake-src/util/cfg/handle_database_args.hh"
+
+#include "src/libfred/opcontext.hh"
 
 #include "src/util/log/add_log_device.hh"
 
@@ -38,66 +40,56 @@
 
 #include <utility>
 
-namespace Test {
+namespace {
 
-#ifndef CONFIG_FILE
-constexpr const char* CONFIG_FILE = "libfred.conf";
-#endif
-
-struct handle_command_line_args
+void database_setup()
 {
-    handle_command_line_args()
-    {
-        config_handlers = boost::assign::list_of
-                (HandleArgsPtr(new HandleTestsArgs(CONFIG_FILE)))
-                (HandleArgsPtr(new HandleLoggingArgs))
-                (HandleArgsPtr(new HandleDatabaseArgs))
-                (HandleArgsPtr(new HandleAdminDatabaseArgs)).convert_to_container<HandlerPtrVector>();
-
-        CfgArgs::init<HandleTestsArgs>(config_handlers)->handle(
-                boost::unit_test::framework::master_test_suite().argc,
-                boost::unit_test::framework::master_test_suite().argv).copy_onlynospaces_args();
-    }
-    HandlerPtrVector config_handlers;
-};
-
-void setup_logging(CfgArgs* cfg_instance_ptr)
-{
-    const HandleLoggingArgs* const handler_ptr = cfg_instance_ptr->get_handler_ptr_by_type<HandleLoggingArgs>();
-
-    switch (handler_ptr->log_type)
-    {
-        case 0:
-            Logging::add_console_device(
-                    Logging::Manager::instance_ref(),
-                    static_cast<Logging::Log::Severity>(handler_ptr->log_level));
-            break;
-        case 1:
-            Logging::add_file_device(
-                    Logging::Manager::instance_ref(),
-                    handler_ptr->log_file,
-                    static_cast<Logging::Log::Severity>(handler_ptr->log_level));
-            break;
-        case 2:
-            Logging::add_syslog_device(
-                    Logging::Manager::instance_ref(),
-                    handler_ptr->log_syslog_facility,
-                    static_cast<Logging::Log::Severity>(handler_ptr->log_level));
-            break;
-    }
+    LibFred::OperationContextCreator ctx;
+    Test::CzZone{ctx};
+    Test::CzEnumZone{ctx};
+    Test::InitDomainNameCheckers{ctx};
+    Test::SystemRegistrar{ctx, Test::Setter::system_registrar(LibFred::CreateRegistrar{"REG-CZNIC"})};
+    Test::Registrar{ctx, Test::Setter::registrar(LibFred::CreateRegistrar{"REG-MOJEID"}, 1)};
+    ctx.get_conn().exec(
+            "WITH u1 AS ("
+                "UPDATE enum_parameters SET val = '2' WHERE name = 'handle_registration_protection_period' "
+                "RETURNING id) "
+            "UPDATE enum_parameters SET val = 'CZ' WHERE name = 'roid_suffix'");
+//    Test::Registrar{ctx, Test::Setter::registrar(LibFred::CreateRegistrar{"REG-A"}, 1)};
+//    Test::Registrar{ctx, Test::Setter::registrar(LibFred::CreateRegistrar{"REG-B"}, 2)};
+//    Test::Registrar{ctx, Test::Setter::registrar(LibFred::CreateRegistrar{"REG-C"}, 3)};
+    ctx.commit_transaction();
 }
 
-}//namespace Test
-
-struct global_fixture
+class GlobalFixture
 {
-    Test::handle_command_line_args handle_admin_db_cmd_line_args;
-    Test::create_db_template crete_db_template;
-
-    global_fixture()
+public:
+    GlobalFixture()
+        : database_administrator_{
+                []()
+                {
+                    const HandlerPtrVector config_handlers = {
+                            std::make_shared<HandleLoggingArgs>(),
+                            std::make_shared<HandleDatabaseArgs>(),
+                            std::make_shared<Test::HandleAdminDatabaseArgs>()};
+                    return Test::Cfg::handle_command_line_args(config_handlers, database_setup);
+                }()}
     {
-        Test::setup_logging(CfgArgs::instance());
+        ::LOGGER.info("tests start");
     }
+    ~GlobalFixture()
+    {
+        try
+        {
+            ::LOGGER.info("tests done");
+        }
+        catch (...) { }
+    }
+private:
+    Test::Cfg::DatabaseAdministrator database_administrator_;
+    Test::create_db_template create_db_template;
 };
 
-BOOST_GLOBAL_FIXTURE(global_fixture);
+}//namespace {anonymous}
+
+BOOST_GLOBAL_FIXTURE(GlobalFixture);
