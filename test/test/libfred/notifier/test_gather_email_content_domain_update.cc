@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -131,10 +129,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_empty_data, has_empty_domain_big_up
                 {"ticket", input_svtrid},
                 {"registrar", registrar.name.get_value() + " (" + registrar.url.get_value() + ")"},
                 {"changes", "1"},
-
-                {"changes.object.authinfo", "1"},
-                {"changes.object.authinfo.old", dom.authinfopw},
-                {"changes.object.authinfo.new", new_domain_data.authinfopw},
 
                 {"changes.domain.registrant", "1"},
                 {"changes.domain.registrant.old", dom.registrant.handle},
@@ -257,10 +251,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_full_data, has_full_domain_big_upda
                 {"ticket", input_svtrid},
                 {"registrar", registrar.name.get_value() + " (" + registrar.url.get_value() + ")"},
                 {"changes", "1"},
-
-                {"changes.object.authinfo", "1"},
-                {"changes.object.authinfo.old", new_domain_data.authinfopw},
-                {"changes.object.authinfo.new", newest_domain_data.authinfopw},
 
                 {"changes.domain.registrant", "1"},
                 {"changes.domain.registrant.old", new_domain_data.registrant.handle},

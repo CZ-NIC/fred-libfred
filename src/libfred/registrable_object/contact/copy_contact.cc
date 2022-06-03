@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file copy_contact.cc
- *  copy contact
- */
 
 #include "libfred/registrable_object/contact/copy_contact.hh"
 #include "libfred/object_state/get_blocking_status_desc_list.hh"
@@ -28,8 +24,10 @@
 #include "libfred/registrable_object/contact/create_contact.hh"
 #include "libfred/object/object.hh"
 #include "libfred/opcontext.hh"
-#include "util/optional_value.hh"
+
 #include "util/db/nullable.hh"
+#include "util/log/log.hh"
+#include "util/optional_value.hh"
 
 namespace LibFred {
 
@@ -59,11 +57,6 @@ template <class T>
 Optional<T> to_optional(const Nullable<T> &_n)
 {
     return _n.isnull() ? Optional<T>() : Optional<T>(_n.get_value());
-}
-
-Optional<std::string> to_optional(const std::string &_n)
-{
-    return _n.empty() ? Optional<std::string>() : Optional<std::string>(_n);
 }
 
 Optional<unsigned long long> to_optional(unsigned long long _n)
@@ -119,7 +112,7 @@ ObjectId CopyContact::exec(OperationContext &_ctx)
     LibFred::CreateContact create_contact(
             dst_contact_handle_,
             dst_registrar_handle_.get_value(),
-            to_optional(old_contact.info_contact_data.authinfopw),
+            Optional<std::string>(),
             to_optional(old_contact.info_contact_data.name),
             to_optional(old_contact.info_contact_data.organization),
             to_optional(old_contact.info_contact_data.place),
@@ -155,17 +148,39 @@ ObjectId CopyContact::exec(OperationContext &_ctx)
         }
         throw;
     }
-    const Database::Result dst_contact_id_res = _ctx.get_conn().exec_params(
-            "SELECT id "
-            "FROM object_registry "
-            "WHERE type=$1::integer AND name=UPPER($2::text) AND erdate IS NULL",
-            Database::query_param_list
-                (OBJECT_TYPE_ID_CONTACT)(dst_contact_handle_));
-    if (dst_contact_id_res.size() != 1)
+    const Database::Result dbres = _ctx.get_conn().exec_params(
+            "WITH dst_c AS "
+            "("
+                "SELECT id "
+                  "FROM object_registry "
+                 "WHERE type = $1::integer AND "
+                       "name = UPPER($3::text) AND "
+                       "erdate IS NULL"
+            "), "
+            "authinfo AS "
+            "("
+                "INSERT INTO object_authinfo (object_id, registrar_id, password, created_at, expires_at) "
+                    "SELECT dst_c.id, oa.registrar_id, oa.password, oa.created_at, oa.expires_at "
+                      "FROM dst_c, "
+                           "object_registry src_c "
+                      "JOIN object_authinfo oa ON oa.object_id = src_c.id "
+                     "WHERE src_c.type = $1::integer AND "
+                           "src_c.name = UPPER($2::text) AND "
+                           "src_c.erdate IS NULL AND "
+                           "NOW() < oa.expires_at AND "
+                           "oa.canceled_at IS NULL AND "
+                           "oa.password <> '' "
+                "RETURNING id"
+            ") "
+            "SELECT id, (SELECT COUNT(*) FROM authinfo) "
+              "FROM dst_c",
+            Database::QueryParams{ OBJECT_TYPE_ID_CONTACT, src_contact_handle_, dst_contact_handle_ });
+    if (dbres.size() != 1)
     {
         BOOST_THROW_EXCEPTION(Exception().set_create_contact_failed("dst_contact " + dst_contact_handle_ + " not found"));
     }
-    return static_cast<ObjectId>(dst_contact_id_res[0][0]);
+    LOGGER.debug(static_cast<std::string>(dbres[0][1]) + " authinfo records copied");
+    return static_cast<ObjectId>(dbres[0][0]);
 }
 
 }//namespace LibFred

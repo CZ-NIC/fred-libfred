@@ -163,7 +163,9 @@ struct has_nsset_and_a_different_registrar_and_a_different_contact : Test::has_n
           different_contact_authinfo{
                 [&]()
                 {
-                    const auto contact_id = ::LibFred::InfoContactByHandle{"THE-DIFFERENT-ONE"}.exec(ctx).info_contact_data.id;
+                    const std::string different_contact_handle = "THE-DIFFERENT-ONE";
+                    ::LibFred::CreateContact(different_contact_handle, registrar.handle).exec(ctx);
+                    const auto contact_id = ::LibFred::InfoContactByHandle{different_contact_handle}.exec(ctx).info_contact_data.id;
                     return Test::HasAuthinfo{
                             ctx,
                             ::LibFred::Object::ObjectId{contact_id},

@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -210,10 +208,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_empty_data, has_contact_big_update<
         new_contact_data.addresses.at(::LibFred::ContactAddressType::SHIPPING).city + ", " +
         new_contact_data.addresses.at(::LibFred::ContactAddressType::SHIPPING).country;
 
-    etalon["changes.object.authinfo"]                   = "1";
-    etalon["changes.object.authinfo.old"]               = contact.authinfopw;
-    etalon["changes.object.authinfo.new"]               = new_contact_data.authinfopw;
-
     etalon["changes.contact.name"]                      = "1";
     etalon["changes.contact.name.old"]                  = "";
     etalon["changes.contact.name.new"]                  = new_contact_data.name.get_value();
@@ -359,10 +353,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_full_data, has_contact_big_update<h
         new_contact_data.addresses.at(::LibFred::ContactAddressType::SHIPPING).city + ", " +
         new_contact_data.addresses.at(::LibFred::ContactAddressType::SHIPPING).country;
 
-    etalon["changes.object.authinfo"]                   = "1";
-    etalon["changes.object.authinfo.old"]               = contact         .authinfopw;
-    etalon["changes.object.authinfo.new"]               = new_contact_data.authinfopw;
-
     etalon["changes.contact.name"]                      = "1";
     etalon["changes.contact.name.old"]                  = contact         .name.get_value();
     etalon["changes.contact.name.new"]                  = new_contact_data.name.get_value();
@@ -449,7 +439,7 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_full_data, has_contact_big_update<h
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Contact/Update
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Contact
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier

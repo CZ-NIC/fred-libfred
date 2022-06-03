@@ -98,7 +98,7 @@ BOOST_FIXTURE_TEST_CASE(test_transfer_via_holder, Test::has_domain_and_a_differe
                     domain.id,
                     the_different_registrar.handle,
                     contact_authinfo.password,
-                    {admin_contact1.handle, admin_contact2.handle},
+                    {contact.handle, admin_contact1.handle, admin_contact2.handle},
                     logd_request_id));
 }
 
@@ -115,7 +115,7 @@ BOOST_FIXTURE_TEST_CASE(test_transfer_via_admin_contact1, Test::has_domain_and_a
                     domain.id,
                     the_different_registrar.handle,
                     admin_contact1_authinfo.password,
-                    {admin_contact1.handle, admin_contact2.handle},
+                    {contact.handle, admin_contact1.handle, admin_contact2.handle},
                     logd_request_id));
 }
 
@@ -132,7 +132,7 @@ BOOST_FIXTURE_TEST_CASE(test_transfer_via_admin_contact2, Test::has_domain_and_a
                     domain.id,
                     the_different_registrar.handle,
                     admin_contact2_authinfo.password,
-                    {admin_contact1.handle, admin_contact2.handle},
+                    {contact.handle, admin_contact1.handle, admin_contact2.handle},
                     logd_request_id));
 }
 

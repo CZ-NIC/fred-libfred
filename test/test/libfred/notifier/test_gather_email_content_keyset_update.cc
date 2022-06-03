@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -132,10 +130,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_empty_data, has_keyset_big_update<h
                 {"ticket", input_svtrid},
                 {"registrar", registrar.name.get_value() + " (" + registrar.url.get_value() + ")"},
                 {"changes", "1"},
-
-                {"changes.object.authinfo", "1"},
-                {"changes.object.authinfo.old", keyset.authinfopw},
-                {"changes.object.authinfo.new", new_keyset_data.authinfopw},
             };
     struct extract
     {
@@ -179,10 +173,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_full_data, has_keyset_big_update<ha
                 {"ticket", input_svtrid},
                 {"registrar", registrar.name.get_value() + " (" + registrar.url.get_value() + ")"},
                 {"changes", "1"},
-
-                {"changes.object.authinfo", "1"},
-                {"changes.object.authinfo.old", keyset.authinfopw},
-                {"changes.object.authinfo.new", new_keyset_data.authinfopw}
             };
     struct extract
     {
