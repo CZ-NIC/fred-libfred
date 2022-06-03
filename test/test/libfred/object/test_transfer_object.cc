@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include <boost/test/unit_test.hpp>
 
 #include "libfred/object/generated_authinfo_password.hh"
@@ -29,15 +30,14 @@ BOOST_AUTO_TEST_SUITE(TestTransferObject)
 
 BOOST_FIXTURE_TEST_CASE(test_transfer, Test::has_contact_and_a_different_registrar)
 {
-    const ::LibFred::GeneratedAuthInfoPassword new_authinfo("abcdefgh");
-
     const unsigned long long logd_request_id = 123456;
 
     const unsigned long long post_transfer_history_id = ::LibFred::transfer_object(
         ctx,
         contact.id,
         the_different_registrar.handle,
-        new_authinfo,
+        contact_authinfo.password,
+        {},
         logd_request_id
     );
 
@@ -49,11 +49,6 @@ BOOST_FIXTURE_TEST_CASE(test_transfer, Test::has_contact_and_a_different_registr
     BOOST_CHECK_EQUAL(
         ::LibFred::InfoRegistrarByHandle(post_transfer_contact_data.sponsoring_registrar_handle).exec(ctx).info_registrar_data.id,
         the_different_registrar.id
-    );
-
-    BOOST_CHECK_EQUAL(
-        post_transfer_contact_data.authinfopw,
-        new_authinfo.password_
     );
 
     BOOST_CHECK_EQUAL(
@@ -89,28 +84,104 @@ BOOST_FIXTURE_TEST_CASE(test_transfer, Test::has_contact_and_a_different_registr
     );
 }
 
+BOOST_FIXTURE_TEST_CASE(test_transfer_via_holder, Test::has_domain_and_a_different_registrar)
+{
+    static constexpr unsigned long long logd_request_id = 123456;
+
+    BOOST_REQUIRE_EQUAL(contact.handle, domain.registrant.handle);
+    BOOST_CHECK_NE(contact_authinfo.password, admin_contact1_authinfo.password);
+    BOOST_CHECK_NE(contact_authinfo.password, admin_contact2_authinfo.password);
+    BOOST_CHECK_NE(admin_contact1_authinfo.password, admin_contact2_authinfo.password);
+    BOOST_CHECK_NO_THROW(
+            ::LibFred::transfer_object(
+                    ctx,
+                    domain.id,
+                    the_different_registrar.handle,
+                    contact_authinfo.password,
+                    {admin_contact1.handle, admin_contact2.handle},
+                    logd_request_id));
+}
+
+BOOST_FIXTURE_TEST_CASE(test_transfer_via_admin_contact1, Test::has_domain_and_a_different_registrar)
+{
+    static constexpr unsigned long long logd_request_id = 123456;
+
+    BOOST_CHECK_NE(contact_authinfo.password, admin_contact1_authinfo.password);
+    BOOST_CHECK_NE(contact_authinfo.password, admin_contact2_authinfo.password);
+    BOOST_CHECK_NE(admin_contact1_authinfo.password, admin_contact2_authinfo.password);
+    BOOST_CHECK_NO_THROW(
+            ::LibFred::transfer_object(
+                    ctx,
+                    domain.id,
+                    the_different_registrar.handle,
+                    admin_contact1_authinfo.password,
+                    {admin_contact1.handle, admin_contact2.handle},
+                    logd_request_id));
+}
+
+BOOST_FIXTURE_TEST_CASE(test_transfer_via_admin_contact2, Test::has_domain_and_a_different_registrar)
+{
+    static constexpr unsigned long long logd_request_id = 123456;
+
+    BOOST_CHECK_NE(contact_authinfo.password, admin_contact1_authinfo.password);
+    BOOST_CHECK_NE(contact_authinfo.password, admin_contact2_authinfo.password);
+    BOOST_CHECK_NE(admin_contact1_authinfo.password, admin_contact2_authinfo.password);
+    BOOST_CHECK_NO_THROW(
+            ::LibFred::transfer_object(
+                    ctx,
+                    domain.id,
+                    the_different_registrar.handle,
+                    admin_contact2_authinfo.password,
+                    {admin_contact1.handle, admin_contact2.handle},
+                    logd_request_id));
+}
+
 BOOST_FIXTURE_TEST_CASE(test_unknown_registrar, Test::has_contact_and_a_different_registrar)
 {
     BOOST_CHECK_THROW(
-        ::LibFred::transfer_object(ctx, contact.id, "nonexistentregistrar" /* <= !!! */, ::LibFred::GeneratedAuthInfoPassword("abcdefgh")),
-        ::LibFred::UnknownRegistrar
-    );
+            ::LibFred::transfer_object(
+                    ctx,
+                    contact.id,
+                    "nonexistentregistrar" /* <= !!! */,
+                    contact_authinfo.password,
+                    {}),
+            ::LibFred::UnknownRegistrar);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_unknown_object, Test::has_contact_and_a_different_registrar)
 {
     BOOST_CHECK_THROW(
-        ::LibFred::transfer_object(ctx, Test::get_nonexistent_object_id(ctx) /* <= !!! */, the_different_registrar.handle, ::LibFred::GeneratedAuthInfoPassword("abcdefgh")),
-        ::LibFred::UnknownObjectId
-    );
+            ::LibFred::transfer_object(
+                    ctx,
+                    Test::get_nonexistent_object_id(ctx) /* <= !!! */,
+                    the_different_registrar.handle,
+                    contact_authinfo.password,
+                    {}),
+            ::LibFred::UnknownObjectId);
+}
+
+BOOST_FIXTURE_TEST_CASE(test_incorrect_password, Test::has_contact_and_a_different_registrar)
+{
+    BOOST_CHECK_THROW(
+            ::LibFred::transfer_object(
+                    ctx,
+                    contact.id,
+                    the_different_registrar.handle,
+                    "another password",
+                    {}),
+            ::LibFred::IncorrectAuthInfoPw);
 }
 
 BOOST_FIXTURE_TEST_CASE(test_registrar_is_already_sponsoring, Test::has_contact_and_a_different_registrar)
 {
     BOOST_CHECK_THROW(
-        ::LibFred::transfer_object(ctx, contact.id, registrar.handle, ::LibFred::GeneratedAuthInfoPassword("abcdefgh")),
-        ::LibFred::NewRegistrarIsAlreadySponsoring
-    );
+            ::LibFred::transfer_object(
+                    ctx,
+                    contact.id,
+                    registrar.handle,
+                    contact_authinfo.password,
+                    {}),
+            ::LibFred::NewRegistrarIsAlreadySponsoring);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestTransferObject
