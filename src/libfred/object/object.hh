@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file object.h
- *  common object
  */
 
 #ifndef OBJECT_HH_656D57B205F348B8A9C6540F6FAA1625
@@ -57,9 +53,7 @@ public:
     CreateObject(const std::string& object_type
             , const std::string& handle
         , const std::string& registrar
-        , const Optional<std::string>& authinfo
         , const Nullable<unsigned long long>& logd_request_id);
-    CreateObject& set_authinfo(const std::string& authinfo);
     CreateObject& set_logd_request_id(const Nullable<unsigned long long>& logd_request_id);
 
     struct Result
@@ -79,7 +73,6 @@ private:
     const std::string object_type_;//object type name
     const std::string handle_;//object identifier
     const std::string registrar_;//set registrar
-    Optional<std::string> authinfo_;//set authinfo
     Nullable<unsigned long long> logd_request_id_;//logger request_id
 };
 

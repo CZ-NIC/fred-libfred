@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  create domain
  */
 
 #ifndef CREATE_DOMAIN_HH_50FADF453194422ABF1FB8259B1F8F2A
@@ -91,7 +87,7 @@ public:
     * @param fqdn sets fully qualified domain name into @ref fqdn_ attribute
     * @param registrar sets registrar handle into @ref registrar_ attribute
     * @param registrant sets registrant contact handle into @ref registrant_ attribute
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * @param authinfo unused
     * @param nsset sets nsset handle or NULL in case of no nsset into @ref nsset_ attribute
     * @param keyset sets keyset handle or NULL in case of no keyset into @ref keyset_ attribute
     * @param admin_contacts sets admin contact handles into @ref admin_contacts_ attribute
@@ -115,8 +111,8 @@ public:
             , const Optional<unsigned long long> logd_request_id);
 
     /**
-    * Sets domain transfer password.
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * Does nothing.
+    * @param authinfo unused
     * @return operation instance reference to allow method chaining
     */
     CreateDomain& set_authinfo(const std::string& authinfo);
@@ -210,7 +206,6 @@ protected:
 private:
     const std::string fqdn_;/**< fully qualified domain name */
     const std::string registrar_;/**< handle of registrar performing the create */
-    Optional<std::string> authinfo_;/**< transfer password */
     const std::string registrant_;/**< registrant contact handle*/
     Optional<Nullable<std::string> > nsset_;/**< nsset handle or NULL if missing */
     Optional<Nullable<std::string> > keyset_;/**< keyset handle or NULL if missing */

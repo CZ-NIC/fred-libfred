@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  create keyset
  */
 
 #ifndef CREATE_KEYSET_HH_19E4B696C7A64400BF4135FCA2DC92C4
@@ -75,7 +71,7 @@ public:
     * Create keyset constructor with all parameters.
     * @param handle sets keyset handle into @ref handle_ attribute
     * @param registrar sets registrar handle into @ref registrar_ attribute
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * @param authinfo unused
     * @param dns_keys sets DNS keys into @ref dns_keys_ attribute
     * @param tech_contact sets list of technical contact handles into @ref tech_contacts_ attribute
     * @param logd_request_id sets logger request id into @ref logd_request_id_ attribute
@@ -87,8 +83,8 @@ public:
             , const std::vector<std::string>& tech_contacts);
 
     /**
-    * Sets keyset transfer password.
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * Does nothing.
+    * @param authinfo unused
     * @return operation instance reference to allow method chaining
     */
     CreateKeyset& set_authinfo(const std::string& authinfo);
@@ -133,7 +129,6 @@ protected://used by tests/setup/fixtures_utils.hh !?
 private:
     const std::string handle_;/**< keyset identifier */
     const std::string registrar_;/**< handle of registrar performing the create */
-    Optional<std::string> authinfo_;/**< transfer password */
     std::vector<DnsKey> dns_keys_; /**< list of DNS keys */
     std::vector<std::string> tech_contacts_; /**< technical contact handles */
 };
