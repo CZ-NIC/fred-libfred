@@ -31,6 +31,16 @@
 
 #include "util/log/logger.hh"
 
+#include "libfred/registrable_object/contact/create_contact.hh"
+#include "libfred/registrable_object/contact/info_contact.hh"
+#include "libfred/registrable_object/domain/create_domain.hh"
+#include "libfred/registrable_object/domain/info_domain.hh"
+#include "libfred/registrar/create_registrar.hh"
+#include "libfred/registrar/info_registrar.hh"
+#include "libfred/zone/create_zone.hh"
+#include "libfred/zone/exceptions.hh"
+#include "libfred/zone/info_zone.hh"
+
 /** well, these includes are ugly
  * but there is no other way to get to the name of current test_case
  * needed for ~instantiate_db_template() to store post-test db copy
@@ -500,6 +510,125 @@ InitDomainNameCheckers::InitDomainNameCheckers(LibFred::OperationContext& ctx)
         ctx.get_conn().exec("ROLLBACK TO SAVEPOINT init_domain_name_checkers");
     }
 }
+
+HasOperationContext::~HasOperationContext()
+{
+    try
+    {
+        ctx.commit_transaction();
+    }
+    catch (...) { }
+}
+
+namespace {
+
+auto make_registrar(LibFred::OperationContext& ctx, const std::string& handle, bool is_system, bool is_internal)
+{
+    try
+    {
+        return LibFred::InfoRegistrarByHandle{handle}.exec(ctx).info_registrar_data.id;
+    }
+    catch (const LibFred::InfoRegistrarByHandle::Exception& e)
+    {
+        if (!e.is_set_unknown_registrar_handle())
+        {
+            throw;
+        }
+        return LibFred::CreateRegistrar{handle}
+                .set_name("Registrar " + handle)
+                .set_system(is_system)
+                .set_internal(is_internal)
+                .exec(ctx);
+    }
+}
+
+}//namespace Test::{anonymous}
+
+HasRegistrar::HasRegistrar(LibFred::OperationContext& ctx, std::string handle, bool is_system, bool is_internal)
+    : id{make_registrar(ctx, handle, is_system, is_internal)},
+      handle{std::move(handle)}
+{ }
+
+namespace {
+
+auto make_zone(LibFred::OperationContext& ctx, const std::string& fqdn)
+{
+    try
+    {
+        return get_zone_id(LibFred::Zone::InfoZone{fqdn}.exec(ctx));
+    }
+    catch (const LibFred::Zone::NonExistentZone& e)
+    {
+        return LibFred::Zone::CreateZone{fqdn, 12, 120}.exec(ctx);
+    }
+}
+
+}//namespace Test::{anonymous}
+
+HasZone::HasZone(LibFred::OperationContext& ctx, std::string fqdn)
+    : id{make_zone(ctx, fqdn)},
+      fqdn{std::move(fqdn)}
+{ }
+
+namespace {
+
+auto make_contact(LibFred::OperationContext& ctx, const std::string& handle, const HasRegistrar& registrar)
+{
+    try
+    {
+        return LibFred::InfoContactByHandle{handle}.exec(ctx).info_contact_data.id;
+    }
+    catch (const LibFred::InfoContactByHandle::Exception& e)
+    {
+        if (!e.is_set_unknown_contact_handle())
+        {
+            throw;
+        }
+        return LibFred::CreateContact{handle, registrar.handle}
+                .set_name("Contact " + handle)
+                .exec(ctx).create_object_result.object_id;
+    }
+}
+
+}//namespace Test::{anonymous}
+
+HasContact::HasContact(LibFred::OperationContext& ctx, std::string handle, const HasRegistrar& registrar)
+    : id{make_contact(ctx, handle, registrar)},
+      handle{std::move(handle)}
+{ }
+
+namespace {
+
+auto make_domain(
+        LibFred::OperationContext& ctx,
+        const std::string& fqdn,
+        const HasRegistrar& registrar,
+        const HasContact& registrant)
+{
+    try
+    {
+        return LibFred::InfoDomainByFqdn{fqdn}.exec(ctx).info_domain_data.id;
+    }
+    catch (const LibFred::InfoDomainByFqdn::Exception& e)
+    {
+        if (!e.is_set_unknown_fqdn())
+        {
+            throw;
+        }
+        return LibFred::CreateDomain{fqdn, registrar.handle, registrant.handle}.exec(ctx).create_object_result.object_id;
+    }
+}
+
+}//namespace Test::{anonymous}
+
+HasDomain::HasDomain(
+        LibFred::OperationContext& ctx,
+        std::string fqdn,
+        const HasRegistrar& registrar,
+        const HasContact& registrant)
+    : id{make_domain(ctx, fqdn, registrar, registrant)},
+      fqdn{std::move(fqdn)}
+{ }
 
 }//namespace Test
 
