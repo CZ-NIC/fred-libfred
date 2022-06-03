@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include <boost/test/unit_test.hpp>
-#include <string>
 
 #include "libfred/registrable_object/keyset/transfer_keyset.hh"
 #include "libfred/object/transfer_object_exception.hh"
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(test_transfer_ok_data)
 {
     const unsigned long long logd_request_id = 369874125;
 
-    const unsigned long long post_transfer_history_id = ::LibFred::TransferKeyset(keyset.id, the_different_registrar.handle, keyset.authinfopw, logd_request_id).exec(ctx);
+    const unsigned long long post_transfer_history_id = ::LibFred::TransferKeyset(keyset.id, the_different_registrar.handle, keyset_authinfo.password, logd_request_id).exec(ctx);
 
     const std::string timezone = "Europe/Prague";
 
@@ -86,16 +86,25 @@ BOOST_AUTO_TEST_CASE(test_transfer_ok_data)
 BOOST_AUTO_TEST_CASE(test_transfer_ok_by_keyset_authinfo)
 {
     ::LibFred::TransferKeyset transfer(
-        keyset.id, the_different_registrar.handle, keyset.authinfopw, Nullable<unsigned long long>()
+        keyset.id, the_different_registrar.handle, keyset_authinfo.password, Nullable<unsigned long long>()
     );
 
     BOOST_CHECK_NO_THROW( transfer.exec(ctx) );
 }
 
-BOOST_AUTO_TEST_CASE(test_transfer_ok_by_tech_contact)
+BOOST_AUTO_TEST_CASE(test_transfer_ok_by_tech_contact1)
 {
     ::LibFred::TransferKeyset transfer(
-        keyset.id, the_different_registrar.handle, tech_contact1.authinfopw, Nullable<unsigned long long>()
+        keyset.id, the_different_registrar.handle, tech_contact1_authinfo.password, Nullable<unsigned long long>()
+    );
+
+    BOOST_CHECK_NO_THROW( transfer.exec(ctx) );
+}
+
+BOOST_AUTO_TEST_CASE(test_transfer_ok_by_tech_contact2)
+{
+    ::LibFred::TransferKeyset transfer(
+        keyset.id, the_different_registrar.handle, tech_contact2_authinfo.password, Nullable<unsigned long long>()
     );
 
     BOOST_CHECK_NO_THROW( transfer.exec(ctx) );
@@ -106,7 +115,7 @@ BOOST_AUTO_TEST_CASE(test_unknown_registrar)
     ::LibFred::TransferKeyset transfer(
         keyset.id,
         "nonexistentregistrar", /* <= !!! */
-        keyset.authinfopw,
+        keyset_authinfo.password,
         Nullable<unsigned long long>()
     );
 
@@ -121,7 +130,7 @@ BOOST_AUTO_TEST_CASE(test_unknown_object)
     ::LibFred::TransferKeyset transfer(
         Test::get_nonexistent_object_id(ctx), /* <= !!! */
         the_different_registrar.handle,
-        keyset.authinfopw,
+        keyset_authinfo.password,
         Nullable<unsigned long long>()
     );
 
@@ -145,23 +154,34 @@ BOOST_AUTO_TEST_CASE(test_incorrect_authinfopw)
     );
 }
 
-struct has_keyset_and_a_different_registrar_and_a_different_contact : Test::has_keyset_and_a_different_registrar {
+namespace {
 
-    ::LibFred::InfoContactData different_contact;
-
-    has_keyset_and_a_different_registrar_and_a_different_contact() {
-        const std::string different_contact_handle = "THE-DIFFERENT-ONE";
-        ::LibFred::CreateContact(different_contact_handle, registrar.handle).exec(ctx);
-        different_contact = ::LibFred::InfoContactByHandle(different_contact_handle).exec(ctx).info_contact_data;
-    }
+struct has_keyset_and_a_different_registrar_and_a_different_contact : Test::has_keyset_and_a_different_registrar
+{
+    has_keyset_and_a_different_registrar_and_a_different_contact()
+        : Test::has_keyset_and_a_different_registrar{},
+          different_contact_authinfo{
+                [&]()
+                {
+                    const auto contact_id = ::LibFred::InfoContactByHandle{"THE-DIFFERENT-ONE"}.exec(ctx).info_contact_data.id;
+                    return Test::HasAuthinfo{
+                            ctx,
+                            ::LibFred::Object::ObjectId{contact_id},
+                            registrar.id,
+                            "different contact password"};
+                }()}
+    { }
+    Test::HasAuthinfo different_contact_authinfo;
 };
+
+}//namespace {anonymous}
 
 BOOST_FIXTURE_TEST_CASE(test_incorrect_authinfopw_other_contact, has_keyset_and_a_different_registrar_and_a_different_contact)
 {
     ::LibFred::TransferKeyset transfer(
         keyset.id,
         the_different_registrar.handle,
-        different_contact.handle, /* <= !!! */
+        different_contact_authinfo.password, /* <= !!! */
         Nullable<unsigned long long>()
     );
     BOOST_CHECK_THROW(
@@ -175,7 +195,7 @@ BOOST_AUTO_TEST_CASE(test_registrar_is_already_sponsoring)
     ::LibFred::TransferKeyset transfer(
         keyset.id,
         registrar.handle, /* <= !!! */
-        keyset.authinfopw,
+        keyset_authinfo.password,
         Nullable<unsigned long long>()
     );
     BOOST_CHECK_THROW(
@@ -184,4 +204,4 @@ BOOST_AUTO_TEST_CASE(test_registrar_is_already_sponsoring)
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()//TestTransferKeyset
