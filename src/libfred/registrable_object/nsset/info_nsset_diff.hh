@@ -79,6 +79,7 @@ struct InfoNssetDiff : Util::Printable<InfoNssetDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the nsset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > update_time; /**< last update time of the nsset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< unused */
 
     DiffMember<Nullable<short> > tech_check_level; /**< nsset level of technical checks */
     DiffMember<std::vector<DnsHost> > dns_hosts;/**< DNS hosts */

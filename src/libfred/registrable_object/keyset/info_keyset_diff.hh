@@ -79,6 +79,7 @@ struct InfoKeysetDiff : Util::Printable<InfoKeysetDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the keyset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > update_time; /**< last update time of the keyset in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime> > transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< unused */
 
     DiffMember<std::vector<DnsKey> > dns_keys;/**< DNS keys */
     DiffMember<std::vector<RegistrableObject::Contact::ContactReference>> tech_contacts;/**< list of technical contacts*/
