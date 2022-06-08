@@ -168,18 +168,36 @@ UpdateObject& UpdateObject::set_logd_request_id(const Nullable<unsigned long lon
 
 namespace {
 
-auto get_authinfo_ttl()
+constexpr auto get_default_authinfo_ttl()
 {
-    static constexpr auto seconds_per_hour = 3600;
-    static constexpr auto hours_per_day = 24;
-    static constexpr auto seconds_per_day = hours_per_day * seconds_per_hour;
-    using Days = std::chrono::duration<std::chrono::seconds::rep, std::ratio<seconds_per_day>>;
-    static constexpr auto ttl = std::chrono::duration_cast<std::chrono::seconds>(Days{14});
-    static_assert(ttl.count() == 14 * 24 * 3600);
+    using SecondsPerMinute = std::ratio<60>;
+    using SecondsPerHour = std::ratio_multiply<std::ratio<60>, SecondsPerMinute>;
+    using SecondsPerDay = std::ratio_multiply<std::ratio<24>, SecondsPerHour>;
+    using Days = std::chrono::duration<std::chrono::seconds::rep, SecondsPerDay>;
+    return std::chrono::duration_cast<std::chrono::seconds>(Days{14});
+}
+
+static_assert(get_default_authinfo_ttl().count() == 14 * 24 * 3600);
+
+auto& get_authinfo_ttl_ref()
+{
+    static auto ttl = get_default_authinfo_ttl();
     return ttl;
 }
 
+auto get_authinfo_ttl()
+{
+    return get_authinfo_ttl_ref();
+}
+
 }//namespace LibFred::{anonymous}
+
+std::chrono::seconds UpdateObject::set_authinfo_ttl(std::chrono::seconds value) noexcept
+{
+    auto previous_value = get_authinfo_ttl();
+    get_authinfo_ttl_ref() = value;
+    return previous_value;
+}
 
 unsigned long long UpdateObject::exec(OperationContext& ctx)
 {
@@ -233,8 +251,6 @@ unsigned long long UpdateObject::exec(OperationContext& ctx)
         {
             BOOST_THROW_EXCEPTION(LibFred::InternalError("historyid update failed"));
         }
-
-
     }
     catch (ExceptionStack& ex)
     {
