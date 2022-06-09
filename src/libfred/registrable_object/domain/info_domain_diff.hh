@@ -75,6 +75,7 @@ struct InfoDomainDiff : Util::Printable<InfoDomainDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the domain in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> update_time; /**< last update time of the domain in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< unused */
 
     DiffMember<RegistrableObject::Contact::ContactReference> registrant; /**< registrant contact reference, owner of domain*/
     DiffMember<Nullable<RegistrableObject::Nsset::NssetReference>> nsset;/**< nsset id and handle or NULL if missing */

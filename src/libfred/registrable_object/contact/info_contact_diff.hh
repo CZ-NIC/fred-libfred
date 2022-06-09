@@ -75,6 +75,7 @@ struct InfoContactDiff : Util::Printable<InfoContactDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the contact in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> update_time; /**< last update time of the contact in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> transfer_time; /**<last transfer time in set local zone*/
+    DiffMember<std::string> authinfopw;/**< unused */
     DiffMember<Nullable<std::string>> name ;/**< name of contact person */
     DiffMember<Nullable<std::string>> organization;/**< full trade name of organization */
     DiffMember< Nullable<LibFred::Contact::PlaceAddress>> place;/**< place address of contact */
