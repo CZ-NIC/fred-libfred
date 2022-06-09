@@ -29,6 +29,7 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#include <chrono>
 #include <string>
 
 namespace LibFred {
@@ -105,6 +106,8 @@ public:
     unsigned long long exec(OperationContext& ctx);//return history_id
 
     std::string to_string()const;
+
+    static std::chrono::seconds set_authinfo_ttl(std::chrono::seconds value) noexcept;
 private:
     const std::string handle_;//object identifier
     const std::string obj_type_;//object type name
