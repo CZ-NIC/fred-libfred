@@ -106,6 +106,7 @@ src/libfred/notifier/gather_email_data/objecttype_specific_impl/keyset.cc
 src/libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.cc
 src/libfred/object/check_authinfo.cc
 src/libfred/object/check_handle.cc
+src/libfred/object/clean_authinfo.cc
 src/libfred/object/clean_expired_authinfos.cc
 src/libfred/object/generate_authinfo_password.cc
 src/libfred/object/generated_authinfo_password.cc

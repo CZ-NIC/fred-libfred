@@ -172,7 +172,7 @@ void CheckAuthinfo::increment_usage_and_cancel(const OperationContext& ctx, cons
             "UPDATE object_authinfo "
                "SET canceled_at = NOW(), "
                    "password = NULL, "
-                   "use_count = use_count + 1"
+                   "use_count = use_count + 1 "
              "WHERE id = $1::INT AND "
                    "canceled_at IS NULL AND "
                    "NOW() < expires_at AND "
