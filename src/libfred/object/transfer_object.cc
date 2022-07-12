@@ -20,6 +20,7 @@
 #include "libfred/object/transfer_object.hh"
 
 #include "libfred/object/check_authinfo.hh"
+#include "libfred/object/clean_authinfo.hh"
 #include "libfred/object/object.hh"
 #include "libfred/object/transfer_object_exception.hh"
 #include "libfred/registrable_object/contact/info_contact.hh"
@@ -88,14 +89,16 @@ auto set_history_id(
     return _history_id;
 }
 
-auto get_authorized_contact(
+auto get_authorized_contacts(
         LibFred::OperationContext& _ctx,
         const std::string& _authinfopw,
         const std::set<std::string>& _contacts)
 {
-    return std::find_if(
+    std::set<std::string> authorized_contacts;
+    std::copy_if(
             begin(_contacts),
             end(_contacts),
+            std::inserter(authorized_contacts, next(begin(authorized_contacts))),
             [&](auto&& contact_handle)
             {
                 try
@@ -103,7 +106,7 @@ auto get_authorized_contact(
                     const auto contact_id = Object::ObjectId{InfoContactByHandle{contact_handle}
                                                     .exec(_ctx).info_contact_data.id};
                     return 0 < Object::CheckAuthinfo{Object::ObjectId{contact_id}}
-                                        .exec(_ctx, _authinfopw, Object::CheckAuthinfo::increment_usage_and_cancel);
+                                        .exec(_ctx, _authinfopw, Object::CheckAuthinfo::increment_usage);
                 }
                 catch (const InfoContactByHandle::Exception& e)
                 {
@@ -116,6 +119,7 @@ auto get_authorized_contact(
                 { }
                 return false;
             });
+    return authorized_contacts;
 }
 
 }//namespace LibFred::{anonymous}
@@ -150,13 +154,16 @@ unsigned long long transfer_object(
         throw NewRegistrarIsAlreadySponsoring{};
     }
 
-    if (Object::CheckAuthinfo{Object::ObjectId{_object_id}}
-                .exec(_ctx, _authinfopw, Object::CheckAuthinfo::increment_usage_and_cancel) == 0)
+    const auto authinfo_of_object_used = 0 < Object::CheckAuthinfo{Object::ObjectId{_object_id}}
+            .exec(_ctx, _authinfopw, Object::CheckAuthinfo::increment_usage_and_cancel);
+    const auto authinfo_of_friendly_contacts_used = !get_authorized_contacts(_ctx, _authinfopw, _enabled_contacts).empty();
+    if (!(authinfo_of_object_used || authinfo_of_friendly_contacts_used))
     {
-        if (get_authorized_contact(_ctx, _authinfopw, _enabled_contacts) == end(_enabled_contacts))
-        {
-            throw IncorrectAuthInfoPw{};
-        }
+        throw IncorrectAuthInfoPw{};
+    }
+    if (!authinfo_of_object_used)
+    {
+        Object::CleanAuthinfo{Object::ObjectId{_object_id}}.exec(_ctx);
     }
 
     set_new_sponsoring_registrar(_ctx, Object::ObjectId{_object_id}, new_registrar_id);

@@ -20,6 +20,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "libfred/object/check_authinfo.hh"
+#include "libfred/object/clean_authinfo.hh"
 #include "libfred/object/clean_expired_authinfos.hh"
 #include "libfred/object/store_authinfo.hh"
 
@@ -114,6 +115,41 @@ BOOST_FIXTURE_TEST_CASE(clean_expired_authinfos_happy, HasBasicObjects)
                     Database::QueryParams{first_id, second_id}).size(),
             2);
     BOOST_CHECK_EQUAL(LibFred::Object::CleanExpiredAuthinfos{}.exec(ctx), 2);
+}
+
+BOOST_FIXTURE_TEST_CASE(clean_authinfo, HasBasicObjects)
+{
+    BOOST_REQUIRE_EQUAL(
+            LibFred::Object::CheckAuthinfo{LibFred::Object::ObjectId{domain.id}}
+                    .exec(ctx, "password", LibFred::Object::CheckAuthinfo::increment_usage),
+            0);
+    BOOST_REQUIRE_EQUAL(
+            LibFred::Object::CheckAuthinfo{LibFred::Object::ObjectId{domain.id}}
+                    .exec(ctx, "bad password", LibFred::Object::CheckAuthinfo::increment_usage),
+            0);
+    BOOST_REQUIRE_NO_THROW((LibFred::Object::StoreAuthinfo{
+            LibFred::Object::ObjectId{domain.id},
+            registrar.id,
+            std::chrono::seconds{3600}}.exec(ctx, "password")));
+    BOOST_REQUIRE_EQUAL(
+            LibFred::Object::CheckAuthinfo{LibFred::Object::ObjectId{domain.id}}
+                    .exec(ctx, "password", LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
+    BOOST_REQUIRE_EQUAL(
+            LibFred::Object::CheckAuthinfo{LibFred::Object::ObjectId{domain.id}}
+                    .exec(ctx, "bad password", LibFred::Object::CheckAuthinfo::increment_usage),
+            0);
+
+    BOOST_CHECK_EQUAL(LibFred::Object::CleanAuthinfo{LibFred::Object::ObjectId{domain.id}}.exec(ctx), 1);
+
+    BOOST_REQUIRE_EQUAL(
+            LibFred::Object::CheckAuthinfo{LibFred::Object::ObjectId{domain.id}}
+                    .exec(ctx, "password", LibFred::Object::CheckAuthinfo::increment_usage),
+            0);
+    BOOST_REQUIRE_EQUAL(
+            LibFred::Object::CheckAuthinfo{LibFred::Object::ObjectId{domain.id}}
+                    .exec(ctx, "bad password", LibFred::Object::CheckAuthinfo::increment_usage),
+            0);
 }
 
 BOOST_FIXTURE_TEST_CASE(check_authinfo_happy, HasBasicObjects)
