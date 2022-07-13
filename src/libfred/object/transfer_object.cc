@@ -98,7 +98,7 @@ auto get_authorized_contacts(
     std::copy_if(
             begin(_contacts),
             end(_contacts),
-            std::inserter(authorized_contacts, next(begin(authorized_contacts))),
+            std::inserter(authorized_contacts, end(authorized_contacts)),
             [&](auto&& contact_handle)
             {
                 try
