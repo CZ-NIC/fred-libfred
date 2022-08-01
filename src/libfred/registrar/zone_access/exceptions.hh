@@ -51,6 +51,8 @@ struct NoUpdateData : virtual std::exception
     const char* what() const noexcept override;
 };
 
+struct DeleteRegistrarZoneAccessException : virtual std::exception { };
+
 struct NonexistentZoneAccess : virtual std::exception
 {
     const char* what() const noexcept override;

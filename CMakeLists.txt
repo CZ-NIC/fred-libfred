@@ -268,6 +268,7 @@ src/libfred/registrar/group/membership/end_registrar_group_membership.cc
 src/libfred/registrar/group/membership/info_group_membership_by_group.cc
 src/libfred/registrar/group/membership/info_group_membership_by_registrar.cc
 src/libfred/registrar/zone_access/add_registrar_zone_access.cc
+src/libfred/registrar/zone_access/delete_registrar_zone_access.cc
 src/libfred/registrar/zone_access/exceptions.cc
 src/libfred/registrar/zone_access/get_zone_access_history.cc
 src/libfred/registrar/zone_access/registrar_zone_access_history.cc
