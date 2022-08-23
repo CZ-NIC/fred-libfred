@@ -249,6 +249,7 @@ src/libfred/registrar/registrar_zone_credit.cc
 src/libfred/registrar/update_registrar.cc
 src/libfred/registrar/zone_credit.cc
 src/libfred/registrar/certification/create_registrar_certification.cc
+src/libfred/registrar/certification/delete_registrar_certification.cc
 src/libfred/registrar/certification/get_registrar_certifications.cc
 src/libfred/registrar/certification/update_registrar_certification.cc
 src/libfred/registrar/credit/create_registrar_credit_transaction.cc
