@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,52 +16,131 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/db_settings.hh"
 #include "libfred/registrar/epp_auth/delete_registrar_epp_auth.hh"
 #include "libfred/registrar/epp_auth/exceptions.hh"
 
+#include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include <stdexcept>
+#include <utility>
 
 namespace LibFred {
 namespace Registrar {
 namespace EppAuth {
 
-DeleteRegistrarEppAuth::DeleteRegistrarEppAuth(const unsigned long long _id)
-        : id_(_id)
-{
-}
+DeleteRegistrarEppAuth::DeleteRegistrarEppAuth(EppAuthRecordCommonId _id)
+    : id_{std::move(_id)}
+{ }
 
-void DeleteRegistrarEppAuth::exec(OperationContext& _ctx) const
+namespace {
+
+class Exec : public boost::static_visitor<Database::Result>
 {
-    try
+public:
+    explicit Exec(OperationContext& ctx)
+        : ctx_{ctx}
+    { }
+    Database::Result operator()(unsigned long long id) const
     {
-        const Database::Result db_result = _ctx.get_conn().exec_params(
+        return ctx_.get_conn().exec_params(
                 // clang-format off
                 "DELETE FROM registraracl "
-                "WHERE id = $1::bigint "
-                "RETURNING 1",
+                      "WHERE id = $1::BIGINT "
+                  "RETURNING id, "
+                            "uuid, "
+                            "create_time, "
+                            "cert, "
+                            "password, "
+                            "cert_data_pem",
                 // clang-format on
-                Database::query_param_list(id_));
+                Database::QueryParams{id});
+    }
+    Database::Result operator()(const EppAuthRecordUuid& uuid) const
+    {
+        return ctx_.get_conn().exec_params(
+                // clang-format off
+                "DELETE FROM registraracl "
+                      "WHERE uuid = $1::UUID "
+                  "RETURNING id, "
+                            "uuid, "
+                            "create_time, "
+                            "cert, "
+                            "password, "
+                            "cert_data_pem",
+                // clang-format on
+                Database::QueryParams{uuid.value});
+    }
+private:
+    OperationContext& ctx_;
+};
 
-        if (db_result.size() == 0)
-        {
-            throw NonexistentRegistrarEppAuth();
-        }
-        if (db_result.size() > 1)
-        {
-            throw std::runtime_error("Duplicity in database");
-        }
-    }
-    catch (const NonexistentRegistrarEppAuth&)
-    {
-        throw;
-    }
-    catch (const std::exception&)
-    {
-        throw DeleteRegistrarEppAuthException();
-    }
+auto to_uuid(const Database::Value& value)
+{
+    return boost::uuids::string_generator()(static_cast<std::string>(value));
+}
+
+}//namespace LibFred::Registrar::EppAuth::{anonymous}
+
+unsigned long long DeleteRegistrarEppAuth::exec(OperationContext& _ctx) const
+{
+    return delete_registrar_epp_auth(_ctx, id_).id;
 }
 
 } // namespace LibFred::Registrar::EppAuth
 } // namespace LibFred::Registrar
 } // namespace LibFred
+
+using namespace LibFred::Registrar::EppAuth;
+
+EppAuthRecord LibFred::Registrar::EppAuth::delete_registrar_epp_auth(
+        OperationContext& ctx,
+        const DeleteRegistrarEppAuth::EppAuthRecordCommonId& id)
+{
+    try
+    {
+        const auto db_result = boost::apply_visitor(Exec{ctx}, id);
+
+        if (db_result.size() == 1)
+        {
+            return EppAuthRecord{
+                    static_cast<unsigned long long>(db_result[0]["id"]),
+                    {to_uuid(db_result[0]["uuid"])},
+                    static_cast<EppAuthRecord::TimePoint>(db_result[0]["create_time"]),
+                    static_cast<std::string>(db_result[0]["cert"]),
+                    static_cast<std::string>(db_result[0]["password"]),
+                    [](auto&& col_cert_data_pem)
+                    {
+                        if (!col_cert_data_pem.isnull())
+                        {
+                            return static_cast<std::string>(col_cert_data_pem);
+                        }
+                        return std::string{};
+                    }(db_result[0]["cert_data_pem"])};
+        }
+        if (db_result.size() == 0)
+        {
+            throw NonexistentRegistrarEppAuth();
+        }
+        throw std::runtime_error("Duplicity in database");
+    }
+    catch (const NonexistentRegistrarEppAuth&)
+    {
+        throw;
+    }
+    catch (const Database::ResultFailed& e)
+    {
+        LOGGER.info(boost::format{"Exception Database::ResultFailed caught: %1%"} % e.what());
+    }
+    catch (const std::exception& e)
+    {
+        LOGGER.info(boost::format{"std::exception caught: %1%"} % e.what());
+    }
+    catch (...)
+    {
+        LOGGER.info("Unknown exception caught");
+    }
+    throw DeleteRegistrarEppAuthException();
+}
