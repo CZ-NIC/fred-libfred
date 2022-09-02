@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  exceptions
  */
 
 #ifndef EXCEPTIONS_HH_6E652B2F6EEF4081BF3CD3561D3FB0EE
@@ -81,5 +77,9 @@ struct RegistrarNotFound : std::exception
         return "registrar with this id doesn't exist";
     }
 };
+
+struct FileDoesNotExist : std::exception { };
+
+struct RegistrarCertificationDoesNotExist : std::exception { };
 
 #endif
