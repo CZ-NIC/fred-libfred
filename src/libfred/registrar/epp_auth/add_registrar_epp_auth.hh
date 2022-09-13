@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef ADD_REGISTRAR_EPP_AUTH_HH_3704104C25B849B6B67818302E72B174
 #define ADD_REGISTRAR_EPP_AUTH_HH_3704104C25B849B6B67818302E72B174
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrar/epp_auth/registrar_epp_auth_data.hh"
 
 #include <string>
 
@@ -30,18 +32,26 @@ namespace EppAuth {
 class AddRegistrarEppAuth
 {
 public:
-    AddRegistrarEppAuth(
-            const std::string& _registrar_handle,
-            const std::string& _certificate_fingerprint,
-            const std::string& _plain_password);
+    explicit AddRegistrarEppAuth(
+            std::string _registrar_handle,
+            std::string _certificate_fingerprint,
+            std::string _plain_password,
+            std::string _cert_data_pem = no_cert_data);
 
     unsigned long long exec(OperationContext& _ctx) const;
-
 private:
     std::string registrar_handle_;
     std::string certificate_fingerprint_;
     std::string plain_password_;
+    std::string cert_data_pem_;
 };
+
+EppAuthRecord add_registrar_epp_auth(
+        OperationContext& ctx,
+        const std::string& registrar_handle,
+        const std::string& certificate_fingerprint,
+        const std::string& plain_password,
+        const std::string& cert_data_pem = no_cert_data);
 
 } // namespace LibFred::Registrar::EppAuth
 } // namespace LibFred::Registrar
