@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrar/zone_access/exceptions.hh"
 #include "libfred/registrar/zone_access/update_registrar_zone_access.hh"
 #include "src/util/db/query_param.hh"
@@ -27,8 +28,7 @@ namespace LibFred {
 namespace Registrar {
 namespace ZoneAccess {
 
-namespace
-{
+namespace {
 
 constexpr const char * psql_type(const boost::optional<boost::gregorian::date>&)
 {
@@ -43,7 +43,7 @@ constexpr const char * psql_type(const unsigned long long&)
 } // namespace LibFred::Registrar::ZoneAccess::{anonymous}
 
 UpdateRegistrarZoneAccess::UpdateRegistrarZoneAccess(const unsigned long long _id)
-        :id_(_id)
+    : id_(_id)
 {
 }
 
@@ -63,63 +63,110 @@ UpdateRegistrarZoneAccess& UpdateRegistrarZoneAccess::set_to_date(
 
 unsigned long long UpdateRegistrarZoneAccess::exec(OperationContext& _ctx) const
 {
-    const bool values_for_update_are_set = (from_date_ != boost::none || to_date_ != boost::none);
+    const bool values_for_update_are_set =
+            (from_date_ != boost::none && !from_date_->is_special()) ||
+            (to_date_ != boost::none && !to_date_->is_special());
     if (!values_for_update_are_set)
     {
-        throw NoUpdateData();
+        struct NothingToUpdate : NoUpdateData, UpdateRegistrarZoneAccessException
+        {
+            const char* what() const noexcept override { return "No data to update"; }
+        };
+        throw NothingToUpdate{};
     }
 
     Database::QueryParams params;
-    std::ostringstream object_sql;
-    Util::HeadSeparator set_separator(" SET ", ", ");
+    std::ostringstream sql;
+    Util::HeadSeparator delimiter("", ", ");
 
-    object_sql << "UPDATE registrarinvoice";
-    if (from_date_ != boost::none)
+    sql << "UPDATE registrarinvoice lhs SET ";
+    if (from_date_ != boost::none && !from_date_->is_special())
     {
-        if (!from_date_->is_special())
-        {
-            params.push_back(from_date_.get());
-            object_sql << set_separator.get() << "fromdate = $" << params.size() << psql_type(from_date_);
-        }
+        params.push_back(from_date_.get());
+        sql << delimiter.get() << "fromdate = $" << params.size() << psql_type(from_date_);
     }
-    if (to_date_ != boost::none)
+    if (to_date_ != boost::none && !to_date_->is_special())
     {
-        if (!to_date_->is_special())
-        {
-            params.push_back(to_date_.get());
-            object_sql << set_separator.get() << "todate = $" << params.size() << psql_type(to_date_);
-        }
+        params.push_back(to_date_.get());
+        sql << delimiter.get() << "todate = $" << params.size() << psql_type(to_date_);
     }
 
     params.push_back(id_);
-    object_sql << " WHERE id = $" << params.size() << psql_type(id_) << " RETURNING id";
+    sql << " "
+        "WHERE id = $" << params.size() << psql_type(id_) << " "
+    "RETURNING id, "
+              "EXISTS(SELECT 0 "
+                       "FROM registrarinvoice rhs "
+                      "WHERE rhs.registrarid = lhs.registrarid AND "
+                            "rhs.zone = lhs.zone AND "
+                            "rhs.id != lhs.id AND "
+                            "(lhs.fromdate <= rhs.todate OR rhs.todate IS NULL) AND "
+                            "(rhs.fromdate <= lhs.todate OR lhs.todate IS NULL)), "
+              "lhs.todate < lhs.fromdate";
 
     try
     {
-        const Database::Result update_result = _ctx.get_conn().exec_params(
-                object_sql.str(),
-                params);
-        if (update_result.size() == 1)
+        const auto dbres = _ctx.get_conn().exec_params(sql.str(), params);
+        if (dbres.size() == 1)
         {
-            const auto id = static_cast<unsigned long long>(update_result[0][0]);
+            const bool has_overlapped_periods = static_cast<bool>(dbres[0][1]);
+            if (has_overlapped_periods)
+            {
+                struct OverlappedPeriods : OverlappingZoneAccessRange, UpdateRegistrarZoneAccessException
+                {
+                    const char* what() const noexcept override { return "Overlapped zone access periods after update"; }
+                };
+                throw OverlappedPeriods{};
+            }
+            const bool has_invalid_period =
+                    !dbres[0][2].isnull() && static_cast<bool>(dbres[0][2]);
+            if (has_invalid_period)
+            {
+                struct InvalidPeriod : InvalidZoneAccessPeriod, UpdateRegistrarZoneAccessException
+                {
+                    const char* what() const noexcept override { return "Invalid zone access period after update"; }
+                };
+                throw InvalidPeriod{};
+            }
+            const auto id = static_cast<unsigned long long>(dbres[0][0]);
             return id;
         }
-        else if (update_result.size() < 1)
+        if (dbres.size() < 1)
         {
-            throw NonexistentZoneAccess();
+            struct ZoneAccessDoesNotExist : NonexistentZoneAccess, UpdateRegistrarZoneAccessException
+            {
+                const char* what() const noexcept override { return "Register zone access not found"; }
+            };
+            throw ZoneAccessDoesNotExist{};
         }
-        else
+        struct UnexpectedNumberOfRows : UpdateRegistrarZoneAccessException
         {
-            throw std::runtime_error("Duplicity in database");
-        }
+            const char* what() const noexcept override { return "At most one row expected"; }
+        };
+        throw UnexpectedNumberOfRows{};
     }
-    catch (const NonexistentZoneAccess&)
+    catch (const UpdateRegistrarZoneAccessException& e)
     {
+        _ctx.get_log().info(boost::format{"Exception caught by update: %1%"} % e.what());
         throw;
     }
-    catch (const std::exception&)
+    catch (const std::exception& e)
     {
-        throw UpdateRegistrarZoneAccessException();
+        _ctx.get_log().info(boost::format{"Unexpected std::exception caught by update: %1%"} % e.what());
+        struct UnexpectedStdException : UpdateRegistrarZoneAccessException
+        {
+            const char* what() const noexcept override { return "Unexpected std::exception caught by update"; }
+        };
+        throw UnexpectedStdException{};
+    }
+    catch (...)
+    {
+        _ctx.get_log().info("Unexpected exception caught by update");
+        struct UnexpectedException : UpdateRegistrarZoneAccessException
+        {
+            const char* what() const noexcept override { return "Unexpected exception caught by update"; }
+        };
+        throw UnexpectedException{};
     }
 }
 

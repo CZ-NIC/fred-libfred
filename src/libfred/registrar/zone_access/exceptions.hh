@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef EXCEPTIONS_HH_A96C589FC5F14474872247B053482D69
 #define EXCEPTIONS_HH_A96C589FC5F14474872247B053482D69
 
@@ -50,6 +51,8 @@ struct NoUpdateData : virtual std::exception
     const char* what() const noexcept override;
 };
 
+struct DeleteRegistrarZoneAccessException : virtual std::exception { };
+
 struct NonexistentZoneAccess : virtual std::exception
 {
     const char* what() const noexcept override;
@@ -64,6 +67,8 @@ struct InvalidDateFrom : virtual std::exception
 {
     const char* what() const noexcept override;
 };
+
+struct InvalidZoneAccessPeriod : virtual std::exception { };
 
 } // namespace LibFred::Registrar::ZoneAccess
 } // namespace LibFred::Registrar

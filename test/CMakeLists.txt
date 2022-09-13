@@ -167,6 +167,7 @@ add_executable(test-libfred
     test/libfred/registrar/test_info_registrar.cc
     test/libfred/registrar/test_registrar_zone_access.cc
     test/libfred/registrar/certification/test_create_registrar_certification.cc
+    test/libfred/registrar/certification/test_delete_registrar_certification.cc
     test/libfred/registrar/certification/test_get_registrar_certifications.cc
     test/libfred/registrar/certification/test_update_registrar_certification.cc
     test/libfred/registrar/credit/test_create_registrar_credit_transaction.cc

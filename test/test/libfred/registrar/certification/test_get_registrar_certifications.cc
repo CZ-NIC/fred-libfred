@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrar/certification/create_registrar_certification.hh"
 #include "libfred/registrar/certification/get_registrar_certifications.hh"
 #include "libfred/registrar/certification/exceptions.hh"
@@ -31,22 +32,32 @@
 
 #include <algorithm>
 
+namespace {
+
+auto to_uuid(const Database::Value& value)
+{
+    return boost::uuids::string_generator()(static_cast<std::string>(value));
+}
+
 struct test_get_certifications_fixture : virtual public Test::instantiate_db_template
 {
-    LibFred::InfoRegistrarData test_registrar;
-    unsigned int certifications_amount;
-    std::vector<LibFred::Registrar::RegistrarCertification> reg_certs;
-
     test_get_certifications_fixture()
-    : certifications_amount(3)
     {
         LibFred::OperationContextCreator ctx;
         test_registrar = Test::registrar::make(ctx);
-        const int file_id = ctx.get_conn().exec(
-                "INSERT INTO files (name, path, filesize, filetype) "
+        const auto file_uuid = LibFred::Registrar::FileUuid{to_uuid(ctx.get_conn().exec(
+                "INSERT INTO files "
+                       "(name, "
+                        "path, "
+                        "filesize, "
+                        "filetype) "
                 "VALUES ('update_file', "
-                "CONCAT(TO_CHAR(current_timestamp, 'YYYY/fmMM/fmD'), '/', CURRVAL('files_id_seq'::regclass))::text, "
-                "0, 6) RETURNING id;")[0][0];
+                        "CONCAT(TO_CHAR(current_timestamp, 'YYYY/fmMM/fmD'), "
+                               "'/', "
+                               "CURRVAL('files_id_seq'::regclass))::TEXT, "
+                        "0, "
+                        "6) "
+             "RETURNING uuid")[0][0])};
         unsigned score = 1;
         unsigned date_duration = 10;
         LibFred::Registrar::RegistrarCertification rc;
@@ -56,25 +67,40 @@ struct test_get_certifications_fixture : virtual public Test::instantiate_db_tem
             rc.valid_from += boost::gregorian::date_duration(date_duration);
             if (i == certifications_amount - 1)
             {
-                rc.valid_until = boost::gregorian::date(boost::gregorian::not_a_date_time);
+                rc.valid_until = boost::gregorian::date(boost::gregorian::pos_infin);
             }
             else
             {
                 rc.valid_until = rc.valid_from + boost::gregorian::date_duration(date_duration - 1);
             }
-            rc.id = LibFred::Registrar::CreateRegistrarCertification(
-                    test_registrar.id, rc.valid_from, score, file_id)
-                .exec(ctx);
-            rc.classification = score++;
-            rc.eval_file_id = file_id;
+            const auto record = LibFred::Registrar::create_registrar_certification(
+                    ctx,
+                    test_registrar.id,
+                    rc.valid_from,
+                    boost::gregorian::date{boost::date_time::special_values::pos_infin},
+                    score, file_uuid);
+            rc.id = record.id;
+            rc.uuid = record.uuid;
+            rc.eval_file_id = record.eval_file_id;
+            rc.eval_file_uuid = record.eval_file_uuid;
+            rc.classification = record.classification;
             reg_certs.push_back(rc);
+            ++score;
         }
         ctx.commit_transaction();
         std::reverse(reg_certs.begin(), reg_certs.end());
     }
+    LibFred::InfoRegistrarData test_registrar;
+    static const unsigned int certifications_amount;
+    std::vector<LibFred::Registrar::RegistrarCertification> reg_certs;
 };
 
-BOOST_FIXTURE_TEST_SUITE(TestGetRegistrarCertifications, test_get_certifications_fixture)
+const unsigned int test_get_certifications_fixture::certifications_amount = 3;
+
+}//namespace {anonymous}
+
+BOOST_AUTO_TEST_SUITE(TestRegistrarCertifications)
+BOOST_FIXTURE_TEST_SUITE(Get, test_get_certifications_fixture)
 
 BOOST_AUTO_TEST_CASE(get_registrar_certifications)
 {
@@ -99,4 +125,5 @@ BOOST_AUTO_TEST_CASE(registrar_not_found)
         RegistrarNotFound);
 }
 
-BOOST_AUTO_TEST_SUITE_END(); // TestGetRegistrarCertifications
+BOOST_AUTO_TEST_SUITE_END()//TestRegistrarCertifications/Get
+BOOST_AUTO_TEST_SUITE_END()//TestRegistrarCertifications

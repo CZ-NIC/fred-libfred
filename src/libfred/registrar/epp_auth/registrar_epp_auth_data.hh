@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,9 +16,15 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef REGISTRAR_EPP_AUTH_DATA_HH_6AAF7D673128405A9A77195271FC06E9
 #define REGISTRAR_EPP_AUTH_DATA_HH_6AAF7D673128405A9A77195271FC06E9
 
+#include <boost/optional.hpp>
+#include <boost/uuid/uuid.hpp>
+
+#include <chrono>
+#include <initializer_list>
 #include <set>
 #include <string>
 
@@ -26,15 +32,23 @@ namespace LibFred {
 namespace Registrar {
 namespace EppAuth {
 
+struct EppAuthRecordUuid
+{
+    boost::uuids::uuid value;
+};
+
 struct EppAuthRecord
 {
+    using TimePoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
     unsigned long long id;
+    EppAuthRecordUuid uuid;
+    boost::optional<TimePoint> create_time;
     std::string certificate_fingerprint;
     std::string hashed_password;
-
-    bool operator<(const EppAuthRecord& _other) const
+    std::string cert_data_pem;
+    friend bool operator<(const EppAuthRecord& lhs, const EppAuthRecord& rhs) noexcept
     {
-        return id < _other.id;
+        return lhs.id < rhs.id;
     }
 };
 
@@ -43,6 +57,8 @@ struct RegistrarEppAuthData
     std::string registrar_handle;
     std::set<EppAuthRecord> epp_auth_records;
 };
+
+constexpr std::initializer_list<char> no_cert_data = {};
 
 } // namespace LibFred::Registrar::EppAuth
 } // namespace LibFred::Registrar

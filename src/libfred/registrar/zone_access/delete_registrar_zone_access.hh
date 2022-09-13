@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -17,30 +17,26 @@
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef GET_REGISTRAR_EPP_AUTH_HH_84F019F1ECE041A5BBC1196190DA150F
-#define GET_REGISTRAR_EPP_AUTH_HH_84F019F1ECE041A5BBC1196190DA150F
+#ifndef DELETE_REGISTRAR_ZONE_ACCESS_HH_469FDAF3F07831D75F9FC6E8E6562A40//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define DELETE_REGISTRAR_ZONE_ACCESS_HH_469FDAF3F07831D75F9FC6E8E6562A40
 
 #include "libfred/opcontext.hh"
-#include "libfred/registrar/epp_auth/registrar_epp_auth_data.hh"
-
-#include <string>
 
 namespace LibFred {
 namespace Registrar {
-namespace EppAuth {
+namespace ZoneAccess {
 
-class GetRegistrarEppAuth
+class DeleteRegistrarZoneAccess
 {
 public:
-    explicit GetRegistrarEppAuth(std::string _registrar_handle);
-
-    RegistrarEppAuthData exec(OperationContext& _ctx) const;
+    explicit DeleteRegistrarZoneAccess(unsigned long long access_id);
+    unsigned long long exec(OperationContext& ctx) const;
 private:
-    std::string registrar_handle_;
+    unsigned long long access_id_;
 };
 
-} // namespace LibFred::Registrar::EppAuth
+} // namespace LibFred::Registrar::ZoneAccess
 } // namespace LibFred::Registrar
 } // namespace LibFred
 
-#endif
+#endif//DELETE_REGISTRAR_ZONE_ACCESS_HH_469FDAF3F07831D75F9FC6E8E6562A40
