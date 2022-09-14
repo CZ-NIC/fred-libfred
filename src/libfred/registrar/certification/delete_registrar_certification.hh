@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -17,35 +17,34 @@
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef DELETE_REGISTRAR_EPP_AUTH_HH_7FB5773EAB814D37A611447D8A29E4D8
-#define DELETE_REGISTRAR_EPP_AUTH_HH_7FB5773EAB814D37A611447D8A29E4D8
+#ifndef DELETE_REGISTRAR_CERTIFICATION_HH_9A7519FA648DC17A0426ED67225ADBEB//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
+#define DELETE_REGISTRAR_CERTIFICATION_HH_9A7519FA648DC17A0426ED67225ADBEB
 
 #include "libfred/opcontext.hh"
-#include "libfred/registrar/epp_auth/registrar_epp_auth_data.hh"
+
+#include "libfred/registrar/certification/registrar_certification_type.hh"
 
 #include <boost/variant.hpp>
 
 namespace LibFred {
 namespace Registrar {
-namespace EppAuth {
 
-class DeleteRegistrarEppAuth
+class DeleteRegistrarCertification
 {
 public:
-    using EppAuthRecordCommonId = boost::variant<unsigned long long, EppAuthRecordUuid>;
-    explicit DeleteRegistrarEppAuth(EppAuthRecordCommonId id);
+    using RegistrarCertificationIdVariant = boost::variant<unsigned long long, RegistrarCertificationUuid>;
+    explicit DeleteRegistrarCertification(const RegistrarCertificationIdVariant& certification_id);
 
     unsigned long long exec(const OperationContext& ctx) const;
 private:
-    EppAuthRecordCommonId id_;
+    RegistrarCertificationIdVariant certification_id_;
 };
 
-EppAuthRecord delete_registrar_epp_auth(
+RegistrarCertification delete_registrar_certification(
         const OperationContext& ctx,
-        const DeleteRegistrarEppAuth::EppAuthRecordCommonId& id);
+        const DeleteRegistrarCertification::RegistrarCertificationIdVariant& certification_id);
 
-} // namespace LibFred::Registrar::EppAuth
-} // namespace LibFred::Registrar
+} // namespace Registrar
 } // namespace LibFred
 
-#endif
+#endif//DELETE_REGISTRAR_CERTIFICATION_HH_9A7519FA648DC17A0426ED67225ADBEB

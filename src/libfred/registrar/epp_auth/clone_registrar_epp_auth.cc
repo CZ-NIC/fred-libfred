@@ -16,39 +16,132 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/db_settings.hh"
 #include "libfred/registrar/epp_auth/clone_registrar_epp_auth.hh"
 #include "libfred/registrar/epp_auth/exceptions.hh"
 #include "src/util/db/db_exceptions.hh"
 
+#include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
+#include <utility>
+
 namespace LibFred {
 namespace Registrar {
 namespace EppAuth {
 
-CloneRegistrarEppAuth::CloneRegistrarEppAuth(const unsigned long long _id,
-        const std::string& _certificate_fingerprint)
-        : id_(_id),
-          certificate_fingerprint_(_certificate_fingerprint)
+CloneRegistrarEppAuth::CloneRegistrarEppAuth(
+        EppAuthRecordCommonId id,
+        std::string certificate_fingerprint,
+        std::string certificate_data_pem)
+    : id_{std::move(id)},
+      fingerprint_{std::move(certificate_fingerprint)},
+      data_{std::move(certificate_data_pem)}
+{ }
+
+namespace {
+
+class Exec : public boost::static_visitor<Database::Result>
 {
+public:
+    explicit Exec(const OperationContext& ctx, const std::string& fingerprint, const std::string& data)
+        : ctx_{ctx},
+          fingerprint_{fingerprint},
+          data_{data}
+    { }
+    Database::Result operator()(unsigned long long id) const
+    {
+        return ctx_.get_conn().exec_params(
+                // clang-format off
+                "INSERT INTO registraracl (registrarid, cert, password, cert_data_pem) "
+                     "SELECT ra.registrarid, $1::TEXT, ra.password, $2::TEXT "
+                       "FROM registraracl ra "
+                      "WHERE ra.id = $3::BIGINT "
+                  "RETURNING id, "
+                            "uuid, "
+                            "create_time, "
+                            "cert, "
+                            "password, "
+                            "cert_data_pem",
+                // clang-format on
+                Database::QueryParams{
+                        fingerprint_,
+                        data_.empty() ? Database::QueryParam{}
+                                      : Database::QueryParam{data_},
+                        id});
+    }
+    Database::Result operator()(const EppAuthRecordUuid& uuid) const
+    {
+        return ctx_.get_conn().exec_params(
+                // clang-format off
+                "INSERT INTO registraracl (registrarid, cert, password, cert_data_pem) "
+                     "SELECT ra.registrarid, $1::TEXT, ra.password, $2::TEXT "
+                       "FROM registraracl ra "
+                      "WHERE ra.uuid = $3::UUID "
+                  "RETURNING id, "
+                            "uuid, "
+                            "create_time, "
+                            "cert, "
+                            "password, "
+                            "cert_data_pem",
+                // clang-format on
+                Database::QueryParams{
+                        fingerprint_,
+                        data_.empty() ? Database::QueryParam{}
+                                      : Database::QueryParam{data_},
+                        uuid.value});
+    }
+private:
+    const OperationContext& ctx_;
+    const std::string& fingerprint_;
+    const std::string& data_;
+};
+
+auto to_uuid(const Database::Value& value)
+{
+    return boost::uuids::string_generator()(static_cast<std::string>(value));
 }
+
+}//namespace LibFred::Registrar::EppAuth::{anonymous}
 
 unsigned long long CloneRegistrarEppAuth::exec(const OperationContext& _ctx) const
 {
+    return clone_registrar_epp_auth(_ctx, id_, fingerprint_, data_).id;
+}
+
+} // namespace LibFred::Registrar::EppAuth
+} // namespace LibFred::Registrar
+} // namespace LibFred
+
+using namespace LibFred::Registrar::EppAuth;
+
+EppAuthRecord LibFred::Registrar::EppAuth::clone_registrar_epp_auth(
+        const OperationContext& ctx,
+        const CloneRegistrarEppAuth::EppAuthRecordCommonId& id,
+        const std::string& certificate_fingerprint,
+        const std::string& certificate_data_pem)
+{
     try
     {
-        const Database::Result db_result = _ctx.get_conn().exec_params(
-                // clang-format off
-                "INSERT INTO registraracl (registrarid, cert, password) "
-                "SELECT ra.registrarid, $1::text, ra.password FROM registraracl AS ra "
-                "WHERE ra.id = $2::bigint "
-                "RETURNING id ",
-                // clang-format on
-                Database::query_param_list(certificate_fingerprint_)(id_));
+        const auto db_result = boost::apply_visitor(Exec{ctx, certificate_fingerprint, certificate_data_pem}, id);
 
         if (db_result.size() == 1)
         {
-            const auto id = static_cast<unsigned long long>(db_result[0][0]);
-            return id;
+            return EppAuthRecord{
+                    static_cast<unsigned long long>(db_result[0]["id"]),
+                    {to_uuid(db_result[0]["uuid"])},
+                    static_cast<EppAuthRecord::TimePoint>(db_result[0]["create_time"]),
+                    static_cast<std::string>(db_result[0]["cert"]),
+                    static_cast<std::string>(db_result[0]["password"]),
+                    [](auto&& col_cert_data_pem)
+                    {
+                        if (!col_cert_data_pem.isnull())
+                        {
+                            return static_cast<std::string>(col_cert_data_pem);
+                        }
+                        return std::string{};
+                    }(db_result[0]["cert_data_pem"])};
         }
         if (db_result.size() == 0)
         {
@@ -59,17 +152,18 @@ unsigned long long CloneRegistrarEppAuth::exec(const OperationContext& _ctx) con
     {
         throw;
     }
-    catch (const Database::ResultFailed&)
+    catch (const Database::ResultFailed& e)
     {
+        FREDLOG_INFO(boost::format{"Exception Database::ResultFailed caught: %1%"} % e.what());
         throw DuplicateCertificate();
     }
-    catch (const std::exception&)
+    catch (const std::exception& e)
     {
-        throw CloneRegistrarEppAuthException();
+        FREDLOG_INFO(boost::format{"std::exception caught: %1%"} % e.what());
+    }
+    catch (...)
+    {
+        FREDLOG_INFO("Unknown exception caught");
     }
     throw CloneRegistrarEppAuthException();
 }
-
-} // namespace LibFred::Registrar::EppAuth
-} // namespace LibFred::Registrar
-} // namespace LibFred

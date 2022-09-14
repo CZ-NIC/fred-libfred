@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,54 +16,70 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "libfred/opcontext.hh"
-#include "libfred/registrar/certification/exceptions.hh"
-#include "libfred/registrar/certification/get_registrar_certifications.hh"
-#include "libfred/registrar/certification/registrar_certification_type.hh"
 
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include "libfred/registrar/certification/get_registrar_certifications.hh"
+#include "libfred/registrar/certification/exceptions.hh"
+
+#include <boost/uuid/string_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 namespace LibFred {
 namespace Registrar {
 
+namespace {
+
+auto to_uuid(const Database::Value& value)
+{
+    return boost::uuids::string_generator()(static_cast<std::string>(value));
+}
+
+}//namespace LibFred::Registrar::{anonymous}
+
 GetRegistrarCertifications::GetRegistrarCertifications(unsigned long long _registrar_id)
     : registrar_id_(_registrar_id)
-{
-}
+{ }
 
 std::vector<RegistrarCertification> GetRegistrarCertifications::exec(const OperationContext& _ctx) const
 {
     try
     {
-        std::vector<RegistrarCertification> result;
-
-        const Database::Result reg_exists = _ctx.get_conn().exec_params(
+        const auto dbres = _ctx.get_conn().exec_params(
                 // clang-format off
-                "SELECT id FROM registrar WHERE id = $1::integer",
+                "SELECT rc.id, "
+                       "rc.uuid, "
+                       "rc.valid_from, "
+                       "rc.valid_until, "
+                       "rc.classification, "
+                       "rc.eval_file_id, "
+                       "rc.eval_file_uuid "
+                  "FROM registrar r "
+             "LEFT JOIN registrar_certification rc ON rc.registrar_id = r.id "
+                 "WHERE r.id = $1::BIGINT "
+              "ORDER BY 3 DESC, 1 DESC",
                 // clang-format on
                 Database::query_param_list(registrar_id_));
-        if (reg_exists.size() != 1)
+        if (dbres.size() == 0)
         {
-            throw RegistrarNotFound();
+            throw RegistrarNotFound{};
         }
-
-        const Database::Result certifications = _ctx.get_conn().exec_params(
-                // clang-format off
-                "SELECT id, valid_from, valid_until, classification, eval_file_id "
-                "FROM registrar_certification WHERE registrar_id=$1::bigint "
-                "ORDER BY valid_from DESC, id DESC",
-                // clang-format on
-                Database::query_param_list(registrar_id_));
-        result.reserve(certifications.size());
-        for (Database::Result::Iterator it = certifications.begin(); it != certifications.end(); ++it)
+        std::vector<RegistrarCertification> result;
+        if (dbres[0][0].isnull())
         {
-            Database::Row::Iterator col = (*it).begin();
+            return result;
+        }
+        result.reserve(dbres.size());
+        for (unsigned idx = 0; idx < dbres.size(); ++idx)
+        {
+            const auto row = dbres[idx];
             RegistrarCertification rc;
-            rc.id = *col;
-            rc.valid_from = *(++col);
-            rc.valid_until = *(++col);
-            rc.classification = *(++col);
-            rc.eval_file_id = *(++col);
+            rc.id = static_cast<unsigned long long>(row[0]);
+            rc.uuid = {to_uuid(row[1])};
+            rc.valid_from = boost::gregorian::from_string(static_cast<std::string>(row[2]));
+            rc.valid_until = row[3].isnull() ? boost::gregorian::date{boost::date_time::special_values::pos_infin}
+                                             : boost::gregorian::from_string(static_cast<std::string>(row[3]));
+            rc.classification = static_cast<int>(row[4]);
+            rc.eval_file_id = static_cast<unsigned long long>(row[5]);
+            rc.eval_file_uuid = {to_uuid(row[6])};
             result.push_back(std::move(rc));
         }
         return result;

@@ -16,112 +16,224 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/db_settings.hh"
 #include "libfred/registrar/epp_auth/exceptions.hh"
 #include "libfred/registrar/epp_auth/update_registrar_epp_auth.hh"
+
 #include "src/util/db/query_param.hh"
 #include "src/util/password_storage.hh"
 #include "src/util/util.hh"
 
-#include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace LibFred {
 namespace Registrar {
 namespace EppAuth {
 
-namespace {
-constexpr const char * psql_type(const std::string&)
-{
-    return "::text";
-}
-
-constexpr const char * psql_type(const unsigned long long)
-{
-    return "::bigint";
-}
-
-} // namespace LibFred::Registrar::EppAuth::{anonymous}
-
-UpdateRegistrarEppAuth::UpdateRegistrarEppAuth(const unsigned long long _id)
-        : id_(_id)
-{
-}
+UpdateRegistrarEppAuth::UpdateRegistrarEppAuth(EppAuthRecordCommonId _id)
+    : id_{std::move(_id)},
+      certificate_fingerprint_{},
+      plain_password_{},
+      certificate_data_pem_{}
+{ }
 
 UpdateRegistrarEppAuth& UpdateRegistrarEppAuth::set_certificate_fingerprint(
-        const boost::optional<std::string>& _certificate_fingerprint)
+        boost::optional<std::string> certificate_fingerprint)
 {
-    certificate_fingerprint_ = _certificate_fingerprint;
+    return this->set_certificate(std::move(certificate_fingerprint), std::string{});
+}
+
+UpdateRegistrarEppAuth& UpdateRegistrarEppAuth::set_certificate(
+        boost::optional<std::string> _certificate_fingerprint,
+        boost::optional<std::string> _certificate_data_pem)
+{
+    certificate_fingerprint_ = std::move(_certificate_fingerprint);
+    certificate_data_pem_ = std::move(_certificate_data_pem);
     return *this;
 }
 
 UpdateRegistrarEppAuth& UpdateRegistrarEppAuth::set_plain_password(
-        const boost::optional<std::string>& _plain_password)
+        boost::optional<std::string> _plain_password)
 {
-    plain_password_ = _plain_password;
+    plain_password_ = std::move(_plain_password);
     return *this;
 }
 
+namespace {
+
+auto to_uuid(const Database::Value& value)
+{
+    return boost::uuids::string_generator()(static_cast<std::string>(value));
+}
+
+class Exec : public boost::static_visitor<Database::Result>
+{
+public:
+    explicit Exec(
+            const OperationContext& ctx,
+            const UpdateRegistrarEppAuth::EppAuthRecordCommonId& id,
+            const boost::optional<std::string>& certificate_fingerprint,
+            const boost::optional<std::string>& plain_password,
+            const boost::optional<std::string>& certificate_data_pem)
+        : ctx_{ctx},
+          id_{id},
+          certificate_fingerprint_{certificate_fingerprint},
+          plain_password_{plain_password},
+          certificate_data_pem_{certificate_data_pem}
+    { }
+    Database::Result operator()(unsigned long long id) const
+    {
+        auto params = Database::QueryParams{id};
+        return ctx_.get_conn().exec_params(
+                // clang-format off
+                "UPDATE registraracl "
+                   "SET " + this->make_set_part(params) + " "
+                 "WHERE id = $1::BIGINT "
+             "RETURNING id, "
+                       "uuid, "
+                       "create_time, "
+                       "cert, "
+                       "password, "
+                       "cert_data_pem",
+                // clang-format on
+                params);
+    }
+    Database::Result operator()(const EppAuthRecordUuid& uuid) const
+    {
+        auto params = Database::QueryParams{uuid.value};
+        return ctx_.get_conn().exec_params(
+                // clang-format off
+                "UPDATE registraracl "
+                   "SET " + this->make_set_part(params) + " "
+                 "WHERE uuid = $1::UUID "
+             "RETURNING id, "
+                       "uuid, "
+                       "create_time, "
+                       "cert, "
+                       "password, "
+                       "cert_data_pem",
+                // clang-format on
+                params);
+    }
+private:
+    std::string make_set_part(Database::QueryParams& params) const
+    {
+        std::string result;
+        const auto append = [&](auto&& str)
+        {
+            if (!result.empty())
+            {
+                result.append(", ");
+            }
+            result.append(str);
+        };
+        if (certificate_fingerprint_ != boost::none)
+        {
+            params.emplace_back(*certificate_fingerprint_);
+            append("cert = $" + std::to_string(params.size()) + "::TEXT");
+        }
+        if (plain_password_ != boost::none)
+        {
+            params.emplace_back(
+                    PasswordStorage::encrypt_password_by_preferred_method(*plain_password_).get_value());
+            append("password = $" + std::to_string(params.size()) + "::TEXT");
+        }
+        if (certificate_data_pem_ != boost::none)
+        {
+            if (certificate_data_pem_->empty())
+            {
+                params.emplace_back(); // NULL
+            }
+            else
+            {
+                params.emplace_back(*certificate_data_pem_);
+            }
+            append("cert_data_pem = $" + std::to_string(params.size()) + "::TEXT");
+        }
+        return result;
+    }
+    const OperationContext& ctx_;
+    const UpdateRegistrarEppAuth::EppAuthRecordCommonId& id_;
+    const boost::optional<std::string>& certificate_fingerprint_;
+    const boost::optional<std::string>& plain_password_;
+    const boost::optional<std::string>& certificate_data_pem_;
+};
+
+}//namespace LibFred::Registrar::EppAuth::{anonymous}
+
 void UpdateRegistrarEppAuth::exec(const OperationContext& _ctx) const
 {
-    const bool values_for_update_are_set = (certificate_fingerprint_ != boost::none ||
-                                            plain_password_ != boost::none);
+    update_registrar_epp_auth(_ctx, id_, certificate_fingerprint_, plain_password_, certificate_data_pem_);
+}
+
+} // namespace LibFred::Registrar::EppAuth
+} // namespace LibFred::Registrar
+} // namespace LibFred
+
+using namespace LibFred::Registrar::EppAuth;
+
+EppAuthRecord LibFred::Registrar::EppAuth::update_registrar_epp_auth(
+        const OperationContext& ctx,
+        const UpdateRegistrarEppAuth::EppAuthRecordCommonId& id,
+        const boost::optional<std::string>& certificate_fingerprint,
+        const boost::optional<std::string>& plain_password,
+        const boost::optional<std::string>& certificate_data_pem)
+{
+    const bool values_for_update_are_set = (certificate_fingerprint != boost::none ||
+                                            plain_password != boost::none ||
+                                            certificate_data_pem != boost::none);
 
     if (!values_for_update_are_set)
     {
         throw NoUpdateData();
     }
 
-    Database::QueryParams params;
-    std::ostringstream object_sql;
-    Util::HeadSeparator set_separator(" SET ", ", ");
-
-    object_sql << "UPDATE registraracl";
-    if (certificate_fingerprint_ != boost::none)
-    {
-        params.push_back(*certificate_fingerprint_);
-        object_sql << set_separator.get();
-        object_sql <<  "cert = $" << params.size() << psql_type(certificate_fingerprint_.get());
-    }
-    if (plain_password_ != boost::none)
-    {
-        const auto encrypted_password =
-                PasswordStorage::encrypt_password_by_preferred_method(plain_password_.get());
-        params.push_back(encrypted_password.get_value());
-        object_sql << set_separator.get();
-        object_sql << "password = $" << params.size() << psql_type(encrypted_password.get_value());
-    }
-    params.push_back(id_);
-    object_sql << " WHERE id = $" << params.size() << psql_type(id_) <<  " RETURNING 1";
-
     try
     {
-        const Database::Result update_result = _ctx.get_conn().exec_params(
-                object_sql.str(),
-                params);
-        if (update_result.size() == 0)
+        const auto db_result = boost::apply_visitor(
+                Exec{ctx, id, certificate_fingerprint, plain_password, certificate_data_pem},
+                id);
+
+        if (db_result.size() == 1)
+        {
+            return EppAuthRecord{
+                    static_cast<unsigned long long>(db_result[0]["id"]),
+                    {to_uuid(db_result[0]["uuid"])},
+                    static_cast<EppAuthRecord::TimePoint>(db_result[0]["create_time"]),
+                    static_cast<std::string>(db_result[0]["cert"]),
+                    static_cast<std::string>(db_result[0]["password"]),
+                    [](auto&& col_cert_data_pem)
+                    {
+                        if (!col_cert_data_pem.isnull())
+                        {
+                            return static_cast<std::string>(col_cert_data_pem);
+                        }
+                        return std::string{};
+                    }(db_result[0]["cert_data_pem"])};
+        }
+        if (db_result.size() == 0)
         {
             throw NonexistentRegistrarEppAuth();
-        }
-        if (update_result.size() > 1)
-        {
-            throw std::runtime_error("Duplicate in database.");
         }
     }
     catch (const NonexistentRegistrarEppAuth&)
     {
         throw;
     }
-    catch (const Database::ResultFailed&)
+    catch (const Database::ResultFailed& e)
     {
+        FREDLOG_INFO(boost::format{"Exception Database::ResultFailed caught: %1%"} % e.what());
         throw DuplicateCertificate();
     }
-    catch (const std::exception&)
+    catch (const std::exception& e)
     {
-        throw UpdateRegistrarEppAuthException();
+        FREDLOG_INFO(boost::format{"std::exception caught: %1%"} % e.what());
     }
+    catch (...)
+    {
+        FREDLOG_INFO("Unknown exception caught");
+    }
+    throw UpdateRegistrarEppAuthException();
 }
-
-} // namespace LibFred::Registrar::EppAuth
-} // namespace LibFred::Registrar
-} // namespace LibFred
