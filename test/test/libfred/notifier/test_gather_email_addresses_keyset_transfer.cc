@@ -16,17 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
 
 #include "libfred/notifier/gather_email_data/gather_email_addresses.hh"
 #include "libfred/registrable_object/keyset/transfer_keyset.hh"
+#include "libfred/registrable_object/keyset/update_keyset.hh"
 
 BOOST_AUTO_TEST_SUITE(TestNotifier)
 BOOST_AUTO_TEST_SUITE(GatherEmailAddresses)
@@ -177,7 +176,9 @@ struct has_transferred_keyset : has_keyset
           new_registrar(Test::registrar(ctx).info_data)
     {
         const ::LibFred::InfoKeysetData keyset_data = ::LibFred::InfoKeysetByHandle(keyset_handle).exec(ctx).info_keyset_data;
-        ::LibFred::TransferKeyset transfer(keyset_data.id, new_registrar.handle, keyset_data.authinfopw, Nullable<unsigned long long>());
+        static constexpr const char* password = "password";
+        ::LibFred::UpdateKeyset{keyset_data.handle, registrar.handle}.set_authinfo(password).exec(ctx);
+        ::LibFred::TransferKeyset transfer(keyset_data.id, new_registrar.handle, password, Nullable<unsigned long long>());
 
         keyset_data_to_be_notified = has_keyset_operation_followed_by_future_changes<::LibFred::TransferKeyset>(
             keyset_handle,

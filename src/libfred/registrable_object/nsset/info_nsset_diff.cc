@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  nsset info data diff
  */
 
 #include "libfred/registrable_object/nsset/info_nsset_diff.hh"
@@ -68,7 +64,6 @@ std::set<std::string> InfoNssetDiff::changed_fields() const
     insert_if_presents(creation_time, "creation_time", fields);
     insert_if_presents(update_time, "update_time", fields);
     insert_if_presents(transfer_time, "transfer_time", fields);
-    insert_if_presents(authinfopw, "authinfopw", fields);
 
     insert_if_presents(tech_check_level, "tech_check_level", fields);
     insert_if_presents(dns_hosts, "dns_hosts", fields);
@@ -106,7 +101,6 @@ std::string InfoNssetDiff::to_string() const
                 make_named_quoted_data("creation_time", creation_time),
                 make_named_quoted_data("update_time", update_time),
                 make_named_quoted_data("transfer_time", transfer_time),
-                make_named_quoted_data("authinfopw", authinfopw),
 
                 make_named_quoted_data("tech_check_level", tech_check_level),
                 make_named_quoted_data("dns_hosts", dns_hosts),
@@ -147,7 +141,6 @@ bool InfoNssetDiff::is_empty() const
             creation_time,
             update_time,
             transfer_time,
-            authinfopw,
 
             tech_check_level,
             dns_hosts,
@@ -221,11 +214,6 @@ InfoNssetDiff diff_nsset_data(const InfoNssetData& first, const InfoNssetData& s
     if (!Util::is_equal(first.transfer_time, second.transfer_time))
     {
         diff.transfer_time = std::make_pair(first.transfer_time, second.transfer_time);
-    }
-
-    if (first.authinfopw != second.authinfopw)
-    {
-        diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
     }
 
     if (!Util::is_equal(first.tech_check_level, second.tech_check_level))

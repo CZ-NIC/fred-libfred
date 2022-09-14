@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,20 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file object.cc
- *  common object
- */
 
+#include "libfred/object/object.hh"
+
+#include "libfred/db_settings.hh"
 #include "libfred/object/object_impl.hh"
-#include "libfred/registrar/registrar_impl.hh"
-#include "libfred/object/generate_authinfo_password.hh"
+#include "libfred/object/store_authinfo.hh"
 #include "libfred/opexception.hh"
 #include "libfred/opcontext.hh"
-#include "libfred/db_settings.hh"
+#include "libfred/registrar/registrar_impl.hh"
+
 #include "util/optional_value.hh"
 #include "util/log/log.hh"
-#include "libfred/object/object.hh"
 
 #include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
@@ -50,20 +48,12 @@ CreateObject::CreateObject(const std::string& object_type
 CreateObject::CreateObject(const std::string& object_type
     , const std::string& handle
     , const std::string& registrar
-    , const Optional<std::string>& authinfo
     , const Nullable<unsigned long long>& logd_request_id)
 : object_type_(object_type)
 , handle_(handle)
 , registrar_(registrar)
-, authinfo_(authinfo)
 , logd_request_id_(logd_request_id)
 {}
-
-CreateObject& CreateObject::set_authinfo(const std::string& authinfo)
-{
-    authinfo_ = authinfo;
-    return *this;
-}
 
 CreateObject& CreateObject::set_logd_request_id(const Nullable<unsigned long long>& logd_request_id)
 {
@@ -102,14 +92,9 @@ CreateObject::Result  CreateObject::exec(OperationContext& ctx)
             BOOST_THROW_EXCEPTION(Exception().set_invalid_object_handle(handle_));
         }
 
-        if (authinfo_.get_value_or_default().empty())
-        {
-            authinfo_ = generate_authinfo_pw().password_;
-        }
-
-        ctx.get_conn().exec_params("INSERT INTO object(id, clid, authinfopw) VALUES ($1::bigint "//object id from create_object
-                " , $2::integer, $3::text)"
-                , Database::query_param_list(result.object_id)(registrar_id)(authinfo_.get_value()));
+        ctx.get_conn().exec_params("INSERT INTO object(id, clid) VALUES ($1::bigint, "//object id from create_object
+                "$2::integer)",
+                Database::query_param_list(result.object_id)(registrar_id));
 
         result.history_id = LibFred::InsertHistory(logd_request_id_, result.object_id).exec(ctx);
 
@@ -146,7 +131,6 @@ std::string CreateObject::to_string() const
                 (std::make_pair("object_type", object_type_))
                 (std::make_pair("handle", handle_))
                 (std::make_pair("registrar", registrar_))
-                (std::make_pair("authinfo", authinfo_.print_quoted()))
                 (std::make_pair("logd_request_id", logd_request_id_.print_quoted())));
 }
 
@@ -182,6 +166,39 @@ UpdateObject& UpdateObject::set_logd_request_id(const Nullable<unsigned long lon
     return *this;
 }
 
+namespace {
+
+constexpr auto get_default_authinfo_ttl()
+{
+    using SecondsPerMinute = std::ratio<60>;
+    using SecondsPerHour = std::ratio_multiply<std::ratio<60>, SecondsPerMinute>;
+    using SecondsPerDay = std::ratio_multiply<std::ratio<24>, SecondsPerHour>;
+    using Days = std::chrono::duration<std::chrono::seconds::rep, SecondsPerDay>;
+    return std::chrono::duration_cast<std::chrono::seconds>(Days{14});
+}
+
+static_assert(get_default_authinfo_ttl().count() == 14 * 24 * 3600);
+
+auto& get_authinfo_ttl_ref()
+{
+    static auto ttl = get_default_authinfo_ttl();
+    return ttl;
+}
+
+auto get_authinfo_ttl()
+{
+    return get_authinfo_ttl_ref();
+}
+
+}//namespace LibFred::{anonymous}
+
+std::chrono::seconds UpdateObject::set_authinfo_ttl(std::chrono::seconds value) noexcept
+{
+    auto previous_value = get_authinfo_ttl();
+    get_authinfo_ttl_ref() = value;
+    return previous_value;
+}
+
 unsigned long long UpdateObject::exec(OperationContext& ctx)
 {
     unsigned long long history_id = 0;
@@ -208,8 +225,8 @@ unsigned long long UpdateObject::exec(OperationContext& ctx)
 
         if (authinfo_.isset())
         {
-            params.push_back(authinfo_);
-            sql << " , authinfopw = $" << params.size() << "::text ";//set authinfo
+            Object::StoreAuthinfo{Object::ObjectId{object_id}, registrar_id, get_authinfo_ttl()}
+                    .exec(ctx, authinfo_.get_value());
         }
 
         params.push_back(object_id);
@@ -234,8 +251,6 @@ unsigned long long UpdateObject::exec(OperationContext& ctx)
         {
             BOOST_THROW_EXCEPTION(LibFred::InternalError("historyid update failed"));
         }
-
-
     }
     catch (ExceptionStack& ex)
     {
@@ -286,8 +301,8 @@ unsigned long long InsertHistory::exec(OperationContext& ctx)
 
         //object_history
         ctx.get_conn().exec_params(
-                "INSERT INTO object_history(historyid,id,clid,upid,trdate,update,authinfopw) "
-                "SELECT $1::bigint,id,clid,upid,trdate,update,authinfopw FROM object "
+                "INSERT INTO object_history(historyid,id,clid,upid,trdate,update) "
+                "SELECT $1::bigint,id,clid,upid,trdate,update FROM object "
                 "WHERE id=$2::integer",
                 Database::query_param_list(history_id)(object_id_));
     }

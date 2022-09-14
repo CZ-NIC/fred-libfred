@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -34,27 +32,26 @@ BOOST_AUTO_TEST_SUITE(GatherEmailContent)
 BOOST_AUTO_TEST_SUITE(Nsset)
 BOOST_AUTO_TEST_SUITE(Transfer)
 
-template<typename T_has_nsset>struct has_nsset_transferred : T_has_nsset {
-
-    const unsigned long long logd_request_id;
-    const ::LibFred::InfoRegistrarData new_registrar;
-    const unsigned long long new_historyid;
-
+template <typename HasNsset>
+struct has_nsset_transferred : HasNsset
+{
     has_nsset_transferred()
-    :   logd_request_id(12345),
-        new_registrar( Test::registrar(T_has_nsset::ctx).info_data ),
-        new_historyid(
-            ::LibFred::TransferNsset(
-                T_has_nsset::nsset.id,
-                new_registrar.handle,
-                T_has_nsset::nsset.authinfopw,
-                logd_request_id
-            ).exec(T_has_nsset::ctx)
-        )
+        : logd_request_id{12345},
+          new_registrar{Test::registrar{HasNsset::ctx}.info_data},
+          new_historyid{
+                ::LibFred::TransferNsset{
+                        HasNsset::nsset.id,
+                        new_registrar.handle,
+                        HasNsset::authinfopw,
+                        logd_request_id}
+                .exec(HasNsset::ctx)}
     { }
+    unsigned long long logd_request_id;
+    ::LibFred::InfoRegistrarData new_registrar;
+    unsigned long long new_historyid;
 };
 
-BOOST_FIXTURE_TEST_CASE(test_empty_transfer, has_nsset_transferred<has_empty_nsset>)
+BOOST_FIXTURE_TEST_CASE(test_empty_transfer, has_nsset_transferred<HasEmptyNssetWithAuthinfo>)
 {
     const std::string input_svtrid = "abc-123";
 
@@ -78,7 +75,7 @@ BOOST_FIXTURE_TEST_CASE(test_empty_transfer, has_nsset_transferred<has_empty_nss
     );
 }
 
-BOOST_FIXTURE_TEST_CASE(test_full_transfer, has_nsset_transferred<has_full_nsset>)
+BOOST_FIXTURE_TEST_CASE(test_full_transfer, has_nsset_transferred<HasFullNssetWithAuthinfo>)
 {
     const std::string input_svtrid = "abc-123";
 
@@ -102,7 +99,7 @@ BOOST_FIXTURE_TEST_CASE(test_full_transfer, has_nsset_transferred<has_full_nsset
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Nsset/Transfer
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Nsset
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier

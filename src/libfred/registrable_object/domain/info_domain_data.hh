@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  common domain info data
  */
 
 #ifndef INFO_DOMAIN_DATA_HH_01A2CF8365C944A6B77108D7667AD395
@@ -85,7 +81,7 @@ struct InfoDomainData : Util::Printable<InfoDomainData>
     Nullable<boost::posix_time::ptime> update_time; /**< time of last update time in set local zone*/
     Nullable<boost::posix_time::ptime> transfer_time; /**< time of last transfer in set local zone*/
     boost::gregorian::date expiration_date; /**< domain expiration local date */
-    std::string authinfopw;/**< password for domain transfer */
+    std::string authinfopw;/**< unused */
     std::vector<RegistrableObject::Contact::ContactReference> admin_contacts;/**< list of administrative contacts (contacts references) */
     Nullable<ENUMValidationExtension> enum_domain_validation;/**< ENUM domain validation extension info */
     Nullable<boost::posix_time::ptime> delete_time;/**< domain delete time in set local zone*/

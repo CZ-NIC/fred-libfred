@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  common contact info data
  */
 
 #ifndef INFO_CONTACT_DATA_HH_72F0149107A84D17AABEEAC0E248C180
@@ -343,7 +339,7 @@ struct InfoContactData : public Util::Printable<InfoContactData>
     boost::posix_time::ptime creation_time;/**< creation time of the contact in set local zone*/
     Nullable<boost::posix_time::ptime> update_time; /**< last update time of the contact in set local zone*/
     Nullable<boost::posix_time::ptime> transfer_time; /**<last transfer time in set local zone*/
-    std::string authinfopw;/**< password for transfer */
+    std::string authinfopw;/**< unused */
     Nullable<std::string> name ;/**< name of contact person */
     Nullable<std::string> organization;/**< full trade name of organization */
     Nullable< Contact::PlaceAddress > place;/**< place address of contact */

@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include <boost/test/unit_test.hpp>
-#include <string>
 
 #include "libfred/registrable_object/domain/transfer_domain.hh"
 #include "libfred/object/transfer_object_exception.hh"
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(test_transfer_ok_data)
 {
     const unsigned long long logd_request_id = 753159;
 
-    const unsigned long long post_transfer_history_id = ::LibFred::TransferDomain(domain.id, the_different_registrar.handle, domain.authinfopw, logd_request_id).exec(ctx);
+    const unsigned long long post_transfer_history_id = ::LibFred::TransferDomain(domain.id, the_different_registrar.handle, domain_authinfo.password, logd_request_id).exec(ctx);
 
     const std::string timezone = "Europe/Prague";
 
@@ -83,11 +83,37 @@ BOOST_AUTO_TEST_CASE(test_transfer_ok_data)
     );
 }
 
+BOOST_AUTO_TEST_CASE(test_transfer_via_admin_contact1)
+{
+    const unsigned long long logd_request_id = 753159;
+
+    BOOST_CHECK_NO_THROW(
+            ::LibFred::TransferDomain(
+                    domain.id,
+                    the_different_registrar.handle,
+                    admin_contact1_authinfo.password,
+                    logd_request_id)
+            .exec(ctx));
+}
+
+BOOST_AUTO_TEST_CASE(test_transfer_via_admin_contact2)
+{
+    const unsigned long long logd_request_id = 753159;
+
+    BOOST_CHECK_NO_THROW(
+            ::LibFred::TransferDomain(
+                    domain.id,
+                    the_different_registrar.handle,
+                    admin_contact2_authinfo.password,
+                    logd_request_id)
+            .exec(ctx));
+}
+
 BOOST_FIXTURE_TEST_CASE(test_transfer_ok_data_enum, Test::has_enum_domain_and_a_different_registrar)
 {
     const unsigned long long logd_request_id = 753159;
 
-    const unsigned long long post_transfer_history_id = ::LibFred::TransferDomain(domain.id, the_different_registrar.handle, domain.authinfopw, logd_request_id).exec(ctx);
+    const unsigned long long post_transfer_history_id = ::LibFred::TransferDomain(domain.id, the_different_registrar.handle, domain_authinfo.password, logd_request_id).exec(ctx);
 
     const std::string timezone = "Europe/Prague";
 
@@ -140,7 +166,7 @@ BOOST_FIXTURE_TEST_CASE(test_transfer_ok_data_enum, Test::has_enum_domain_and_a_
 BOOST_AUTO_TEST_CASE(test_transfer_ok_by_domain_authinfo)
 {
     ::LibFred::TransferDomain transfer(
-        domain.id, the_different_registrar.handle, domain.authinfopw, Nullable<unsigned long long>()
+        domain.id, the_different_registrar.handle, domain_authinfo.password, Nullable<unsigned long long>()
     );
 
     BOOST_CHECK_NO_THROW( transfer.exec(ctx) );
@@ -149,7 +175,7 @@ BOOST_AUTO_TEST_CASE(test_transfer_ok_by_domain_authinfo)
 BOOST_AUTO_TEST_CASE(test_transfer_ok_by_registrant_authinfo)
 {
     ::LibFred::TransferDomain transfer(
-        domain.id, the_different_registrar.handle, contact.authinfopw, Nullable<unsigned long long>()
+        domain.id, the_different_registrar.handle, contact_authinfo.password, Nullable<unsigned long long>()
     );
 
     BOOST_CHECK_NO_THROW( transfer.exec(ctx) );
@@ -158,7 +184,7 @@ BOOST_AUTO_TEST_CASE(test_transfer_ok_by_registrant_authinfo)
 BOOST_AUTO_TEST_CASE(test_transfer_ok_by_admin_contact)
 {
     ::LibFred::TransferDomain transfer(
-        domain.id, the_different_registrar.handle, admin_contact1.authinfopw, Nullable<unsigned long long>()
+        domain.id, the_different_registrar.handle, admin_contact1_authinfo.password, Nullable<unsigned long long>()
     );
 
     BOOST_CHECK_NO_THROW( transfer.exec(ctx) );
@@ -169,7 +195,7 @@ BOOST_AUTO_TEST_CASE(test_unknown_registrar)
     ::LibFred::TransferDomain transfer(
         domain.id,
         "nonexistentregistrar", /* <= !!! */
-        domain.authinfopw,
+        domain_authinfo.password,
         Nullable<unsigned long long>()
     );
 
@@ -184,7 +210,7 @@ BOOST_AUTO_TEST_CASE(test_unknown_object)
     ::LibFred::TransferDomain transfer(
         Test::get_nonexistent_object_id(ctx), /* <= !!! */
         the_different_registrar.handle,
-        domain.authinfopw,
+        domain_authinfo.password,
         Nullable<unsigned long long>()
     );
 
@@ -208,23 +234,36 @@ BOOST_AUTO_TEST_CASE(test_incorrect_authinfopw)
     );
 }
 
-struct has_domain_and_a_different_registrar_and_a_different_contact : Test::has_domain_and_a_different_registrar {
+namespace {
 
-    ::LibFred::InfoContactData different_contact;
-
-    has_domain_and_a_different_registrar_and_a_different_contact() {
-        const std::string different_contact_handle = "THE-DIFFERENT-ONE";
-        ::LibFred::CreateContact(different_contact_handle, registrar.handle).exec(ctx);
-        different_contact = ::LibFred::InfoContactByHandle(different_contact_handle).exec(ctx).info_contact_data;
-    }
+struct has_domain_and_a_different_registrar_and_a_different_contact : Test::has_domain_and_a_different_registrar
+{
+    has_domain_and_a_different_registrar_and_a_different_contact()
+        : Test::has_domain_and_a_different_registrar{},
+          different_contact_authinfo{
+                [&]()
+                {
+                    const std::string different_contact_handle = "THE-DIFFERENT-ONE";
+                    ::LibFred::CreateContact(different_contact_handle, registrar.handle).exec(ctx);
+                    const auto contact_id = ::LibFred::InfoContactByHandle{different_contact_handle}.exec(ctx).info_contact_data.id;
+                    return Test::HasAuthinfo{
+                            ctx,
+                            ::LibFred::Object::ObjectId{contact_id},
+                            registrar.id,
+                            "different contact password"};
+                }()}
+    { }
+    Test::HasAuthinfo different_contact_authinfo;
 };
+
+}//namespace {anonymous}
 
 BOOST_FIXTURE_TEST_CASE(test_incorrect_authinfopw_other_contact, has_domain_and_a_different_registrar_and_a_different_contact)
 {
     ::LibFred::TransferDomain transfer(
         domain.id,
         the_different_registrar.handle,
-        different_contact.handle, /* <= !!! */
+        different_contact_authinfo.password,
         Nullable<unsigned long long>()
     );
     BOOST_CHECK_THROW(
@@ -238,7 +277,7 @@ BOOST_AUTO_TEST_CASE(test_registrar_is_already_sponsoring)
     ::LibFred::TransferDomain transfer(
         domain.id,
         registrar.handle, /* <= !!! */
-        domain.authinfopw,
+        domain_authinfo.password,
         Nullable<unsigned long long>()
     );
     BOOST_CHECK_THROW(
@@ -247,4 +286,4 @@ BOOST_AUTO_TEST_CASE(test_registrar_is_already_sponsoring)
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()//TestTransferDomain

@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #ifndef FIXTURE_DATA_HH_C6D7DDED73CB410498DED2CDFCACBB5E
 #define FIXTURE_DATA_HH_C6D7DDED73CB410498DED2CDFCACBB5E
@@ -31,10 +28,15 @@
 #include "libfred/registrable_object/contact/info_contact_diff.hh"
 #include "libfred/registrable_object/contact/merge_contact.hh"
 #include "libfred/registrable_object/contact/update_contact.hh"
+#include "libfred/registrable_object/domain/create_domain.hh"
+#include "libfred/registrable_object/domain/update_domain.hh"
+#include "libfred/registrable_object/keyset/update_keyset.hh"
+#include "libfred/registrable_object/nsset/update_nsset.hh"
 #include "libfred/registrar/check_registrar.hh"
 #include "libfred/registrar/create_registrar.hh"
 #include "libfred/registrar/info_registrar.hh"
 #include "libfred/registrar/info_registrar_diff.hh"
+
 #include "test/libfred/notifier/util.hh"
 #include "test/setup/fixtures_utils.hh"
 
@@ -59,6 +61,19 @@ struct has_empty_contact : has_autocomitting_ctx {
     { }
 };
 
+struct HasEmptyContactWithAuthinfo : has_empty_contact
+{
+    HasEmptyContactWithAuthinfo()
+        : has_empty_contact{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateContactByHandle{has_empty_contact::contact.handle, has_empty_contact::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_empty_contact::ctx);
+    }
+    std::string authinfopw;
+};
+
 struct has_full_contact : has_autocomitting_ctx {
     const ::LibFred::InfoRegistrarData registrar;
     const ::LibFred::InfoContactData contact;
@@ -75,7 +90,6 @@ struct has_full_contact : has_autocomitting_ctx {
         contact(
             Test::exec(
                 ::LibFred::CreateContact("CONTACT1", registrar.handle)
-                    .set_authinfo("AUTH656")
                     .set_name("John Doe")
                     .set_place(
                         ::LibFred::Contact::PlaceAddress(
@@ -116,6 +130,19 @@ struct has_full_contact : has_autocomitting_ctx {
     { }
 };
 
+struct HasFullContactWithAuthinfo : has_full_contact
+{
+    HasFullContactWithAuthinfo()
+        : has_full_contact{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateContactByHandle{has_full_contact::contact.handle, has_full_contact::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_full_contact::ctx);
+    }
+    std::string authinfopw;
+};
+
 struct has_domain : has_autocomitting_ctx {
     const ::LibFred::InfoRegistrarData registrar;
     const ::LibFred::InfoContactData domain_registrant;
@@ -146,6 +173,19 @@ struct has_domain : has_autocomitting_ctx {
             )
         )
     { }
+};
+
+struct HasDomainWithAuthinfo : has_domain
+{
+    HasDomainWithAuthinfo()
+        : has_domain{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateDomain{has_domain::dom.fqdn, has_domain::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_domain::ctx);
+    }
+    std::string authinfopw;
 };
 
 struct has_enum_domain : has_autocomitting_ctx {
@@ -191,6 +231,19 @@ struct has_enum_domain : has_autocomitting_ctx {
     { }
 };
 
+struct HasEnumDomainWithAuthinfo : has_enum_domain
+{
+    HasEnumDomainWithAuthinfo()
+        : has_enum_domain{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateDomain{has_enum_domain::dom.fqdn, has_enum_domain::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_enum_domain::ctx);
+    }
+    std::string authinfopw;
+};
+
 struct has_empty_keyset : has_autocomitting_ctx {
     const ::LibFred::InfoRegistrarData registrar;
     const ::LibFred::InfoKeysetData keyset;
@@ -231,7 +284,6 @@ struct has_full_keyset : has_autocomitting_ctx {
         keyset(
             Test::exec(
                 ::LibFred::CreateKeyset("MY_BIG_NSSET_1", registrar.handle)
-                    .set_authinfo("AUT_H_I_NFO")
                     .set_dns_keys(
                         boost::assign::list_of
                             ( ::LibFred::DnsKey(1, 1, 3, "da_key!!!") )
@@ -260,6 +312,32 @@ struct has_full_keyset : has_autocomitting_ctx {
             )
         )
     { }
+};
+
+struct HasEmptyKeysetWithAuthinfo : has_empty_keyset
+{
+    HasEmptyKeysetWithAuthinfo()
+        : has_empty_keyset{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateKeyset{has_empty_keyset::keyset.handle, has_empty_keyset::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_empty_keyset::ctx);
+    }
+    std::string authinfopw;
+};
+
+struct HasFullKeysetWithAuthinfo : has_full_keyset
+{
+    HasFullKeysetWithAuthinfo()
+        : has_full_keyset{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateKeyset{has_full_keyset::keyset.handle, has_full_keyset::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_full_keyset::ctx);
+    }
+    std::string authinfopw;
 };
 
 struct has_empty_nsset : has_autocomitting_ctx {
@@ -302,7 +380,6 @@ struct has_full_nsset : has_autocomitting_ctx {
         nsset(
             Test::exec(
                 ::LibFred::CreateNsset("MY_BIG_NSSET_1", registrar.handle)
-                    .set_authinfo("AUT_H_I_NFO")
                     .set_tech_check_level(3)
                     .set_dns_hosts(
                         boost::assign::list_of
@@ -348,4 +425,30 @@ struct has_full_nsset : has_autocomitting_ctx {
     { }
 };
 
-#endif
+struct HasEmptyNssetWithAuthinfo : has_empty_nsset
+{
+    HasEmptyNssetWithAuthinfo()
+        : has_empty_nsset{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateNsset{has_empty_nsset::nsset.handle, has_empty_nsset::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_empty_nsset::ctx);
+    }
+    std::string authinfopw;
+};
+
+struct HasFullNssetWithAuthinfo : has_full_nsset
+{
+    HasFullNssetWithAuthinfo()
+        : has_full_nsset{},
+          authinfopw{"passwd"}
+    {
+        ::LibFred::UpdateNsset{has_full_nsset::nsset.handle, has_full_nsset::registrar.handle}
+                .set_authinfo(authinfopw)
+                .exec(has_full_nsset::ctx);
+    }
+    std::string authinfopw;
+};
+
+#endif//FIXTURE_DATA_HH_C6D7DDED73CB410498DED2CDFCACBB5E

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  create contact
  */
 
 #ifndef CREATE_CONTACT_HH_99FAF02B7ADB45C3ADD9E9C3A0B9AFB7
@@ -77,7 +73,7 @@ public:
     * Create contact constructor with all parameters.
     * @param handle sets contact identifier into @ref handle_ attribute
     * @param registrar sets registrar handle into @ref registrar_ attribute
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * @param authinfo unused
     * @param name sets name of contact person into @ref name_ attribute
     * @param organization sets full trade name of organization into @ref organization_ attribute
     * @param place sets contact address into @ref place_ attribute
@@ -129,8 +125,8 @@ public:
             );
 
     /**
-    * Sets contact transfer password.
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * Does nothing.
+    * @param authinfo unused
     * @return operation instance reference to allow method chaining
     */
     CreateContact& set_authinfo(const std::string& authinfo);
@@ -312,7 +308,6 @@ protected:
 private:
     const std::string handle_;/**< contact identifier */
     const std::string registrar_;/**< handle of registrar performing the create */
-    Optional<std::string> authinfo_;/**< transfer password */
     Optional<std::string> name_ ;/**< name of contact person */
     Optional<std::string> organization_;/**< full trade name of organization */
     Optional< LibFred::Contact::PlaceAddress > place_;/**< place address of contact */

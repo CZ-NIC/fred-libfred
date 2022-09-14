@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  common nsset info data
  */
 
 #include "libfred/registrable_object/nsset/info_nsset_data.hh"
@@ -67,7 +63,6 @@ std::string InfoNssetData::to_string() const
                 std::make_pair("creation_time", boost::lexical_cast<std::string>(creation_time)),
                 std::make_pair("update_time", update_time.print_quoted()),
                 std::make_pair("transfer_time", transfer_time.print_quoted()),
-                std::make_pair("authinfopw", authinfopw),
                 std::make_pair("tech_check_level", tech_check_level.print_quoted()),
                 std::make_pair("dns_hosts", Util::format_container(dns_hosts)),
                 std::make_pair("tech_contacts", Util::format_container(tech_contacts))

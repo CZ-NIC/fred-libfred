@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -34,27 +32,26 @@ BOOST_AUTO_TEST_SUITE(GatherEmailContent)
 BOOST_AUTO_TEST_SUITE(Keyset)
 BOOST_AUTO_TEST_SUITE(Transfer)
 
-template<typename T_has_keyset>struct has_keyset_transferred : T_has_keyset {
-
-    const unsigned long long logd_request_id;
-    const ::LibFred::InfoRegistrarData new_registrar;
-    const unsigned long long new_historyid;
-
+template <typename HasKeyset>
+struct has_keyset_transferred : HasKeyset
+{
     has_keyset_transferred()
-    :   logd_request_id(12345),
-        new_registrar( Test::registrar(T_has_keyset::ctx).info_data ),
-        new_historyid(
-            ::LibFred::TransferKeyset(
-                T_has_keyset::keyset.id,
-                new_registrar.handle,
-                T_has_keyset::keyset.authinfopw,
-                logd_request_id
-            ).exec(T_has_keyset::ctx)
-        )
+        : logd_request_id{12345},
+          new_registrar{Test::registrar{HasKeyset::ctx}.info_data},
+          new_historyid{
+                ::LibFred::TransferKeyset{
+                        HasKeyset::keyset.id,
+                        new_registrar.handle,
+                        HasKeyset::authinfopw,
+                        logd_request_id}
+                .exec(HasKeyset::ctx)}
     { }
+    unsigned long long logd_request_id;
+    ::LibFred::InfoRegistrarData new_registrar;
+    unsigned long long new_historyid;
 };
 
-BOOST_FIXTURE_TEST_CASE(test_empty_transfer, has_keyset_transferred<has_empty_keyset>)
+BOOST_FIXTURE_TEST_CASE(test_empty_transfer, has_keyset_transferred<HasEmptyKeysetWithAuthinfo>)
 {
     const std::string input_svtrid = "abc-123";
 
@@ -78,7 +75,7 @@ BOOST_FIXTURE_TEST_CASE(test_empty_transfer, has_keyset_transferred<has_empty_ke
     );
 }
 
-BOOST_FIXTURE_TEST_CASE(test_full_transfer, has_keyset_transferred<has_full_keyset>)
+BOOST_FIXTURE_TEST_CASE(test_full_transfer, has_keyset_transferred<HasFullKeysetWithAuthinfo>)
 {
     const std::string input_svtrid = "abc-123";
 
@@ -102,7 +99,7 @@ BOOST_FIXTURE_TEST_CASE(test_full_transfer, has_keyset_transferred<has_full_keys
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Keyset/Transfer
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent/Keyset
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/GatherEmailContent
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier

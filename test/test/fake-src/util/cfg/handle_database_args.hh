@@ -45,7 +45,6 @@ class HandleDatabaseArgs : public HandleArgs
 protected:
     std::string conn_info;
 public:
-
     std::shared_ptr<boost::program_options::options_description>
         get_options_description()
     {
@@ -90,7 +89,8 @@ public:
         }
 
         conn_info += "dbname=";
-        conn_info += vm["database.name"].as<std::string>();
+        db_name = vm["database.name"].as<std::string>();
+        conn_info += db_name;
         conn_info += " ";
 
         conn_info += "user=";
@@ -120,6 +120,7 @@ public:
         }
         return conn_info;
     }
+    std::string db_name;
 };//class HandleDatabaseArgs
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,16 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  test fixtures
- */
 
 #ifndef FIXTURES_HH_327B2D873D064624803561323E8E3BF3
 #define FIXTURES_HH_327B2D873D064624803561323E8E3BF3
 
 #include "test/fake-src/util/cfg/handle_args.hh"
+
 #include "libfred/db_settings.hh"
+#include "libfred/opcontext.hh"
+#include "libfred/registrar/create_registrar.hh"
+#include "libfred/registrar/info_registrar_data.hh"
+#include "libfred/zone/info_zone_data.hh"
 
 #include <string>
 
@@ -56,6 +57,43 @@ private:
     std::string testcase_db_name();
 };
 
+struct HasOperationContext
+{
+    ~HasOperationContext();
+    LibFred::OperationContextCreator ctx;
+};
+
+struct HasRegistrar
+{
+    HasRegistrar(LibFred::OperationContext& ctx, std::string handle, bool is_system, bool is_internal);
+    unsigned long long id;
+    std::string handle;
+};
+
+struct HasZone
+{
+    HasZone(LibFred::OperationContext& ctx, std::string fqdn);
+    unsigned long long id;
+    std::string fqdn;
+};
+
+struct HasContact
+{
+    HasContact(LibFred::OperationContext& ctx, std::string handle, const HasRegistrar& registrar);
+    unsigned long long id;
+    std::string handle;
+};
+
+struct HasDomain
+{
+    HasDomain(
+            LibFred::OperationContext& ctx,
+            std::string fqdn,
+            const HasRegistrar& registrar,
+            const HasContact& registrant);
+    unsigned long long id;
+    std::string fqdn;
+};
 
 /***
  * config handlers for admin connection to db used by fixtures related to db data
@@ -76,6 +114,63 @@ class HandleAdminDatabaseArgs : public HandleArgs
 
         std::unique_ptr<Database::StandaloneConnection> get_admin_connection();
 };
+
+struct Registrar
+{
+    explicit Registrar(LibFred::OperationContext& ctx, LibFred::CreateRegistrar create);
+    LibFred::InfoRegistrarData data;
+};
+
+struct SystemRegistrar
+{
+    explicit SystemRegistrar(LibFred::OperationContext& ctx, LibFred::CreateRegistrar create);
+    LibFred::InfoRegistrarData data;
+};
+
+struct Zone
+{
+    explicit Zone(
+            LibFred::OperationContext& ctx,
+            const char* zone,
+            bool idn_enabled = false);
+    LibFred::Zone::NonEnumZone data;
+};
+
+struct EnumZone
+{
+    explicit EnumZone(
+            LibFred::OperationContext& ctx,
+            const char* zone,
+            int enum_validation_period_in_months);
+    LibFred::Zone::EnumZone data;
+};
+
+struct CzZone : Zone
+{
+    explicit CzZone(LibFred::OperationContext& ctx);
+    static const char* fqdn() noexcept;
+    static std::string fqdn(const char* subdomain);
+    static std::string fqdn(const std::string& subdomain);
+};
+
+struct CzEnumZone : EnumZone
+{
+    explicit CzEnumZone(LibFred::OperationContext& ctx);
+    static const char* fqdn() noexcept;
+    static std::string fqdn(unsigned long long subdomain);
+};
+
+struct InitDomainNameCheckers
+{
+    explicit InitDomainNameCheckers(LibFred::OperationContext& ctx);
+};
+
+namespace Setter {
+
+LibFred::CreateRegistrar registrar(LibFred::CreateRegistrar create, int index = 0);
+LibFred::CreateRegistrar system_registrar(LibFred::CreateRegistrar create, int index = 0);
+
+}//namespace Test::Setter
 
 }//namespace Test
 
