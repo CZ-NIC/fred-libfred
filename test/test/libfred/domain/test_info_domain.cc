@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -57,7 +58,7 @@
 
 BOOST_AUTO_TEST_SUITE(TestInfoDomain)
 
-struct test_domain_fixture : public Test::instantiate_db_template
+struct test_domain_fixture : Test::instantiate_db_template
 {
     std::string registrar_handle;
     std::string xmark;
@@ -135,7 +136,7 @@ struct test_domain_fixture : public Test::instantiate_db_template
                 test_fqdn,//const std::string& fqdn
                 registrar_handle,//const std::string& registrar
                 registrant_contact_handle,//const std::string& registrant
-                Optional<std::string>("testauthinfo1"),//const Optional<std::string>& authinfo
+                Optional<std::string>(),//const Optional<std::string>& authinfo
                 Nullable<std::string>(test_nsset_handle),//const Optional<Nullable<std::string> >& nsset
                 Nullable<std::string>(test_keyset_handle),//const Optional<Nullable<std::string> >& keyset
                 Util::vector_of<std::string>(admin_contact1_handle),//const std::vector<std::string>& admin_contacts
@@ -169,6 +170,7 @@ struct test_domain_fixture : public Test::instantiate_db_template
                                    Database::query_param_list("2011-06-30T23:59:59")
                                                              (static_cast<unsigned long long>(id_res[0]["test_fqdn_id"])));
 
+        const auto cz_zone = Test::CzZone{ctx};
         ctx.commit_transaction();//commit fixture
 
         //expected output data
@@ -193,7 +195,6 @@ struct test_domain_fixture : public Test::instantiate_db_template
         test_info_domain_output.info_domain_data.creation_time = boost::posix_time::time_from_string("2011-07-01 01:59:59");
         test_info_domain_output.info_domain_data.transfer_time = Nullable<boost::posix_time::ptime>();
         test_info_domain_output.info_domain_data.expiration_date = boost::gregorian::from_simple_string("2012-06-30");
-        test_info_domain_output.info_domain_data.authinfopw = "testauthinfo1";
         test_info_domain_output.info_domain_data.admin_contacts =
                 {
                     ::LibFred::RegistrableObject::Contact::ContactReference(
@@ -208,7 +209,7 @@ struct test_domain_fixture : public Test::instantiate_db_template
         test_info_domain_output.info_domain_data.history_uuid = id_res[0]["test_fqdn_history_uuid"].as<::LibFred::RegistrableObject::Domain::DomainHistoryUuid>();
         test_info_domain_output.info_domain_data.id = static_cast<unsigned long long>(id_res[0]["test_fqdn_id"]);
         test_info_domain_output.info_domain_data.uuid = id_res[0]["test_fqdn_uuid"].as<::LibFred::RegistrableObject::Domain::DomainUuid>();
-        test_info_domain_output.info_domain_data.zone = ::LibFred::ObjectIdHandlePair(2, "cz");
+        test_info_domain_output.info_domain_data.zone = ::LibFred::ObjectIdHandlePair(cz_zone.data.id, cz_zone.data.fqdn);
     }
     ~test_domain_fixture()
     {}
@@ -222,7 +223,7 @@ BOOST_FIXTURE_TEST_CASE(info_domain, test_domain_fixture)
     ::LibFred::OperationContextCreator ctx;
 
     ::LibFred::InfoDomainOutput info_data_1 = ::LibFred::InfoDomainByFqdn(test_fqdn).exec(ctx);
-    BOOST_CHECK(test_info_domain_output == info_data_1);
+    BOOST_CHECK_EQUAL(test_info_domain_output, info_data_1);
     ::LibFred::InfoDomainOutput info_data_2 = ::LibFred::InfoDomainById(test_info_domain_output.info_domain_data.id).exec(ctx);
     BOOST_CHECK(test_info_domain_output == info_data_2);
     ::LibFred::InfoDomainOutput info_data_3 = ::LibFred::InfoDomainHistoryByRoid(test_info_domain_output.info_domain_data.roid).exec(ctx).at(0);
@@ -413,7 +414,6 @@ BOOST_FIXTURE_TEST_CASE(info_domain_diff, test_domain_fixture)
                                            Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>(),
                                              Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.authinfopw = std::make_pair(std::string("testpass1"), std::string("testpass2"));
 
     BOOST_TEST_MESSAGE(test_diff.to_string());
     BOOST_TEST_MESSAGE(test_empty_diff.to_string());

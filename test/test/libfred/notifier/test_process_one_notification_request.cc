@@ -16,7 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -521,9 +523,6 @@ BOOST_FIXTURE_TEST_CASE(test_process_update_domain, has_domain_big_update)
             ("ticket",                  input_svtrid)
             ("registrar",               registrar.name.get_value_or("") + " (" + registrar.url.get_value_or("") + ")")
             ("changes",                 "1")
-            ("changes.object.authinfo",         "1")
-            ("changes.object.authinfo.old",     domain_data_pre_update .authinfopw)
-            ("changes.object.authinfo.new",     domain_data_post_update.authinfopw)
             ("changes.domain.registrant",       "1")
             ("changes.domain.registrant.old",   domain_data_pre_update .registrant.handle)
             ("changes.domain.registrant.new",   domain_data_post_update.registrant.handle)
@@ -681,5 +680,5 @@ BOOST_FIXTURE_TEST_CASE(test_process_request_invalid_notify_email, has_domain_bi
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END();
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier/SendNotification
+BOOST_AUTO_TEST_SUITE_END()//TestNotifier

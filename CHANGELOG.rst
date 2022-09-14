@@ -11,6 +11,13 @@ ChangeLog
   (allow to create ``libfred::OperationContext`` from ``libpg::*Transaction`` classes)
 
 
+5.3.0 (2022-09-14)
+------------------
+
+* Create new object authinfo storage with hashed password and ttl (expiration timestamp)
+* Modify info / create/update / transfer operations of domain / contact / nsset / keyset to support authinfo with ttl
+
+
 5.2.0 (2022-02-28)
 ------------------
 

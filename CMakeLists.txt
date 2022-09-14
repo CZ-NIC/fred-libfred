@@ -116,13 +116,17 @@ src/libfred/notifier/gather_email_data/objecttype_specific_impl/contact.cc
 src/libfred/notifier/gather_email_data/objecttype_specific_impl/domain.cc
 src/libfred/notifier/gather_email_data/objecttype_specific_impl/keyset.cc
 src/libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.cc
+src/libfred/object/check_authinfo.cc
 src/libfred/object/check_handle.cc
+src/libfred/object/clean_authinfo.cc
+src/libfred/object/clean_expired_authinfos.cc
 src/libfred/object/generate_authinfo_password.cc
 src/libfred/object/generated_authinfo_password.cc
 src/libfred/object/get_id_of_registered.cc
 src/libfred/object/object.cc
 src/libfred/object/object_id_handle_pair.cc
 src/libfred/object/object_impl.cc
+src/libfred/object/store_authinfo.cc
 src/libfred/object/transfer_object.cc
 src/libfred/object_state/cancel_object_state_request_id.cc
 src/libfred/object_state/clear_admin_object_state_request_id.cc

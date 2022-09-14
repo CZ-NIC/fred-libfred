@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  contact info implementation
  */
 
 #include "libfred/registrable_object/contact/info_contact_impl.hh"
@@ -94,7 +90,6 @@ Database::ParamQuery InfoContact::make_query(const std::string& local_timestamp_
                        "(cobr.crdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::creation_time())(","
                        "(obj.trdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::transfer_time())(","
                        "(obj.update AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::update_time())(","
-                       "obj.authinfopw AS ")(GetAlias::authinfopw())(","
                        "cobr.crhistoryid AS ")(GetAlias::first_historyid())(","
                        "h.request_id AS ")(GetAlias::logd_request_id())(","
                        "ct.name AS ")(GetAlias::name())(","
@@ -227,8 +222,6 @@ std::vector<InfoContactOutput> InfoContact::exec(
 
         info_contact_output.info_contact_data.update_time = query_result[i][GetAlias::update_time()].isnull() ? Nullable<boost::posix_time::ptime>()
         : Nullable<boost::posix_time::ptime>(boost::posix_time::time_from_string(static_cast<std::string>(query_result[i][GetAlias::update_time()])));
-
-        info_contact_output.info_contact_data.authinfopw = static_cast<std::string>(query_result[i][GetAlias::authinfopw()]);
 
         info_contact_output.info_contact_data.crhistoryid = static_cast<unsigned long long>(query_result[i][GetAlias::first_historyid()]);
 

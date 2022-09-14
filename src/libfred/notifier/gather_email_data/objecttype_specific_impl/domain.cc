@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/notifier/gather_email_data/objecttype_specific_impl/domain.hh"
 
 #include "libfred/notifier/gather_email_data/objecttype_specific_impl/util.hh"
@@ -43,15 +44,6 @@ std::map<std::string, std::string> gather_domain_update_data_change(
     std::map<std::string, std::string> result;
 
     const LibFred::InfoDomainDiff diff = diff_domain_data(_before, _after);
-
-    if (diff.authinfopw.isset())
-    {
-        add_old_new_changes_pair_if_different(
-            result,
-            "object.authinfo",
-            diff.authinfopw.get_value().first,
-            diff.authinfopw.get_value().second);
-    }
 
     if (diff.registrant.isset())
     {

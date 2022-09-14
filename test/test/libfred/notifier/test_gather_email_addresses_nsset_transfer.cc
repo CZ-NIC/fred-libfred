@@ -16,17 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
 
 #include "libfred/notifier/gather_email_data/gather_email_addresses.hh"
 #include "libfred/registrable_object/nsset/transfer_nsset.hh"
+#include "libfred/registrable_object/nsset/update_nsset.hh"
 
 BOOST_AUTO_TEST_SUITE(TestNotifier)
 BOOST_AUTO_TEST_SUITE(GatherEmailAddresses)
@@ -175,7 +174,9 @@ struct has_transferred_nsset : has_nsset
           new_registrar(Test::registrar(ctx).info_data)
     {
         const ::LibFred::InfoNssetData nsset_data = ::LibFred::InfoNssetByHandle(nsset_handle).exec(ctx).info_nsset_data;
-        ::LibFred::TransferNsset transfer(nsset_data.id, new_registrar.handle, nsset_data.authinfopw, Nullable<unsigned long long>());
+        static constexpr const char* password = "password";
+        ::LibFred::UpdateNsset{nsset_data.handle, registrar.handle}.set_authinfo(password).exec(ctx);
+        ::LibFred::TransferNsset transfer(nsset_data.id, new_registrar.handle, password, Nullable<unsigned long long>());
 
         nsset_data_to_be_notified = has_updated_nsset_followed_by_future_changes<::LibFred::TransferNsset>(
             nsset_handle,
@@ -184,7 +185,6 @@ struct has_transferred_nsset : has_nsset
             ctx).nsset_data_to_be_notified;
     }
 };
-
 
 BOOST_FIXTURE_TEST_CASE(test_transferred_nsset, has_transferred_nsset)
 {

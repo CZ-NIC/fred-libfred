@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  nsset info implementation
  */
 
 #ifndef INFO_NSSET_IMPL_HH_3F9A4813905741329F222603AC6A8143
@@ -78,7 +74,6 @@ public:
         static const char* transfer_time() { return "info_nsset_transfer_time"; }
         static const char* update_time() { return "info_nsset_update_time"; }
         static const char* tech_check_level() { return "info_nsset_tech_check_level"; }
-        static const char* authinfopw() { return "info_nsset_authinfopw"; }
         static const char* first_historyid() { return "info_nsset_first_historyid"; }
         static const char* logd_request_id() { return "info_nsset_logd_request_id"; }
         static const char* utc_timestamp() { return "info_nsset_utc_timestamp"; }

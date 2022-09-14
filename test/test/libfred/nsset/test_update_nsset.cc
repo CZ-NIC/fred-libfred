@@ -16,6 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include "libfred/object/check_authinfo.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -291,9 +293,10 @@ BOOST_FIXTURE_TEST_CASE(update_nsset, update_nsset_fixture)
     info_data_3_with_changes.info_nsset_data.update_time = info_data_4.info_nsset_data.update_time;
 
     //updated authinfopw
-    BOOST_CHECK_NE(info_data_3.info_nsset_data.authinfopw, info_data_4.info_nsset_data.authinfopw);
-    BOOST_CHECK_EQUAL(info_data_4.info_nsset_data.authinfopw, "passwd");
-    info_data_3_with_changes.info_nsset_data.authinfopw = "passwd";
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_4.info_nsset_data.id}}
+                    .exec(ctx, "passwd", ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
 
     //update dns_hosts
     info_data_3_with_changes.info_nsset_data.dns_hosts =
@@ -352,9 +355,14 @@ BOOST_FIXTURE_TEST_CASE(update_nsset, update_nsset_fixture)
     info_data_4_with_changes.info_nsset_data.update_time = info_data_5.info_nsset_data.update_time;
 
     //updated authinfopw
-    BOOST_CHECK_NE(info_data_4.info_nsset_data.authinfopw, info_data_5.info_nsset_data.authinfopw);
-    BOOST_CHECK_EQUAL(info_data_5.info_nsset_data.authinfopw, "passw");
-    info_data_4_with_changes.info_nsset_data.authinfopw = "passw";
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_4.info_nsset_data.id}}
+                    .exec(ctx, "passwd", ::LibFred::Object::CheckAuthinfo::increment_usage),
+            0);
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_5.info_nsset_data.id}}
+                    .exec(ctx, "passw", ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
 
     //update dns_hosts
     info_data_4_with_changes.info_nsset_data.dns_hosts =
@@ -604,9 +612,6 @@ BOOST_FIXTURE_TEST_CASE(update_nsset, update_nsset_fixture)
 
     //updated update_time
     info_data_9_with_changes.info_nsset_data.update_time = info_data_10.info_nsset_data.update_time;
-
-    //set authinfopw
-    info_data_9_with_changes.info_nsset_data.authinfopw = "passw";
 
     //check changes made by last update
     BOOST_CHECK(info_data_9_with_changes == info_data_10);

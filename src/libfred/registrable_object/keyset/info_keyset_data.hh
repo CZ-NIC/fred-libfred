@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  common keyset info data
  */
 
 #ifndef INFO_KEYSET_DATA_HH_FF8C3982D4304BADBA11BD995610CB24
@@ -82,7 +78,7 @@ struct InfoKeysetData : Util::Printable<InfoKeysetData>
     boost::posix_time::ptime creation_time;/**< creation time of the keyset in local time zone viz @ref local_timestamp_pg_time_zone_name*/
     Nullable<boost::posix_time::ptime> update_time; /**< last update time of the keyset in local time zone viz @ref local_timestamp_pg_time_zone_name*/
     Nullable<boost::posix_time::ptime> transfer_time; /**<last transfer time in local time zone viz @ref local_timestamp_pg_time_zone_name*/
-    std::string authinfopw;/**< password for transfer */
+    std::string authinfopw;/**< unused */
     std::vector<DnsKey> dns_keys;/**< DNS keys */
     std::vector<RegistrableObject::Contact::ContactReference> tech_contacts;/**< list of technical contact handles */
 };

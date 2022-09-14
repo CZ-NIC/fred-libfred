@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- * contact info data diff
  */
 
 #include "libfred/registrable_object/contact/info_contact_diff.hh"
@@ -66,7 +62,6 @@ std::set<std::string> InfoContactDiff::changed_fields() const
     insert_if_presents(creation_time, "creation_time", fields);
     insert_if_presents(update_time, "update_time", fields);
     insert_if_presents(transfer_time, "transfer_time", fields);
-    insert_if_presents(authinfopw, "authinfopw", fields);
     insert_if_presents(name, "name", fields);
     insert_if_presents(organization, "organization", fields);
     insert_if_presents(place, "place", fields);
@@ -119,7 +114,6 @@ std::string InfoContactDiff::to_string() const
                 make_named_quoted_data("creation_time", creation_time),
                 make_named_quoted_data("update_time", update_time),
                 make_named_quoted_data("transfer_time", transfer_time),
-                make_named_quoted_data("authinfopw", authinfopw),
                 make_named_quoted_data("name", name),
                 make_named_quoted_data("organization", organization),
                 make_named_quoted_data("place", place),
@@ -175,7 +169,6 @@ bool InfoContactDiff::is_empty() const
             creation_time,
             update_time,
             transfer_time,
-            authinfopw,
             name,
             organization,
             place,
@@ -274,11 +267,6 @@ InfoContactDiff diff_contact_data(const InfoContactData& first, const InfoContac
     if (!Util::is_equal(first.transfer_time, second.transfer_time))
     {
         diff.transfer_time = std::make_pair(first.transfer_time, second.transfer_time);
-    }
-
-    if (first.authinfopw != second.authinfopw)
-    {
-        diff.authinfopw = std::make_pair(first.authinfopw, second.authinfopw);
     }
 
     if (!Util::is_equal(first.name, second.name))

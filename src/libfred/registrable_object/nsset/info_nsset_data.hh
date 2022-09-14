@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  common nsset info data
  */
 
 #ifndef INFO_NSSET_DATA_HH_C14A5C7CFE8D4FEEB547C2AD2D8B9324
@@ -84,7 +80,7 @@ struct InfoNssetData : Util::Printable<InfoNssetData>
     boost::posix_time::ptime creation_time;/**< creation time of the nsset in set local zone*/
     Nullable<boost::posix_time::ptime> update_time; /**< last update time of the nsset in set local zone*/
     Nullable<boost::posix_time::ptime> transfer_time; /**<last transfer time in set local zone*/
-    std::string authinfopw;/**< password for transfer */
+    std::string authinfopw;/**< unused */
     Nullable<short> tech_check_level; /**< nsset level of technical checks */
     std::vector<DnsHost> dns_hosts; /**< DNS hosts */
     std::vector<RegistrableObject::Contact::ContactReference> tech_contacts;/**< list of technical contacts */

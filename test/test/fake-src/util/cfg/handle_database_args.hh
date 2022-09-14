@@ -86,8 +86,10 @@ public:
             conn_info_ += "port=" + boost::lexical_cast<std::string>(*port_) + " ";
         }
 
-        db_name_ = vm["database.name"].as<std::string>();
-        conn_info_ += "dbname=" + db_name_ + " ";
+        conn_info += "dbname=";
+        db_name = vm["database.name"].as<std::string>();
+        conn_info += db_name;
+        conn_info += " ";
 
         user_ = vm["database.user"].as<std::string>();
         conn_info_ += "user=" + user_ + " ";
@@ -115,57 +117,8 @@ public:
         }
         return conn_info_;
     }
- 
-    const std::string& get_host() const
-    {
-        return host_;
-    }
- 
-    bool has_port() const noexcept
-    {
-        return port_ != boost::none;
-    }
-    unsigned get_port() const
-    {
-        return *port_;
-    }
- 
-    const std::string& get_db_name() const
-    {
-        return db_name_;
-    }
- 
-    const std::string& get_user() const
-    {
-        return user_;
-    }
- 
-    bool has_password() const noexcept
-    {
-        return password_ != boost::none;
-    }
-    const std::string& get_password() const
-    {
-        return *password_;
-    }
- 
-    bool has_connect_timeout() const noexcept
-    {
-        return connect_timeout_sec_ != boost::none;
-    }
-    unsigned get_connect_timeout_sec() const
-    {
-        return *connect_timeout_sec_;
-    }
-private:
-    std::string conn_info_;
-    std::string host_;
-    boost::optional<unsigned> port_;
-    std::string db_name_;
-    std::string user_;
-    boost::optional<std::string> password_;
-    boost::optional<unsigned> connect_timeout_sec_;
-};
+    std::string db_name;
+};//class HandleDatabaseArgs
 
 /**
  * \class HandleLoggingArgsGrp
