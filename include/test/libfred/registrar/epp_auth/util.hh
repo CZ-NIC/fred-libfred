@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2020-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef UTIL_HH_D98CD47F7B6A47699889AD58CD5A631A
 #define UTIL_HH_D98CD47F7B6A47699889AD58CD5A631A
 

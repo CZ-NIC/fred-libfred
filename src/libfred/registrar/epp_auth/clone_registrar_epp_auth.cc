@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #include "libfred/db_settings.hh"
 #include "libfred/registrar/epp_auth/clone_registrar_epp_auth.hh"
 #include "libfred/registrar/epp_auth/exceptions.hh"

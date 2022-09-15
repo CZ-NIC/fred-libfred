@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-
 #ifndef UPDATE_REGISTRAR_EPP_AUTH_HH_4D17531385D14877B071FDC2D35425A0
 #define UPDATE_REGISTRAR_EPP_AUTH_HH_4D17531385D14877B071FDC2D35425A0
 
