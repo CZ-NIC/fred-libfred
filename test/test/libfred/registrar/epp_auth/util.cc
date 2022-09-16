@@ -34,7 +34,7 @@
 
 using namespace Test;
 
-unsigned long long get_epp_auth_id(
+unsigned long long Test::get_epp_auth_id(
         const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
@@ -73,7 +73,7 @@ unsigned long long get_epp_auth_id(
     throw UnexpectedNumberOfRows{};
 }
 
-unsigned long long add_epp_authentications(
+unsigned long long Test::get_epp_auth_id(
         const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
@@ -83,7 +83,7 @@ unsigned long long add_epp_authentications(
 }
 
 unsigned long long Test::add_epp_authentications(
-        ::LibFred::OperationContext& _ctx,
+        const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
         const std::string& _plain_password)
@@ -97,7 +97,7 @@ unsigned long long Test::add_epp_authentications(
 }
 
 ::LibFred::Registrar::EppAuth::EppAuthRecord Test::add_epp_authentications(
-        ::LibFred::OperationContext& _ctx,
+        const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
         const std::string& _plain_password,

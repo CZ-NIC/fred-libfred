@@ -222,6 +222,8 @@ CreateDomain::Result CreateDomain::exec(const OperationContext& ctx, const std::
         //expiration_period
         const unsigned expiration_period = zone.ex_period_min;//in months
 
+        boost::gregorian::date expiration_date;
+
         //get crdate and exdate and lock row from object_registry
         {
             const Database::Result reg_date_res = ctx.get_conn().exec_params(
@@ -240,10 +242,9 @@ CreateDomain::Result CreateDomain::exec(const OperationContext& ctx, const std::
             }
 
             result.creation_time = boost::posix_time::time_from_string(std::string(reg_date_res[0][0]));
-            if (!expiration_date_.isset())
-            {
-                expiration_date_ = boost::gregorian::from_simple_string(std::string(reg_date_res[0][1]));
-            }
+            expiration_date = !expiration_date_.isset()
+                                      ? boost::gregorian::from_simple_string(std::string(reg_date_res[0][1]))
+                                      : expiration_date_.get_value();
         }
 
         Exception create_domain_exception;
@@ -279,13 +280,13 @@ CreateDomain::Result CreateDomain::exec(const OperationContext& ctx, const std::
             val_sql << val_separator.get() << "$" << params.size() <<"::integer";
 
             //expiration_date
-            if (expiration_date_.get_value().is_special())
+            if (expiration_date.is_special())
             {
-                create_domain_exception.set_invalid_expiration_date(expiration_date_.get_value());
+                create_domain_exception.set_invalid_expiration_date(expiration_date);
             }
-            else //if expiration_date_ ok
+            else //if expiration_date ok
             {
-                params.push_back(expiration_date_.get_value());
+                params.push_back(expiration_date);
                 col_sql << col_separator.get() << "exdate";
                 val_sql << val_separator.get() << "$" << params.size() <<"::date";
             }

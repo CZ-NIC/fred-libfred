@@ -28,9 +28,9 @@
 #include "test/fake-src/util/cfg/handle_args.hh"
 #include "libfred/db_settings.hh"
 
-#include <boost/optional.hpp>
-#include <boost/program_options.hpp>
 #include <boost/format.hpp>
+#include <boost/optional/optional_io.hpp>
+#include <boost/program_options.hpp>
 
 #include <iostream>
 #include <exception>
@@ -44,30 +44,28 @@
 class HandleDatabaseArgs : public HandleArgs
 {
 public:
-    std::shared_ptr<boost::program_options::options_description>
-    get_options_description()
+    std::shared_ptr<boost::program_options::options_description> get_options_description()
     {
-        auto db_opts = std::make_shared<boost::program_options::options_description>(
-                "Database connection configuration");
+        std::shared_ptr<boost::program_options::options_description> db_opts(
+                new boost::program_options::options_description(
+                        std::string("Database connection configuration")));
         db_opts->add_options()
-                ("database.name",
-                        boost::program_options::value<std::string>()->default_value("fred"),
-                        "database name")
-                ("database.user",
-                        boost::program_options::value<std::string>()->default_value("fred"),
-                        "database user name")
-                ("database.password",
-                        boost::program_options::value<std::string>(),
-                        "database password")
-                ("database.host",
-                        boost::program_options::value<std::string>()->default_value("localhost"),
-                        "database hostname")
-                ("database.port",
-                        boost::program_options::value<unsigned int>(),
-                        "database port number")
-                ("database.timeout",
-                        boost::program_options::value<unsigned int>(),
-                        "database timeout");
+                ("database.name", boost::program_options
+                            ::value<std::string>()->default_value(std::string("fred"))
+                        , "database name")
+                ("database.user", boost::program_options
+                            ::value<std::string>()->default_value(std::string("fred"))
+                        , "database user name")
+                ("database.password", boost::program_options
+                            ::value<std::string>(), "database password")
+                ("database.host", boost::program_options
+                            ::value<std::string>()->default_value(std::string("localhost"))
+                        , "database hostname")
+                ("database.port", boost::program_options
+                            ::value<unsigned int>(), "database port number")
+                ("database.timeout", boost::program_options
+                            ::value<unsigned int>(), "database timeout");
+
         return db_opts;
     }
 
@@ -86,10 +84,8 @@ public:
             conn_info_ += "port=" + boost::lexical_cast<std::string>(*port_) + " ";
         }
 
-        conn_info += "dbname=";
-        db_name = vm["database.name"].as<std::string>();
-        conn_info += db_name;
-        conn_info += " ";
+        db_name_ = vm["database.name"].as<std::string>();
+        conn_info_ += "dbname=" + db_name_ + " ";
 
         user_ = vm["database.user"].as<std::string>();
         conn_info_ += "user=" + user_ + " ";
@@ -117,8 +113,57 @@ public:
         }
         return conn_info_;
     }
-    std::string db_name;
-};//class HandleDatabaseArgs
+ 
+    const std::string& get_host() const
+    {
+        return host_;
+    }
+ 
+    bool has_port() const noexcept
+    {
+        return port_ != boost::none;
+    }
+    unsigned get_port() const
+    {
+        return *port_;
+    }
+ 
+    const std::string& get_db_name() const
+    {
+        return db_name_;
+    }
+ 
+    const std::string& get_user() const
+    {
+        return user_;
+    }
+ 
+    bool has_password() const noexcept
+    {
+        return password_ != boost::none;
+    }
+    const std::string& get_password() const
+    {
+        return *password_;
+    }
+ 
+    bool has_connect_timeout() const noexcept
+    {
+        return connect_timeout_sec_ != boost::none;
+    }
+    unsigned get_connect_timeout_sec() const
+    {
+        return *connect_timeout_sec_;
+    }
+private:
+    std::string conn_info_;
+    std::string host_;
+    boost::optional<unsigned> port_;
+    std::string db_name_;
+    std::string user_;
+    boost::optional<std::string> password_;
+    boost::optional<unsigned> connect_timeout_sec_;
+};
 
 /**
  * \class HandleLoggingArgsGrp

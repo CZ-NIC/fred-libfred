@@ -32,8 +32,6 @@
 
 #include "src/libfred/opcontext.hh"
 
-#include "src/util/log/add_log_device.hh"
-
 // dynamic library version
 #include <boost/test/unit_test.hpp>
 #include <boost/assign/list_of.hpp>

@@ -100,7 +100,7 @@ CreateKeyset::Result CreateKeyset::exec(const OperationContext& _ctx,
             //set dns keys
             if (!dns_keys_.empty())
             {
-                for (std::vector<DnsKey>::iterator i = dns_keys_.begin(); i != dns_keys_.end(); ++i)
+                for (std::vector<DnsKey>::const_iterator i = dns_keys_.begin(); i != dns_keys_.end(); ++i)
                 {
                     try
                     {
@@ -141,7 +141,7 @@ CreateKeyset::Result CreateKeyset::exec(const OperationContext& _ctx,
                 sql << "INSERT INTO keyset_contact_map(keysetid, contactid) "
                         " VALUES ($" << params.size() << "::integer, ";
 
-                for (std::vector<std::string>::iterator i = tech_contacts_.begin(); i != tech_contacts_.end(); ++i)
+                for (std::vector<std::string>::const_iterator i = tech_contacts_.begin(); i != tech_contacts_.end(); ++i)
                 {
                     //lock object_registry row for share and get id
                     unsigned long long tech_contact_id = get_object_id_by_handle_and_type_with_lock(

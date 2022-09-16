@@ -19,7 +19,8 @@ target_include_directories(fred-test-setup
         ${CMAKE_CURRENT_SOURCE_DIR}/../include
         ${PostgreSQL_INCLUDE_DIRS}
     PRIVATE
-        ${CMAKE_CURRENT_BINARY_DIR})
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}/..)
 
 target_link_libraries(fred-test-setup PUBLIC
     Boost::unit_test_framework

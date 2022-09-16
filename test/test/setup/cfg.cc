@@ -27,14 +27,19 @@
 #include "test/fake-src/util/cfg/handle_logging_args.hh"
 #include "test/fake-src/util/cfg/handle_database_args.hh"
 
-#include "util/log/add_log_device.hh"
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
+
+#include "liblog/liblog.hh"
+#include "liblog/log_config.hh"
+#include "liblog/log.hh"
 
 #include "libfred/db_settings.hh"
 
 #include <boost/program_options.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_parameters.hpp>
+
+#include <syslog.h>
 
 #include <algorithm>
 #include <array>
@@ -112,13 +117,14 @@ struct AdminDatabase
     std::string timeout;
 };
 
+
 struct Logging
 {
-    unsigned type;
-    unsigned level;
-    std::string file;
-    unsigned syslog_facility;
-    bool config_dump;
+    unsigned log_type;
+    unsigned log_level;
+    std::string log_file;
+    unsigned log_syslog_facility;
+    bool log_config_dump;
 };
 
 bpo::options_description make_program_options(Generic& cfg)
@@ -209,17 +215,17 @@ bpo::options_description make_program_options(AdminDatabase& cfg)
 bpo::options_description make_program_options(Logging& cfg)
 {
     bpo::options_description logging_options{"Logging configuration", terminal_width};
-    const auto set_type = [&](unsigned type) { cfg.type = type; };
-    const auto set_level = [&](unsigned level) { cfg.level = level; };
-    const auto set_file = [&](const std::string& file) { cfg.file = file; };
-    const auto set_syslog_facility = [&](unsigned syslog_facility) { cfg.syslog_facility = syslog_facility; };
-    const auto set_config_dump = [&](unsigned config_dump) { cfg.config_dump = config_dump; };
+    const auto set_log_type = [&](unsigned log_type) { cfg.log_type = log_type; };
+    const auto set_log_level = [&](unsigned log_level) { cfg.log_level = log_level; };
+    const auto set_log_file = [&](const std::string& log_file) { cfg.log_file = log_file; };
+    const auto set_log_syslog_facility = [&](unsigned log_syslog_facility) { cfg.log_syslog_facility = log_syslog_facility; };
+    const auto set_log_config_dump = [&](unsigned log_config_dump) { cfg.log_config_dump = log_config_dump; };
     logging_options.add_options()
-        ("log.type", bpo::value<unsigned>()->default_value(1)->notifier(set_type), "log type: 0-console, 1-file, 2-syslog")
-        ("log.level", bpo::value<unsigned>()->default_value(8)->notifier(set_level), "log severity level")
-        ("log.file", bpo::value<std::string>()->default_value("test.log")->notifier(set_file), "log file name for log.type = 1")
-        ("log.syslog_facility", bpo::value<unsigned>()->default_value(1)->notifier(set_syslog_facility), "syslog facility for log.type = 2")
-        ("log.config_dump", bpo::value<bool>()->default_value(false)->notifier(set_config_dump), "log loaded configuration data with debug severity");
+        ("log.type", bpo::value<unsigned>()->default_value(1)->notifier(set_log_type), "log type: 0-console, 1-file, 2-syslog")
+        ("log.level", bpo::value<unsigned>()->default_value(8)->notifier(set_log_level), "log severity level")
+        ("log.file", bpo::value<std::string>()->default_value("test.log")->notifier(set_log_file), "log file name for log.type = 1")
+        ("log.syslog_facility", bpo::value<unsigned>()->default_value(1)->notifier(set_log_syslog_facility), "syslog facility for log.type = 2")
+        ("log.config_dump", bpo::value<bool>()->default_value(false)->notifier(set_log_config_dump), "log loaded configuration data with debug severity");
     return logging_options;
 }
 
@@ -402,63 +408,107 @@ Util::Arguments& push_back(Util::Arguments& args, const AdminDatabase& cfg)
 
 Util::Arguments& push_back(Util::Arguments& args, const Logging& cfg)
 {
-    args.push_back("--log.type=" + std::to_string(cfg.type))
-        .push_back("--log.level=" + std::to_string(cfg.level));
-    switch (cfg.type)
+    args.push_back("--log.type=" + std::to_string(cfg.log_type))
+        .push_back("--log.level=" + std::to_string(cfg.log_level));
+    switch (cfg.log_type)
     {
         case 1:
-            return args.push_back("--log.file=" + cfg.file);
+            return args.push_back("--log.file=" + cfg.log_file);
         case 2:
-            return args.push_back("--log.syslog_facility=" + std::to_string(cfg.syslog_facility));
+            return args.push_back("--log.syslog_facility=" + std::to_string(cfg.log_syslog_facility));
     }
     return args;
 }
 
 void setup_logging(const Logging& cfg)
 {
-    ::Logging::Log::Severity min_severity = ::Logging::Log::Severity::trace;
-    switch (cfg.level)
+    enum class LogSeverity
     {
-        case 0:
-            min_severity = ::Logging::Log::Severity::emerg;
-            break;
-        case 1:
-            min_severity = ::Logging::Log::Severity::alert;
-            break;
-        case 2:
-            min_severity = ::Logging::Log::Severity::crit;
-            break;
-        case 3:
-            min_severity = ::Logging::Log::Severity::err;
-            break;
-        case 4:
-            min_severity = ::Logging::Log::Severity::warning;
-            break;
-        case 5:
-            min_severity = ::Logging::Log::Severity::notice;
-            break;
-        case 6:
-            min_severity = ::Logging::Log::Severity::info;
-            break;
-        case 7:
-            min_severity = ::Logging::Log::Severity::debug;
-            break;
-        case 8:
-            min_severity = ::Logging::Log::Severity::trace;
-            break;
-    }
+        emerg,
+        alert,
+        crit,
+        err,
+        warning,
+        notice,
+        info,
+        debug,
+        trace
+    };
+    static const auto severity_to_level = [](LogSeverity severity) {
+        switch (severity)
+        {
+            case LogSeverity::emerg:
+                return LibLog::Level::critical;
+            case LogSeverity::alert:
+                return LibLog::Level::critical;
+            case LogSeverity::crit:
+                return LibLog::Level::critical;
+            case LogSeverity::err:
+                return LibLog::Level::error;
+            case LogSeverity::warning:
+                return LibLog::Level::warning;
+            case LogSeverity::notice:
+                return LibLog::Level::info;
+            case LogSeverity::info:
+                return LibLog::Level::info;
+            case LogSeverity::debug:
+                return LibLog::Level::debug;
+            case LogSeverity::trace:
+                return LibLog::Level::trace;
+        }
+        return LibLog::Level::trace;
+    };
+    static const auto make_console_config = [](LogSeverity severity)
+    {
+            LibLog::Sink::ConsoleSinkConfig config;
+        config.set_level(severity_to_level(severity));
+        config.set_output_stream(LibLog::Sink::ConsoleSinkConfig::OutputStream::stderr);
+        config.set_color_mode(LibLog::ColorMode::never);
+        return config;
+    };
+    static const auto make_file_config = [](LogSeverity severity, const std::string& file)
+    {
+        LibLog::Sink::FileSinkConfig config{file};
+        config.set_level(severity_to_level(severity));
+        return config;
+    };
+    static const auto make_syslog_config = [](LogSeverity severity, unsigned facility)
+    {
+        LibLog::Sink::SyslogSinkConfig config;
+        config.set_level(severity_to_level(severity));
+        config.set_syslog_facility(static_cast<int>(facility));
+        return config;
+    };
+    const auto min_severity = static_cast<LogSeverity>(cfg.log_level);
 
-    switch (cfg.type)
+    LibLog::LogConfig log_config;
+    const auto has_log_device = [&]() {
+        switch (cfg.log_type)
+        {
+            case 0:
+                log_config.add_sink_config(make_console_config(min_severity));
+                return true;
+            case 1:
+                log_config.add_sink_config(make_file_config(min_severity, cfg.log_file));
+                return true;
+            case 2:
+                log_config.add_sink_config(make_syslog_config(min_severity, cfg.log_syslog_facility));
+                return true;
+        }
+        return false;
+    }();
+    if (has_log_device)
     {
-        case 0:
-            ::Logging::add_console_device(::LOGGER, min_severity);
-            break;
-        case 1:
-            ::Logging::add_file_device(::LOGGER, cfg.file, min_severity);
-            break;
-        case 2:
-            ::Logging::add_syslog_device(::LOGGER, cfg.syslog_facility, min_severity);
-            break;
+        LibLog::Log::start<LibLog::ThreadMode::multi_threaded>(log_config);
+        if (cfg.log_config_dump)
+        {
+            for (std::string config_item = AccumulatedConfig::get_instance().pop_front();
+                    !config_item.empty();
+                    config_item = AccumulatedConfig::get_instance().pop_front())
+            {
+                FREDLOG_DEBUG(config_item);
+            }
+        }
     }
 }
 
@@ -616,11 +666,11 @@ void run_parallel(
     };
     const auto make_process_log_file = [&](int process_id)
     {
-        if (std::get<Logging>(main_cfg).file.empty())
+        if (std::get<Logging>(main_cfg).log_file.empty())
         {
             return std::string{};
         }
-        return std::get<Logging>(main_cfg).file + "." + std::to_string(process_id);
+        return std::get<Logging>(main_cfg).log_file + "." + std::to_string(process_id);
     };
     const auto create_databases = [&]()
     {

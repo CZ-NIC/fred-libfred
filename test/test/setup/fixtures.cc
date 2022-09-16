@@ -29,7 +29,7 @@
 #include "src/libfred/zone/exceptions.hh"
 #include "src/libfred/zone/info_zone.hh"
 
-#include "util/log/logger.hh"
+#include "util/log/log.hh"
 
 #include "libfred/registrable_object/contact/create_contact.hh"
 #include "libfred/registrable_object/contact/info_contact.hh"
@@ -311,7 +311,7 @@ std::string make_fqdn(unsigned long long subdomain, const char* zone)
 
 std::string get_original_db_name()
 {
-    return CfgArgs::instance()->get_handler_ptr_by_type<HandleDatabaseArgs>()->db_name;
+    return CfgArgs::instance()->get_handler_ptr_by_type<HandleDatabaseArgs>()->get_db_name();
 }
 
 std::string create_db_template::get_db_template_name()
