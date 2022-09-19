@@ -28,7 +28,7 @@ option(FMT_HEADER_ONLY "Use fmt library in header-only manner." OFF) # significa
 
 include("cmake/package.cmake")
 
-package(fred-libfred FULL_VERSION "6.0.0")
+package(fred-libfred FULL_VERSION "6.1.0")
 
 project(LibFred
     VERSION ${PACKAGE_VERSION}
