@@ -1,6 +1,15 @@
 ChangeLog
 =========
 
+6.1.0 (2022-09-19)
+------------------
+
+* Merge new features from 5.3 branch
+
+    * Create new object authinfo storage with hashed password and ttl (expiration timestamp)
+    * Modify info / create/update / transfer operations of domain / contact / nsset / keyset to support authinfo with ttl
+
+
 6.0.0 (2021-12-19)
 ------------------
 
