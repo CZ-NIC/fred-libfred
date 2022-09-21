@@ -22,7 +22,7 @@ set(HAVE_BOOST_SERIALIZATION 1)
 
 include("cmake/package.cmake")
 
-package(fred-libfred FULL_VERSION "5.3.0")
+package(fred-libfred FULL_VERSION "5.3.1")
 
 project(LibFred
     VERSION ${PACKAGE_VERSION}
