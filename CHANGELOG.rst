@@ -1,6 +1,14 @@
 ChangeLog
 =========
 
+6.1.1 (2022-09-21)
+------------------
+
+* Merge fixes from 5.3 branch
+
+    * Fix ``*RegistrarEppAuth`` operations - optional ``create_time``
+
+
 6.1.0 (2022-09-19)
 ------------------
 
