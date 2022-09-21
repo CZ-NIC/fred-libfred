@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,11 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  create domain
- */
-
 
 #include "libfred/registrable_object/domain/create_domain.hh"
 #include "libfred/registrable_object/domain/domain_name.hh"
@@ -41,10 +36,10 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <set>
 
 namespace LibFred {
 
@@ -61,7 +56,7 @@ CreateDomain::CreateDomain(
         const std::string& fqdn,
         const std::string& registrar,
         const std::string& registrant,
-        const Optional<std::string>& authinfo,
+        const Optional<std::string>&,
         const Optional<Nullable<std::string>>& nsset,
         const Optional<Nullable<std::string>>& keyset,
         const std::vector<std::string>& admin_contacts,
@@ -71,7 +66,6 @@ CreateDomain::CreateDomain(
         const Optional<unsigned long long> logd_request_id)
     : fqdn_(fqdn),
       registrar_(registrar),
-      authinfo_(authinfo),
       registrant_(registrant),
       nsset_(nsset),
       keyset_(keyset),
@@ -84,9 +78,8 @@ CreateDomain::CreateDomain(
             : Nullable<unsigned long long>())//is NULL if not set
 {}
 
-CreateDomain& CreateDomain::set_authinfo(const std::string& authinfo)
+CreateDomain& CreateDomain::set_authinfo(const std::string&)
 {
-    authinfo_ = authinfo;
     return *this;
 }
 
@@ -223,12 +216,13 @@ CreateDomain::Result CreateDomain::exec(const OperationContext& ctx, const std::
                 "domain",
                 no_root_dot_fqdn,
                 registrar_,
-                authinfo_,
                 logd_request_id_).exec(ctx);
         result.create_object_result = create_object_result;
 
         //expiration_period
         const unsigned expiration_period = zone.ex_period_min;//in months
+
+        boost::gregorian::date expiration_date;
 
         //get crdate and exdate and lock row from object_registry
         {
@@ -248,10 +242,9 @@ CreateDomain::Result CreateDomain::exec(const OperationContext& ctx, const std::
             }
 
             result.creation_time = boost::posix_time::time_from_string(std::string(reg_date_res[0][0]));
-            if (!expiration_date_.isset())
-            {
-                expiration_date_ = boost::gregorian::from_simple_string(std::string(reg_date_res[0][1]));
-            }
+            expiration_date = !expiration_date_.isset()
+                                      ? boost::gregorian::from_simple_string(std::string(reg_date_res[0][1]))
+                                      : expiration_date_.get_value();
         }
 
         Exception create_domain_exception;
@@ -287,13 +280,13 @@ CreateDomain::Result CreateDomain::exec(const OperationContext& ctx, const std::
             val_sql << val_separator.get() << "$" << params.size() <<"::integer";
 
             //expiration_date
-            if (expiration_date_.get_value().is_special())
+            if (expiration_date.is_special())
             {
-                create_domain_exception.set_invalid_expiration_date(expiration_date_.get_value());
+                create_domain_exception.set_invalid_expiration_date(expiration_date);
             }
-            else //if expiration_date_ ok
+            else //if expiration_date ok
             {
-                params.push_back(expiration_date_.get_value());
+                params.push_back(expiration_date);
                 col_sql << col_separator.get() << "exdate";
                 val_sql << val_separator.get() << "$" << params.size() <<"::date";
             }
@@ -493,7 +486,6 @@ std::string CreateDomain::to_string() const
             Util::vector_of<std::pair<std::string, std::string>>
                 (std::make_pair("fqdn", fqdn_))
                 (std::make_pair("registrar", registrar_))
-                (std::make_pair("authinfo", authinfo_.print_quoted()))
                 (std::make_pair("registrant", registrant_))
                 (std::make_pair("nsset", nsset_.isset() ? nsset_.get_value().print_quoted() : nsset_.print_quoted()))
                 (std::make_pair("keyset", keyset_.isset() ? keyset_.get_value().print_quoted() : keyset_.print_quoted()))

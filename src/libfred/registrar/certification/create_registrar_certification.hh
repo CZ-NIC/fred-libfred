@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,17 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  create registrar certification
- */
 
-#ifndef CREATE_REGISTRAR_CERTIFICATION_HH_BDE927161AD44CEFAEDD7C35AE6E8C28
+#ifndef CREATE_REGISTRAR_CERTIFICATION_HH_BDE927161AD44CEFAEDD7C35AE6E8C28//date "+%s.%N"|md5sum|tr "[a-f]" "[A-F]"
 #define CREATE_REGISTRAR_CERTIFICATION_HH_BDE927161AD44CEFAEDD7C35AE6E8C28
 
+#include "libfred/registrar/certification/registrar_certification_type.hh"
 #include "libfred/opcontext.hh"
 
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/variant.hpp>
+
+#include <string>
 
 namespace LibFred {
 namespace Registrar {
@@ -34,25 +33,41 @@ namespace Registrar {
 class CreateRegistrarCertification
 {
 public:
-    CreateRegistrarCertification(
-            unsigned long long _registrar_id,
+    using RegistrarIdVariant = boost::variant<unsigned long long, std::string>;
+    using FileIdVariant = boost::variant<unsigned long long, FileUuid>;
+    explicit CreateRegistrarCertification(
+            RegistrarIdVariant _registrar_id,
             boost::gregorian::date _valid_from,
             int _classification,
-            unsigned long long _eval_file_id);
+            FileIdVariant _eval_file_id);
+    explicit CreateRegistrarCertification(
+            RegistrarIdVariant _registrar_id,
+            boost::gregorian::date _valid_from,
+            boost::gregorian::date _valid_until,
+            int _classification,
+            FileIdVariant _eval_file_id);
 
     CreateRegistrarCertification& set_valid_until(boost::gregorian::date _valid_until);
 
     unsigned long long exec(const OperationContext& _ctx) const;
 
 private:
-    unsigned long long registrar_id_;
+    RegistrarIdVariant registrar_id_;
     boost::gregorian::date valid_from_;
     boost::gregorian::date valid_until_;
     int classification_;
-    unsigned long long eval_file_id_;
+    FileIdVariant eval_file_id_;
 };
+
+RegistrarCertification create_registrar_certification(
+        const OperationContext& ctx,
+        const CreateRegistrarCertification::RegistrarIdVariant& registrar_id,
+        const boost::gregorian::date& valid_from,
+        const boost::gregorian::date& valid_until,
+        int classification,
+        const CreateRegistrarCertification::FileIdVariant& eval_file_id);
 
 } // namespace Registrar
 } // namespace LibFred
 
-#endif
+#endif//CREATE_REGISTRAR_CERTIFICATION_HH_BDE927161AD44CEFAEDD7C35AE6E8C28

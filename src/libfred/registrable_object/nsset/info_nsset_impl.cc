@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  nsset info implementation
  */
 
 #include "libfred/registrable_object/nsset/info_nsset_impl.hh"
@@ -104,7 +100,6 @@ Database::ParamQuery InfoNsset::make_info_nsset_projection_query(const std::stri
                    "(obj.trdate AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::transfer_time())(","
                    "(obj.update AT TIME ZONE 'UTC') AT TIME ZONE ").param(p_local_zone)(" AS ")(GetAlias::update_time())(","
                    "nt.checklevel AS ")(GetAlias::tech_check_level())(","
-                   "obj.authinfopw AS ")(GetAlias::authinfopw())(","
                    "nobr.crhistoryid AS ")(GetAlias::first_historyid())(","
                    "h.request_id AS ")(GetAlias::logd_request_id())(","
                    "(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')::timestamp AS ")(GetAlias::utc_timestamp())(","
@@ -273,7 +268,6 @@ std::vector<InfoNssetOutput> InfoNsset::exec(
             : Nullable<boost::posix_time::ptime>(boost::posix_time::time_from_string(static_cast<std::string>(param_query_result[i][GetAlias::update_time()])));
         info_nsset_output.info_nsset_data.tech_check_level = param_query_result[i][GetAlias::tech_check_level()].isnull() ? Nullable<short>()
             : Nullable<short>(static_cast<short>(param_query_result[i][GetAlias::tech_check_level()]));
-        info_nsset_output.info_nsset_data.authinfopw = static_cast<std::string>(param_query_result[i][GetAlias::authinfopw()]);
         info_nsset_output.info_nsset_data.crhistoryid = static_cast<unsigned long long>(param_query_result[i][GetAlias::first_historyid()]);
         info_nsset_output.logd_request_id = param_query_result[i][GetAlias::logd_request_id()].isnull() ? Nullable<unsigned long long>()
             : Nullable<unsigned long long>(static_cast<unsigned long long>(param_query_result[i][GetAlias::logd_request_id()]));

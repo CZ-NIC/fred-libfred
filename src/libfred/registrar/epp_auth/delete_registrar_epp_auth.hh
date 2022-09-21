@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef DELETE_REGISTRAR_EPP_AUTH_HH_7FB5773EAB814D37A611447D8A29E4D8
 #define DELETE_REGISTRAR_EPP_AUTH_HH_7FB5773EAB814D37A611447D8A29E4D8
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrar/epp_auth/registrar_epp_auth_data.hh"
+
+#include <boost/variant.hpp>
 
 namespace LibFred {
 namespace Registrar {
@@ -28,13 +32,17 @@ namespace EppAuth {
 class DeleteRegistrarEppAuth
 {
 public:
-    explicit DeleteRegistrarEppAuth(unsigned long long _id);
+    using EppAuthRecordCommonId = boost::variant<unsigned long long, EppAuthRecordUuid>;
+    explicit DeleteRegistrarEppAuth(EppAuthRecordCommonId id);
 
-    void exec(const OperationContext& _ctx) const;
-
+    unsigned long long exec(const OperationContext& ctx) const;
 private:
-    unsigned long long id_;
+    EppAuthRecordCommonId id_;
 };
+
+EppAuthRecord delete_registrar_epp_auth(
+        const OperationContext& ctx,
+        const DeleteRegistrarEppAuth::EppAuthRecordCommonId& id);
 
 } // namespace LibFred::Registrar::EppAuth
 } // namespace LibFred::Registrar

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2020-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -20,21 +20,40 @@
 #define UTIL_HH_D98CD47F7B6A47699889AD58CD5A631A
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrar/epp_auth/registrar_epp_auth_data.hh"
 
 #include <boost/optional.hpp>
+
 #include <string>
 
 namespace Test {
 
-unsigned long long get_epp_auth_id(const ::LibFred::OperationContext& _ctx,
+unsigned long long get_epp_auth_id(
+        const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
-        const boost::optional<std::string>& _plain_password);
+        const boost::optional<std::string>& _plain_password = boost::none);
 
-unsigned long long add_epp_authentications(const ::LibFred::OperationContext& _ctx,
+unsigned long long get_epp_auth_id(
+        const ::LibFred::OperationContext& _ctx,
         const std::string& _registrar_handle,
         const std::string& _certificate_fingerprint,
         const std::string& _plain_password);
+
+unsigned long long add_epp_authentications(
+        const ::LibFred::OperationContext& _ctx,
+        const std::string& _registrar_handle,
+        const std::string& _certificate_fingerprint,
+        const std::string& _plain_password);
+
+::LibFred::Registrar::EppAuth::EppAuthRecord add_epp_authentications(
+        const ::LibFred::OperationContext& _ctx,
+        const std::string& _registrar_handle,
+        const std::string& _certificate_fingerprint,
+        const std::string& _plain_password,
+        const std::string& _certificate_data_pem);
+
+std::string get_random_fingerprint();
 
 } //namespace Test
 

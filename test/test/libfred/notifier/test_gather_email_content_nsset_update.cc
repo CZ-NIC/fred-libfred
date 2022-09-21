@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -140,10 +138,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_empty_data, has_nsset_big_update<ha
                 {"registrar", registrar.name.get_value() + " (" + registrar.url.get_value() + ")"},
                 {"changes", "1"},
 
-                {"changes.object.authinfo", "1"},
-                {"changes.object.authinfo.old", nsset.authinfopw},
-                {"changes.object.authinfo.new", new_nsset_data.authinfopw},
-
                 {"changes.nsset.check_level", "1"},
                 {"changes.nsset.check_level.old", std::to_string(nsset.tech_check_level.get_value())},
                 {"changes.nsset.check_level.new", std::to_string(new_nsset_data.tech_check_level.get_value())}
@@ -203,10 +197,6 @@ BOOST_FIXTURE_TEST_CASE(test_big_update_from_full_data, has_nsset_big_update<has
                 {"ticket", input_svtrid},
                 {"registrar", registrar.name.get_value() + " (" + registrar.url.get_value() + ")"},
                 {"changes", "1"},
-
-                {"changes.object.authinfo", "1"},
-                {"changes.object.authinfo.old", nsset.authinfopw},
-                {"changes.object.authinfo.new", new_nsset_data.authinfopw},
 
                 {"changes.nsset.check_level", "1"},
                 {"changes.nsset.check_level.old", std::to_string(nsset.tech_check_level.get_value())},

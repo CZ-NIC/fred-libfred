@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef GET_REGISTRAR_EPP_AUTH_HH_84F019F1ECE041A5BBC1196190DA150F
 #define GET_REGISTRAR_EPP_AUTH_HH_84F019F1ECE041A5BBC1196190DA150F
 
@@ -31,7 +32,7 @@ namespace EppAuth {
 class GetRegistrarEppAuth
 {
 public:
-    explicit GetRegistrarEppAuth(const std::string& _registrar_handle);
+    explicit GetRegistrarEppAuth(std::string _registrar_handle);
 
     RegistrarEppAuthData exec(const OperationContext& _ctx) const;
 

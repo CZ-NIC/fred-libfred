@@ -3,6 +3,39 @@ find_package(Boost 1.53.0
     unit_test_framework
     REQUIRED)
 
+add_library(fred-test-setup STATIC
+    test/setup/arguments.cc
+    test/setup/cfg.cc
+    test/setup/fixtures.cc
+    test/setup/fixtures_utils.cc
+    test/setup/run_in_background.cc
+    test/setup/test_tree_list.cc)
+add_library(FredTestSetup::library ALIAS fred-test-setup)
+
+target_include_directories(fred-test-setup
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include
+        ${PostgreSQL_INCLUDE_DIRS}
+    PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}/..)
+
+target_link_libraries(fred-test-setup PUBLIC
+    Boost::unit_test_framework
+    Boost::program_options
+    Fred::library
+    ${PostgreSQL_LIBRARIES})
+
+set_target_properties(fred-test-setup PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    CXX_STANDARD 14
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib"
+    OUTPUT_NAME "fred-test-setup")
+
 add_library(fred-test-common-static STATIC
     test/libfred/contact/verification/setup_utils.cc
     test/libfred/registrar/epp_auth/util.cc)
@@ -107,6 +140,7 @@ add_executable(test-libfred
     test/libfred/notifier/test_process_one_notification_request.cc
     test/libfred/object/test_generate_authinfo_password.cc
     test/libfred/object/test_generated_authinfo_password.cc
+    test/libfred/object/test_object_authinfo.cc
     test/libfred/object/test_registry_object_type.cc
     test/libfred/object/test_transfer_object.cc
     test/libfred/object_state/test_cancel_object_state_request_id.cc
@@ -135,6 +169,7 @@ add_executable(test-libfred
     test/libfred/registrar/test_info_registrar.cc
     test/libfred/registrar/test_registrar_zone_access.cc
     test/libfred/registrar/certification/test_create_registrar_certification.cc
+    test/libfred/registrar/certification/test_delete_registrar_certification.cc
     test/libfred/registrar/certification/test_get_registrar_certifications.cc
     test/libfred/registrar/certification/test_update_registrar_certification.cc
     test/libfred/registrar/credit/test_create_registrar_credit_transaction.cc
@@ -168,9 +203,14 @@ add_executable(test-libfred
     test/libfred/zone/zone_soa/util.cc
     test/util/test_case_insensitive.cc
     test/util/test_password_storage.cc
-    test/util/test_db.cc
-    test/setup/fixtures.cc
-    test/setup/fixtures_utils.cc)
+    test/util/test_db.cc)
+
+get_directory_property(LIBFRED_HAS_PARENT PARENT_DIRECTORY)
+if(LIBFRED_HAS_PARENT)
+    set(${PROJECT_NAME}_INCLUDE_DIRS ${LIBFRED_INCLUDE_DIRS} PARENT_SCOPE)
+    set(${PROJECT_NAME}_LIBRARIES ${LIBFRED_LIBRARIES} PARENT_SCOPE)
+    set(LIBFRED_VERSION ${LIBFRED_VERSION} PARENT_SCOPE)
+endif()
 
 set_target_properties(test-libfred PROPERTIES
     CXX_STANDARD 14
@@ -186,13 +226,13 @@ target_include_directories(test-libfred PUBLIC
     ${CMAKE_CURRENT_BINARY_DIR}/..
     ${PostgreSQL_INCLUDE_DIRS})
 
-target_link_libraries(test-libfred PUBLIC
+target_link_libraries(test-libfred PRIVATE
     Fred::library
-PRIVATE
-    fred-test-common-static
+    fred-test-common-static::library
+    FredTestSetup::library
     Boost::unit_test_framework
-    Boost::program_options)
-
+    Boost::program_options
+    ${LIBFRED_LIBRARIES})
 include(GNUInstallDirs)
 
 install(TARGETS test-libfred DESTINATION ${CMAKE_INSTALL_BINDIR})

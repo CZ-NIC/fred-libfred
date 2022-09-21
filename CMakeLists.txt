@@ -28,7 +28,7 @@ option(FMT_HEADER_ONLY "Use fmt library in header-only manner." OFF) # significa
 
 include("cmake/package.cmake")
 
-package(fred-libfred FULL_VERSION "6.0.0")
+package(fred-libfred FULL_VERSION "6.1.1")
 
 project(LibFred
     VERSION ${PACKAGE_VERSION}
@@ -116,13 +116,17 @@ src/libfred/notifier/gather_email_data/objecttype_specific_impl/contact.cc
 src/libfred/notifier/gather_email_data/objecttype_specific_impl/domain.cc
 src/libfred/notifier/gather_email_data/objecttype_specific_impl/keyset.cc
 src/libfred/notifier/gather_email_data/objecttype_specific_impl/nsset.cc
+src/libfred/object/check_authinfo.cc
 src/libfred/object/check_handle.cc
+src/libfred/object/clean_authinfo.cc
+src/libfred/object/clean_expired_authinfos.cc
 src/libfred/object/generate_authinfo_password.cc
 src/libfred/object/generated_authinfo_password.cc
 src/libfred/object/get_id_of_registered.cc
 src/libfred/object/object.cc
 src/libfred/object/object_id_handle_pair.cc
 src/libfred/object/object_impl.cc
+src/libfred/object/store_authinfo.cc
 src/libfred/object/transfer_object.cc
 src/libfred/object_state/cancel_object_state_request_id.cc
 src/libfred/object_state/clear_admin_object_state_request_id.cc
@@ -261,6 +265,7 @@ src/libfred/registrar/registrar_zone_credit.cc
 src/libfred/registrar/update_registrar.cc
 src/libfred/registrar/zone_credit.cc
 src/libfred/registrar/certification/create_registrar_certification.cc
+src/libfred/registrar/certification/delete_registrar_certification.cc
 src/libfred/registrar/certification/get_registrar_certifications.cc
 src/libfred/registrar/certification/update_registrar_certification.cc
 src/libfred/registrar/credit/create_registrar_credit_transaction.cc
@@ -280,6 +285,7 @@ src/libfred/registrar/group/membership/end_registrar_group_membership.cc
 src/libfred/registrar/group/membership/info_group_membership_by_group.cc
 src/libfred/registrar/group/membership/info_group_membership_by_registrar.cc
 src/libfred/registrar/zone_access/add_registrar_zone_access.cc
+src/libfred/registrar/zone_access/delete_registrar_zone_access.cc
 src/libfred/registrar/zone_access/exceptions.cc
 src/libfred/registrar/zone_access/get_zone_access_history.cc
 src/libfred/registrar/zone_access/registrar_zone_access_history.cc

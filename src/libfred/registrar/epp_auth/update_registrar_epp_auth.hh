@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -20,8 +20,11 @@
 #define UPDATE_REGISTRAR_EPP_AUTH_HH_4D17531385D14877B071FDC2D35425A0
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrar/epp_auth/registrar_epp_auth_data.hh"
 
 #include <boost/optional.hpp>
+#include <boost/variant.hpp>
+
 #include <string>
 
 namespace LibFred {
@@ -31,20 +34,32 @@ namespace EppAuth {
 class UpdateRegistrarEppAuth
 {
 public:
-    explicit UpdateRegistrarEppAuth(unsigned long long _id);
+    using EppAuthRecordCommonId = boost::variant<unsigned long long, EppAuthRecordUuid>;
+    explicit UpdateRegistrarEppAuth(EppAuthRecordCommonId id);
 
     UpdateRegistrarEppAuth& set_certificate_fingerprint(
-            const boost::optional<std::string>& _certificate_fingerprint);
+            boost::optional<std::string> certificate_fingerprint);
 
-    UpdateRegistrarEppAuth& set_plain_password(const boost::optional<std::string>& _plain_password);
+    UpdateRegistrarEppAuth& set_certificate(
+            boost::optional<std::string> certificate_fingerprint,
+            boost::optional<std::string> certificate_data_pem);
+
+    UpdateRegistrarEppAuth& set_plain_password(boost::optional<std::string> plain_password);
 
     void exec(const OperationContext& _ctx) const;
-
 private:
-    unsigned long long id_;
+    EppAuthRecordCommonId id_;
     boost::optional<std::string> certificate_fingerprint_;
     boost::optional<std::string> plain_password_;
+    boost::optional<std::string> certificate_data_pem_;
 };
+
+EppAuthRecord update_registrar_epp_auth(
+        const OperationContext& ctx,
+        const UpdateRegistrarEppAuth::EppAuthRecordCommonId& id,
+        const boost::optional<std::string>& certificate_fingerprint,
+        const boost::optional<std::string>& plain_password,
+        const boost::optional<std::string>& certificate_data_pem);
 
 } // namespace LibFred::Registrar::EppAuth
 } // namespace LibFred::Registrar

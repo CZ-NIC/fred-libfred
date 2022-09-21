@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,10 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef CLONE_REGISTRAR_EPP_AUTH_HH_7424349027DF40F9BD398B04054BC9CD
 #define CLONE_REGISTRAR_EPP_AUTH_HH_7424349027DF40F9BD398B04054BC9CD
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrar/epp_auth/registrar_epp_auth_data.hh"
+
+#include <boost/variant.hpp>
 
 #include <string>
 
@@ -30,14 +34,24 @@ namespace EppAuth {
 class CloneRegistrarEppAuth
 {
 public:
-    CloneRegistrarEppAuth(unsigned long long _id, const std::string& _certificate_fingerprint);
+    using EppAuthRecordCommonId = boost::variant<unsigned long long, EppAuthRecordUuid>;
+    explicit CloneRegistrarEppAuth(
+            EppAuthRecordCommonId id,
+            std::string certificate_fingerprint,
+            std::string certificate_data_pem = no_cert_data);
 
-    unsigned long long exec(const OperationContext& _ctx) const;
-
+    unsigned long long exec(const OperationContext& ctx) const;
 private:
-    unsigned long long id_;
-    std::string certificate_fingerprint_;
+    EppAuthRecordCommonId id_;
+    std::string fingerprint_;
+    std::string data_;
 };
+
+EppAuthRecord clone_registrar_epp_auth(
+        const OperationContext& ctx,
+        const CloneRegistrarEppAuth::EppAuthRecordCommonId& id,
+        const std::string& certificate_fingerprint,
+        const std::string& certificate_data_pem = no_cert_data);
 
 } // namespace LibFred::Registrar::EppAuth
 } // namespace LibFred::Registrar

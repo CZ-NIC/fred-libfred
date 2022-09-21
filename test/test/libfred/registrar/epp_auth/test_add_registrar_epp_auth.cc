@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrar/epp_auth/add_registrar_epp_auth.hh"
 #include "libfred/registrar/epp_auth/exceptions.hh"
 #include "util/random/char_set/char_set.hh"
@@ -26,52 +27,54 @@
 
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
+
 #include <string>
 
-namespace Test {
+namespace {
 
-struct AddRegistrarEppAuthFixture : has_registrar
+struct AddRegistrarEppAuthFixture : Test::has_registrar
 {
-    std::string& registrar_handle;
+    AddRegistrarEppAuthFixture()
+        : Test::has_registrar{},
+          certificate_fingerprint{Test::get_random_fingerprint()},
+          plain_password{Random::Generator().get_seq(Random::CharSet::letters(), 10)}
+    { }
+    auto add_registrar_epp_auth()
+    {
+        return ::LibFred::Registrar::EppAuth::AddRegistrarEppAuth(
+                    registrar.handle, certificate_fingerprint, plain_password, no_cert_data).exec(ctx);
+    }
     std::string certificate_fingerprint;
     std::string plain_password;
-
-    AddRegistrarEppAuthFixture()
-        : registrar_handle(registrar.handle),
-          certificate_fingerprint(Random::Generator().get_seq(Random::CharSet::letters(), 20)),
-          plain_password(Random::Generator().get_seq(Random::CharSet::letters(), 10))
-    {
-    }
+    static const std::string no_cert_data;
 };
+
+const std::string AddRegistrarEppAuthFixture::no_cert_data;
+
+} // namespace {anonymous}
+
+namespace Test {
 
 BOOST_FIXTURE_TEST_SUITE(TestAddRegistrarEppAuth, AddRegistrarEppAuthFixture)
 
 BOOST_AUTO_TEST_CASE(set_nonexistent_registrar)
 {
-    registrar_handle = Random::Generator().get_seq(Random::CharSet::letters(), 20);
-    BOOST_CHECK_THROW(
-            ::LibFred::Registrar::EppAuth::AddRegistrarEppAuth(
-                    registrar_handle, certificate_fingerprint, plain_password).exec(ctx),
-            ::LibFred::Registrar::EppAuth::NonexistentRegistrar);
+    registrar.handle = Random::Generator().get_seq(Random::CharSet::letters(), 20);
+    BOOST_CHECK_THROW(add_registrar_epp_auth(), ::LibFred::Registrar::EppAuth::NonexistentRegistrar);
 }
 
 BOOST_AUTO_TEST_CASE(set_duplicate_eep_auth)
 {
-    ::LibFred::Registrar::EppAuth::AddRegistrarEppAuth(
-            registrar_handle, certificate_fingerprint, plain_password).exec(ctx);
-    BOOST_CHECK_THROW(
-            ::LibFred::Registrar::EppAuth::AddRegistrarEppAuth(
-                    registrar_handle, certificate_fingerprint, plain_password).exec(ctx),
-            ::LibFred::Registrar::EppAuth::DuplicateCertificate);
+    add_registrar_epp_auth();
+    BOOST_CHECK_THROW(add_registrar_epp_auth(), ::LibFred::Registrar::EppAuth::DuplicateCertificate);
 }
 
 BOOST_AUTO_TEST_CASE(set_add_registrar_epp_auth)
 {
-    const unsigned long long id = ::LibFred::Registrar::EppAuth::AddRegistrarEppAuth(
-            registrar_handle, certificate_fingerprint, plain_password).exec(ctx);
-    BOOST_CHECK_EQUAL(get_epp_auth_id(ctx, registrar_handle, certificate_fingerprint, plain_password), id);
+    const auto id = add_registrar_epp_auth();
+    BOOST_CHECK_EQUAL(get_epp_auth_id(ctx, registrar.handle, certificate_fingerprint, plain_password), id);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestAddRegistrarEppAuth
 
 } // namespace Test

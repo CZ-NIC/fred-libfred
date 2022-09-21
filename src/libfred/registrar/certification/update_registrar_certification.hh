@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,18 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- *  update registrar certification
- */
 
 #ifndef UPDATE_REGISTRAR_CERTIFICATION_HH_4BE6201D6B1B476795A61FD9C4042041
 #define UPDATE_REGISTRAR_CERTIFICATION_HH_4BE6201D6B1B476795A61FD9C4042041
 
 #include "libfred/opcontext.hh"
+#include "libfred/registrar/certification/registrar_certification_type.hh"
 
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/optional.hpp>
+#include <boost/variant.hpp>
 
 namespace LibFred {
 namespace Registrar {
@@ -35,23 +33,35 @@ namespace Registrar {
 class UpdateRegistrarCertification
 {
 public:
-    UpdateRegistrarCertification(
-            unsigned long long _certification_id,
-            boost::gregorian::date _valid_until);
+    using RegistrarCertificationIdVariant = boost::variant<unsigned long long, RegistrarCertificationUuid>;
+    using FileIdVariant = boost::variant<unsigned long long, FileUuid>;
+    explicit UpdateRegistrarCertification(const RegistrarCertificationIdVariant& certification_id);
+    explicit UpdateRegistrarCertification(
+            const RegistrarCertificationIdVariant& certification_id,
+            const boost::gregorian::date& valid_until);
+    explicit UpdateRegistrarCertification(
+            const RegistrarCertificationIdVariant& certification_id,
+            int classification,
+            const FileIdVariant& eval_file_id);
 
-    UpdateRegistrarCertification(
-            unsigned long long _certification_id,
-            int _classification,
-            unsigned long long _eval_file_id);
+    UpdateRegistrarCertification& set_valid_until(const boost::gregorian::date& valid_until);
+    UpdateRegistrarCertification& set_classification(int classification);
+    UpdateRegistrarCertification& set_eval_file_id(const FileIdVariant& eval_file_id);
 
-    void exec(const OperationContext& _ctx) const;
-
+    unsigned long long exec(const OperationContext& ctx) const;
 private:
-    unsigned long long certification_id_;
+    RegistrarCertificationIdVariant certification_id_;
     boost::optional<boost::gregorian::date> valid_until_;
     boost::optional<int> classification_;
-    boost::optional<unsigned long long> eval_file_id_;
+    boost::optional<FileIdVariant> eval_file_id_;
 };
+
+RegistrarCertification update_registrar_certification(
+        const OperationContext& ctx,
+        const UpdateRegistrarCertification::RegistrarCertificationIdVariant& certification_id,
+        const boost::optional<boost::gregorian::date>& valid_until,
+        const boost::optional<int>& classification,
+        const boost::optional<UpdateRegistrarCertification::FileIdVariant>& eval_file_id);
 
 } // namespace Registrar
 } // namespace LibFred

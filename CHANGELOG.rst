@@ -1,6 +1,23 @@
 ChangeLog
 =========
 
+6.1.1 (2022-09-21)
+------------------
+
+* Merge fixes from 5.3 branch
+
+    * Fix ``*RegistrarEppAuth`` operations - optional ``create_time``
+
+
+6.1.0 (2022-09-19)
+------------------
+
+* Merge new features from 5.3 branch
+
+    * Create new object authinfo storage with hashed password and ttl (expiration timestamp)
+    * Modify info / create/update / transfer operations of domain / contact / nsset / keyset to support authinfo with ttl
+
+
 6.0.0 (2021-12-19)
 ------------------
 
@@ -9,6 +26,20 @@ ChangeLog
 * Use ``liblog`` for logging
 * Add support to use ``libfred`` operations with ``libpg`` driven source code
   (allow to create ``libfred::OperationContext`` from ``libpg::*Transaction`` classes)
+
+
+5.3.1 (2022-09-21)
+------------------
+
+* Fix ``*RegistrarEppAuth`` operations - optional ``create_time``
+
+
+5.3.0 (2022-09-14)
+------------------
+
+* Create new object authinfo storage with hashed password and ttl (expiration timestamp)
+* Modify info / create/update / transfer operations of domain / contact / nsset / keyset to support authinfo with ttl
+* Update ``*RegistrarEppAuth`` operations with new attributes (``create_time``, ``uuid``, ``cert_data_pem``)
 
 
 5.2.0 (2022-02-28)

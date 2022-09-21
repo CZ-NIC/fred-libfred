@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,9 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #ifndef TRANSFER_NSSET_HH_9FEE728C0EE448DCB9F7D79194625F0E
 #define TRANSFER_NSSET_HH_9FEE728C0EE448DCB9F7D79194625F0E
@@ -34,25 +31,25 @@ class TransferNsset
 {
 public:
     TransferNsset(
-        const unsigned long long _nsset_id,
-        const std::string& _new_registrar_handle,
-        const std::string& _authinfopw_for_authorization,
-        const Nullable<unsigned long long>& _logd_request_id
-    );
+            unsigned long long _nsset_id,
+            std::string _new_registrar_handle,
+            std::string _authinfopw,
+            const Nullable<unsigned long long>& _logd_request_id);
 
     /**
+     * @returns historyid of transferred nsset
      * @throws UnknownNssetId
      * @throws UnknownRegistrar
      * @throws IncorrectAuthInfoPw
      * @throws NewRegistrarIsAlreadySponsoring
      */
-    unsigned long long exec(const OperationContext& _ctx);
+    unsigned long long exec(const OperationContext& _ctx) const;
 
 private:
-    const unsigned long long nsset_id_;
-    const std::string new_registrar_handle_;
-    const std::string authinfopw_for_authorization_;
-    const Nullable<unsigned long long> logd_request_id_;
+    unsigned long long nsset_id_;
+    std::string new_registrar_handle_;
+    std::string authinfopw_;
+    Nullable<unsigned long long> logd_request_id_;
 };
 
 }//namespace LibFred

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -25,14 +25,16 @@
 
 #include "test/libfred/util.hh"
 
-#include <map>
 #include <boost/test/unit_test.hpp>
 
-template < typename ENUM_HOST_TYPE, ::size_t EXPECTED_NUMBER_OF_DB_HANDLES >
-void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, const char *sql_get_all_items)
+#include <limits>
+#include <set>
+
+template <typename ENUM_HOST_TYPE, ::size_t EXPECTED_NUMBER_OF_DB_HANDLES>
+void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, const char* sql_get_all_items)
 {
     typedef typename ENUM_HOST_TYPE::Enum Enum;
-    typedef std::set< std::string > DbHandles;
+    typedef std::set<std::string> DbHandles;
     DbHandles db_handles;
     DbHandles incorrect_db_handles;
     incorrect_db_handles.insert("");
@@ -41,8 +43,9 @@ void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, c
 
     {
         const Database::Result res = ctx.get_conn().exec(sql_get_all_items);
-        BOOST_CHECK(res.size() == EXPECTED_NUMBER_OF_DB_HANDLES);
-        for (::size_t idx = 0; idx < res.size(); ++idx) {
+        BOOST_CHECK_EQUAL(res.size(), EXPECTED_NUMBER_OF_DB_HANDLES);
+        for (::size_t idx = 0; idx < res.size(); ++idx)
+        {
             const std::string correct_handle = static_cast< std::string >(res[idx][0]);
             db_handles.insert(correct_handle);
             incorrect_db_handles.insert(" " + correct_handle);
@@ -52,19 +55,22 @@ void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, c
             incorrect_db_handles.insert(" " + correct_handle + " ");
             incorrect_db_handles.insert("_" + correct_handle + "_");
         }
-        BOOST_CHECK(db_handles.size() == res.size());
+        BOOST_CHECK_EQUAL(db_handles.size(), res.size());
     }
 
-    long long min_enum_value = std::numeric_limits< long long >::max();
-    long long max_enum_value = std::numeric_limits< long long >::min();
-    for (DbHandles::const_iterator db_handle_ptr = db_handles.begin(); db_handle_ptr != db_handles.end(); ++db_handle_ptr) {
-        const Enum enum_value = Conversion::Enums::from_db_handle< ENUM_HOST_TYPE >(*db_handle_ptr);
-        BOOST_CHECK(Conversion::Enums::to_db_handle(enum_value) == *db_handle_ptr);
-        if (static_cast< long long >(enum_value) < min_enum_value) {
-            min_enum_value = static_cast< long long >(enum_value);
+    auto min_enum_value = std::numeric_limits<long long>::max();
+    auto max_enum_value = std::numeric_limits<long long>::min();
+    for (DbHandles::const_iterator db_handle_ptr = db_handles.begin(); db_handle_ptr != db_handles.end(); ++db_handle_ptr)
+    {
+        const Enum enum_value = Conversion::Enums::from_db_handle<ENUM_HOST_TYPE>(*db_handle_ptr);
+        BOOST_CHECK_EQUAL(Conversion::Enums::to_db_handle(enum_value), *db_handle_ptr);
+        if (static_cast< long long >(enum_value) < min_enum_value)
+        {
+            min_enum_value = static_cast<long long>(enum_value);
         }
-        if (max_enum_value < static_cast< long long >(enum_value)) {
-            max_enum_value = static_cast< long long >(enum_value);
+        if (max_enum_value < static_cast<long long>(enum_value))
+        {
+            max_enum_value = static_cast<long long>(enum_value);
         }
     }
 
@@ -72,19 +78,23 @@ void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, c
          incorrect_db_handle_ptr != incorrect_db_handles.end(); ++incorrect_db_handle_ptr)
     {
         BOOST_CHECK_EXCEPTION(
-        try {
-            BOOST_CHECK(db_handles.count(*incorrect_db_handle_ptr) == 0);
-            Conversion::Enums::from_db_handle< ENUM_HOST_TYPE >(*incorrect_db_handle_ptr);
+        try
+        {
+            BOOST_CHECK_EQUAL(db_handles.count(*incorrect_db_handle_ptr), 0);
+            Conversion::Enums::from_db_handle<ENUM_HOST_TYPE>(*incorrect_db_handle_ptr);
         }
-        catch (const std::invalid_argument &e) {
+        catch (const std::invalid_argument &e)
+        {
             BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
             throw;
         }
-        catch (const std::exception &e) {
+        catch (const std::exception &e)
+        {
             BOOST_ERROR(boost::diagnostic_information(e));
             throw;
         }
-        catch (...) {
+        catch (...)
+        {
             BOOST_ERROR("unexpected exception occurs");
             throw;
         },
@@ -93,18 +103,22 @@ void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, c
     }
 
     BOOST_CHECK_EXCEPTION(
-        try {
+        try
+        {
             Conversion::Enums::to_db_handle(Enum(min_enum_value - 1));
         }
-        catch (const std::invalid_argument &e) {
+        catch (const std::invalid_argument &e)
+        {
             BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
             throw;
         }
-        catch (const std::exception &e) {
+        catch (const std::exception &e)
+        {
             BOOST_ERROR(boost::diagnostic_information(e));
             throw;
         }
-        catch (...) {
+        catch (...)
+        {
             BOOST_ERROR("unexpected exception occurs");
             throw;
         },
@@ -112,18 +126,22 @@ void enum_to_db_handle_conversion_test(const ::LibFred::OperationContext& ctx, c
         check_std_exception);
 
     BOOST_CHECK_EXCEPTION(
-        try {
+        try
+        {
             Conversion::Enums::to_db_handle(Enum(max_enum_value + 1));
         }
-        catch (const std::invalid_argument &e) {
+        catch (const std::invalid_argument &e)
+        {
             BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
             throw;
         }
-        catch (const std::exception &e) {
+        catch (const std::exception &e)
+        {
             BOOST_ERROR(boost::diagnostic_information(e));
             throw;
         }
-        catch (...) {
+        catch (...)
+        {
             BOOST_ERROR("unexpected exception occurs");
             throw;
         },

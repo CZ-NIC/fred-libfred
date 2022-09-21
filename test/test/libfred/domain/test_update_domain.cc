@@ -16,11 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file test-update-domain.cc
- *  UpdateDomain tests
- */
 
+#include "libfred/object/check_authinfo.hh"
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -241,8 +238,10 @@ BOOST_FIXTURE_TEST_CASE(update_domain, update_domain_admin_nsset_keyset_fixture)
     ::LibFred::InfoDomainOutput info_data_1_with_changes = info_data_1;
 
     //updated authinfopw
-    BOOST_CHECK_NE(info_data_1.info_domain_data.authinfopw, info_data_2.info_domain_data.authinfopw);
-    BOOST_CHECK_EQUAL(info_data_2.info_domain_data.authinfopw, "testauthinfo1");
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_2.info_domain_data.id}}
+                    .exec(ctx, "testauthinfo1", ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
     info_data_1_with_changes.info_domain_data.authinfopw = "testauthinfo1";
 
     //updated historyid
@@ -321,8 +320,10 @@ BOOST_FIXTURE_TEST_CASE(update_domain, update_domain_admin_nsset_keyset_fixture)
     ::LibFred::InfoDomainOutput info_data_2_with_changes = info_data_2;
 
     //updated authinfopw
-    BOOST_CHECK_NE(info_data_2.info_domain_data.authinfopw, info_data_3.info_domain_data.authinfopw);
-    BOOST_CHECK_EQUAL(info_data_3.info_domain_data.authinfopw, "testauthinfo");
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_3.info_domain_data.id}}
+                    .exec(ctx, "testauthinfo", ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
     info_data_2_with_changes.info_domain_data.authinfopw = "testauthinfo";
 
     //updated historyid
@@ -393,7 +394,10 @@ BOOST_FIXTURE_TEST_CASE(update_domain, update_domain_admin_nsset_keyset_fixture)
     ::LibFred::InfoDomainOutput info_data_3_with_changes = info_data_3;
 
     //updated authinfopw
-    BOOST_CHECK_EQUAL(info_data_4.info_domain_data.authinfopw, "testauthinfo");
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_4.info_domain_data.id}}
+                    .exec(ctx, "testauthinfo", ::LibFred::Object::CheckAuthinfo::increment_usage),
+            1);
     info_data_3_with_changes.info_domain_data.authinfopw = "testauthinfo";
 
     //updated historyid
@@ -1111,14 +1115,9 @@ BOOST_FIXTURE_TEST_CASE(update_domain, update_domain_admin_nsset_keyset_fixture)
     BOOST_CHECK_EQUAL(history_info_data_18.at(1).next_historyid.get_value(), history_info_data_18.at(0).info_domain_data.historyid);
     BOOST_CHECK_EQUAL(history_info_data_18.at(0).info_domain_data.crhistoryid, info_data_18.info_domain_data.crhistoryid);
 
-
-    BOOST_CHECK(static_cast<bool>(ctx.get_conn().exec_params(
-            "SELECT o.authinfopw=$1::text "
-            "FROM object_registry oreg "
-            "JOIN object o ON o.id=oreg.id "
-            "WHERE oreg.name=$2::text AND "
-                  "oreg.type=get_object_type_id('domain')",
-            Database::query_param_list("testauthinfo")(test_fqdn))[0][0]));
+    BOOST_CHECK_EQUAL(
+            ::LibFred::Object::CheckAuthinfo{::LibFred::Object::ObjectId{info_data_1.info_domain_data.id}}
+                    .exec(ctx, "testauthinfo", ::LibFred::Object::CheckAuthinfo::increment_usage_and_cancel), 1);
 
     ctx.commit_transaction();
 }

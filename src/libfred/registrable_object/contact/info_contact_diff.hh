@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  contact info data diff
  */
 
 #ifndef INFO_CONTACT_DIFF_HH_741D8D1B6DF14EE1A97088C2CEE33E01
@@ -79,7 +75,7 @@ struct InfoContactDiff : Util::Printable<InfoContactDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the contact in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> update_time; /**< last update time of the contact in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> transfer_time; /**<last transfer time in set local zone*/
-    DiffMember<std::string> authinfopw;/**< password for transfer */
+    DiffMember<std::string> authinfopw;/**< unused */
     DiffMember<Nullable<std::string>> name ;/**< name of contact person */
     DiffMember<Nullable<std::string>> organization;/**< full trade name of organization */
     DiffMember< Nullable<LibFred::Contact::PlaceAddress>> place;/**< place address of contact */

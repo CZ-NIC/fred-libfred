@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include <boost/test/unit_test.hpp>
-#include <string>
 
 #include "libfred/registrable_object/contact/transfer_contact.hh"
 #include "libfred/object/transfer_object_exception.hh"
@@ -28,6 +28,7 @@
 #include "test/libfred/util.hh"
 
 namespace {
+
     struct has_contact_with_mailing_address_and_a_different_registrar : Test::has_contact_and_a_different_registrar {
         has_contact_with_mailing_address_and_a_different_registrar() {
             ::LibFred::UpdateContactByHandle(contact.handle, registrar.handle)
@@ -47,7 +48,8 @@ namespace {
         }
 
     };
-}
+
+}//namespace {anonymous}
 
 BOOST_FIXTURE_TEST_SUITE(TestTransferContact, has_contact_with_mailing_address_and_a_different_registrar)
 
@@ -55,7 +57,7 @@ BOOST_AUTO_TEST_CASE(test_transfer_ok_data)
 {
     const unsigned long long logd_request_id = 123123;
 
-    const unsigned long long post_transfer_history_id = ::LibFred::TransferContact(contact.id, the_different_registrar.handle, contact.authinfopw, logd_request_id).exec(ctx);
+    const unsigned long long post_transfer_history_id = ::LibFred::TransferContact(contact.id, the_different_registrar.handle, contact_authinfo.password, logd_request_id).exec(ctx);
 
     const std::string timezone = "Europe/Prague";
 
@@ -121,7 +123,7 @@ BOOST_AUTO_TEST_CASE(test_unknown_registrar)
     ::LibFred::TransferContact transfer(
         contact.id,
         "nonexistentregistrar", /* <= !!! */
-        contact.authinfopw
+        contact_authinfo.password
     );
 
     BOOST_CHECK_THROW(
@@ -135,7 +137,7 @@ BOOST_AUTO_TEST_CASE(test_unknown_object)
     ::LibFred::TransferContact transfer(
         Test::get_nonexistent_object_id(ctx), /* <= !!! */
         the_different_registrar.handle,
-        contact.authinfopw
+        contact_authinfo.password
     );
 
     BOOST_CHECK_THROW(
@@ -162,7 +164,7 @@ BOOST_AUTO_TEST_CASE(test_registrar_is_already_sponsoring)
     ::LibFred::TransferContact transfer(
         contact.id,
         registrar.handle, /* <= !!! */
-        contact.authinfopw
+        contact_authinfo.password
     );
     BOOST_CHECK_THROW(
         transfer.exec(ctx),
@@ -170,4 +172,4 @@ BOOST_AUTO_TEST_CASE(test_registrar_is_already_sponsoring)
     );
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()//TestTransferContact

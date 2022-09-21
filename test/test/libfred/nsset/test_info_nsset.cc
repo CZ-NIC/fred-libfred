@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -94,7 +95,6 @@ struct info_nsset_fixture : Test::instantiate_db_template
                         ::LibFred::DnsHost("a.ns.nic.cz", { ip::address::from_string("127.0.0.3"), ip::address::from_string("127.1.1.3") }),//add_dns
                         ::LibFred::DnsHost(test_nsset_dnsname, { ip::address::from_string("127.0.0.4"), ip::address::from_string("127.1.1.4") })//add_dns
                     })
-                .set_authinfo("testauthinfo1")
                 .set_tech_contacts(Util::vector_of<std::string>(admin_contact3_handle))
                 .exec(ctx);
 
@@ -144,7 +144,6 @@ struct info_nsset_fixture : Test::instantiate_db_template
         test_info_nsset_output.info_nsset_data.update_registrar_handle = Nullable<std::string>();
         test_info_nsset_output.info_nsset_data.creation_time = boost::posix_time::time_from_string("2011-07-01 01:59:59");
         test_info_nsset_output.info_nsset_data.transfer_time = Nullable<boost::posix_time::ptime>();
-        test_info_nsset_output.info_nsset_data.authinfopw = "testauthinfo1";
         test_info_nsset_output.info_nsset_data.tech_contacts =
                 {
                     ::LibFred::RegistrableObject::Contact::ContactReference(
@@ -339,7 +338,6 @@ BOOST_FIXTURE_TEST_CASE(info_nsset_diff, info_nsset_fixture)
                                            Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>(),
                                              Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.authinfopw = std::make_pair("testpass1", "testpass2");
 
     BOOST_TEST_MESSAGE(test_diff.to_string());
     ::LibFred::InfoNssetDiff test_empty_diff;

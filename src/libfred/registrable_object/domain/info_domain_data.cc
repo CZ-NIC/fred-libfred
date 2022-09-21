@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file info_domain_data.cc
- *  common domain info data
  */
 
 #include "libfred/registrable_object/domain/info_domain_data.hh"
@@ -65,7 +61,6 @@ std::string InfoDomainData::to_string() const
                 std::make_pair("update_time", update_time.print_quoted()),
                 std::make_pair("transfer_time", transfer_time.print_quoted()),
                 std::make_pair("expiration_date", boost::lexical_cast<std::string>(expiration_date)),
-                std::make_pair("authinfopw", authinfopw),
                 std::make_pair("admin_contacts", Util::format_container(admin_contacts)),
                 std::make_pair("enum_domain_validation", enum_domain_validation.print_quoted()),
                 std::make_pair("delete_time", delete_time.print_quoted()),

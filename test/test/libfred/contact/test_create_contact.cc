@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -98,7 +99,6 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_registrar)
     try
     {
         ::LibFred::CreateContact(create_contact_handle, bad_registrar_handle)
-        .set_authinfo("testauthinfo")
         .set_logd_request_id(0)
         .exec(ctx);
     }
@@ -124,7 +124,6 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_ssntype)
     try
     {
         ::LibFred::CreateContact(create_contact_handle, registrar_handle)
-        .set_authinfo("testauthinfo")
         .set_logd_request_id(0)
         .set_ssntype("BAD")
         .set_ssn("any")
@@ -151,7 +150,6 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_address)
         ::LibFred::ContactAddressList bad_addresses = addresses;
         bad_addresses[::LibFred::ContactAddressType::MAILING].company_name = "Výjimečná & korespondenční, s.r.o.";
         ::LibFred::CreateContact(create_contact_handle, registrar_handle)
-        .set_authinfo("testauthinfo")
         .set_addresses(bad_addresses)
         .set_logd_request_id(0)
         .exec(ctx);
@@ -170,7 +168,6 @@ BOOST_AUTO_TEST_CASE(create_contact_wrong_address)
         ::LibFred::ContactAddressList bad_addresses = addresses;
         bad_addresses[::LibFred::ContactAddressType::BILLING].company_name = "Výjimečná & fakturační, s.r.o.";
         ::LibFred::CreateContact(create_contact_handle, registrar_handle)
-        .set_authinfo("testauthinfo")
         .set_addresses(bad_addresses)
         .set_logd_request_id(0)
         .exec(ctx);
@@ -191,7 +188,6 @@ BOOST_FIXTURE_TEST_CASE(create_contact_ok, create_contact_fixture)
 {
     ::LibFred::OperationContextCreator ctx;
     ::LibFred::CreateContact(create_contact_handle, registrar_handle)
-    .set_authinfo("testauthinfo")
     .set_logd_request_id(0)
     .set_name(contact_name)
     .set_place(place)

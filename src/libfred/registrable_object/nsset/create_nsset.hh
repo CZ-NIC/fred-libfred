@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  create nsset
  */
 
 #ifndef CREATE_NSSET_HH_85F3D80AEDC6465FB71D1306CCEADAEE
@@ -78,7 +74,7 @@ public:
     * Create nsset constructor with all parameters.
     * @param handle sets nsset handle into @ref handle_ attribute
     * @param registrar sets registrar handle into @ref registrar_ attribute
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * @param authinfo unused
     * @param tech_check_level sets level of technical checks into @ref tech_check_level_ attribute
     * @param dns_hosts sets DNS hosts into @ref dns_hosts_ attribute
     * @param tech_contact sets list of technical contact handles into @ref tech_contacts_ attribute
@@ -94,8 +90,8 @@ public:
             );
 
     /**
-    * Sets nsset transfer password.
-    * @param authinfo sets transfer password into @ref authinfo_ attribute
+    * Does nothing.
+    * @param authinfo unused
     * @return operation instance reference to allow method chaining
     */
     CreateNsset& set_authinfo(const std::string& authinfo);
@@ -152,7 +148,6 @@ protected:
 private:
     const std::string handle_;/**< nsset identifier */
     const std::string registrar_;/**< handle of registrar performing the create */
-    Optional<std::string> authinfo_;/**< transfer password */
     Optional<short> tech_check_level_; /**< level of technical checks*/
     std::vector<DnsHost> dns_hosts_; /**< DNS hosts of the nsset */
     std::vector<std::string> tech_contacts_; /**< technical contact handles */

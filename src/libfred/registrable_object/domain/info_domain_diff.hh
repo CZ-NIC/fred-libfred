@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -15,10 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
- */
-/**
- *  @file
- *  domain info data diff
  */
 
 #ifndef INFO_DOMAIN_DIFF_HH_68B5D7A7671D46E7B7BCD2A93DEB43EF
@@ -79,7 +75,7 @@ struct InfoDomainDiff : Util::Printable<InfoDomainDiff>
     DiffMember<boost::posix_time::ptime> creation_time;/**< creation time of the domain in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> update_time; /**< last update time of the domain in set local zone*/
     DiffMember<Nullable<boost::posix_time::ptime>> transfer_time; /**<last transfer time in set local zone*/
-    DiffMember<std::string> authinfopw;/**< password for transfer */
+    DiffMember<std::string> authinfopw;/**< unused */
 
     DiffMember<RegistrableObject::Contact::ContactReference> registrant; /**< registrant contact reference, owner of domain*/
     DiffMember<Nullable<RegistrableObject::Nsset::NssetReference>> nsset;/**< nsset id and handle or NULL if missing */

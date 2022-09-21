@@ -28,9 +28,9 @@
 #include "test/fake-src/util/cfg/handle_args.hh"
 #include "libfred/db_settings.hh"
 
-#include <boost/optional.hpp>
-#include <boost/program_options.hpp>
 #include <boost/format.hpp>
+#include <boost/optional/optional_io.hpp>
+#include <boost/program_options.hpp>
 
 #include <iostream>
 #include <exception>
@@ -44,30 +44,28 @@
 class HandleDatabaseArgs : public HandleArgs
 {
 public:
-    std::shared_ptr<boost::program_options::options_description>
-    get_options_description()
+    std::shared_ptr<boost::program_options::options_description> get_options_description()
     {
-        auto db_opts = std::make_shared<boost::program_options::options_description>(
-                "Database connection configuration");
+        std::shared_ptr<boost::program_options::options_description> db_opts(
+                new boost::program_options::options_description(
+                        std::string("Database connection configuration")));
         db_opts->add_options()
-                ("database.name",
-                        boost::program_options::value<std::string>()->default_value("fred"),
-                        "database name")
-                ("database.user",
-                        boost::program_options::value<std::string>()->default_value("fred"),
-                        "database user name")
-                ("database.password",
-                        boost::program_options::value<std::string>(),
-                        "database password")
-                ("database.host",
-                        boost::program_options::value<std::string>()->default_value("localhost"),
-                        "database hostname")
-                ("database.port",
-                        boost::program_options::value<unsigned int>(),
-                        "database port number")
-                ("database.timeout",
-                        boost::program_options::value<unsigned int>(),
-                        "database timeout");
+                ("database.name", boost::program_options
+                            ::value<std::string>()->default_value(std::string("fred"))
+                        , "database name")
+                ("database.user", boost::program_options
+                            ::value<std::string>()->default_value(std::string("fred"))
+                        , "database user name")
+                ("database.password", boost::program_options
+                            ::value<std::string>(), "database password")
+                ("database.host", boost::program_options
+                            ::value<std::string>()->default_value(std::string("localhost"))
+                        , "database hostname")
+                ("database.port", boost::program_options
+                            ::value<unsigned int>(), "database port number")
+                ("database.timeout", boost::program_options
+                            ::value<unsigned int>(), "database timeout");
+
         return db_opts;
     }
 

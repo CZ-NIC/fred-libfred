@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/registrable_object/contact/check_contact.hh"
 #include "libfred/registrable_object/contact/copy_contact.hh"
@@ -98,7 +99,6 @@ struct info_keyset_fixture : Test::instantiate_db_template
         BOOST_TEST_MESSAGE("admin_contact6_handle: " + admin_contact6_handle);
 
         ::LibFred::CreateKeyset(test_keyset_handle, registrar_handle)
-                .set_authinfo("testauthinfo1")
                 .set_tech_contacts({admin_contact6_handle})
                 .set_dns_keys({::LibFred::DnsKey(257, 3, 5, "AwEAAddt2AkLfYGKgiEZB5SmIF8EvrjxNMH6HtxWEA4RJ9Ao6LCWheg8")})
                 .exec(ctx);
@@ -148,7 +148,6 @@ struct info_keyset_fixture : Test::instantiate_db_template
         test_info_keyset_output.info_keyset_data.update_registrar_handle = Nullable<std::string>();
         test_info_keyset_output.info_keyset_data.creation_time = boost::posix_time::time_from_string("2011-07-01 01:59:59");
         test_info_keyset_output.info_keyset_data.transfer_time = Nullable<boost::posix_time::ptime>();
-        test_info_keyset_output.info_keyset_data.authinfopw = "testauthinfo1";
         test_info_keyset_output.info_keyset_data.tech_contacts =
                 {
                     ::LibFred::RegistrableObject::Contact::ContactReference(
@@ -331,7 +330,6 @@ BOOST_FIXTURE_TEST_CASE(info_keyset_diff, info_keyset_fixture)
                                            Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
     test_diff.transfer_time = std::make_pair(Nullable<boost::posix_time::ptime>(),
                                              Nullable<boost::posix_time::ptime>(boost::posix_time::second_clock::local_time()));
-    test_diff.authinfopw = std::make_pair(std::string("testpass1"), std::string("testpass2"));
 
     BOOST_TEST_MESSAGE(test_diff.to_string());
     const ::LibFred::InfoKeysetDiff test_empty_diff;
