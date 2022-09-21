@@ -201,7 +201,14 @@ EppAuthRecord LibFred::Registrar::EppAuth::update_registrar_epp_auth(
             return EppAuthRecord{
                     static_cast<unsigned long long>(db_result[0]["id"]),
                     {to_uuid(db_result[0]["uuid"])},
-                    static_cast<EppAuthRecord::TimePoint>(db_result[0]["create_time"]),
+                    [](auto&& col_create_time) -> boost::optional<EppAuthRecord::TimePoint>
+                    {
+                        if (!col_create_time.isnull())
+                        {
+                            return static_cast<EppAuthRecord::TimePoint>(col_create_time);
+                        }
+                        return boost::none;
+                    }(db_result[0]["create_time"]),
                     static_cast<std::string>(db_result[0]["cert"]),
                     static_cast<std::string>(db_result[0]["password"]),
                     [](auto&& col_cert_data_pem)
