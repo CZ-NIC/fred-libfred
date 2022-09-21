@@ -20,11 +20,18 @@ ChangeLog
   (allow to create ``libfred::OperationContext`` from ``libpg::*Transaction`` classes)
 
 
+5.3.1 (2022-09-21)
+------------------
+
+* Fix ``*RegistrarEppAuth`` operations - optional ``create_time``
+
+
 5.3.0 (2022-09-14)
 ------------------
 
 * Create new object authinfo storage with hashed password and ttl (expiration timestamp)
 * Modify info / create/update / transfer operations of domain / contact / nsset / keyset to support authinfo with ttl
+* Update ``*RegistrarEppAuth`` operations with new attributes (``create_time``, ``uuid``, ``cert_data_pem``)
 
 
 5.2.0 (2022-02-28)
