@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2021  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2018-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef FIXTURE_HH_DDB7D8EEA4534803A96FA30593FE5869
 #define FIXTURE_HH_DDB7D8EEA4534803A96FA30593FE5869
 
@@ -38,32 +39,36 @@ namespace Contact {
 
 
 template <class T>
-struct supply_ctx
-    : autorollbacking_context,
-      T
+struct supply_ctx : autorollbacking_context, T
 {
-
-
     supply_ctx()
         : autorollbacking_context(),
           T(ctx)
-    {
-    }
-
-
+    { }
 };
 
 struct Registrar
 {
-    ::LibFred::InfoRegistrarData data;
-
-
     Registrar(
             const ::LibFred::OperationContext& _ctx,
             const std::string& _registrar_handle = "REG-TEST")
+        : data{
+            [](const ::LibFred::OperationContext& ctx, const std::string& handle)
+            {
+                ::LibFred::CreateRegistrar{
+                        handle,
+                        "Name " + handle,
+                        "Organization " + handle,
+                        {"Street " + handle},
+                        "City " + handle,
+                        "PostalCode " + handle,
+                        "Telephone " + handle,
+                        "Email " + handle,
+                        "Url " + handle,
+                        "Dic " + handle}.exec(ctx);
+                return ::LibFred::InfoRegistrarByHandle(handle).exec(ctx).info_registrar_data;
+            }(_ctx, _registrar_handle)}
     {
-        ::LibFred::CreateRegistrar(_registrar_handle).exec(_ctx);
-        data = ::LibFred::InfoRegistrarByHandle(_registrar_handle).exec(_ctx).info_registrar_data;
         BOOST_REQUIRE(!data.system.get_value_or(false));
 
         _ctx.get_conn().exec_params(
@@ -84,8 +89,7 @@ struct Registrar
                 // clang-format on
                 Database::query_param_list(data.id)("0.2.4.e164.arpa"));
     }
-
-
+    ::LibFred::InfoRegistrarData data;
 };
 
 

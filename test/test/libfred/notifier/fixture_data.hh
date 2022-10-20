@@ -49,9 +49,17 @@ struct has_empty_contact : has_autocomitting_ctx {
     has_empty_contact()
     :   registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Reg Ist Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Reg Ist Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),
@@ -81,9 +89,17 @@ struct has_full_contact : has_autocomitting_ctx {
     has_full_contact()
     :   registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Reg Ist Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Reg Ist Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),
@@ -152,9 +168,17 @@ struct has_domain : has_autocomitting_ctx {
     :
         registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Reg Ist Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Reg Ist Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),
@@ -206,9 +230,17 @@ struct has_enum_domain : has_autocomitting_ctx {
         ),
         registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Reg Ist Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Reg Ist Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),
@@ -252,9 +284,17 @@ struct has_empty_keyset : has_autocomitting_ctx {
     :
         registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Regis T Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Regis T Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),
@@ -275,9 +315,17 @@ struct has_full_keyset : has_autocomitting_ctx {
     :
         registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Regis T Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Regis T Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),
@@ -348,9 +396,17 @@ struct has_empty_nsset : has_autocomitting_ctx {
     :
         registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Regis T Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Regis T Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),
@@ -371,9 +427,17 @@ struct has_full_nsset : has_autocomitting_ctx {
     :
         registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("REGISTRAR1")
-                    .set_name("Regis T Rar Jr.")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "REGISTRAR1",
+                        "Regis T Rar Jr.",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),

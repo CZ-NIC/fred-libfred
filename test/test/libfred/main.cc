@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE TestFredlib
 
@@ -47,8 +48,30 @@ void database_setup()
     Test::CzZone{ctx};
     Test::CzEnumZone{ctx};
     Test::InitDomainNameCheckers{ctx};
-    Test::SystemRegistrar{ctx, Test::Setter::system_registrar(LibFred::CreateRegistrar{"REG-CZNIC"})};
-    Test::Registrar{ctx, Test::Setter::registrar(LibFred::CreateRegistrar{"REG-MOJEID"}, 1)};
+    Test::SystemRegistrar{ctx, Test::Setter::system_registrar(
+            LibFred::CreateRegistrar{
+                    "REG-CZNIC",
+                    "Name REG-CZNIC",
+                    "Organization REG-CZNIC",
+                    {"Street REG-CZNIC"},
+                    "City REG-CZNIC",
+                    "PostalCode REG-CZNIC",
+                    "Telephone REG-CZNIC",
+                    "Email REG-CZNIC",
+                    "Url REG-CZNIC",
+                    "Dic REG-CZNIC"})};
+    Test::Registrar{ctx, Test::Setter::registrar(
+            LibFred::CreateRegistrar{
+                    "REG-MOJEID",
+                    "Name REG-MOJEID",
+                    "Organization REG-MOJEID",
+                    {"Street REG-MOJEID"},
+                    "City REG-MOJEID",
+                    "PostalCode REG-MOJEID",
+                    "Telephone REG-MOJEID",
+                    "Email REG-MOJEID",
+                    "Url REG-MOJEID",
+                    "Dic REG-MOJEID"}, 1)};
     ctx.get_conn().exec(
             "WITH u1 AS ("
                 "UPDATE enum_parameters SET val = '2' WHERE name = 'handle_registration_protection_period' "

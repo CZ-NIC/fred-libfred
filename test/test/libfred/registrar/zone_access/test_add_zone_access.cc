@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrar/create_registrar.hh"
 #include "libfred/registrar/zone_access/add_registrar_zone_access.hh"
 #include "libfred/registrar/zone_access/exceptions.hh"
@@ -30,6 +31,7 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
+
 #include <string>
 
 namespace Test {
@@ -53,7 +55,17 @@ struct AddRegistrarZoneAccessFixture
                   boost::gregorian::from_simple_string("2038-01-19"))),
           to_date()
     {
-        ::LibFred::CreateRegistrar(registrar_handle).exec(_ctx);
+        ::LibFred::CreateRegistrar{
+                registrar_handle,
+                "Novakovic Jan",
+                "Organization",
+                {"Street"},
+                "City",
+                "PostalCode",
+                "Telephone",
+                "Email",
+                "registrar1.cz",
+                "Dic"}.exec(_ctx);
         ::LibFred::Zone::CreateZone(zone_fqdn, ex_period_min, ex_period_max).exec(_ctx);
     }
 };

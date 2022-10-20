@@ -40,23 +40,26 @@ struct test_get_registrar_zone_credit_fixture:Test::instantiate_db_template
           registrar_1_handle("TEST-REGISTRAR1-HANDLE" + xmark),
           registrar_2_handle("TEST-REGISTRAR2-HANDLE" + xmark)
     {
-        ::LibFred::CreateRegistrar(registrar_1_handle)
-            .set_name("TEST-REGISTRAR NAME1" + xmark)
-            .set_organization("TEST-REGISTRAR ORG1" + xmark)
-            .set_street1("STR11" + xmark)
-            .set_street2("STR21" + xmark)
-            .set_street3("STR31" + xmark)
-            .set_city("Praha 1")
+        ::LibFred::CreateRegistrar{
+                registrar_1_handle,
+                "TEST-REGISTRAR NAME1" + xmark,
+                "TEST-REGISTRAR ORG1" + xmark,
+                {
+                    "STR11" + xmark,
+                    "STR21" + xmark,
+                    "STR31" + xmark
+                },
+                "Praha 1",
+                "11150",
+                "+420.728123456",
+                "test1@nic.cz",
+                "www.test1.com",
+                "1123456789"}
             .set_stateorprovince("State1")
-            .set_postalcode("11150")
             .set_country("CZ")
-            .set_telephone("+420.728123456")
             .set_fax("+420.728123457")
-            .set_email("test1@nic.cz")
-            .set_url("www.test1.com")
             .set_system(false)
             .set_ico("1023456789")
-            .set_dic("1123456789")
             .set_variable_symbol("123456789")
             .set_payment_memo_regex("test-registrar1*")
             .set_vat_payer(true)
@@ -67,23 +70,26 @@ struct test_get_registrar_zone_credit_fixture:Test::instantiate_db_template
                     "SELECT id FROM registrar WHERE handle=$1::TEXT",
                     Database::query_param_list(registrar_1_handle))[0][0]);
 
-        ::LibFred::CreateRegistrar(registrar_2_handle)
-            .set_name("TEST-REGISTRAR NAME2" + xmark)
-            .set_organization("TEST-REGISTRAR ORG2" + xmark)
-            .set_street1("STR12" + xmark)
-            .set_street2("STR22" + xmark)
-            .set_street3("STR32" + xmark)
-            .set_city("Praha 2")
+        ::LibFred::CreateRegistrar{
+                registrar_2_handle,
+                "TEST-REGISTRAR NAME2" + xmark,
+                "TEST-REGISTRAR ORG2" + xmark,
+                {
+                    "STR12" + xmark,
+                    "STR22" + xmark,
+                    "STR32" + xmark
+                },
+                "Praha 2",
+                "21150",
+                "+420.728123458",
+                "test2@nic.cz",
+                "www.test2.com",
+                "2123456789"}
             .set_stateorprovince("State2")
-            .set_postalcode("21150")
             .set_country("SK")
-            .set_telephone("+420.728123458")
             .set_fax("+420.728123459")
-            .set_email("test2@nic.cz")
-            .set_url("www.test2.com")
             .set_system(true)
             .set_ico("2023456789")
-            .set_dic("2123456789")
             .set_variable_symbol("223456789")
             .set_payment_memo_regex("test-registrar2*")
             .set_vat_payer(false)
