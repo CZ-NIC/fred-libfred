@@ -16,171 +16,364 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrar/exceptions.hh"
 #include "libfred/registrar/update_registrar.hh"
 #include "src/util/db/query_param.hh"
 #include "src/util/util.hh"
 
-#include <sstream>
+#include <algorithm>
+#include <cctype>
 #include <stdexcept>
+#include <utility>
 
 namespace LibFred {
 namespace Registrar {
 
-namespace
-{
+namespace {
+
 constexpr const char * psql_type(const std::string&)
 {
     return "::text";
 }
 
-constexpr const char * psql_type(const bool)
+constexpr const char * psql_type(bool)
 {
     return "::bool";
 }
 
-constexpr const char * psql_type(const unsigned long long)
+constexpr const char * psql_type(unsigned long long)
 {
     return "::bigint";
 }
 
-bool is_country_code_valid(const LibFred::OperationContext& _ctx, const std::string& _country) {
-    const Database::Result db_result = _ctx.get_conn().exec_params(
-                "SELECT 1 FROM enum_country WHERE id = $1::text FOR SHARE ",
-                Database::query_param_list(_country));
-    return db_result.size() > 0;
+bool is_empty(const std::string& value)
+{
+    return value.empty() ||
+           std::all_of(begin(value), end(value), [](unsigned char c) { return std::isspace(c); });
+}
+
+template <typename Fnc>
+std::string nonempty(std::string value, Fnc make_exception)
+{
+    if (is_empty(value))
+    {
+        throw make_exception();
+    }
+    return value;
+}
+
+template <typename Fnc>
+boost::optional<std::string> nonempty(boost::optional<std::string> value, Fnc make_exception)
+{
+    if ((value != boost::none) && is_empty(*value))
+    {
+        throw make_exception();
+    }
+    return value;
+}
+
+auto make_invalid_street_exception()
+{
+    struct InvalidStreet : UpdateRegistrarException
+    {
+        const char* what() const noexcept override { return "street can not be empty"; }
+    };
+    return InvalidStreet{};
+}
+
+void check_street(const std::vector<std::string>& street)
+{
+    static constexpr auto max_number_of_streets = 3u;
+    if (max_number_of_streets < street.size())
+    {
+        struct TooManyStreets : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "too many street items"; }
+        };
+        throw TooManyStreets{};
+    }
+    if (street.empty())
+    {
+        throw make_invalid_street_exception();
+    }
+    std::for_each(begin(street), end(street), [](auto&& item)
+    {
+        nonempty(item, make_invalid_street_exception);
+    });
+}
+
+boost::optional<std::vector<std::string>> correct_street(boost::optional<std::vector<std::string>> street)
+{
+    if (street != boost::none)
+    {
+        check_street(*street);
+    }
+    return street;
+}
+
+bool does_optional_attribute_present(const std::string& value)
+{
+    return !is_empty(value);
+}
+
+class TheSetPartOfUpdate
+{
+public:
+    explicit TheSetPartOfUpdate(Database::QueryParams& params)
+        : params_{params}
+    { }
+    template <typename T, typename Fnc>
+    TheSetPartOfUpdate& append(const T& value, Fnc fnc)
+    {
+        if (!sql_.empty())
+        {
+            sql_.append(", ");
+        }
+        params_.push_back(value);
+        sql_.append(fnc("$" + std::to_string(params_.size()) + psql_type(value)));
+        return *this;
+    }
+    template <typename Fnc>
+    TheSetPartOfUpdate& append_optional(const std::string& value, Fnc fnc)
+    {
+        if (!sql_.empty())
+        {
+            sql_.append(", ");
+        }
+        if (does_optional_attribute_present(value))
+        {
+            params_.push_back(value);
+            sql_.append(fnc("$" + std::to_string(params_.size()) + psql_type(value)));
+        }
+        else
+        {
+            sql_.append(fnc("NULL::TEXT"));
+        }
+        return *this;
+    }
+    const std::string& get() const noexcept
+    {
+        return sql_;
+    }
+private:
+    Database::QueryParams& params_;
+    std::string sql_;
+};
+
+bool is_country_code_valid(const LibFred::OperationContext& _ctx, const std::string& _country)
+{
+    const auto db_result = _ctx.get_conn().exec_params(
+            "SELECT FROM enum_country WHERE id = $1::TEXT FOR SHARE",
+            Database::query_param_list(_country));
+    return 0 < db_result.size();
 }
 
 } // namespace LibFred::Registrar::{anonymous}
 
 UpdateRegistrarById::UpdateRegistrarById(const unsigned long long _id)
-        : id_(_id)
-{
-}
+    : id_(_id)
+{ }
 
-UpdateRegistrarById& UpdateRegistrarById::set_handle(const boost::optional<std::string>& _handle)
+UpdateRegistrarById& UpdateRegistrarById::set_handle(boost::optional<std::string> _handle)
 {
-    handle_ = _handle;
+    handle_ = nonempty(std::move(_handle), []()
+    {
+        struct InvalidHandle : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "handle can not be empty"; }
+        };
+        return InvalidHandle{};
+    });
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_ico(const boost::optional<std::string>& _ico)
+UpdateRegistrarById& UpdateRegistrarById::set_ico(boost::optional<std::string> _ico)
 {
-    ico_ = _ico;
+    ico_ = std::move(_ico);
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_dic(const boost::optional<std::string>& _dic)
+UpdateRegistrarById& UpdateRegistrarById::set_dic(boost::optional<std::string> _dic)
 {
-    dic_ = _dic;
+    dic_ = nonempty(std::move(_dic), []()
+    {
+        struct InvalidDic : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "dic can not be empty"; }
+        };
+        return InvalidDic{};
+    });
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_variable_symbol(const boost::optional<std::string>& _variable_symbol)
+UpdateRegistrarById& UpdateRegistrarById::set_variable_symbol(boost::optional<std::string> _variable_symbol)
 {
-    variable_symbol_ = _variable_symbol;
+    variable_symbol_ = std::move(_variable_symbol);
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_vat_payer(const boost::optional<bool>& _vat_payer)
+UpdateRegistrarById& UpdateRegistrarById::set_vat_payer(boost::optional<bool> _vat_payer)
 {
     vat_payer_ = _vat_payer;
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_name(const boost::optional<std::string>& _name)
+UpdateRegistrarById& UpdateRegistrarById::set_name(boost::optional<std::string> _name)
 {
-    name_ = _name;
+    name_ = nonempty(std::move(_name), []()
+    {
+        struct InvalidName : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "name can not be empty"; }
+        };
+        return InvalidName{};
+    });
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_organization(const boost::optional<std::string>& _organization)
+UpdateRegistrarById& UpdateRegistrarById::set_organization(boost::optional<std::string> _organization)
 {
-    organization_ = _organization;
+    organization_ = nonempty(std::move(_organization), []()
+    {
+        struct InvalidOrganization : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "organization can not be empty"; }
+        };
+        return InvalidOrganization{};
+    });
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_street1(const boost::optional<std::string>& _street1)
+UpdateRegistrarById& UpdateRegistrarById::set_street(boost::optional<std::vector<std::string>> _street)
 {
-    street1_ = _street1;
+    street_ = correct_street(std::move(_street));
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_street2(const boost::optional<std::string>& _street2)
+UpdateRegistrarById& UpdateRegistrarById::set_street(std::string _street1)
 {
-    street2_ = _street2;
+    street_ = std::vector<std::string>{nonempty(std::move(_street1), make_invalid_street_exception)};
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_street3(const boost::optional<std::string>& _street3)
+UpdateRegistrarById& UpdateRegistrarById::set_street(std::string _street1, std::string _street2)
 {
-    street3_ = _street3;
+    street_ = std::vector<std::string>{
+            nonempty(std::move(_street1), make_invalid_street_exception),
+            nonempty(std::move(_street2), make_invalid_street_exception)
+    };
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_city(const boost::optional<std::string>& _city)
+UpdateRegistrarById& UpdateRegistrarById::set_street(std::string _street1, std::string _street2, std::string _street3)
 {
-    city_ = _city;
+    street_ = std::vector<std::string>{
+            nonempty(std::move(_street1), make_invalid_street_exception),
+            nonempty(std::move(_street2), make_invalid_street_exception),
+            nonempty(std::move(_street3), make_invalid_street_exception)
+    };
+    return *this;
+}
+
+UpdateRegistrarById& UpdateRegistrarById::set_city(boost::optional<std::string> _city)
+{
+    city_ = nonempty(std::move(_city), []()
+    {
+        struct InvalidCity : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "city can not be empty"; }
+        };
+        return InvalidCity{};
+    });
     return *this;
 }
 
 UpdateRegistrarById& UpdateRegistrarById::set_state_or_province(
-        const boost::optional<std::string>& _state_or_province)
+        boost::optional<std::string> _state_or_province)
 {
-    state_or_province_ = _state_or_province;
+    state_or_province_ = std::move(_state_or_province);
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_postal_code(const boost::optional<std::string>& _postal_code)
+UpdateRegistrarById& UpdateRegistrarById::set_postal_code(boost::optional<std::string> _postal_code)
 {
-    postal_code_ = _postal_code;
+    postal_code_ = nonempty(std::move(_postal_code), []()
+    {
+        struct InvalidPostalCode : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "postal code can not be empty"; }
+        };
+        return InvalidPostalCode{};
+    });
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_country(const boost::optional<std::string>& _country)
+UpdateRegistrarById& UpdateRegistrarById::set_country(boost::optional<std::string> _country)
 {
-    country_ = _country;
+    country_ = std::move(_country);
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_telephone(const boost::optional<std::string>& _telephone)
+UpdateRegistrarById& UpdateRegistrarById::set_telephone(boost::optional<std::string> _telephone)
 {
-    telephone_ = _telephone;
+    telephone_ = nonempty(std::move(_telephone), []()
+    {
+        struct InvalidTelephone : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "telephone can not be empty"; }
+        };
+        return InvalidTelephone{};
+    });;
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_fax(const boost::optional<std::string>& _fax)
+UpdateRegistrarById& UpdateRegistrarById::set_fax(boost::optional<std::string> _fax)
 {
-    fax_ = _fax;
+    fax_ = std::move(_fax);
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_email(const boost::optional<std::string>& _email)
+UpdateRegistrarById& UpdateRegistrarById::set_email(boost::optional<std::string> _email)
 {
-    email_ = _email;
+    email_ = nonempty(std::move(_email), []()
+    {
+        struct InvalidEmail : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "email can not be empty"; }
+        };
+        return InvalidEmail{};
+    });
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_url(const boost::optional<std::string>& _url)
+UpdateRegistrarById& UpdateRegistrarById::set_url(boost::optional<std::string> _url)
 {
-    url_ = _url;
+    url_ = nonempty(std::move(_url), []()
+    {
+        struct InvalidUrl : UpdateRegistrarException
+        {
+            const char* what() const noexcept override { return "url can not be empty"; }
+        };
+        return InvalidUrl{};
+    });
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_system(const boost::optional<bool>& _system)
+UpdateRegistrarById& UpdateRegistrarById::set_system(boost::optional<bool> _system)
 {
     system_ = _system;
     return *this;
 }
 
 UpdateRegistrarById& UpdateRegistrarById::set_payment_memo_regex(
-        const boost::optional<std::string>& _payment_memo_regex)
+        boost::optional<std::string> _payment_memo_regex)
 {
-    payment_memo_regex_ = _payment_memo_regex;
+    payment_memo_regex_ = std::move(_payment_memo_regex);
     return *this;
 }
 
-UpdateRegistrarById& UpdateRegistrarById::set_internal(const boost::optional<bool>& value)
+UpdateRegistrarById& UpdateRegistrarById::set_internal(boost::optional<bool> value)
 {
     is_internal_ = value;
     return *this;
@@ -188,159 +381,178 @@ UpdateRegistrarById& UpdateRegistrarById::set_internal(const boost::optional<boo
 
 void UpdateRegistrarById::exec(const OperationContext& _ctx) const
 {
-    const bool values_for_update_are_set = (handle_ != boost::none ||
-            ico_ != boost::none ||
-            dic_ != boost::none ||
-            variable_symbol_ != boost::none ||
-            vat_payer_ != boost::none ||
-            name_ != boost::none ||
-            organization_ != boost::none ||
-            street1_ != boost::none ||
-            street2_ != boost::none ||
-            street3_ != boost::none ||
-            city_ != boost::none ||
-            state_or_province_ != boost::none ||
-            postal_code_ != boost::none ||
-            country_ != boost::none ||
-            telephone_ != boost::none ||
-            fax_ != boost::none ||
-            email_ != boost::none ||
-            url_ != boost::none ||
-            system_ != boost::none ||
-            payment_memo_regex_ != boost::none ||
-            is_internal_ != boost::none);
-
-    if (!values_for_update_are_set)
-    {
-        throw NoUpdateData();
-    }
-
     Database::QueryParams params;
-    std::ostringstream object_sql;
-    Util::HeadSeparator set_separator(" SET ", ", ");
+    TheSetPartOfUpdate the_set_part{params};
 
-    object_sql << "UPDATE registrar";
-    if (handle_ != boost::none && !handle_->empty())
+    if (handle_ != boost::none)
     {
-        params.push_back(*handle_);
-        object_sql << set_separator.get() << "handle = UPPER($" << params.size() << psql_type(*handle_) << ")";
+        the_set_part.append(*handle_, [](const std::string& param)
+        {
+            return "handle = UPPER(" + param + ")";
+        });
     }
-    if (ico_ != boost::none && !ico_->empty())
+    if (ico_ != boost::none)
     {
-        params.push_back(*ico_);
-        object_sql << set_separator.get() << "ico = $" << params.size() << psql_type(*ico_);
+        the_set_part.append_optional(*ico_, [](const std::string& param)
+        {
+            return "ico = " + param;
+        });
     }
-    if (dic_ != boost::none && !dic_->empty())
+    if (dic_ != boost::none)
     {
-        params.push_back(*dic_);
-        object_sql << set_separator.get() << "dic = $" << params.size() << psql_type(*dic_);
+        the_set_part.append(*dic_, [](const std::string& param)
+        {
+            return "dic = " + param;
+        });
     }
-    if (variable_symbol_ != boost::none && !variable_symbol_->empty())
+    if (variable_symbol_ != boost::none)
     {
-        params.push_back(*variable_symbol_);
-        object_sql << set_separator.get() << "varsymb = $" << params.size() << psql_type(*variable_symbol_);
+        the_set_part.append_optional(*variable_symbol_, [](const std::string& param)
+        {
+            return "varsymb = " + param;
+        });
     }
     if (vat_payer_ != boost::none)
     {
-        params.push_back(*vat_payer_);
-        object_sql << set_separator.get() << "vat = $" << params.size() << psql_type(*vat_payer_);
+        the_set_part.append(*vat_payer_, [](const std::string& param)
+        {
+            return "vat = " + param;
+        });
     }
-    if (name_ != boost::none && !name_->empty())
+    if (name_ != boost::none)
     {
-        params.push_back(*name_);
-        object_sql << set_separator.get() << "name = $" << params.size() << psql_type(*name_);
+        the_set_part.append(*name_, [](const std::string& param)
+        {
+            return "name = " + param;
+        });
     }
-    if (organization_ != boost::none && !organization_->empty())
+    if (organization_ != boost::none)
     {
-        params.push_back(*organization_);
-        object_sql << set_separator.get() << "organization = $" << params.size() << psql_type(*organization_);
+        the_set_part.append(*organization_, [](const std::string& param)
+        {
+            return "organization = " + param;
+        });
     }
-    if (street1_ != boost::none && !street1_->empty())
+    if (street_ != boost::none)
     {
-        params.push_back(*street1_);
-        object_sql << set_separator.get() << "street1 = $" << params.size() << psql_type(*street1_);
+        the_set_part.append((*street_)[0], [](const std::string& param)
+        {
+            return "street1 = " + param;
+        });
+        the_set_part.append_optional(1 < street_->size() ? (*street_)[1] : "",
+                [](const std::string& param)
+                {
+                    return "street2 = " + param;
+                });
+        the_set_part.append_optional(2 < street_->size() ? (*street_)[2] : "",
+                [](const std::string& param)
+                {
+                    return "street3 = " + param;
+                });
     }
-    if (street2_ != boost::none && !street2_->empty())
+    if (city_ != boost::none)
     {
-        params.push_back(*street2_);
-        object_sql << set_separator.get() << "street2 = $" << params.size() << psql_type(*street2_);
+        the_set_part.append(*city_, [](const std::string& param)
+        {
+            return "city = " + param;
+        });
     }
-    if (street3_ != boost::none && !street3_->empty())
+    if (postal_code_ != boost::none)
     {
-        params.push_back(*street3_);
-        object_sql << set_separator.get() << "street3 = $" << params.size() << psql_type(*street3_);
+        the_set_part.append(*postal_code_, [](const std::string& param)
+        {
+            return "postalcode = " + param;
+        });
     }
-    if (city_ != boost::none && !city_->empty())
+    if (state_or_province_ != boost::none)
     {
-        params.push_back(*city_);
-        object_sql << set_separator.get() << "city = $" << params.size() << psql_type(*city_);
+        the_set_part.append_optional(*state_or_province_, [](const std::string& param)
+        {
+            return "stateorprovince = " + param;
+        });
     }
-    if (postal_code_ != boost::none && !postal_code_->empty())
+    if (country_ != boost::none)
     {
-        params.push_back(*postal_code_);
-        object_sql << set_separator.get() << "postalcode = $" << params.size() << psql_type(*postal_code_);
-    }
-    if (state_or_province_ != boost::none && !state_or_province_->empty())
-    {
-        params.push_back(*state_or_province_);
-        object_sql << set_separator.get() << "stateorprovince = $" << params.size() << psql_type(*state_or_province_);
-    }
-    if (country_ != boost::none && !country_->empty())
-    {
-        if (!is_country_code_valid(_ctx, *country_))
+        if (!is_country_code_valid(_ctx, *country_) &&
+            !is_empty(*country_))
         {
             throw UnknownCountryCode();
         }
-        params.push_back(*country_);
-        object_sql << set_separator.get() << "country = $" << params.size() << psql_type(*country_);
+        the_set_part.append_optional(*country_, [](const std::string& param)
+        {
+            return "country = " + param;
+        });
     }
-    if (telephone_ != boost::none && !telephone_->empty())
+    if (telephone_ != boost::none)
     {
-        params.push_back(*telephone_);
-        object_sql << set_separator.get() << "telephone = $" << params.size() << psql_type(*telephone_);
+        the_set_part.append(*telephone_, [](const std::string& param)
+        {
+            return "telephone = " + param;
+        });
     }
-    if (fax_ != boost::none && !fax_->empty())
+    if (fax_ != boost::none)
     {
-        params.push_back(*fax_);
-        object_sql << set_separator.get() << "fax = $" << params.size() << psql_type(*fax_);
+        the_set_part.append_optional(*fax_, [](const std::string& param)
+        {
+            return "fax = " + param;
+        });
     }
-    if (email_ != boost::none && !email_->empty())
+    if (email_ != boost::none)
     {
-        params.push_back(*email_);
-        object_sql << set_separator.get() << "email = $" << params.size() << psql_type(*email_);
+        the_set_part.append(*email_, [](const std::string& param)
+        {
+            return "email = " + param;
+        });
     }
-    if (url_ != boost::none && !url_->empty())
+    if (url_ != boost::none)
     {
-        params.push_back(*url_);
-        object_sql << set_separator.get() << "url = $" << params.size() << psql_type(*url_);
+        the_set_part.append(*url_, [](const std::string& param)
+        {
+            return "url = " + param;
+        });
     }
     if (system_ != boost::none)
     {
-        params.push_back(*system_);
-        object_sql << set_separator.get() << "system = $" << params.size() << psql_type(*system_);
+        the_set_part.append(*system_, [](const std::string& param)
+        {
+            return "system = " + param;
+        });
     }
-    if (payment_memo_regex_ != boost::none && !payment_memo_regex_->empty())
+    if (payment_memo_regex_)
     {
-        params.push_back(*payment_memo_regex_);
-        object_sql << set_separator.get() << "regex = $" << params.size() << psql_type(*payment_memo_regex_);
+        the_set_part.append_optional(*payment_memo_regex_, [](const std::string& param)
+        {
+            return "regex = " + param;
+        });
     }
-    if (is_internal_ != boost::none)
+    if (is_internal_)
     {
-        params.push_back(*is_internal_);
-        object_sql << set_separator.get() << "is_internal = $" << params.size() << psql_type(*is_internal_);
+        the_set_part.append(*is_internal_, [](const std::string& param)
+        {
+            return "is_internal = " + param;
+        });
     }
 
+    if (the_set_part.get().empty())
+    {
+        throw NoUpdateData();
+    }
     params.push_back(id_);
-    object_sql << " WHERE registrar.id = $" << params.size() << psql_type(id_) << " RETURNING id";
+    const auto sql = "UPDATE registrar "
+                        "SET " + the_set_part.get() + " "
+                      "WHERE id = $" + std::to_string(params.size()) + psql_type(id_) + " "
+                  "RETURNING 0";
 
     try
     {
-        const Database::Result update_result = _ctx.get_conn().exec_params(
-                object_sql.str(),
-                params);
-        if (update_result.size() > 1)
+        const auto update_result = _ctx.get_conn().exec_params(sql, params);
+        if (1 < update_result.size())
         {
-            throw std::runtime_error("Duplicity in database");
+            struct BadDatabase : UpdateRegistrarException
+            {
+                const char* what() const noexcept override { return "Duplicity in database"; }
+            };
+            throw BadDatabase{};
         }
         if (update_result.size() < 1)
         {
@@ -351,13 +563,19 @@ void UpdateRegistrarById::exec(const OperationContext& _ctx) const
     {
         throw;
     }
+    catch (const UpdateRegistrarException&)
+    {
+        throw;
+    }
     catch (const std::exception& e)
     {
         const std::string what_string(e.what());
+        // there is no better way to detect an SQL error caused by a uniqueness violation
         if (what_string.find("registrar_handle_key") != std::string::npos)
         {
             throw RegistrarHandleAlreadyExists();
         }
+        // there is no better way to detect an SQL error caused by a uniqueness violation
         if (what_string.find("registrar_varsymb_key") != std::string::npos)
         {
             throw VariableSymbolAlreadyExists();

@@ -115,9 +115,10 @@ BOOST_AUTO_TEST_CASE(set_registrar_update_all)
     ::LibFred::Registrar::UpdateRegistrarById(registrar.id)
             .set_handle(registrar.handle)
             .set_name(registrar.name.get_value())
-            .set_street1(registrar.street1.get_value())
-            .set_street2(registrar.street2.get_value())
-            .set_street3(registrar.street3.get_value())
+            .set_street(std::vector<std::string>{
+                    registrar.street1.get_value(),
+                    registrar.street2.get_value(),
+                    registrar.street3.get_value()})
             .set_state_or_province(boost::none)
             .set_city(registrar.city.get_value())
             .set_postal_code(registrar.postalcode.get_value())
