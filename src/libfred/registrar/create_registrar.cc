@@ -372,7 +372,7 @@ unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
         //insert into registrar
         try
         {
-            const Database::Result dbres = ctx.get_conn().exec_params(col_sql.str() + " VALUES(" + val_sql.str() + ") RETURNING id", params);
+            const Database::Result dbres = ctx.get_conn().exec_params(col_sql.str() + ") VALUES(" + val_sql.str() + ") RETURNING id", params);
 
             if (dbres.size() != 1)
             {
