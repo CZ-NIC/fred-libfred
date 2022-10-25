@@ -37,6 +37,11 @@ bool is_empty(const std::string& value)
     return value.empty() || std::all_of(begin(value), end(value), [](unsigned char c) { return std::isspace(c); });
 }
 
+bool does_present(const Optional<std::string>& argument)
+{
+    return argument.is_set() && !is_empty(argument.get_value());
+}
+
 template <typename Fnc, typename ...Args>
 std::string nonempty(std::string value, Fnc make_exception, Args&& ...args)
 {
@@ -314,14 +319,14 @@ unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
             }
         }
 
-        if (stateorprovince_.isset() && !stateorprovince_.get_value().empty())
+        if (does_present(stateorprovince_))
         {
             params.push_back(stateorprovince_.get_value());
             col_sql << ", stateorprovince";
             val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (country_.isset() && !country_.get_value().empty())
+        if (does_present(country_))
         {
             params.push_back(LibFred::Contact::get_country_code(country_, ctx, static_cast<Exception*>(nullptr),
                             &Exception::set_unknown_country)); //throw if country unknown
@@ -329,28 +334,28 @@ unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
             val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (fax_.isset() && !fax_.get_value().empty())
+        if (does_present(fax_))
         {
             params.push_back(fax_.get_value());
             col_sql << ", fax";
             val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (ico_.isset() && !ico_.get_value().empty())
+        if (does_present(ico_))
         {
             params.push_back(ico_.get_value());
             col_sql << ", ico";
             val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (variable_symbol_.isset() && !variable_symbol_.get_value().empty())
+        if (does_present(variable_symbol_))
         {
             params.push_back(variable_symbol_.get_value());
             col_sql << ", varsymb";
             val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (payment_memo_regex_.isset() && !payment_memo_regex_.get_value().empty())
+        if (does_present(payment_memo_regex_))
         {
             params.push_back(payment_memo_regex_.get_value());
             col_sql << ", regex";
