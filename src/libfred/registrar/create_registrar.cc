@@ -37,12 +37,12 @@ bool is_empty(const std::string& value)
     return value.empty() || std::all_of(begin(value), end(value), [](unsigned char c) { return std::isspace(c); });
 }
 
-template <typename Fnc>
-std::string nonempty(std::string value, Fnc make_exception)
+template <typename Fnc, typename ...Args>
+std::string nonempty(std::string value, Fnc make_exception, Args&& ...args)
 {
     if (is_empty(value))
     {
-        throw make_exception();
+        throw make_exception(std::forward<Args>(args)...);
     }
     return value;
 }
@@ -51,6 +51,13 @@ auto make_missing_street_exception()
 {
     CreateRegistrar::Exception e;
     e.set_missing_mandatory_attribute("street");
+    return e;
+}
+
+auto make_missing_attribute_exception(const std::string& attribute_name)
+{
+    CreateRegistrar::Exception e;
+    e.set_missing_mandatory_attribute(attribute_name);
     return e;
 }
 
@@ -71,7 +78,7 @@ std::vector<std::string> correct_street(std::vector<std::string> street)
     return street;
 }
 
-}////namespace LibFred::{anonymous}
+}//namespace LibFred::{anonymous}
 
 CreateRegistrar::CreateRegistrar(
         std::string handle,
@@ -86,17 +93,17 @@ CreateRegistrar::CreateRegistrar(
         std::string dic,
         bool system,
         bool is_internal)
-    : handle_{nonempty(std::move(handle), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("handle"); return e; })},
-      name_{nonempty(std::move(name), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("name"); return e; })},
-      organization_{nonempty(std::move(organization), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("organization"); return e; })},
+    : handle_{nonempty(std::move(handle), make_missing_attribute_exception, "handle")},
+      name_{nonempty(std::move(name), make_missing_attribute_exception, "name")},
+      organization_{nonempty(std::move(organization), make_missing_attribute_exception, "organization")},
       street_{correct_street(std::move(street))},
-      city_{nonempty(std::move(city), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("city"); return e; })},
-      postalcode_{nonempty(std::move(postalcode), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("postalcode"); return e; })},
-      telephone_{nonempty(std::move(telephone), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("telephone"); return e; })},
-      email_{nonempty(std::move(email), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("email"); return e; })},
-      url_{nonempty(std::move(url), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("url"); return e; })},
+      city_{nonempty(std::move(city), make_missing_attribute_exception, "city")},
+      postalcode_{nonempty(std::move(postalcode), make_missing_attribute_exception, "postalcode")},
+      telephone_{nonempty(std::move(telephone), make_missing_attribute_exception, "telephone")},
+      email_{nonempty(std::move(email), make_missing_attribute_exception, "email")},
+      url_{nonempty(std::move(url), make_missing_attribute_exception, "url")},
       system_{system},
-      dic_{nonempty(std::move(dic), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("dic"); return e; })},
+      dic_{nonempty(std::move(dic), make_missing_attribute_exception, "dic")},
       is_internal_{is_internal}
 {}
 
@@ -120,21 +127,21 @@ CreateRegistrar::CreateRegistrar(
         const Optional<std::string>& payment_memo_regex,
         const Optional<bool>& vat_payer,
         bool is_internal)
-    : handle_{nonempty(std::move(handle), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("handle"); return e; })},
-      name_{nonempty(std::move(name), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("name"); return e; })},
-      organization_{nonempty(std::move(organization), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("organization"); return e; })},
+    : handle_{nonempty(std::move(handle), make_missing_attribute_exception, "handle")},
+      name_{nonempty(std::move(name), make_missing_attribute_exception, "name")},
+      organization_{nonempty(std::move(organization), make_missing_attribute_exception, "organization")},
       street_{correct_street(std::move(street))},
-      city_{nonempty(std::move(city), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("city"); return e; })},
+      city_{nonempty(std::move(city), make_missing_attribute_exception, "city")},
       stateorprovince_{stateorprovince},
-      postalcode_{nonempty(std::move(postalcode), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("postalcode"); return e; })},
+      postalcode_{nonempty(std::move(postalcode), make_missing_attribute_exception, "postalcode")},
       country_{country},
-      telephone_{nonempty(std::move(telephone), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("telephone"); return e; })},
+      telephone_{nonempty(std::move(telephone), make_missing_attribute_exception, "telephone")},
       fax_{fax},
-      email_{nonempty(std::move(email), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("email"); return e; })},
-      url_{nonempty(std::move(url), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("url"); return e; })},
+      email_{nonempty(std::move(email), make_missing_attribute_exception, "email")},
+      url_{nonempty(std::move(url), make_missing_attribute_exception, "url")},
       system_{system},
       ico_{ico},
-      dic_{nonempty(std::move(dic), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("dic"); return e; })},
+      dic_{nonempty(std::move(dic), make_missing_attribute_exception, "dic")},
       variable_symbol_{variable_symbol},
       payment_memo_regex_{payment_memo_regex},
       vat_payer_{vat_payer},
@@ -143,13 +150,13 @@ CreateRegistrar::CreateRegistrar(
 
 CreateRegistrar& CreateRegistrar::set_name(std::string name)
 {
-    name_ = nonempty(std::move(name), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("name"); return e; });
+    name_ = nonempty(std::move(name), make_missing_attribute_exception, "name");
     return *this;
 }
 
 CreateRegistrar& CreateRegistrar::set_organization(std::string organization)
 {
-    organization_ = nonempty(std::move(organization), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("organization"); return e; });
+    organization_ = nonempty(std::move(organization), make_missing_attribute_exception, "organization");
     return *this;
 }
 
@@ -188,7 +195,7 @@ CreateRegistrar& CreateRegistrar::set_street(std::string street1, std::string st
 
 CreateRegistrar& CreateRegistrar::set_city(std::string city)
 {
-    city_ = nonempty(std::move(city), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("city"); return e; });
+    city_ = nonempty(std::move(city), make_missing_attribute_exception, "city");
     return *this;
 }
 
@@ -200,7 +207,7 @@ CreateRegistrar& CreateRegistrar::set_stateorprovince(const std::string& stateor
 
 CreateRegistrar& CreateRegistrar::set_postalcode(std::string postalcode)
 {
-    postalcode_ = nonempty(std::move(postalcode), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("postalcode"); return e; });
+    postalcode_ = nonempty(std::move(postalcode), make_missing_attribute_exception, "postalcode");
     return *this;
 }
 
@@ -212,7 +219,7 @@ CreateRegistrar& CreateRegistrar::set_country(const std::string& country)
 
 CreateRegistrar& CreateRegistrar::set_telephone(std::string telephone)
 {
-    telephone_ = nonempty(std::move(telephone), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("telephone"); return e; });
+    telephone_ = nonempty(std::move(telephone), make_missing_attribute_exception, "telephone");
     return *this;
 }
 
@@ -224,13 +231,13 @@ CreateRegistrar& CreateRegistrar::set_fax(const std::string& fax)
 
 CreateRegistrar& CreateRegistrar::set_email(std::string email)
 {
-    email_ = nonempty(std::move(email), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("email"); return e; });
+    email_ = nonempty(std::move(email), make_missing_attribute_exception, "email");
     return *this;
 }
 
 CreateRegistrar& CreateRegistrar::set_url(std::string url)
 {
-    url_ = nonempty(std::move(url), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("url"); return e; });
+    url_ = nonempty(std::move(url), make_missing_attribute_exception, "url");
     return *this;
 }
 
@@ -248,7 +255,7 @@ CreateRegistrar& CreateRegistrar::set_ico(const std::string& ico)
 
 CreateRegistrar& CreateRegistrar::set_dic(std::string dic)
 {
-    dic_ = nonempty(std::move(dic), []() { CreateRegistrar::Exception e; e.set_missing_mandatory_attribute("dic"); return e; });
+    dic_ = nonempty(std::move(dic), make_missing_attribute_exception, "dic");
     return *this;
 }
 
