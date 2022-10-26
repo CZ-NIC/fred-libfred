@@ -36,6 +36,18 @@
 
 namespace Test {
 
+namespace {
+
+auto make_from_date()
+{
+    return boost::gregorian::from_simple_string("2009-12-31");
+}
+
+auto make_to_date()
+{
+    return boost::gregorian::from_simple_string("2020-01-01");
+}
+
 struct AddRegistrarZoneAccessFixture
 {
     std::string registrar_handle;
@@ -50,9 +62,7 @@ struct AddRegistrarZoneAccessFixture
           zone_fqdn(Random::Generator().get_seq(Random::CharSet::letters(), 3)),
           ex_period_min(Random::Generator().get(1, 5)),
           ex_period_max(Random::Generator().get(6, 10)),
-          from_date(Random::Generator().get(
-                  boost::gregorian::from_simple_string("1990-01-01"),
-                  boost::gregorian::from_simple_string("2038-01-19"))),
+          from_date(make_from_date()),
           to_date()
     {
         ::LibFred::CreateRegistrar{
@@ -69,6 +79,8 @@ struct AddRegistrarZoneAccessFixture
         ::LibFred::Zone::CreateZone(zone_fqdn, ex_period_min, ex_period_max).exec(_ctx);
     }
 };
+
+} // namespace Test::{anonymous}
 
 BOOST_FIXTURE_TEST_SUITE(TestAddRegistrarZoneAccess, SupplyFixtureCtx<AddRegistrarZoneAccessFixture>)
 
@@ -134,9 +146,7 @@ BOOST_AUTO_TEST_CASE(set_min_add_registrar_zone)
 
 BOOST_AUTO_TEST_CASE(set_max_add_registrar_zone)
 {
-    to_date = Random::Generator().get(
-                  boost::gregorian::from_simple_string("1990-01-01"),
-                  boost::gregorian::from_simple_string("2038-01-19"));
+    to_date = make_to_date();
     const unsigned long long id =
             ::LibFred::Registrar::ZoneAccess::AddRegistrarZoneAccess(registrar_handle, zone_fqdn, from_date)
                     .set_to_date(to_date)
@@ -144,6 +154,6 @@ BOOST_AUTO_TEST_CASE(set_max_add_registrar_zone)
     BOOST_CHECK_EQUAL(get_zone_access_id(ctx, registrar_handle, zone_fqdn, from_date, to_date), id);
 }
 
-BOOST_AUTO_TEST_SUITE_END();
+BOOST_AUTO_TEST_SUITE_END()//TestAddRegistrarZoneAccess
 
 } // namespace Test
