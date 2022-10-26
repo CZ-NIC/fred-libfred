@@ -383,7 +383,7 @@ unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
         }
         catch (const std::exception& e)
         {
-            std::string what_string(e.what());
+            const std::string what_string = e.what();
             if (what_string.find("registrar_handle_key") != std::string::npos)
             {
                 BOOST_THROW_EXCEPTION(Exception().set_invalid_registrar_handle(handle_));
@@ -410,9 +410,9 @@ std::string CreateRegistrar::to_string() const
             (std::make_pair("handle", handle_))
             (std::make_pair("name", name_))
             (std::make_pair("organization", organization_))
-            (std::make_pair("street1", street_[0]))
-            (std::make_pair("street2", street_[1]))
-            (std::make_pair("street3", street_[2]))
+            (std::make_pair("street1", 0 < street_.size() ? street_[0] : ""))
+            (std::make_pair("street2", 1 < street_.size() ? street_[1] : ""))
+            (std::make_pair("street3", 2 < street_.size() ? street_[2] : ""))
             (std::make_pair("city", city_))
             (std::make_pair("stateorprovince", stateorprovince_.print_quoted()))
             (std::make_pair("postalcode", postalcode_))

@@ -213,11 +213,19 @@ BOOST_AUTO_TEST_CASE(create_registrar_invalid_handle)
                 "Dic"}.set_email("test1@nic.cz").exec(ctx);
         BOOST_ERROR("unreported invalid_registrar_handle");
     }
-    catch (const ::LibFred::CreateRegistrar::Exception& ex)
+    catch (const ::LibFred::CreateRegistrar::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_invalid_registrar_handle());
-        BOOST_TEST_MESSAGE(boost::diagnostic_information(ex));
-        BOOST_CHECK(ex.get_invalid_registrar_handle().compare(test_registrar_handle) == 0);
+        BOOST_CHECK(e.is_set_invalid_registrar_handle());
+        BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
+        BOOST_CHECK_EQUAL(e.get_invalid_registrar_handle(), test_registrar_handle);
+    }
+    catch (const std::exception& e)
+    {
+        BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
+    }
+    catch (...)
+    {
+        BOOST_TEST_MESSAGE("unknown exception caught");
     }
 
     {
