@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019  CZ.NIC, z. s. p. o.
+ * Copyright (C) 2019-2022  CZ.NIC, z. s. p. o.
  *
  * This file is part of FRED.
  *
@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #ifndef EXCEPTIONS_HH_2595C4AB83554D95BAD1348002A17E35
 #define EXCEPTIONS_HH_2595C4AB83554D95BAD1348002A17E35
 
@@ -54,8 +55,12 @@ struct UpdateRegistrarException : std::exception
     const char* what() const noexcept override;
 };
 
+struct InvalidAttribute : UpdateRegistrarException
+{
+    virtual const char* attribute_name() const noexcept = 0;
+};
+
 } // namespace LibFred::Registrar
 } // namespace LibFred
 
-
-#endif
+#endif//EXCEPTIONS_HH_2595C4AB83554D95BAD1348002A17E35

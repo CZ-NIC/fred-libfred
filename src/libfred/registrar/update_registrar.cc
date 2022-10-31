@@ -47,15 +47,18 @@ constexpr const char * psql_type(unsigned long long)
     return "::bigint";
 }
 
-class InvalidAttribute : public UpdateRegistrarException
+class MissingAttribute : public InvalidAttribute
 {
 public:
-    explicit InvalidAttribute(const char* message)
-        : message_{message}
+    explicit MissingAttribute(const char* attribute_name)
+        : attribute_name_{attribute_name},
+          message_{std::string{attribute_name}.append(" can not be empty")}
     { }
 private:
-    const char* what() const noexcept override { return message_; }
-    const char* message_;
+    const char* what() const noexcept override { return message_.c_str(); }
+    const char* attribute_name() const noexcept override { return attribute_name_; }
+    const char* attribute_name_;
+    std::string message_;
 };
 
 bool is_empty(const std::string& value)
@@ -86,12 +89,12 @@ boost::optional<std::string> nonempty(boost::optional<std::string> value, Fnc ma
 
 auto make_invalid_street_exception()
 {
-    return InvalidAttribute{"street can not be empty"};
+    return MissingAttribute{"street"};
 }
 
-auto make_invalid_attribute_exception(const char* message)
+auto make_invalid_attribute_exception(const char* attribute_name)
 {
-    return InvalidAttribute{message};
+    return MissingAttribute{attribute_name};
 }
 
 void check_street(const std::vector<std::string>& street)
@@ -99,9 +102,10 @@ void check_street(const std::vector<std::string>& street)
     static constexpr auto max_number_of_streets = 3u;
     if (max_number_of_streets < street.size())
     {
-        struct TooManyStreets : UpdateRegistrarException
+        struct TooManyStreets : InvalidAttribute
         {
             const char* what() const noexcept override { return "too many street items"; }
+            const char* attribute_name() const noexcept override { return "street"; }
         };
         throw TooManyStreets{};
     }
@@ -189,7 +193,7 @@ UpdateRegistrarById::UpdateRegistrarById(const unsigned long long _id)
 
 UpdateRegistrarById& UpdateRegistrarById::set_handle(boost::optional<std::string> _handle)
 {
-    handle_ = nonempty(std::move(_handle), make_invalid_attribute_exception, "handle can not be empty");
+    handle_ = nonempty(std::move(_handle), make_invalid_attribute_exception, "handle");
     return *this;
 }
 
@@ -201,7 +205,7 @@ UpdateRegistrarById& UpdateRegistrarById::set_ico(boost::optional<std::string> _
 
 UpdateRegistrarById& UpdateRegistrarById::set_dic(boost::optional<std::string> _dic)
 {
-    dic_ = nonempty(std::move(_dic), make_invalid_attribute_exception, "dic can not be empty");
+    dic_ = nonempty(std::move(_dic), make_invalid_attribute_exception, "dic");
     return *this;
 }
 
@@ -219,13 +223,13 @@ UpdateRegistrarById& UpdateRegistrarById::set_vat_payer(boost::optional<bool> _v
 
 UpdateRegistrarById& UpdateRegistrarById::set_name(boost::optional<std::string> _name)
 {
-    name_ = nonempty(std::move(_name), make_invalid_attribute_exception, "name can not be empty");
+    name_ = nonempty(std::move(_name), make_invalid_attribute_exception, "name");
     return *this;
 }
 
 UpdateRegistrarById& UpdateRegistrarById::set_organization(boost::optional<std::string> _organization)
 {
-    organization_ = nonempty(std::move(_organization), make_invalid_attribute_exception, "organization can not be empty");
+    organization_ = nonempty(std::move(_organization), make_invalid_attribute_exception, "organization");
     return *this;
 }
 
@@ -262,7 +266,7 @@ UpdateRegistrarById& UpdateRegistrarById::set_street(std::string _street1, std::
 
 UpdateRegistrarById& UpdateRegistrarById::set_city(boost::optional<std::string> _city)
 {
-    city_ = nonempty(std::move(_city), make_invalid_attribute_exception, "city can not be empty");
+    city_ = nonempty(std::move(_city), make_invalid_attribute_exception, "city");
     return *this;
 }
 
@@ -275,7 +279,7 @@ UpdateRegistrarById& UpdateRegistrarById::set_state_or_province(
 
 UpdateRegistrarById& UpdateRegistrarById::set_postal_code(boost::optional<std::string> _postal_code)
 {
-    postal_code_ = nonempty(std::move(_postal_code), make_invalid_attribute_exception, "postal code can not be empty");
+    postal_code_ = nonempty(std::move(_postal_code), make_invalid_attribute_exception, "postal_code");
     return *this;
 }
 
@@ -287,7 +291,7 @@ UpdateRegistrarById& UpdateRegistrarById::set_country(boost::optional<std::strin
 
 UpdateRegistrarById& UpdateRegistrarById::set_telephone(boost::optional<std::string> _telephone)
 {
-    telephone_ = nonempty(std::move(_telephone), make_invalid_attribute_exception, "telephone can not be empty");
+    telephone_ = nonempty(std::move(_telephone), make_invalid_attribute_exception, "telephone");
     return *this;
 }
 
@@ -299,13 +303,13 @@ UpdateRegistrarById& UpdateRegistrarById::set_fax(boost::optional<std::string> _
 
 UpdateRegistrarById& UpdateRegistrarById::set_email(boost::optional<std::string> _email)
 {
-    email_ = nonempty(std::move(_email), make_invalid_attribute_exception, "email can not be empty");
+    email_ = nonempty(std::move(_email), make_invalid_attribute_exception, "email");
     return *this;
 }
 
 UpdateRegistrarById& UpdateRegistrarById::set_url(boost::optional<std::string> _url)
 {
-    url_ = nonempty(std::move(_url), make_invalid_attribute_exception, "url can not be empty");
+    url_ = nonempty(std::move(_url), make_invalid_attribute_exception, "url");
     return *this;
 }
 
