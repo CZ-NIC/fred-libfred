@@ -17,11 +17,6 @@
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- *  @file
- *  test create registrar
- */
-
 #include "libfred/registrar/create_registrar.hh"
 #include "libfred/registrar/info_registrar.hh"
 #include "libfred/registrar/info_registrar_diff.hh"
@@ -88,23 +83,27 @@ BOOST_AUTO_TEST_CASE(create_registrar)
 {
     ::LibFred::OperationContextCreator ctx;
 
-    ::LibFred::CreateRegistrar(test_info.handle)
-        .set_name(test_info.name.get_value())
-        .set_street1(test_info.street1.get_value())
-        .set_street2(test_info.street2.get_value())
-        .set_street3(test_info.street3.get_value())
+    ::LibFred::CreateRegistrar{
+            test_info.handle,
+            test_info.name.get_value(),
+            test_info.organization.get_value(),
+            {
+                test_info.street1.get_value(),
+                test_info.street2.get_value(),
+                test_info.street3.get_value()
+            },
+            test_info.city.get_value(),
+            test_info.postalcode.get_value(),
+            test_info.telephone.get_value(),
+            test_info.email.get_value(),
+            test_info.url.get_value(),
+            test_info.dic.get_value()}
         .set_stateorprovince(test_info.stateorprovince.get_value())
-        .set_city(test_info.city.get_value()).set_postalcode(test_info.postalcode.get_value())
         .set_country(test_info.country.get_value())
-        .set_dic(test_info.dic.get_value())
-        .set_email(test_info.email.get_value())
         .set_fax(test_info.fax.get_value())
         .set_ico(test_info.ico.get_value())
-        .set_organization(test_info.organization.get_value())
         .set_payment_memo_regex(test_info.payment_memo_regex.get_value())
         .set_system(test_info.system.get_value())
-        .set_telephone(test_info.telephone.get_value())
-        .set_url(test_info.url.get_value())
         .set_variable_symbol(test_info.variable_symbol.get_value())
         .set_vat_payer(test_info.vat_payer)
         .set_internal(test_info.is_internal)
@@ -133,23 +132,27 @@ BOOST_AUTO_TEST_CASE(create_internal_registrar)
     ::LibFred::OperationContextCreator ctx;
     test_info.is_internal = true;
 
-    ::LibFred::CreateRegistrar(test_info.handle)
-        .set_name(test_info.name.get_value())
-        .set_street1(test_info.street1.get_value())
-        .set_street2(test_info.street2.get_value())
-        .set_street3(test_info.street3.get_value())
+    ::LibFred::CreateRegistrar{
+            test_info.handle,
+            test_info.name.get_value(),
+            test_info.organization.get_value(),
+            {
+                test_info.street1.get_value(),
+                test_info.street2.get_value(),
+                test_info.street3.get_value()
+            },
+            test_info.city.get_value(),
+            test_info.postalcode.get_value(),
+            test_info.telephone.get_value(),
+            test_info.email.get_value(),
+            test_info.url.get_value(),
+            test_info.dic.get_value()}
         .set_stateorprovince(test_info.stateorprovince.get_value())
-        .set_city(test_info.city.get_value()).set_postalcode(test_info.postalcode.get_value())
         .set_country(test_info.country.get_value())
-        .set_dic(test_info.dic.get_value())
-        .set_email(test_info.email.get_value())
         .set_fax(test_info.fax.get_value())
         .set_ico(test_info.ico.get_value())
-        .set_organization(test_info.organization.get_value())
         .set_payment_memo_regex(test_info.payment_memo_regex.get_value())
         .set_system(test_info.system.get_value())
-        .set_telephone(test_info.telephone.get_value())
-        .set_url(test_info.url.get_value())
         .set_variable_symbol(test_info.variable_symbol.get_value())
         .set_vat_payer(test_info.vat_payer)
         .set_internal(test_info.is_internal)
@@ -180,21 +183,49 @@ BOOST_AUTO_TEST_CASE(create_registrar_invalid_handle)
 {
     {
         ::LibFred::OperationContextCreator ctx;
-        ::LibFred::CreateRegistrar(test_registrar_handle).exec(ctx);
+        ::LibFred::CreateRegistrar{
+                test_registrar_handle,
+                "Novakovic Jan",
+                "Organization",
+                {"Street"},
+                "City",
+                "PostalCode",
+                "Telephone",
+                "Email",
+                "registrar1.cz",
+                "Dic"}.exec(ctx);
         ctx.commit_transaction();
     }
 
     try
     {
         ::LibFred::OperationContextCreator ctx;
-        ::LibFred::CreateRegistrar(test_registrar_handle).set_email("test1@nic.cz").exec(ctx);
+        ::LibFred::CreateRegistrar{
+                test_registrar_handle,
+                "Novakovic Jan",
+                "Organization",
+                {"Street"},
+                "City",
+                "PostalCode",
+                "Telephone",
+                "Email",
+                "registrar1.cz",
+                "Dic"}.set_email("test1@nic.cz").exec(ctx);
         BOOST_ERROR("unreported invalid_registrar_handle");
     }
-    catch (const ::LibFred::CreateRegistrar::Exception& ex)
+    catch (const ::LibFred::CreateRegistrar::Exception& e)
     {
-        BOOST_CHECK(ex.is_set_invalid_registrar_handle());
-        BOOST_TEST_MESSAGE(boost::diagnostic_information(ex));
-        BOOST_CHECK(ex.get_invalid_registrar_handle().compare(test_registrar_handle) == 0);
+        BOOST_CHECK(e.is_set_invalid_registrar_handle());
+        BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
+        BOOST_CHECK_EQUAL(e.get_invalid_registrar_handle(), test_registrar_handle);
+    }
+    catch (const std::exception& e)
+    {
+        BOOST_TEST_MESSAGE(boost::diagnostic_information(e));
+    }
+    catch (...)
+    {
+        BOOST_TEST_MESSAGE("unknown exception caught");
     }
 
     {
@@ -213,7 +244,17 @@ BOOST_AUTO_TEST_CASE(create_registrar_unknown_country)
 
     try
     {
-        ::LibFred::CreateRegistrar(test_registrar_handle).set_country("XY").exec(ctx);
+        ::LibFred::CreateRegistrar{
+                test_registrar_handle,
+                "Novakovic Jan",
+                "Organization",
+                {"Street"},
+                "City",
+                "PostalCode",
+                "Telephone",
+                "Email",
+                "registrar1.cz",
+                "Dic"}.set_country("XY").exec(ctx);
         BOOST_ERROR("unreported unknown country");
     }
     catch (const ::LibFred::CreateRegistrar::Exception& ex)

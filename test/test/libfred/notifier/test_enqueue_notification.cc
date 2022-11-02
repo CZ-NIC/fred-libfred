@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
-/**
- *  @file
- */
 
 #include <boost/test/unit_test.hpp>
+
 #include "test/setup/fixtures.hh"
 #include "test/setup/fixtures_utils.hh"
 #include "test/libfred/notifier/util.hh"
@@ -39,9 +37,17 @@ struct has_domain : has_autocomitting_ctx {
     :
         creating_registrar(
             Test::exec(
-                ::LibFred::CreateRegistrar("BIG_R")
-                    .set_name("Novakovic Jan")
-                    .set_url("registrar1.cz"),
+                ::LibFred::CreateRegistrar{
+                        "BIG_R",
+                        "Novakovic Jan",
+                        "Organization",
+                        {"Street"},
+                        "City",
+                        "PostalCode",
+                        "Telephone",
+                        "Email",
+                        "registrar1.cz",
+                        "Dic"},
                 ctx
             )
         ),

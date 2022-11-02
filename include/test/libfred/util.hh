@@ -53,14 +53,28 @@ struct autocommitting_context : virtual Test::instantiate_db_template {
     }
 };
 
-struct has_registrar : Test::autocommitting_context {
+struct has_registrar : Test::autocommitting_context
+{
+    has_registrar()
+        : registrar{
+            [](const ::LibFred::OperationContext& ctx)
+            {
+                const std::string reg_handle = "REGISTRAR1";
+                ::LibFred::CreateRegistrar{
+                        reg_handle,
+                        "Name " + reg_handle,
+                        "Organization " + reg_handle,
+                        {"Street " + reg_handle},
+                        "City " + reg_handle,
+                        "PostalCode " + reg_handle,
+                        "Telephone " + reg_handle,
+                        "Email " + reg_handle,
+                        "Url " + reg_handle,
+                        "Dic " + reg_handle}.exec(ctx);
+                return ::LibFred::InfoRegistrarByHandle{reg_handle}.exec(ctx).info_registrar_data;
+            }(ctx)}
+    { }
     ::LibFred::InfoRegistrarData registrar;
-
-    has_registrar() {
-        const std::string reg_handle = "REGISTRAR1";
-        ::LibFred::CreateRegistrar(reg_handle).exec(ctx);
-        registrar = ::LibFred::InfoRegistrarByHandle(reg_handle).exec(ctx).info_registrar_data;
-    }
 };
 
 struct HasAuthinfo
@@ -115,7 +129,17 @@ struct has_contact_and_a_different_registrar : has_contact
                 [&]()
                 {
                     const std::string diff_reg_handle = "REGISTRAR2";
-                    ::LibFred::CreateRegistrar(diff_reg_handle).exec(ctx);
+                    ::LibFred::CreateRegistrar{
+                            diff_reg_handle,
+                            "Name " + diff_reg_handle,
+                            "Organization " + diff_reg_handle,
+                            {"Street " + diff_reg_handle},
+                            "City " + diff_reg_handle,
+                            "PostalCode " + diff_reg_handle,
+                            "Telephone " + diff_reg_handle,
+                            "Email " + diff_reg_handle,
+                            "Url " + diff_reg_handle,
+                            "Dic " + diff_reg_handle}.exec(ctx);
                     return ::LibFred::InfoRegistrarByHandle(diff_reg_handle).exec(ctx).info_registrar_data;
                 }()}
     { }
@@ -293,39 +317,86 @@ struct has_domain_and_a_different_registrar : has_domain
 {
     ::LibFred::InfoRegistrarData the_different_registrar;
 
-    has_domain_and_a_different_registrar() {
+    has_domain_and_a_different_registrar()
+    {
         const std::string diff_reg_handle = "REGISTRAR2";
-        ::LibFred::CreateRegistrar(diff_reg_handle).exec(ctx);
+        ::LibFred::CreateRegistrar{
+                diff_reg_handle,
+                "Name " + diff_reg_handle,
+                "Organization " + diff_reg_handle,
+                {"Street " + diff_reg_handle},
+                "City " + diff_reg_handle,
+                "PostalCode " + diff_reg_handle,
+                "Telephone " + diff_reg_handle,
+                "Email " + diff_reg_handle,
+                "Url " + diff_reg_handle,
+                "Dic " + diff_reg_handle}.exec(ctx);
         the_different_registrar = ::LibFred::InfoRegistrarByHandle(diff_reg_handle).exec(ctx).info_registrar_data;
     }
 };
 
-struct has_enum_domain_and_a_different_registrar : has_enum_domain {
+struct has_enum_domain_and_a_different_registrar : has_enum_domain
+{
     ::LibFred::InfoRegistrarData the_different_registrar;
 
-    has_enum_domain_and_a_different_registrar() {
+    has_enum_domain_and_a_different_registrar()
+    {
         const std::string diff_reg_handle = "REGISTRAR2";
-        ::LibFred::CreateRegistrar(diff_reg_handle).exec(ctx);
+        ::LibFred::CreateRegistrar{
+                diff_reg_handle,
+                "Name " + diff_reg_handle,
+                "Organization " + diff_reg_handle,
+                {"Street " + diff_reg_handle},
+                "City " + diff_reg_handle,
+                "PostalCode " + diff_reg_handle,
+                "Telephone " + diff_reg_handle,
+                "Email " + diff_reg_handle,
+                "Url " + diff_reg_handle,
+                "Dic " + diff_reg_handle}.exec(ctx);
         the_different_registrar = ::LibFred::InfoRegistrarByHandle(diff_reg_handle).exec(ctx).info_registrar_data;
     }
 };
 
-struct has_keyset_and_a_different_registrar : has_keyset {
+struct has_keyset_and_a_different_registrar : has_keyset
+{
     ::LibFred::InfoRegistrarData the_different_registrar;
 
-    has_keyset_and_a_different_registrar() {
+    has_keyset_and_a_different_registrar()
+    {
         const std::string diff_reg_handle = "REGISTRAR2";
-        ::LibFred::CreateRegistrar(diff_reg_handle).exec(ctx);
+        ::LibFred::CreateRegistrar{
+                diff_reg_handle,
+                "Name " + diff_reg_handle,
+                "Organization " + diff_reg_handle,
+                {"Street " + diff_reg_handle},
+                "City " + diff_reg_handle,
+                "PostalCode " + diff_reg_handle,
+                "Telephone " + diff_reg_handle,
+                "Email " + diff_reg_handle,
+                "Url " + diff_reg_handle,
+                "Dic " + diff_reg_handle}.exec(ctx);
         the_different_registrar = ::LibFred::InfoRegistrarByHandle(diff_reg_handle).exec(ctx).info_registrar_data;
     }
 };
 
-struct has_nsset_and_a_different_registrar : has_nsset {
+struct has_nsset_and_a_different_registrar : has_nsset
+{
     ::LibFred::InfoRegistrarData the_different_registrar;
 
-    has_nsset_and_a_different_registrar() {
+    has_nsset_and_a_different_registrar()
+    {
         const std::string diff_reg_handle = "REGISTRAR2";
-        ::LibFred::CreateRegistrar(diff_reg_handle).exec(ctx);
+        ::LibFred::CreateRegistrar{
+                diff_reg_handle,
+                "Name " + diff_reg_handle,
+                "Organization " + diff_reg_handle,
+                {"Street " + diff_reg_handle},
+                "City " + diff_reg_handle,
+                "PostalCode " + diff_reg_handle,
+                "Telephone " + diff_reg_handle,
+                "Email " + diff_reg_handle,
+                "Url " + diff_reg_handle,
+                "Dic " + diff_reg_handle}.exec(ctx);
         the_different_registrar = ::LibFred::InfoRegistrarByHandle(diff_reg_handle).exec(ctx).info_registrar_data;
     }
 };

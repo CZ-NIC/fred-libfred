@@ -139,9 +139,9 @@ void set_registrar(LibFred::CreateRegistrar& op, bool system, int index)
          .set_email("registrar-" + version + "@registrar.com")
          .set_url("https://registrar-" + version + ".registrar.com");
    }
-   op.set_street1("Street 1 - " + version)
-     .set_street2("Street 2 - " + version)
-     .set_street3("Street 3 - " + version)
+   op.set_street({"Street 1 - " + version,
+                  "Street 2 - " + version,
+                  "Street 3 - " + version})
      .set_city("City " + version)
      .set_stateorprovince("State Or Province " + version)
      .set_postalcode("143 21")
@@ -534,11 +534,19 @@ auto make_registrar(LibFred::OperationContext& ctx, const std::string& handle, b
         {
             throw;
         }
-        return LibFred::CreateRegistrar{handle}
-                .set_name("Registrar " + handle)
-                .set_system(is_system)
-                .set_internal(is_internal)
-                .exec(ctx);
+        return LibFred::CreateRegistrar{
+                handle,
+                "Registrar " + handle,
+                "Organization " + handle,
+                {"Street " + handle},
+                "City " + handle,
+                "PostalCode " + handle,
+                "Telephone " + handle,
+                "Email " + handle,
+                "Url " + handle,
+                "Dic " + handle,
+                is_system,
+                is_internal}.exec(ctx);
     }
 }
 

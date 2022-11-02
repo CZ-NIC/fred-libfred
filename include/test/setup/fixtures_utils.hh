@@ -217,22 +217,32 @@ protected:
 
 }//namespace Test::util
 
-template<typename TCreateOper> struct CreateX_factory;
+template <typename TCreateOper> struct CreateX_factory;
 
-template<>
+template <>
 struct CreateX_factory<::LibFred::CreateRegistrar>
 {
-    typedef ::LibFred::CreateRegistrar create_type;
+    using create_type = ::LibFred::CreateRegistrar;
 
-    create_type make(const Optional<std::string>& _handle = Optional<std::string>())
+    static create_type make(const Optional<std::string>& _handle = Optional<std::string>())
     {
-        return create_type(
-            _handle.isset() ? _handle.get_value() : "REGISTRAR_" + Random::Generator().get_seq(Random::CharSet::digits(), 20)
-        );
+        const auto suffix = Random::Generator().get_seq(Random::CharSet::digits(), 20);
+        return create_type{
+                _handle.isset() ? _handle.get_value() : "REGISTRAR_" + suffix,
+                "Name " + suffix,
+                "Organization " + suffix,
+                {"Street " + suffix},
+                "City " + suffix,
+                "PostalCode " + suffix,
+                "Telephone " + suffix,
+                "Email " + suffix,
+                "Url " + suffix,
+                "Dic " + suffix
+        };
     }
 
     // CreateX operation class is in fact non-assignable (due to const members). Ouch :-/ Welcome boost::ptr_vector.
-    boost::ptr_vector<create_type> make_vector(const unsigned n)
+    static boost::ptr_vector<create_type> make_vector(const unsigned n)
     {
         boost::ptr_vector<create_type> result;
         for (unsigned i = 0; i < n; ++i)
@@ -377,9 +387,9 @@ inline ::LibFred::CreateRegistrar generate_test_data<>(::LibFred::CreateRegistra
 
     obj.set_name("Jan " + rnd.get_seq(Random::CharSet::letters_and_digits(), 7) + " Novak");
     obj.set_organization("Zakoupil a Zboril a " + rnd.get_seq(Random::CharSet::letters_and_digits(), 7) + " s. r. o.");
-    obj.set_street1("Na rynku " + rnd.get_seq(Random::CharSet::digits(), 3) + "/" + rnd.get_seq(Random::CharSet::digits(), 2));
-    obj.set_street2(rnd.get_seq(Random::CharSet::digits(), 1) + ". patro");
-    obj.set_street3(rnd.get_seq(Random::CharSet::digits(), 1) + ". dvere vlevo");
+    obj.set_street({"Na rynku " + rnd.get_seq(Random::CharSet::digits(), 3) + "/" + rnd.get_seq(Random::CharSet::digits(), 2),
+                    rnd.get_seq(Random::CharSet::digits(), 1) + ". patro",
+                    rnd.get_seq(Random::CharSet::digits(), 1) + ". dvere vlevo"});
     obj.set_city("Praha " + rnd.get_seq(Random::CharSet::digits(), 1));
     obj.set_stateorprovince("Kraj c." + rnd.get_seq(Random::CharSet::digits(), 2));
     obj.set_postalcode(rnd.get_seq(Random::CharSet::digits(), 3) + " " + rnd.get_seq(Random::CharSet::digits(), 2));

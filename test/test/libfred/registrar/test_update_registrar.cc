@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/opcontext.hh"
 #include "libfred/opexception.hh"
 #include "libfred/registrar/create_registrar.hh"
@@ -30,6 +31,7 @@
 
 #include <boost/test/test_tools.hpp>
 #include <boost/test/unit_test.hpp>
+
 #include <string>
 
 namespace Test {
@@ -40,13 +42,20 @@ struct update_registrar_fixture
 
     update_registrar_fixture(const ::LibFred::OperationContext& _ctx)
     {
-        registrar.handle = Random::Generator().get_seq(Random::CharSet::letters(), 12);
-        registrar.name = Nullable<std::string>("Testname");
-        registrar.system = false;
-        registrar.vat_payer = true;
+        const auto handle = Random::Generator().get_seq(Random::CharSet::letters(), 12);
 
-        ::LibFred::CreateRegistrar(registrar.handle).exec(_ctx);
-        registrar = ::LibFred::InfoRegistrarByHandle(registrar.handle).exec(_ctx).info_registrar_data;
+        ::LibFred::CreateRegistrar{
+                handle,
+                "Novakovic Jan",
+                "Organization",
+                {"Street"},
+                "City",
+                "PostalCode",
+                "Telephone",
+                "Email",
+                "registrar1.cz",
+                "Dic"}.exec(_ctx);
+        registrar = ::LibFred::InfoRegistrarByHandle(handle).exec(_ctx).info_registrar_data;
     }
 };
 
@@ -106,9 +115,10 @@ BOOST_AUTO_TEST_CASE(set_registrar_update_all)
     ::LibFred::Registrar::UpdateRegistrarById(registrar.id)
             .set_handle(registrar.handle)
             .set_name(registrar.name.get_value())
-            .set_street1(registrar.street1.get_value())
-            .set_street2(registrar.street2.get_value())
-            .set_street3(registrar.street3.get_value())
+            .set_street(std::vector<std::string>{
+                    registrar.street1.get_value(),
+                    registrar.street2.get_value(),
+                    registrar.street3.get_value()})
             .set_state_or_province(boost::none)
             .set_city(registrar.city.get_value())
             .set_postal_code(registrar.postalcode.get_value())

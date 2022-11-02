@@ -120,23 +120,26 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
 
         ctx.get_conn().exec("TRUNCATE TABLE registrar CASCADE;");
 
-        ::LibFred::CreateRegistrar(test_registrar_data_1.handle)
-            .set_name(test_registrar_data_1.name.get_value())
-            .set_organization(test_registrar_data_1.organization.get_value())
-            .set_street1(test_registrar_data_1.street1.get_value())
-            .set_street2(test_registrar_data_1.street2.get_value())
-            .set_street3(test_registrar_data_1.street3.get_value())
-            .set_city(test_registrar_data_1.city.get_value())
+        ::LibFred::CreateRegistrar{
+                test_registrar_data_1.handle,
+                test_registrar_data_1.name.get_value(),
+                test_registrar_data_1.organization.get_value(),
+                {
+                    test_registrar_data_1.street1.get_value(),
+                    test_registrar_data_1.street2.get_value(),
+                    test_registrar_data_1.street3.get_value()
+                },
+                test_registrar_data_1.city.get_value(),
+                test_registrar_data_1.postalcode.get_value(),
+                test_registrar_data_1.telephone.get_value(),
+                test_registrar_data_1.email.get_value(),
+                test_registrar_data_1.url.get_value(),
+                test_registrar_data_1.dic.get_value()}
             .set_stateorprovince(test_registrar_data_1.stateorprovince.get_value())
-            .set_postalcode(test_registrar_data_1.postalcode.get_value())
             .set_country(test_registrar_data_1.country.get_value())
-            .set_telephone(test_registrar_data_1.telephone.get_value())
             .set_fax(test_registrar_data_1.fax.get_value())
-            .set_email(test_registrar_data_1.email.get_value())
-            .set_url(test_registrar_data_1.url.get_value())
             .set_system(test_registrar_data_1.system.get_value())
             .set_ico(test_registrar_data_1.ico.get_value())
-            .set_dic(test_registrar_data_1.dic.get_value())
             .set_variable_symbol(test_registrar_data_1.variable_symbol.get_value())
             .set_payment_memo_regex(test_registrar_data_1.payment_memo_regex.get_value())
             .set_vat_payer(test_registrar_data_1.vat_payer)
@@ -148,23 +151,26 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
                 "SELECT id FROM registrar WHERE handle = ")
                     .param_text(test_registrar_data_1.handle))[0]["id"]);
 
-        ::LibFred::CreateRegistrar(test_registrar_data_2.handle)
-            .set_name(test_registrar_data_2.name.get_value())
-            .set_organization(test_registrar_data_2.organization.get_value())
-            .set_street1(test_registrar_data_2.street1.get_value())
-            .set_street2(test_registrar_data_2.street2.get_value())
-            .set_street3(test_registrar_data_2.street3.get_value())
-            .set_city(test_registrar_data_2.city.get_value())
+        ::LibFred::CreateRegistrar{
+                test_registrar_data_2.handle,
+                test_registrar_data_2.name.get_value(),
+                test_registrar_data_2.organization.get_value(),
+                {
+                    test_registrar_data_2.street1.get_value(),
+                    test_registrar_data_2.street2.get_value(),
+                    test_registrar_data_2.street3.get_value()
+                },
+                test_registrar_data_2.city.get_value(),
+                test_registrar_data_2.postalcode.get_value(),
+                test_registrar_data_2.telephone.get_value(),
+                test_registrar_data_2.email.get_value(),
+                test_registrar_data_2.url.get_value(),
+                test_registrar_data_2.dic.get_value()}
             .set_stateorprovince(test_registrar_data_2.stateorprovince.get_value())
-            .set_postalcode(test_registrar_data_2.postalcode.get_value())
             .set_country(test_registrar_data_2.country.get_value())
-            .set_telephone(test_registrar_data_2.telephone.get_value())
             .set_fax(test_registrar_data_2.fax.get_value())
-            .set_email(test_registrar_data_2.email.get_value())
-            .set_url(test_registrar_data_2.url.get_value())
             .set_system(test_registrar_data_2.system.get_value())
             .set_ico(test_registrar_data_2.ico.get_value())
-            .set_dic(test_registrar_data_2.dic.get_value())
             .set_variable_symbol(test_registrar_data_2.variable_symbol.get_value())
             .set_payment_memo_regex(test_registrar_data_2.payment_memo_regex.get_value())
             .set_vat_payer(test_registrar_data_2.vat_payer)
@@ -176,20 +182,21 @@ struct test_info_registrar_fixture : virtual public Test::instantiate_db_templat
                 "SELECT id FROM registrar WHERE handle = ")
                     .param_text(test_registrar_data_2.handle))[0]["id"]);
 
-        ::LibFred::CreateRegistrar(test_internal_registrar_data.handle)
-            .set_name(test_internal_registrar_data.name.get_value())
-            .set_organization(test_internal_registrar_data.organization.get_value())
-            .set_street1(test_internal_registrar_data.street1.get_value())
-            .set_city(test_internal_registrar_data.city.get_value())
+        ::LibFred::CreateRegistrar{
+                test_internal_registrar_data.handle,
+                test_internal_registrar_data.name.get_value(),
+                test_internal_registrar_data.organization.get_value(),
+                {test_internal_registrar_data.street1.get_value()},
+                test_internal_registrar_data.city.get_value(),
+                test_internal_registrar_data.postalcode.get_value(),
+                test_internal_registrar_data.telephone.get_value(),
+                test_internal_registrar_data.email.get_value(),
+                test_internal_registrar_data.url.get_value(),
+                test_internal_registrar_data.dic.get_value()}
             .set_stateorprovince(test_internal_registrar_data.stateorprovince.get_value())
-            .set_postalcode(test_internal_registrar_data.postalcode.get_value())
             .set_country(test_internal_registrar_data.country.get_value())
-            .set_telephone(test_internal_registrar_data.telephone.get_value())
-            .set_email(test_internal_registrar_data.email.get_value())
-            .set_url(test_internal_registrar_data.url.get_value())
             .set_system(test_internal_registrar_data.system.get_value())
             .set_ico(test_internal_registrar_data.ico.get_value())
-            .set_dic(test_internal_registrar_data.dic.get_value())
             .set_variable_symbol(test_internal_registrar_data.variable_symbol.get_value())
             .set_payment_memo_regex(test_internal_registrar_data.payment_memo_regex.get_value())
             .set_vat_payer(test_internal_registrar_data.vat_payer)

@@ -16,100 +16,191 @@
  * You should have received a copy of the GNU General Public License
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "libfred/registrar/create_registrar.hh"
 
 #include "libfred/registrable_object/contact/contact_enum.hh"
 #include "util/util.hh"
 
+#include <algorithm>
+#include <cctype>
 #include <string>
-#include <vector>
 #include <sstream>
+#include <utility>
 
 namespace LibFred {
 
-CreateRegistrar::CreateRegistrar(const std::string& handle)
-    : handle_(handle),
-      is_internal_{false}
+namespace {
+
+bool is_empty(const std::string& value)
+{
+    return value.empty() || std::all_of(begin(value), end(value), [](unsigned char c) { return std::isspace(c); });
+}
+
+bool does_present(const Optional<std::string>& argument)
+{
+    return argument.is_set() && !is_empty(argument.get_value());
+}
+
+template <typename Fnc, typename ...Args>
+std::string nonempty(std::string value, Fnc make_exception, Args&& ...args)
+{
+    if (is_empty(value))
+    {
+        throw make_exception(std::forward<Args>(args)...);
+    }
+    return value;
+}
+
+auto make_missing_street_exception()
+{
+    CreateRegistrar::Exception e;
+    e.set_missing_mandatory_attribute("street");
+    return e;
+}
+
+auto make_missing_attribute_exception(const std::string& attribute_name)
+{
+    CreateRegistrar::Exception e;
+    e.set_missing_mandatory_attribute(attribute_name);
+    return e;
+}
+
+std::vector<std::string> correct_street(std::vector<std::string> street)
+{
+    static constexpr auto max_number_of_streets = 3u;
+    if (max_number_of_streets < street.size())
+    {
+        CreateRegistrar::Exception e;
+        e.set_too_many_streets(street.size());
+        throw e;
+    }
+    if (street.empty())
+    {
+        throw make_missing_street_exception();
+    }
+    std::for_each(begin(street), end(street), [](auto&& item) { nonempty(item, make_missing_street_exception); });
+    return street;
+}
+
+}//namespace LibFred::{anonymous}
+
+CreateRegistrar::CreateRegistrar(
+        std::string handle,
+        std::string name,
+        std::string organization,
+        std::vector<std::string> street,
+        std::string city,
+        std::string postalcode,
+        std::string telephone,
+        std::string email,
+        std::string url,
+        std::string dic,
+        bool system,
+        bool is_internal)
+    : handle_{nonempty(std::move(handle), make_missing_attribute_exception, "handle")},
+      name_{nonempty(std::move(name), make_missing_attribute_exception, "name")},
+      organization_{nonempty(std::move(organization), make_missing_attribute_exception, "organization")},
+      street_{correct_street(std::move(street))},
+      city_{nonempty(std::move(city), make_missing_attribute_exception, "city")},
+      postalcode_{nonempty(std::move(postalcode), make_missing_attribute_exception, "postalcode")},
+      telephone_{nonempty(std::move(telephone), make_missing_attribute_exception, "telephone")},
+      email_{nonempty(std::move(email), make_missing_attribute_exception, "email")},
+      url_{nonempty(std::move(url), make_missing_attribute_exception, "url")},
+      system_{system},
+      dic_{nonempty(std::move(dic), make_missing_attribute_exception, "dic")},
+      is_internal_{is_internal}
 {}
 
 CreateRegistrar::CreateRegistrar(
-        const std::string& handle,
-        const Optional<std::string>& name,
-        const Optional<std::string>& organization,
-        const Optional<std::string>& street1,
-        const Optional<std::string>& street2,
-        const Optional<std::string>& street3,
-        const Optional<std::string>& city,
+        std::string handle,
+        std::string name,
+        std::string organization,
+        std::vector<std::string> street,
+        std::string city,
         const Optional<std::string>& stateorprovince,
-        const Optional<std::string>& postalcode,
+        std::string postalcode,
         const Optional<std::string>& country,
-        const Optional<std::string>& telephone,
+        std::string telephone,
         const Optional<std::string>& fax,
-        const Optional<std::string>& email,
-        const Optional<std::string>& url,
-        const Optional<bool>& system,
+        std::string email,
+        std::string url,
+        bool system,
         const Optional<std::string>& ico,
-        const Optional<std::string>& dic,
+        std::string dic,
         const Optional<std::string>& variable_symbol,
         const Optional<std::string>& payment_memo_regex,
         const Optional<bool>& vat_payer,
         bool is_internal)
-    : handle_(handle),
-      name_(name),
-      organization_(organization),
-      street1_(street1),
-      street2_(street2),
-      street3_(street3),
-      city_(city),
-      stateorprovince_(stateorprovince),
-      postalcode_(postalcode),
-      country_(country),
-      telephone_(telephone),
-      fax_(fax),
-      email_(email),
-      url_(url),
-      system_(system),
-      ico_(ico),
-      dic_(dic),
-      variable_symbol_(variable_symbol),
-      payment_memo_regex_(payment_memo_regex),
-      vat_payer_(vat_payer),
-      is_internal_(is_internal)
+    : handle_{nonempty(std::move(handle), make_missing_attribute_exception, "handle")},
+      name_{nonempty(std::move(name), make_missing_attribute_exception, "name")},
+      organization_{nonempty(std::move(organization), make_missing_attribute_exception, "organization")},
+      street_{correct_street(std::move(street))},
+      city_{nonempty(std::move(city), make_missing_attribute_exception, "city")},
+      stateorprovince_{stateorprovince},
+      postalcode_{nonempty(std::move(postalcode), make_missing_attribute_exception, "postalcode")},
+      country_{country},
+      telephone_{nonempty(std::move(telephone), make_missing_attribute_exception, "telephone")},
+      fax_{fax},
+      email_{nonempty(std::move(email), make_missing_attribute_exception, "email")},
+      url_{nonempty(std::move(url), make_missing_attribute_exception, "url")},
+      system_{system},
+      ico_{ico},
+      dic_{nonempty(std::move(dic), make_missing_attribute_exception, "dic")},
+      variable_symbol_{variable_symbol},
+      payment_memo_regex_{payment_memo_regex},
+      vat_payer_{vat_payer},
+      is_internal_{is_internal}
 {}
 
-CreateRegistrar& CreateRegistrar::set_name(const std::string& name)
+CreateRegistrar& CreateRegistrar::set_name(std::string name)
 {
-    name_ = name;
+    name_ = nonempty(std::move(name), make_missing_attribute_exception, "name");
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_organization(const std::string& organization)
+CreateRegistrar& CreateRegistrar::set_organization(std::string organization)
 {
-    organization_ = organization;
+    organization_ = nonempty(std::move(organization), make_missing_attribute_exception, "organization");
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_street1(const std::string& street1)
+CreateRegistrar& CreateRegistrar::set_street(std::vector<std::string> street)
 {
-    street1_ = street1;
+    street_ = correct_street(std::move(street));
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_street2(const std::string& street2)
+CreateRegistrar& CreateRegistrar::set_street(std::string street1)
 {
-    street2_ = street2;
+    street_ = {nonempty(std::move(street1), make_missing_street_exception)};
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_street3(const std::string& street3)
+CreateRegistrar& CreateRegistrar::set_street(std::string street1, std::string street2)
 {
-    street3_ = street3;
+    street_ =
+            {
+                nonempty(std::move(street1), make_missing_street_exception),
+                nonempty(std::move(street2), make_missing_street_exception)
+            };
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_city(const std::string& city)
+CreateRegistrar& CreateRegistrar::set_street(std::string street1, std::string street2, std::string street3)
 {
-    city_ = city;
+    street_ =
+            {
+                nonempty(std::move(street1), make_missing_street_exception),
+                nonempty(std::move(street2), make_missing_street_exception),
+                nonempty(std::move(street3), make_missing_street_exception)
+            };
+    return *this;
+}
+
+CreateRegistrar& CreateRegistrar::set_city(std::string city)
+{
+    city_ = nonempty(std::move(city), make_missing_attribute_exception, "city");
     return *this;
 }
 
@@ -119,9 +210,9 @@ CreateRegistrar& CreateRegistrar::set_stateorprovince(const std::string& stateor
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_postalcode(const std::string& postalcode)
+CreateRegistrar& CreateRegistrar::set_postalcode(std::string postalcode)
 {
-    postalcode_ = postalcode;
+    postalcode_ = nonempty(std::move(postalcode), make_missing_attribute_exception, "postalcode");
     return *this;
 }
 
@@ -131,9 +222,9 @@ CreateRegistrar& CreateRegistrar::set_country(const std::string& country)
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_telephone(const std::string& telephone)
+CreateRegistrar& CreateRegistrar::set_telephone(std::string telephone)
 {
-    telephone_ = telephone;
+    telephone_ = nonempty(std::move(telephone), make_missing_attribute_exception, "telephone");
     return *this;
 }
 
@@ -143,15 +234,15 @@ CreateRegistrar& CreateRegistrar::set_fax(const std::string& fax)
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_email(const std::string& email)
+CreateRegistrar& CreateRegistrar::set_email(std::string email)
 {
-    email_ = email;
+    email_ = nonempty(std::move(email), make_missing_attribute_exception, "email");
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_url(const std::string& url)
+CreateRegistrar& CreateRegistrar::set_url(std::string url)
 {
-    url_ = url;
+    url_ = nonempty(std::move(url), make_missing_attribute_exception, "url");
     return *this;
 }
 
@@ -167,9 +258,9 @@ CreateRegistrar& CreateRegistrar::set_ico(const std::string& ico)
     return *this;
 }
 
-CreateRegistrar& CreateRegistrar::set_dic(const std::string& dic)
+CreateRegistrar& CreateRegistrar::set_dic(std::string dic)
 {
-    dic_ = dic;
+    dic_ = nonempty(std::move(dic), make_missing_attribute_exception, "dic");
     return *this;
 }
 
@@ -201,164 +292,87 @@ unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
 {
     try
     {
-        Database::QueryParams params;//query params
+        Database::QueryParams params;
         std::ostringstream col_sql;
         std::ostringstream val_sql;
-        Util::HeadSeparator col_separator("", ",");
-        Util::HeadSeparator val_separator("", ",");
 
-        col_sql <<"INSERT INTO registrar (";
-        val_sql << " VALUES (";
+        col_sql << "INSERT INTO registrar (handle, name, organization, city, postalcode, telephone, email, url, dic, system, is_internal";
+        params = {handle_, name_, organization_, city_, postalcode_, telephone_, email_, url_, dic_, system_, is_internal_};
+        val_sql << "UPPER($1::TEXT), $2::TEXT, $3::TEXT, $4::TEXT, $5::TEXT, $6::TEXT, $7::TEXT, $8::TEXT, $9::TEXT, $10::BOOL, $11::BOOL";
 
-        params.push_back(handle_);
-        col_sql << col_separator.get() << "handle";
-        val_sql << val_separator.get() << "UPPER($" << params.size() <<"::text)";
-
-        if (name_.isset() && !name_.get_value().empty())
+        if (0 < street_.size())
         {
-            params.push_back(name_.get_value());
-            col_sql << col_separator.get() << "name";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
+            params.push_back(street_[0]);
+            col_sql << ", street1";
+            val_sql << ", $" << params.size() << "::TEXT";
+            if (1 < street_.size())
+            {
+                params.push_back(street_[1]);
+                col_sql << ", street2";
+                val_sql << ", $" << params.size() << "::TEXT";
+                if (2 < street_.size())
+                {
+                    params.push_back(street_[2]);
+                    col_sql << ", street3";
+                    val_sql << ", $" << params.size() << "::TEXT";
+                }
+            }
         }
 
-        if (organization_.isset() && !organization_.get_value().empty())
-        {
-            params.push_back(organization_.get_value());
-            col_sql << col_separator.get() << "organization";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (street1_.isset() && !street1_.get_value().empty())
-        {
-            params.push_back(street1_.get_value());
-            col_sql << col_separator.get() << "street1";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (street2_.isset() && !street2_.get_value().empty())
-        {
-            params.push_back(street2_.get_value());
-            col_sql << col_separator.get() << "street2";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (street3_.isset() && !street3_.get_value().empty())
-        {
-            params.push_back(street3_.get_value());
-            col_sql << col_separator.get() << "street3";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (city_.isset() && !city_.get_value().empty())
-        {
-            params.push_back(city_.get_value());
-            col_sql << col_separator.get() << "city";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (stateorprovince_.isset() && !stateorprovince_.get_value().empty())
+        if (does_present(stateorprovince_))
         {
             params.push_back(stateorprovince_.get_value());
-            col_sql << col_separator.get() << "stateorprovince";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
+            col_sql << ", stateorprovince";
+            val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (postalcode_.isset() && !postalcode_.get_value().empty())
+        if (does_present(country_))
         {
-            params.push_back(postalcode_.get_value());
-            col_sql << col_separator.get() << "postalcode";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (country_.isset() && !country_.get_value().empty())
-        {
-            params.push_back(LibFred::Contact::get_country_code(country_, ctx, static_cast<Exception*>(0),
+            params.push_back(LibFred::Contact::get_country_code(country_, ctx, static_cast<Exception*>(nullptr),
                             &Exception::set_unknown_country)); //throw if country unknown
-            col_sql << col_separator.get() << "country";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
+            col_sql << ", country";
+            val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (telephone_.isset() && !telephone_.get_value().empty())
-        {
-            params.push_back(telephone_.get_value());
-            col_sql << col_separator.get() << "telephone";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (fax_.isset() && !fax_.get_value().empty())
+        if (does_present(fax_))
         {
             params.push_back(fax_.get_value());
-            col_sql << col_separator.get() << "fax";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
+            col_sql << ", fax";
+            val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (email_.isset() && !email_.get_value().empty())
-        {
-            params.push_back(email_.get_value());
-            col_sql << col_separator.get() << "email";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (url_.isset() && !url_.get_value().empty())
-        {
-            params.push_back(url_.get_value());
-            col_sql << col_separator.get() << "url";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (system_.isset())
-        {
-            params.push_back(system_.get_value());
-            col_sql << col_separator.get() << "system";
-            val_sql << val_separator.get() << "$" << params.size() << "::boolean";
-        }
-
-        if (ico_.isset() && !ico_.get_value().empty())
+        if (does_present(ico_))
         {
             params.push_back(ico_.get_value());
-            col_sql << col_separator.get() << "ico";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
+            col_sql << ", ico";
+            val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (dic_.isset() && !dic_.get_value().empty())
-        {
-            params.push_back(dic_.get_value());
-            col_sql << col_separator.get() << "dic";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
-        }
-
-        if (variable_symbol_.isset() && !variable_symbol_.get_value().empty())
+        if (does_present(variable_symbol_))
         {
             params.push_back(variable_symbol_.get_value());
-            col_sql << col_separator.get() << "varsymb";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
+            col_sql << ", varsymb";
+            val_sql << ", $" << params.size() << "::TEXT";
         }
 
-        if (payment_memo_regex_.isset() && !payment_memo_regex_.get_value().empty())
+        if (does_present(payment_memo_regex_))
         {
             params.push_back(payment_memo_regex_.get_value());
-            col_sql << col_separator.get() << "regex";
-            val_sql << val_separator.get() << "$" << params.size() << "::text";
+            col_sql << ", regex";
+            val_sql << ", $" << params.size() << "::TEXT";
         }
 
         if (vat_payer_.isset())
         {
             params.push_back(vat_payer_.get_value());
-            col_sql << col_separator.get() << "vat";
-            val_sql << val_separator.get() << "$" << params.size() << "::boolean";
+            col_sql << ", vat";
+            val_sql << ", $" << params.size() << "::BOOL";
         }
-
-        params.push_back(is_internal_);
-        col_sql << col_separator.get() << "is_internal";
-        val_sql << val_separator.get() << "$" << params.size() << "::boolean";
-
-        col_sql <<")";
-        val_sql << ") RETURNING id";
 
         //insert into registrar
         try
         {
-            const Database::Result dbres = ctx.get_conn().exec_params(col_sql.str() + val_sql.str(), params);
+            const Database::Result dbres = ctx.get_conn().exec_params(col_sql.str() + ") VALUES(" + val_sql.str() + ") RETURNING id", params);
 
             if (dbres.size() != 1)
             {
@@ -369,7 +383,7 @@ unsigned long long CreateRegistrar::exec(const OperationContext& ctx)
         }
         catch (const std::exception& e)
         {
-            std::string what_string(e.what());
+            const std::string what_string = e.what();
             if (what_string.find("registrar_handle_key") != std::string::npos)
             {
                 BOOST_THROW_EXCEPTION(Exception().set_invalid_registrar_handle(handle_));
@@ -393,30 +407,30 @@ std::string CreateRegistrar::to_string() const
     return Util::format_operation_state(
             "CreateRegistrar",
             Util::vector_of<std::pair<std::string,std::string>>
-            (std::make_pair("handle",handle_))
-            (std::make_pair("name",name_.print_quoted()))
-            (std::make_pair("organization",organization_.print_quoted()))
-            (std::make_pair("street1",street1_.print_quoted()))
-            (std::make_pair("street2",street2_.print_quoted()))
-            (std::make_pair("street3",street3_.print_quoted()))
-            (std::make_pair("city",city_.print_quoted()))
-            (std::make_pair("stateorprovince",stateorprovince_.print_quoted()))
-            (std::make_pair("postalcode",postalcode_.print_quoted()))
-            (std::make_pair("country",country_.print_quoted()))
-            (std::make_pair("telephone",telephone_.print_quoted()))
-            (std::make_pair("fax",fax_.print_quoted()))
-            (std::make_pair("email",email_.print_quoted()))
-            (std::make_pair("url",url_.print_quoted()))
-            (std::make_pair("system",system_.print_quoted()))
-            (std::make_pair("ico",ico_.print_quoted()))
-            (std::make_pair("dic",dic_.print_quoted()))
-            (std::make_pair("variable_symbol",variable_symbol_.print_quoted()))
-            (std::make_pair("payment_memo_regex",payment_memo_regex_.print_quoted()))
-            (std::make_pair("vat_payer",vat_payer_.print_quoted()))
-            (std::make_pair("is_internal",std::to_string(is_internal_))));
+            (std::make_pair("handle", handle_))
+            (std::make_pair("name", name_))
+            (std::make_pair("organization", organization_))
+            (std::make_pair("street1", 0 < street_.size() ? street_[0] : ""))
+            (std::make_pair("street2", 1 < street_.size() ? street_[1] : ""))
+            (std::make_pair("street3", 2 < street_.size() ? street_[2] : ""))
+            (std::make_pair("city", city_))
+            (std::make_pair("stateorprovince", stateorprovince_.print_quoted()))
+            (std::make_pair("postalcode", postalcode_))
+            (std::make_pair("country", country_.print_quoted()))
+            (std::make_pair("telephone", telephone_))
+            (std::make_pair("fax", fax_.print_quoted()))
+            (std::make_pair("email", email_))
+            (std::make_pair("url",url_))
+            (std::make_pair("system", std::to_string(system_)))
+            (std::make_pair("ico", ico_.print_quoted()))
+            (std::make_pair("dic", dic_))
+            (std::make_pair("variable_symbol", variable_symbol_.print_quoted()))
+            (std::make_pair("payment_memo_regex", payment_memo_regex_.print_quoted()))
+            (std::make_pair("vat_payer", vat_payer_.print_quoted()))
+            (std::make_pair("is_internal", std::to_string(is_internal_))));
 }
 
-const std::string& CreateRegistrar::get_handle()const
+const std::string& CreateRegistrar::get_handle() const
 {
     return handle_;
 }
