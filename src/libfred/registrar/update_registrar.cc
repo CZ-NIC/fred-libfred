@@ -17,8 +17,9 @@
  * along with FRED.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "libfred/registrar/exceptions.hh"
 #include "libfred/registrar/update_registrar.hh"
+#include "libfred/registrar/check_registrar.hh"
+#include "libfred/registrar/exceptions.hh"
 #include "src/util/db/query_param.hh"
 #include "src/util/util.hh"
 
@@ -193,6 +194,13 @@ UpdateRegistrarById::UpdateRegistrarById(const unsigned long long _id)
 
 UpdateRegistrarById& UpdateRegistrarById::set_handle(boost::optional<std::string> _handle)
 {
+    if (_handle != boost::none)
+    {
+        if (CheckRegistrar{*_handle}.is_invalid_handle())
+        {
+            throw make_invalid_attribute_exception("handle");
+        }
+    }
     handle_ = nonempty(std::move(_handle), make_invalid_attribute_exception, "handle");
     return *this;
 }

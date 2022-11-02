@@ -18,6 +18,7 @@
  */
 
 #include "libfred/registrar/create_registrar.hh"
+#include "libfred/registrar/check_registrar.hh"
 
 #include "libfred/registrable_object/contact/contact_enum.hh"
 #include "util/util.hh"
@@ -83,6 +84,15 @@ std::vector<std::string> correct_street(std::vector<std::string> street)
     return street;
 }
 
+std::string correct_handle(std::string handle)
+{
+    if (CheckRegistrar{handle}.is_invalid_handle())
+    {
+        throw CreateRegistrar::Exception{}.set_invalid_registrar_handle(handle);
+    }
+    return nonempty(std::move(handle), make_missing_attribute_exception, "handle");
+}
+
 }//namespace LibFred::{anonymous}
 
 CreateRegistrar::CreateRegistrar(
@@ -98,7 +108,7 @@ CreateRegistrar::CreateRegistrar(
         std::string dic,
         bool system,
         bool is_internal)
-    : handle_{nonempty(std::move(handle), make_missing_attribute_exception, "handle")},
+    : handle_{correct_handle(std::move(handle))},
       name_{nonempty(std::move(name), make_missing_attribute_exception, "name")},
       organization_{nonempty(std::move(organization), make_missing_attribute_exception, "organization")},
       street_{correct_street(std::move(street))},
@@ -132,7 +142,7 @@ CreateRegistrar::CreateRegistrar(
         const Optional<std::string>& payment_memo_regex,
         const Optional<bool>& vat_payer,
         bool is_internal)
-    : handle_{nonempty(std::move(handle), make_missing_attribute_exception, "handle")},
+    : handle_{correct_handle(std::move(handle))},
       name_{nonempty(std::move(name), make_missing_attribute_exception, "name")},
       organization_{nonempty(std::move(organization), make_missing_attribute_exception, "organization")},
       street_{correct_street(std::move(street))},
