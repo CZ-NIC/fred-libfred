@@ -1,6 +1,15 @@
 ChangeLog
 =========
 
+7.0.0 (2022-11-21)
+------------------
+
+* Rework interfaces and implementation of operations manipulating registrars (mainly to better reflect actually mandatory attributes)
+
+  * `CreateRegistrar`, `UpdateRegistrarById`
+  * Add new exceptions
+
+
 6.1.1 (2022-09-21)
 ------------------
 
